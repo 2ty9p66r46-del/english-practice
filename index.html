@@ -28,6 +28,8 @@
     .scroll{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior-y:auto;-webkit-overflow-scrolling:touch;padding:18px 20px 34px;scrollbar-width:none}
     .scroll::-webkit-scrollbar{display:none}
     .stack{display:grid;gap:16px}
+    .stack.top-bounce{animation:topBounce .34s cubic-bezier(.2,.75,.35,1)}
+    @keyframes topBounce{0%{transform:translateY(0)}48%{transform:translateY(13px)}100%{transform:translateY(0)}}
     .card{padding:22px;border-radius:23px;background:var(--card);box-shadow:0 1px 1px #1822350d,0 9px 25px #27344d0a}
     .quick{padding:14px}
     .practice{width:100%;min-height:65px;border:0;border-radius:18px;background:var(--blue);color:#fff;font-size:1.18rem;font-weight:800}
@@ -42,7 +44,9 @@
     .small-count{padding:8px 12px;border-radius:999px;background:#edf5ff;color:var(--blue);font-weight:800}
     .label{margin:20px 0 11px;color:#475569;font-size:.91rem;font-weight:800}
     .level-grid,.choice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-    .choice{min-height:51px;border:0;border-radius:15px;background:#e4e6eb;color:#111;font-weight:750}
+    .choice{min-height:51px;border:0;border-radius:15px;background:#e4e6eb;color:#111;font-weight:750;transition:transform .14s ease,box-shadow .14s ease,filter .14s ease}
+    .choice.selected{box-shadow:0 0 0 3px var(--blue),0 4px 12px #087cff24;filter:saturate(1.08)}
+    .all.selected{background:#dcecff;color:var(--blue);box-shadow:0 0 0 2px var(--blue)}
     .level{border:2px solid}
     .red{border-color:#a51f21;background:#ffe1e2;color:#a51f21}.orange{border-color:#a43b14;background:#ffead0;color:#a43b14}.yellow{border-color:#925a10;background:#fff1bf;color:#925a10}
     .purple{border-color:#6927df;background:#eee8ff;color:#6927df}.green{border-color:#116b3a;background:#d8f7e3;color:#116b3a}
@@ -84,9 +88,9 @@
     </header>
     <main class="scroll" id="mainScroll">
       <div class="stack">
-        <section class="card quick"><button class="practice" type="button" data-coming>5問を練習する</button></section>
+        <section class="card quick"><button class="practice" id="practiceButton" type="button" data-coming>0問を練習する</button></section>
         <section class="card">
-          <div class="section-head"><h2>練習する範囲</h2><span class="small-count">5問</span></div>
+          <div class="section-head"><h2>練習する範囲</h2><span class="small-count" id="questionCount">0問</span></div>
           <p class="label">レベル</p>
           <div class="level-grid">
             <button class="choice level red">S1</button><button class="choice level orange">S2</button><button class="choice level yellow">S3</button>
@@ -95,7 +99,7 @@
           <p class="label">品詞</p>
           <div class="group">
             <div class="group-title"><span>S</span><button class="all">すべて</button></div>
-            <div class="choice-grid"><button class="choice">動詞</button><button class="choice">名詞</button><button class="choice red level">形容詞</button></div>
+            <div class="choice-grid"><button class="choice">動詞</button><button class="choice">名詞</button><button class="choice">形容詞</button></div>
           </div>
           <div class="group">
             <div class="group-title"><span>A</span><button class="all">すべて</button></div>
@@ -269,6 +273,7 @@
         const errors=validateRows(rows);
         if(errors.length)throw new Error(`データにエラーがあります。\\n\\n${errors.slice(0,5).join('\\n')}${errors.length>5?`\\nほか${errors.length-5}件`:''}`);
         await saveImportedData({headers,rows,fileName:file.name,fileBytes,modified:false,importedAt:new Date().toISOString()});
+        await refreshQuestionCount();
         alert(`${rows.length}行のデータを読み込みました。`);
       }catch(error){
         alert(error?.message||'Excelの読み込みに失敗しました。');
@@ -278,9 +283,58 @@
       }
     });
     const scroller=document.getElementById('mainScroll');
+    const stack=scroller.querySelector('.stack');
     const backTop=document.getElementById('backTop');
-    backTop.addEventListener('click',()=>scroller.scrollTo({top:0,behavior:'smooth'}));
+    const questionCount=document.getElementById('questionCount');
+    const practiceButton=document.getElementById('practiceButton');
+    const levelChoices=[...document.querySelectorAll('.level-grid .choice')];
+    const partChoices=[...document.querySelectorAll('.group .choice')];
+    const understandingChoices=[...document.querySelectorAll('.understanding .choice')];
+    const selectedValues=buttons=>new Set(buttons.filter(button=>button.classList.contains('selected')).map(button=>button.textContent.trim()));
+    const refreshQuestionCount=async()=>{
+      const stored=await loadImportedData();
+      const rows=stored?.rows||[];
+      const levels=selectedValues(levelChoices);
+      const parts=selectedValues(partChoices);
+      const understandings=selectedValues(understandingChoices);
+      const count=rows.filter(row=>{
+        if(!text(row[8])||!text(row[9]))return false;
+        if(levels.size&&![text(row[11]),text(row[12])].some(value=>levels.has(value)))return false;
+        if(parts.size&&!parts.has(text(row[6])))return false;
+        const understanding=text(row[13])||'未登録';
+        if(understandings.size&&!understandings.has(understanding))return false;
+        return true;
+      }).length;
+      questionCount.textContent=`${count}問`;
+      practiceButton.textContent=`${count}問を練習する`;
+    };
+    [...levelChoices,...partChoices,...understandingChoices].forEach(button=>button.addEventListener('click',()=>{
+      button.classList.toggle('selected');
+      refreshQuestionCount();
+    }));
+    document.querySelectorAll('.group .all').forEach(button=>button.addEventListener('click',()=>{
+      const choices=[...button.closest('.group').querySelectorAll('.choice')];
+      const selectAll=choices.some(choice=>!choice.classList.contains('selected'));
+      choices.forEach(choice=>choice.classList.toggle('selected',selectAll));
+      button.classList.toggle('selected',selectAll);
+      refreshQuestionCount();
+    }));
+    backTop.addEventListener('click',()=>{
+      scroller.scrollTo({top:0,behavior:'smooth'});
+      const waitForTop=()=>{
+        if(scroller.scrollTop<=1){
+          stack.classList.remove('top-bounce');
+          void stack.offsetWidth;
+          stack.classList.add('top-bounce');
+          setTimeout(()=>stack.classList.remove('top-bounce'),380);
+        }else{
+          requestAnimationFrame(waitForTop);
+        }
+      };
+      requestAnimationFrame(waitForTop);
+    });
     scroller.addEventListener('scroll',()=>backTop.classList.toggle('visible',scroller.scrollTop>240),{passive:true});
+    refreshQuestionCount();
     document.querySelectorAll('[data-coming]').forEach(button=>button.addEventListener('click',()=>alert('この機能は次の段階で追加します。')));
     document.querySelectorAll('.segment').forEach(button=>button.addEventListener('click',()=>{const box=button.parentElement;box.querySelectorAll('.segment').forEach(x=>x.classList.remove('active'));button.classList.add('active')}));
     if('serviceWorker' in navigator){
