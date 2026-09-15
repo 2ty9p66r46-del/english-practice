@@ -193,6 +193,8 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     const practicePart=document.getElementById('practicePart');
     const practiceLevels=document.getElementById('practiceLevels');
     const practiceMeaning=document.getElementById('practiceMeaning');
+    const practicePronUs=document.getElementById('practicePronUs');
+    const practicePronUk=document.getElementById('practicePronUk');
     const practiceNote=document.getElementById('practiceNote');
     const practiceRatingButtons=[...document.querySelectorAll('.practice-rating-button')];
     levelChoices.forEach(button=>button.classList.add(button.textContent.trim().endsWith('1')?'red':button.textContent.trim().endsWith('2')?'orange':'yellow'));
@@ -405,6 +407,8 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
           practiceLevels.append(chip);
         });
       }
+      practicePronUs.textContent=text(row[4])||'—';
+      practicePronUk.textContent=text(row[5])||'—';
       practiceMeaning.textContent=text(row[7])||'意味未登録';
       practiceNote.textContent=text(row[10])||'備考なし';
       practicePrev.disabled=practiceIndex===0;
