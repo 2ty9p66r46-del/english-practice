@@ -90,14 +90,14 @@
     </nav>
     <section class="practice-screen" id="practiceScreen" aria-label="英作文練習" hidden>
       <header class="practice-screen-header">
-        <button class="practice-exit" id="practiceExit" type="button" aria-label="ホームへ戻る"><span aria-hidden="true">‹</span>ホーム</button>
+        <button class="practice-exit" id="practiceExit" type="button" aria-label="ホームへ戻る"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11 12 3l9 8v9a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg><span>ホーム</span></button>
         <div class="practice-brand"><img src="./flovo-wordmark-v3.png" alt="FloVo"><small>COMPOSITION PRACTICE</small></div>
         <strong class="practice-progress" id="practiceProgress">0 / 0</strong>
       </header>
       <main class="practice-screen-main">
-        <article class="practice-exercise-card">
+        <article class="practice-exercise-card" id="practiceExerciseCard">
           <section class="practice-language practice-japanese-block">
-            <span class="practice-language-label">日本語</span>
+            <span class="practice-language-label">Japanese</span>
             <p class="practice-japanese" id="practiceJapanese">日本語の例文</p>
           </section>
           <div class="practice-language-divider"></div>
@@ -119,15 +119,17 @@
           </div>
         </article>
         <section class="practice-rating-panel">
-          <span class="practice-panel-label">理解度</span>
+          <span class="practice-panel-label">理解度選択</span>
           <div class="practice-rating-options" id="practiceRatingOptions">
             <button class="practice-rating-button rating-zero" type="button" data-value="0%">0%</button>
             <button class="practice-rating-button rating-fifty" type="button" data-value="50%">50%</button>
             <button class="practice-rating-button rating-eighty" type="button" data-value="80%">80%</button>
             <button class="practice-rating-button rating-full" type="button" data-value="100%">100%</button>
+            <button class="practice-rating-button rating-unregistered" type="button" data-value="未登録">未登録</button>
           </div>
         </section>
         <section class="practice-meta-panel">
+          <div class="practice-meta-id-row"><span id="practiceNo">単語No —</span><span id="practiceSubNo">Sub No —</span></div>
           <div class="practice-meta-top"><strong id="practiceWord">—</strong><span id="practicePart">—</span><span id="practiceLevels">—</span></div>
           <p id="practiceMeaning">—</p>
         </section>
