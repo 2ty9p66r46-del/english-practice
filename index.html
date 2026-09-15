@@ -495,7 +495,6 @@
       const opening=questionMenu.hidden;
       questionMenu.hidden=!opening;
       questionLimit.setAttribute('aria-expanded',String(opening));
-      if(opening)questionMenu.querySelector('.selected')?.scrollIntoView({block:'center'});
     });
     document.addEventListener('pointerdown',event=>{
       if(!questionPicker.contains(event.target)){
