@@ -42,18 +42,20 @@
     .section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
     .section-head h2{margin:0}
     .label{margin:20px 0 11px;color:#475569;font-size:.91rem;font-weight:800}
-    .level-grid,.choice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
-    .choice{position:relative;min-height:49px;padding:0 10px;border:1px solid #e1e5ec;border-radius:14px;background:#f3f4f7;color:#263247;font-weight:750;box-shadow:0 1px 2px #1f29370a;transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}
-    .choice.selected{border-color:#83baff;background:#edf6ff;color:#0872e8;box-shadow:0 3px 10px #087cff16}
-    .choice.selected::after{content:"";position:absolute;top:7px;right:7px;width:6px;height:6px;border-radius:50%;background:#087cff}
-    .all.selected{border-color:#83baff;background:#edf6ff;color:#0872e8;box-shadow:none}
+    .level-grid,.choice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+    .choice{min-height:41px;padding:0 8px;border:1px solid #e0e3e9;border-radius:11px;background:linear-gradient(#f0f2f5,#eaedf1);color:#737c8d;font-weight:750;box-shadow:inset 0 1px 0 #ffffffbf,0 1px 2px #1822370a;transition:transform .14s ease,box-shadow .14s ease,border-color .14s ease,background .14s ease}
+    .choice.selected{color:var(--tone);border-color:var(--line);background:linear-gradient(145deg,var(--wash-top),var(--wash-bottom));box-shadow:inset 0 1px 0 #ffffffe8,0 3px 9px var(--shadow)}
+    .all.selected{color:var(--tone);border-color:var(--line);background:linear-gradient(145deg,var(--wash-top),var(--wash-bottom));box-shadow:inset 0 1px 0 #ffffffe8,0 2px 7px var(--shadow)}
     .level{border-width:1px}
-    .red{border-color:#efc8ca;background:#fff2f2;color:#a9292b}.orange{border-color:#f0d2bc;background:#fff5e9;color:#a4451d}.yellow{border-color:#eadba8;background:#fff9df;color:#876018}
-    .purple{border-color:#d7c7f4;background:#f6f1ff;color:#6d35ce}.green{border-color:#b9dfc8;background:#eefaf2;color:#167040}
-    .group{margin-top:16px}
-    .group-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;color:#526078;font-size:.86rem;font-weight:800}
-    .all{min-height:34px;padding:0 14px;border:1px solid #e1e5ec;border-radius:999px;background:#f5f6f8;color:#526078;font-size:.82rem}
-    .understanding{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+    .red{--tone:#a92b39;--line:#d9969f;--wash-top:#fff5f6;--wash-bottom:#fbe4e7;--shadow:#a92b391f}
+    .orange{--tone:#a94d1d;--line:#dda17d;--wash-top:#fff8f1;--wash-bottom:#fbe8d9;--shadow:#a94d1d1f}
+    .yellow{--tone:#7f5a08;--line:#d2b65e;--wash-top:#fffbed;--wash-bottom:#f7edc9;--shadow:#7f5a081c}
+    .green{--tone:#176c47;--line:#7db99b;--wash-top:#f3fbf7;--wash-bottom:#dcf1e6;--shadow:#176c471c}
+    .purple{--tone:#60399f;--line:#ad93d4;--wash-top:#faf7ff;--wash-bottom:#ebe3f8;--shadow:#60399f1f}
+    .group{margin-top:13px}
+    .group-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;color:#526078;font-size:.86rem;font-weight:800}
+    .all{min-height:29px;padding:0 12px;border:1px solid #e0e3e9;border-radius:999px;background:linear-gradient(#f0f2f5,#eaedf1);color:#737c8d;font-size:.76rem;box-shadow:inset 0 1px 0 #ffffffbf}
+    .understanding{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
     .understanding .choice{min-height:47px;font-size:.82rem}
     .segmented{display:grid;grid-template-columns:1fr 1fr;padding:4px;border:1px solid #e3e6ec;border-radius:16px;background:#f0f1f4}
     .segment{min-height:49px;border:0;border-radius:12px;background:transparent;color:#748095;font-weight:800}
@@ -289,6 +291,14 @@
     const levelChoices=[...document.querySelectorAll('.level-grid .choice')];
     const partChoices=[...document.querySelectorAll('.group .choice')];
     const understandingChoices=[...document.querySelectorAll('.understanding .choice')];
+    levelChoices.forEach(button=>button.classList.add(button.textContent.trim().endsWith('1')?'red':button.textContent.trim().endsWith('2')?'orange':'yellow'));
+    document.querySelectorAll('.group').forEach(group=>{
+      const rank=group.querySelector('.group-title span')?.textContent.trim();
+      const tone={S:'red',A:'orange',B:'yellow',C:'green',D:'purple'}[rank];
+      if(tone)group.querySelectorAll('.choice,.all').forEach(button=>button.classList.add(tone));
+    });
+    const understandingTones={'未登録':'purple','0%':'red','50%':'orange','80%':'yellow','100%':'green'};
+    understandingChoices.forEach(button=>button.classList.add(understandingTones[button.textContent.trim()]));
     const selectedValues=buttons=>new Set(buttons.filter(button=>button.classList.contains('selected')).map(button=>button.textContent.trim()));
     const refreshQuestionCount=async()=>{
       const stored=await loadImportedData();
