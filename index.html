@@ -143,11 +143,11 @@
           <div class="filter-section" data-filter-section="word">
             <div class="filter-section-head"><h3>1. 単語レベル</h3><div class="filter-section-actions"><button class="section-filter-button select" type="button" data-section-action="select">全て選択</button></div></div>
           <div class="group level-group">
-            <div class="group-title"><span>Speaking</span></div>
+            <div class="group-title"><span>Speaking</span><button class="all blue" type="button">全て選択</button></div>
             <div class="choice-grid"><button class="choice level red">S1</button><button class="choice level orange">S2</button><button class="choice level yellow">S3</button></div>
           </div>
           <div class="group level-group">
-            <div class="group-title"><span>Writing</span></div>
+            <div class="group-title"><span>Writing</span><button class="all blue" type="button">全て選択</button></div>
             <div class="choice-grid"><button class="choice level red">W1</button><button class="choice level orange">W2</button><button class="choice level yellow">W3</button></div>
           </div>
           </div>
@@ -400,7 +400,7 @@
       renderFiveDigitCount(wordCount,pairCount);
       renderFiveDigitCount(exampleCount,matchingRows.length);
     };
-    const syncPartGroupAll=group=>{
+    const syncSubgroupAll=group=>{
       if(!group)return;
       const choices=[...group.querySelectorAll('.choice')];
       group.querySelector('.all')?.classList.toggle('selected',choices.length>0&&choices.every(choice=>choice.classList.contains('selected')));
@@ -418,12 +418,12 @@
     };
     [...levelChoices,...partChoices,...understandingChoices].forEach(button=>button.addEventListener('click',()=>{
       button.classList.toggle('selected');
-      syncPartGroupAll(button.closest('.part-group'));
+      syncSubgroupAll(button.closest('.level-group,.part-group'));
       syncSectionControls(button.closest('.filter-section'));
       refreshQuestionCount();
     }));
-    document.querySelectorAll('.part-group .all').forEach(button=>button.addEventListener('click',()=>{
-      const group=button.closest('.part-group');
+    document.querySelectorAll('.level-group .all,.part-group .all').forEach(button=>button.addEventListener('click',()=>{
+      const group=button.closest('.level-group,.part-group');
       group.querySelectorAll('.choice').forEach(choice=>choice.classList.add('selected'));
       button.classList.add('selected');
       syncSectionControls(group.closest('.filter-section'));
@@ -432,13 +432,13 @@
     const filterSections=[...document.querySelectorAll('.filter-section')];
     const setSectionFilters=(section,selected)=>{
       section.querySelectorAll('.choice').forEach(choice=>choice.classList.toggle('selected',selected));
-      section.querySelectorAll('.part-group .all').forEach(button=>button.classList.toggle('selected',selected));
+      section.querySelectorAll('.level-group .all,.part-group .all').forEach(button=>button.classList.toggle('selected',selected));
       syncSectionControls(section);
       refreshQuestionCount();
     };
     const setAllFilters=selected=>{
       allFilterChoices.forEach(choice=>choice.classList.toggle('selected',selected));
-      document.querySelectorAll('.part-group .all').forEach(button=>button.classList.toggle('selected',selected));
+      document.querySelectorAll('.level-group .all,.part-group .all').forEach(button=>button.classList.toggle('selected',selected));
       filterSections.forEach(syncSectionControls);
       syncGlobalControls();
       refreshQuestionCount();
