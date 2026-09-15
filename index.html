@@ -72,6 +72,10 @@
     .label{margin:20px 0 11px;color:#475569;font-size:.91rem;font-weight:800}
     .level-grid,.choice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
     .choice{min-height:41px;padding:0 8px;border:1px solid #e0e3e9;border-radius:11px;background:linear-gradient(#f0f2f5,#eaedf1);color:#737c8d;font-weight:750;box-shadow:inset 0 1px 0 #ffffffbf,0 1px 2px #1822370a;transition:transform .14s ease,box-shadow .14s ease,border-color .14s ease,background .14s ease}
+    .part-label{margin-bottom:7px}
+    .part-group .choice{display:flex;min-height:49px;flex-direction:column;align-items:center;justify-content:center;gap:2px;line-height:1.05}
+    .part-group .choice-main{font-size:.91rem;font-weight:800}
+    .part-group .choice small{color:currentColor;font-size:.54rem;font-weight:650;letter-spacing:.01em;opacity:.72}
     .choice.selected{color:var(--tone);border-color:var(--line);background:linear-gradient(145deg,var(--wash-top),var(--wash-bottom));box-shadow:inset 0 1px 0 #ffffffe8,0 3px 9px var(--shadow)}
     .all.selected{color:var(--tone);border-color:var(--line);background:linear-gradient(145deg,var(--wash-top),var(--wash-bottom));box-shadow:inset 0 1px 0 #ffffffe8,0 2px 7px var(--shadow)}
     .level{border-width:1px}
@@ -124,32 +128,33 @@
         <section class="card">
           <div class="section-head"><h2>絞り込み条件</h2></div>
           <div class="group level-group">
-            <div class="group-title"><span>レベル（Speaking）</span><button class="all blue">すべて</button></div>
+            <div class="group-title"><span>Speaking Level</span><button class="all blue">すべて</button></div>
             <div class="choice-grid"><button class="choice level red">S1</button><button class="choice level orange">S2</button><button class="choice level yellow">S3</button></div>
           </div>
           <div class="group level-group">
-            <div class="group-title"><span>レベル（Writing）</span><button class="all blue">すべて</button></div>
+            <div class="group-title"><span>Writing Level</span><button class="all blue">すべて</button></div>
             <div class="choice-grid"><button class="choice level red">W1</button><button class="choice level orange">W2</button><button class="choice level yellow">W3</button></div>
           </div>
+          <p class="label part-label">品詞</p>
           <div class="group part-group">
-            <div class="group-title"><span>品詞ランクS</span><button class="all">すべて</button></div>
-            <div class="choice-grid"><button class="choice">動詞</button><button class="choice">名詞</button><button class="choice">形容詞</button></div>
+            <div class="group-title"><span>RANK S</span><button class="all">すべて</button></div>
+            <div class="choice-grid"><button class="choice" data-value="動詞"><span class="choice-main">動詞</span><small>verb</small></button><button class="choice" data-value="名詞"><span class="choice-main">名詞</span><small>noun</small></button><button class="choice" data-value="形容詞"><span class="choice-main">形容詞</span><small>adjective</small></button></div>
           </div>
           <div class="group part-group">
-            <div class="group-title"><span>品詞ランクA</span><button class="all">すべて</button></div>
-            <div class="choice-grid"><button class="choice">前置詞</button><button class="choice">副詞</button><button class="choice">接続詞</button><button class="choice">法助動詞</button></div>
+            <div class="group-title"><span>RANK A</span><button class="all">すべて</button></div>
+            <div class="choice-grid"><button class="choice" data-value="前置詞"><span class="choice-main">前置詞</span><small>preposition</small></button><button class="choice" data-value="副詞"><span class="choice-main">副詞</span><small>adverb</small></button><button class="choice" data-value="接続詞"><span class="choice-main">接続詞</span><small>conjunction</small></button><button class="choice" data-value="法助動詞"><span class="choice-main">法助動詞</span><small>modal verb</small></button></div>
           </div>
           <div class="group part-group">
-            <div class="group-title"><span>品詞ランクB</span><button class="all">すべて</button></div>
-            <div class="choice-grid"><button class="choice">限定詞</button><button class="choice">代名詞</button><button class="choice">助動詞</button></div>
+            <div class="group-title"><span>RANK B</span><button class="all">すべて</button></div>
+            <div class="choice-grid"><button class="choice" data-value="限定詞"><span class="choice-main">限定詞</span><small>determiner</small></button><button class="choice" data-value="代名詞"><span class="choice-main">代名詞</span><small>pronoun</small></button><button class="choice" data-value="助動詞"><span class="choice-main">助動詞</span><small>auxiliary verb</small></button></div>
           </div>
           <div class="group part-group">
-            <div class="group-title"><span>品詞ランクC</span><button class="all">すべて</button></div>
-            <div class="choice-grid"><button class="choice">前限定詞</button><button class="choice">間投詞</button><button class="choice">数詞</button></div>
+            <div class="group-title"><span>RANK C</span><button class="all">すべて</button></div>
+            <div class="choice-grid"><button class="choice" data-value="前限定詞"><span class="choice-main">前限定詞</span><small>predeterminer</small></button><button class="choice" data-value="間投詞"><span class="choice-main">間投詞</span><small>interjection</small></button><button class="choice" data-value="数詞"><span class="choice-main">数詞</span><small>numeral</small></button></div>
           </div>
           <div class="group part-group">
-            <div class="group-title"><span>品詞ランクD</span><button class="all">すべて</button></div>
-            <div class="choice-grid"><button class="choice">不定冠詞</button><button class="choice">定冠詞</button></div>
+            <div class="group-title"><span>RANK D</span><button class="all">すべて</button></div>
+            <div class="choice-grid"><button class="choice" data-value="不定冠詞"><span class="choice-main">不定冠詞</span><small>indefinite article</small></button><button class="choice" data-value="定冠詞"><span class="choice-main">定冠詞</span><small>definite article</small></button></div>
           </div>
           <p class="label">理解度</p>
           <div class="understanding">
@@ -346,7 +351,7 @@
     });
     const understandingTones={'未登録':'purple','0%':'red','50%':'orange','80%':'yellow','100%':'green'};
     understandingChoices.forEach(button=>button.classList.add(understandingTones[button.textContent.trim()]));
-    const selectedValues=buttons=>new Set(buttons.filter(button=>button.classList.contains('selected')).map(button=>button.textContent.trim()));
+    const selectedValues=buttons=>new Set(buttons.filter(button=>button.classList.contains('selected')).map(button=>button.dataset.value||button.textContent.trim()));
     const refreshQuestionCount=async()=>{
       const stored=await loadImportedData();
       const rows=stored?.rows||[];
