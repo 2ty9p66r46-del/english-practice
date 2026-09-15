@@ -41,7 +41,12 @@
     .stack.top-bounce{animation:topBounce .34s cubic-bezier(.2,.75,.35,1)}
     @keyframes topBounce{0%{transform:translateY(0)}48%{transform:translateY(13px)}100%{transform:translateY(0)}}
     .card{padding:22px;border-radius:23px;background:var(--card);box-shadow:0 1px 1px #1822350d,0 9px 25px #27344d0a}
-    .quick{padding:14px}
+    .quick{display:grid;gap:9px;padding:14px}
+    .practice-options{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .practice-option{display:flex;min-height:48px;flex-direction:column;align-items:flex-start;justify-content:center;padding:7px 12px;border:1px solid #e0e4eb;border-radius:13px;background:linear-gradient(#f5f6f8,#eef0f4);box-shadow:inset 0 1px 0 #ffffffcc;color:#7a8495;text-align:left}
+    .practice-option span{font-size:.68rem;font-weight:700}
+    .practice-option strong{margin-top:2px;color:#344054;font-size:.87rem;font-weight:800}
+    .practice-option:active{transform:scale(.98)}
     .practice{width:100%;min-height:60px;border:0;border-radius:17px;background:linear-gradient(135deg,#087cff,#0a6be8);color:#fff;font-size:1.08rem;font-weight:800;letter-spacing:.02em;box-shadow:0 8px 18px #087cff2b}
     .practice:active,.wide-button:active,.choice:active,.tab:active{transform:scale(.98)}
     h2{margin:0 0 20px;font-size:1.25rem;line-height:1.35;letter-spacing:-.025em}
@@ -101,7 +106,7 @@
     </header>
     <main class="scroll" id="mainScroll">
       <div class="stack">
-        <section class="card quick"><button class="practice" id="practiceButton" type="button" data-coming>練習する</button></section>
+        <section class="card quick"><button class="practice" id="practiceButton" type="button" data-coming>練習する</button><div class="practice-options"><button class="practice-option" type="button" data-values="シャッフル|順番通り"><span>出題順</span><strong>シャッフル</strong></button><button class="practice-option" type="button" data-values="すべて|数量指定"><span>出題数</span><strong>すべて</strong></button></div></section>
         <section class="card">
           <div class="section-head"><h2>練習する範囲</h2></div>
           <p class="label">レベル</p>
@@ -134,10 +139,6 @@
           <div class="understanding">
             <button class="choice level purple">未登録</button><button class="choice level red">0%</button><button class="choice level orange">50%</button><button class="choice level yellow">80%</button><button class="choice level green">100%</button>
           </div>
-          <p class="label">出題順</p>
-          <div class="segmented"><button class="segment active">シャッフル</button><button class="segment">順番通り</button></div>
-          <p class="label">テスト量</p>
-          <div class="segmented"><button class="segment active">指定範囲すべて</button><button class="segment">数量指定</button></div>
         </section>
         <div class="bottom-space"></div>
       </div>
@@ -385,7 +386,11 @@
     scroller.addEventListener('scroll',()=>backTop.classList.toggle('visible',scroller.scrollTop>240),{passive:true});
     refreshQuestionCount();
     document.querySelectorAll('[data-coming]').forEach(button=>button.addEventListener('click',()=>alert('この機能は次の段階で追加します。')));
-    document.querySelectorAll('.segment').forEach(button=>button.addEventListener('click',()=>{const box=button.parentElement;box.querySelectorAll('.segment').forEach(x=>x.classList.remove('active'));button.classList.add('active')}));
+    document.querySelectorAll('.practice-option').forEach(button=>button.addEventListener('click',()=>{
+      const values=button.dataset.values.split('|');
+      const value=button.querySelector('strong');
+      value.textContent=values[(values.indexOf(value.textContent)+1)%values.length];
+    }));
     if('serviceWorker' in navigator){
       let reloading=false;
       navigator.serviceWorker.addEventListener('controllerchange',()=>{
