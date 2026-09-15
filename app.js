@@ -170,6 +170,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     const practiceButton=document.getElementById('practiceButton');
     const wordCount=document.getElementById('wordCount');
     const exampleCount=document.getElementById('exampleCount');
+    const filterSections=[...document.querySelectorAll('.filter-section')];
     const subgroupAllButtons=[...document.querySelectorAll('.group .all')];
     const levelChoices=[...document.querySelectorAll('.level-group .choice')];
     const partChoices=[...document.querySelectorAll('.part-group .choice')];
@@ -177,6 +178,20 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     const allFilterChoices=[...levelChoices,...partChoices,...understandingChoices];
     const selectAllFilters=document.getElementById('selectAllFilters');
     const overallFilterWarning=document.getElementById('overallFilterWarning');
+    const practiceScreen=document.getElementById('practiceScreen');
+    const practiceExit=document.getElementById('practiceExit');
+    const practiceProgress=document.getElementById('practiceProgress');
+    const practiceJapanese=document.getElementById('practiceJapanese');
+    const practiceEnglish=document.getElementById('practiceEnglish');
+    const practiceReveal=document.getElementById('practiceReveal');
+    const practiceAudio=document.getElementById('practiceAudio');
+    const practicePrev=document.getElementById('practicePrev');
+    const practiceNext=document.getElementById('practiceNext');
+    const practiceWord=document.getElementById('practiceWord');
+    const practicePart=document.getElementById('practicePart');
+    const practiceLevels=document.getElementById('practiceLevels');
+    const practiceMeaning=document.getElementById('practiceMeaning');
+    const practiceRatingButtons=[...document.querySelectorAll('.practice-rating-button')];
     levelChoices.forEach(button=>button.classList.add(button.textContent.trim().endsWith('1')?'red':button.textContent.trim().endsWith('2')?'orange':'yellow'));
     document.querySelectorAll('.part-group').forEach(group=>{
       const rank=group.querySelector('.group-title span')?.textContent.trim().slice(-1);
@@ -186,20 +201,21 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     const understandingTones={'未登録':'purple','0%':'red','50%':'orange','80%':'yellow','100%':'green'};
     understandingChoices.forEach(button=>button.classList.add(understandingTones[button.textContent.trim()]));
     const selectedValues=buttons=>new Set(buttons.filter(button=>button.classList.contains('selected')).map(button=>button.dataset.value||button.textContent.trim()));
-    const refreshQuestionCount=async()=>{
-      const stored=await getImportedData();
-      const rows=stored?.rows||[];
+    const getMatchingRows=rows=>{
       const levels=selectedValues(levelChoices);
       const parts=selectedValues(partChoices);
       const understandings=selectedValues(understandingChoices);
-      const matchingRows=rows.filter(row=>{
+      return rows.filter(row=>{
         if(!text(row[8])||!text(row[9]))return false;
         if(!levels.size||![text(row[11]),text(row[12])].some(value=>levels.has(value)))return false;
         if(!parts.size||!parts.has(text(row[6])))return false;
         const understanding=text(row[13])||'未登録';
-        if(!understandings.size||!understandings.has(understanding))return false;
-        return true;
+        return understandings.size>0&&understandings.has(understanding);
       });
+    };
+    const refreshQuestionCount=async()=>{
+      const stored=await getImportedData();
+      const matchingRows=getMatchingRows(stored?.rows||[]);
       const pairCount=new Set(matchingRows.map(row=>`${text(row[3]).toLowerCase()}\\t${text(row[6])}`)).size;
       practiceButton.dataset.questionCount=String(matchingRows.length);
       practiceButton.dataset.pairCount=String(pairCount);
@@ -250,7 +266,6 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       syncSectionControls(group.closest('.filter-section'));
       refreshQuestionCount();
     }));
-    const filterSections=[...document.querySelectorAll('.filter-section')];
     const setSectionFilters=(section,selected)=>{
       section.querySelectorAll('.choice').forEach(choice=>choice.classList.toggle('selected',selected));
       section.querySelectorAll('.group .all').forEach(button=>button.classList.toggle('selected',selected));
@@ -336,6 +351,104 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     });
     practiceButton.dataset.order='shuffle';
     practiceButton.dataset.questionLimit=selectedQuestionLimit;
+
+    let practiceRows=[];
+    let practiceIndex=0;
+    let practiceStored=null;
+    let answerVisible=false;
+    const currentPracticeRow=()=>practiceRows[practiceIndex];
+    const setAnswerVisible=visible=>{
+      answerVisible=visible;
+      practiceReveal.hidden=visible;
+      practiceEnglish.hidden=!visible;
+      practiceAudio.disabled=!visible||!('speechSynthesis' in window);
+    };
+    const syncPracticeRating=row=>{
+      const value=text(row?.[13]);
+      practiceRatingButtons.forEach(button=>button.classList.toggle('selected',button.dataset.value===value));
+    };
+    const renderPracticeQuestion=()=>{
+      const row=currentPracticeRow();
+      if(!row)return;
+      if('speechSynthesis' in window)speechSynthesis.cancel();
+      practiceAudio.classList.remove('speaking');
+      practiceProgress.textContent=`${practiceIndex+1} / ${practiceRows.length}`;
+      practiceJapanese.textContent=text(row[8]);
+      practiceEnglish.textContent=text(row[9]);
+      practiceWord.textContent=text(row[3])||'—';
+      practicePart.textContent=text(row[6])||'—';
+      practiceLevels.textContent=[text(row[11]),text(row[12])].filter(Boolean).join(' / ')||'—';
+      practiceMeaning.textContent=text(row[7])||'意味未登録';
+      practicePrev.disabled=practiceIndex===0;
+      practiceNext.disabled=practiceIndex===practiceRows.length-1;
+      syncPracticeRating(row);
+      setAnswerVisible(false);
+    };
+    const movePractice=delta=>{
+      const next=Math.max(0,Math.min(practiceRows.length-1,practiceIndex+delta));
+      if(next===practiceIndex)return;
+      practiceIndex=next;
+      renderPracticeQuestion();
+    };
+    const shuffleRows=rows=>{
+      const result=[...rows];
+      for(let index=result.length-1;index>0;index--){
+        const target=Math.floor(Math.random()*(index+1));
+        [result[index],result[target]]=[result[target],result[index]];
+      }
+      return result;
+    };
+    const openPractice=async()=>{
+      const stored=await getImportedData();
+      let rows=getMatchingRows(stored?.rows||[]);
+      if(!rows.length){
+        alert('選択した条件に該当する例文がありません。');
+        return;
+      }
+      if(practiceButton.dataset.order==='shuffle')rows=shuffleRows(rows);
+      const limit=practiceButton.dataset.questionLimit==='all'?rows.length:Number(practiceButton.dataset.questionLimit);
+      practiceRows=rows.slice(0,limit);
+      practiceStored=stored;
+      practiceIndex=0;
+      practiceScreen.hidden=false;
+      renderPracticeQuestion();
+    };
+    const closePractice=()=>{
+      if('speechSynthesis' in window)speechSynthesis.cancel();
+      practiceAudio.classList.remove('speaking');
+      practiceScreen.hidden=true;
+      refreshQuestionCount();
+    };
+    practiceButton.addEventListener('click',()=>openPractice().catch(()=>alert('練習画面を開けませんでした。')));
+    practiceExit.addEventListener('click',closePractice);
+    practiceReveal.addEventListener('click',()=>setAnswerVisible(true));
+    practicePrev.addEventListener('click',()=>movePractice(-1));
+    practiceNext.addEventListener('click',()=>movePractice(1));
+    practiceAudio.addEventListener('click',()=>{
+      if(!answerVisible||!('speechSynthesis' in window))return;
+      speechSynthesis.cancel();
+      const utterance=new SpeechSynthesisUtterance(practiceEnglish.textContent);
+      utterance.lang='en-US';
+      utterance.rate=.9;
+      utterance.onstart=()=>practiceAudio.classList.add('speaking');
+      utterance.onend=utterance.onerror=()=>practiceAudio.classList.remove('speaking');
+      speechSynthesis.speak(utterance);
+    });
+    practiceRatingButtons.forEach(button=>button.addEventListener('click',async()=>{
+      const row=currentPracticeRow();
+      if(!row||!practiceStored)return;
+      row[13]=button.dataset.value;
+      practiceStored.modified=true;
+      syncPracticeRating(row);
+      await saveImportedData(practiceStored);
+    }));
+    document.addEventListener('keydown',event=>{
+      if(practiceScreen.hidden)return;
+      if(event.key==='ArrowLeft')movePractice(-1);
+      if(event.key==='ArrowRight')movePractice(1);
+      if(event.key==='Escape')closePractice();
+    });
+
     if('serviceWorker' in navigator){
       let reloading=false;
       navigator.serviceWorker.addEventListener('controllerchange',()=>{

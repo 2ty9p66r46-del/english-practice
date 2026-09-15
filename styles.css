@@ -126,3 +126,51 @@
     .tab.active{color:var(--blue)}
     .tab svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
     @media (min-width:700px){body{background:#e7e8ee}.shell{box-shadow:0 0 50px #26354a20}}
+
+/* Practice screen prototype — uses the Home screen design tokens and surfaces. */
+.practice-screen{position:absolute;z-index:80;inset:0;display:flex;min-height:0;flex-direction:column;background:#f5f5fa}
+.practice-screen[hidden]{display:none}
+.practice-screen-header{display:grid;flex:0 0 auto;grid-template-columns:82px minmax(0,1fr) 64px;align-items:center;gap:8px;padding:calc(12px + env(safe-area-inset-top)) 16px 12px;border-bottom:1px solid #e1e5ec;background:#f7f7fb}
+.practice-exit{display:flex;min-height:36px;align-items:center;gap:3px;padding:0 8px;border:1px solid #dce2eb;border-radius:var(--radius-pill);background:#fff;color:#526078;font-size:.69rem;font-weight:800}
+.practice-exit span{font-size:1.35rem;line-height:0}
+.practice-brand{display:flex;min-width:0;flex-direction:column;align-items:center;gap:0}
+.practice-brand img{display:block;width:86px;height:34px;object-fit:contain}
+.practice-brand small{margin-top:-5px;color:#65728a;font-size:.38rem;font-weight:850;letter-spacing:.13em;white-space:nowrap}
+.practice-progress{color:#65728a;font-size:.72rem;font-variant-numeric:tabular-nums;text-align:right}
+.practice-screen-main{display:flex;flex:1 1 auto;min-height:0;flex-direction:column;gap:10px;padding:12px 14px calc(14px + env(safe-area-inset-bottom));overflow-y:auto}
+.practice-exercise-card{display:grid;flex:1 1 420px;min-height:360px;grid-template-rows:minmax(0,1fr) 1px minmax(0,1fr) auto;padding:18px;border-radius:23px;background:#fff;box-shadow:0 1px 1px #1822350d,0 9px 25px #27344d0a}
+.practice-language{display:flex;min-height:0;flex-direction:column;justify-content:center;padding:8px 4px}
+.practice-language-label,.practice-panel-label{color:#6f7b8e;font-size:.69rem;font-weight:850;letter-spacing:.04em}
+.practice-japanese,.practice-english{margin:14px 0;color:#111827;font-size:clamp(1.28rem,5.8vw,1.85rem);font-weight:850;line-height:1.48;letter-spacing:-.025em;overflow-y:auto}
+.practice-english{color:#263852;font-size:clamp(1.16rem,5.2vw,1.65rem)}
+.practice-language-divider{background:#e0e5ed}
+.practice-answer-head{display:flex;align-items:center;justify-content:space-between}
+.practice-audio{display:grid;width:43px;height:43px;place-items:center;border:2px solid #a8cfff;border-radius:50%;background:#edf6ff;color:#0876ee;box-shadow:inset 0 1px 0 #fff,0 3px 9px #087cff1f}
+.practice-audio:disabled{border-color:#dfe3e9;background:#f1f3f6;color:#abb2bd;box-shadow:none}
+.practice-audio.speaking{animation:audioPulse .9s ease-in-out infinite alternate}
+.practice-audio svg{width:23px;height:23px;fill:currentColor;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+@keyframes audioPulse{to{transform:scale(1.06);box-shadow:0 0 0 7px #087cff16}}
+.practice-answer{display:grid;flex:1;min-height:0;place-items:center}
+.practice-reveal{min-height:44px;padding:0 22px;border:var(--action-border-width) solid var(--action-border-color);border-radius:var(--radius-pill);background:linear-gradient(180deg,var(--action-top) 0%,var(--action-mid) 46%,var(--action-bottom) 100%);color:#fff;font-size:.82rem;font-weight:850;box-shadow:inset 0 1px 0 #ffffff9c,0 5px 12px #087cff30}
+.practice-question-nav{display:flex;align-items:center;justify-content:space-between;padding-top:8px}
+.practice-nav-button{display:grid;width:48px;height:38px;place-items:center;border:1px solid #dce2eb;border-radius:var(--radius-pill);background:#f5f7fa;color:#526078;font-size:1.15rem;font-weight:850}
+.practice-nav-button:disabled{color:#c5cad2;opacity:.65}
+.practice-rating-panel,.practice-meta-panel{flex:0 0 auto;padding:12px 14px;border-radius:16px;background:#fff;box-shadow:0 4px 14px #27344d0a}
+.practice-rating-panel{display:grid;grid-template-columns:58px minmax(0,1fr);align-items:center;gap:8px}
+.practice-rating-options{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.practice-rating-button{height:38px;min-width:0;padding:0 2px;border:2px solid transparent;border-radius:var(--radius-pill);font-size:.69rem;font-weight:850;white-space:nowrap}
+.rating-zero{background:#fbe1e4;color:#a92b39}
+.rating-fifty{background:#f8edc9;color:#7f5a08}
+.rating-eighty{background:#dff1e7;color:#176c47}
+.rating-full{background:#e2f0ff;color:#0876ee}
+.practice-rating-button.selected{border-width:3px;border-color:currentColor;box-shadow:inset 0 1px 0 #fff,0 3px 8px #26354a1a}
+.practice-meta-top{display:flex;align-items:center;gap:7px;min-width:0}
+.practice-meta-top strong{min-width:0;color:#0876ee;font-size:1.05rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.practice-meta-top span{padding:4px 7px;border-radius:var(--radius-pill);background:#eef1f5;color:#59667b;font-size:.61rem;font-weight:800;white-space:nowrap}
+.practice-meta-panel p{margin:8px 0 0;padding-top:8px;border-top:1px solid #e5e9ef;color:#344054;font-size:.78rem;font-weight:700;line-height:1.45}
+@media (max-height:700px){
+  .practice-screen-main{gap:7px;padding-top:8px}
+  .practice-exercise-card{min-height:330px;padding:14px}
+  .practice-japanese,.practice-english{margin:9px 0}
+  .practice-rating-panel,.practice-meta-panel{padding-top:9px;padding-bottom:9px}
+}
