@@ -230,7 +230,12 @@
           XLSX.utils.book_append_sheet(workbook,sheet,'単語リスト');
           bytes=XLSX.write(workbook,{bookType:'xlsx',type:'array'});
         }
-        const fileName=stored.fileName||'FloVo_export.xlsx';
+        const now=new Date();
+        const pad=value=>String(value).padStart(2,'0');
+        const timestamp=`${now.getFullYear()}${pad(now.getMonth()+1)}${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+        const originalName=stored.fileName||'FloVo_export.xlsx';
+        const baseName=originalName.replace(/\.xlsx$/i,'');
+        const fileName=`${baseName}_${timestamp}.xlsx`;
         const file=new File([bytes],fileName,{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
         await saveFileToDevice(file);
       }catch(error){
