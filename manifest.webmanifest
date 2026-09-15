@@ -1,0 +1,11 @@
+{
+  "name": "瞬間英作文",
+  "short_name": "英作文",
+  "description": "瞬間英作文の練習用アプリ",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#edf4f8",
+  "theme_color": "#123b5d",
+  "icons": [{"src":"./icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}
