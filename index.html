@@ -17,12 +17,8 @@
     .shell{display:flex;flex-direction:column;width:min(100%,520px);height:100dvh;margin:auto;background:#f5f5fa;overflow:hidden}
     .topbar{flex:0 0 auto;padding:calc(24px + env(safe-area-inset-top)) 24px 24px;background:#f7f7fb;border-bottom:1px solid #eef0f4}
     .toprow{display:flex;align-items:center;justify-content:space-between}
-    .brand-logo{display:flex;align-items:center;height:52px;font-family:ui-rounded,"SF Pro Rounded","Arial Rounded MT Bold",-apple-system,BlinkMacSystemFont,sans-serif;font-size:2.32rem;font-weight:800;line-height:1;letter-spacing:-.075em;transform:skewX(-7deg);transform-origin:left center}
-    .brand-logo span{color:#15213b;background:linear-gradient(112deg,#0b1730 0%,#294677 62%,#1761bd 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-    .brand-logo .wave-v{width:55px;height:46px;margin:0 -4px 0 -1px;overflow:visible}
-    .brand-logo .wave-v path{fill:none;stroke-linecap:round;stroke-linejoin:round}
-    .brand-logo .wave-v .wave-halo{stroke:url(#flovoWave);stroke-width:11;opacity:.16}
-    .brand-logo .wave-v .wave-main{stroke:url(#flovoWave);stroke-width:6;filter:drop-shadow(0 2px 2px #375dff35)}
+    .brand-logo{display:flex;align-items:center;width:178px;height:55px;transform:translateY(1px)}
+    .brand-logo img{display:block;width:100%;height:auto;filter:drop-shadow(0 2px 3px #173c7a1f)}
     .count{display:grid;place-items:center;min-width:57px;height:57px;padding:0 15px;border-radius:50%;background:#e9e9ee;color:#666;font-size:1rem;font-weight:750}
     .scroll{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior-y:none;-webkit-overflow-scrolling:touch;padding:18px 20px 34px;scrollbar-width:none}
     .scroll::-webkit-scrollbar{display:none}
@@ -66,7 +62,7 @@
   <div class="shell">
     <header class="topbar">
       <div class="toprow">
-        <div class="brand-logo" role="img" aria-label="FloVo"><span>Flo</span><svg class="wave-v" viewBox="0 0 56 46" aria-hidden="true"><defs><linearGradient id="flovoWave" x1="2" y1="7" x2="54" y2="28" gradientUnits="userSpaceOnUse"><stop stop-color="#16d8ff"/><stop offset=".38" stop-color="#087cff"/><stop offset=".72" stop-color="#665cff"/><stop offset="1" stop-color="#b44cff"/></linearGradient></defs><path class="wave-halo" d="M2 9c6-5 11-3 15 7l10 23c2 5 7 5 11-1l16-18"/><path class="wave-main" d="M2 9c6-5 11-3 15 7l10 23c2 5 7 5 11-1l16-18"/></svg><span>o</span></div>
+        <div class="brand-logo"><img src="./flovo-wordmark.svg" alt="FloVo"></div>
         <div class="count">5問</div>
       </div>
     </header>
