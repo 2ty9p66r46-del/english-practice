@@ -71,14 +71,18 @@
     .file-state{display:flex;gap:12px;align-items:center;margin-top:12px;padding:14px;border-radius:14px;background:#f7f8fa;color:var(--muted);font-size:.86rem}
     .file-state strong{color:#344054}
     .helper{margin:12px 2px 0;color:#6c7890;font-size:.86rem;line-height:1.65}
-    .section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+    .section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
     .section-head h2{margin:0}
+    .filter-bulk-actions{display:flex;align-items:center;gap:6px}
+    .bulk-filter-button{min-height:34px;padding:0 12px;border:1px solid #dfe3ea;border-radius:999px;background:linear-gradient(#f4f5f7,#e9ecf0);color:#6f7a8d;font-size:.69rem;font-weight:800;white-space:nowrap;box-shadow:inset 0 1px 0 #fff,0 2px 5px #26354a10}
+    .bulk-filter-button.selected{color:#fff;border-color:#087cff;background:linear-gradient(135deg,#087cff,#0a6be8);box-shadow:0 5px 12px #087cff30}
+    .bulk-filter-button:active{transform:scale(.96)}
     .filter-section{padding:15px 0 17px;border-top:1px solid #e9edf3}
     .filter-section:first-of-type{border-top:0}
     .filter-section-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:7px}
     .filter-section-head h3{margin:0;color:#344054;font-size:.94rem;letter-spacing:.01em}
     .filter-section-actions{display:flex;align-items:center;gap:5px}
-    .section-filter-button{min-height:29px;padding:0 9px;border:1px solid #dfe3ea;border-radius:999px;background:linear-gradient(#f4f5f7,#e9ecf0);color:#6f7a8d;font-size:.62rem;font-weight:800;white-space:nowrap;box-shadow:inset 0 1px 0 #fff,0 1px 2px #26354a0b}
+    .section-filter-button{min-height:28px;padding:0 9px;border:1px solid #dfe3ea;border-radius:999px;background:linear-gradient(#f4f5f7,#e9ecf0);color:#6f7a8d;font-size:.61rem;font-weight:800;white-space:nowrap;box-shadow:inset 0 1px 0 #fff,0 1px 2px #26354a0b}
     .section-filter-button.selected{color:#fff;border-color:#087cff;background:linear-gradient(135deg,#087cff,#0a6be8);box-shadow:0 4px 10px #087cff2e}
     .section-filter-button:active{transform:scale(.96)}
     .label{margin:20px 0 11px;color:#475569;font-size:.91rem;font-weight:800}
@@ -100,7 +104,7 @@
     .purple{--tone:#60399f;--line:#ad93d4;--wash-top:#faf7ff;--wash-bottom:#ebe3f8;--shadow:#60399f1f}
     .group{margin-top:13px}
     .group-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;color:#526078;font-size:.86rem;font-weight:800}
-    .all{min-height:29px;padding:0 12px;border:1px solid #e0e3e9;border-radius:999px;background:linear-gradient(#f0f2f5,#eaedf1);color:#737c8d;font-size:.76rem;box-shadow:inset 0 1px 0 #ffffffbf}
+    .all{min-height:23px;padding:0 7px;border:1px solid #e0e3e9;border-radius:999px;background:linear-gradient(#f0f2f5,#eaedf1);color:#737c8d;font-size:.56rem;font-weight:800;box-shadow:inset 0 1px 0 #ffffffbf}
     .understanding{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
     .understanding .choice{min-height:47px;font-size:.82rem}
     .segmented{display:grid;grid-template-columns:1fr 1fr;padding:4px;border:1px solid #e3e6ec;border-radius:16px;background:#f0f1f4}
@@ -135,7 +139,7 @@
       <div class="stack">
         <section class="card quick"><button class="practice" id="practiceButton" type="button" data-coming>練習する</button><div class="practice-options"><div class="practice-control"><span class="practice-control-title">出題順</span><button class="order-switch" id="orderSwitch" type="button" aria-pressed="false"><i class="order-thumb"></i><span>シャッフル</span><span>順番通り</span></button></div><div class="practice-control question-picker" id="questionPicker"><span class="practice-control-title">出題数</span><button class="question-trigger" id="questionLimit" type="button" aria-haspopup="listbox" aria-expanded="false"><span id="questionLimitValue">すべて</span><span class="question-chevron">⌄</span></button><div class="question-menu" id="questionMenu" role="listbox" aria-label="出題数" hidden></div></div></div></section>
         <section class="card">
-          <div class="section-head"><h2>絞り込み条件</h2></div>
+          <div class="section-head"><h2>絞り込み条件</h2><div class="filter-bulk-actions"><button class="bulk-filter-button select" id="selectAllFilters" type="button">すべて選択</button><button class="bulk-filter-button" id="clearAllFilters" type="button">すべて解除</button></div></div>
           <div class="filter-section" data-filter-section="word">
             <div class="filter-section-head"><h3>1. 単語レベル</h3><div class="filter-section-actions"><button class="section-filter-button select" type="button" data-section-action="select">すべて選択</button><button class="section-filter-button" type="button" data-section-action="clear">すべて解除</button></div></div>
           <div class="group level-group">
@@ -359,6 +363,9 @@
     const levelChoices=[...document.querySelectorAll('.level-group .choice')];
     const partChoices=[...document.querySelectorAll('.part-group .choice')];
     const understandingChoices=[...document.querySelectorAll('.understanding .choice')];
+    const allFilterChoices=[...levelChoices,...partChoices,...understandingChoices];
+    const selectAllFilters=document.getElementById('selectAllFilters');
+    const clearAllFilters=document.getElementById('clearAllFilters');
     levelChoices.forEach(button=>button.classList.add(button.textContent.trim().endsWith('1')?'red':button.textContent.trim().endsWith('2')?'orange':'yellow'));
     document.querySelectorAll('.part-group').forEach(group=>{
       const rank=group.querySelector('.group-title span')?.textContent.trim().slice(-1);
@@ -400,12 +407,18 @@
       const allButton=group.querySelector('.all');
       allButton?.classList.toggle('selected',choices.length>0&&choices.every(choice=>choice.classList.contains('selected')));
     };
+    const syncGlobalControls=()=>{
+      const selectedCount=allFilterChoices.filter(choice=>choice.classList.contains('selected')).length;
+      selectAllFilters.classList.toggle('selected',selectedCount===allFilterChoices.length);
+      clearAllFilters.classList.toggle('selected',selectedCount===0);
+    };
     const syncSectionControls=section=>{
       if(!section)return;
       const choices=[...section.querySelectorAll('.choice')];
       const selectedCount=choices.filter(choice=>choice.classList.contains('selected')).length;
       section.querySelector('[data-section-action="select"]')?.classList.toggle('selected',choices.length>0&&selectedCount===choices.length);
       section.querySelector('[data-section-action="clear"]')?.classList.toggle('selected',selectedCount===0);
+      syncGlobalControls();
     };
     [...levelChoices,...partChoices,...understandingChoices].forEach(button=>button.addEventListener('click',()=>{
       button.classList.toggle('selected');
@@ -428,11 +441,20 @@
       syncSectionControls(section);
       refreshQuestionCount();
     };
+    const setAllFilters=selected=>{
+      allFilterChoices.forEach(choice=>choice.classList.toggle('selected',selected));
+      document.querySelectorAll('.group .all').forEach(button=>button.classList.toggle('selected',selected));
+      filterSections.forEach(syncSectionControls);
+      syncGlobalControls();
+      refreshQuestionCount();
+    };
     filterSections.forEach(section=>{
       section.querySelector('[data-section-action="select"]').addEventListener('click',()=>setSectionFilters(section,true));
       section.querySelector('[data-section-action="clear"]').addEventListener('click',()=>setSectionFilters(section,false));
-      setSectionFilters(section,true);
     });
+    selectAllFilters.addEventListener('click',()=>setAllFilters(true));
+    clearAllFilters.addEventListener('click',()=>setAllFilters(false));
+    setAllFilters(true);
     document.querySelectorAll('[data-coming]').forEach(button=>button.addEventListener('click',()=>alert('この機能は次の段階で追加します。')));
     const orderSwitch=document.getElementById('orderSwitch');
     const questionLimit=document.getElementById('questionLimit');
