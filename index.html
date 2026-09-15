@@ -24,10 +24,16 @@
     .header-action{display:flex;width:53px;height:50px;text-decoration:none;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:1px solid #dce2ec;border-radius:14px;background:#fff;color:#526078;box-shadow:0 3px 10px #26354a0b;font-size:.62rem;font-weight:800}
     .header-action svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
     .header-action:active{transform:scale(.96)}
-    .match-summary{display:flex;align-items:center;justify-content:flex-end;gap:12px;margin-top:9px;color:#7a8495;font-size:.75rem;font-weight:700}
+    .match-summary{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:9px;color:#7a8495;font-size:.75rem;font-weight:700}
+    .match-counts{display:flex;align-items:center;gap:12px}
     .match-metric{display:flex;align-items:baseline;gap:4px}
     .match-metric:first-child::before{content:"";align-self:center;width:6px;height:6px;margin-right:2px;border-radius:50%;background:#087cff;box-shadow:0 0 0 4px #087cff14}
     .match-summary strong{color:#344054;font-size:.82rem}
+    .reload-button{display:grid;width:31px;height:31px;place-items:center;padding:0;border:1px solid #e0e4eb;border-radius:10px;background:#fff;color:#647086;box-shadow:0 1px 3px #26354a0d}
+    .reload-button:active{transform:scale(.94)}
+    .reload-button svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
+    .reload-button.loading svg{animation:reloadSpin .8s linear infinite}
+    @keyframes reloadSpin{to{transform:rotate(360deg)}}
     .file-input{display:none}
     .scroll{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior-y:auto;-webkit-overflow-scrolling:touch;padding:18px 20px 34px;scrollbar-width:none}
     .scroll::-webkit-scrollbar{display:none}
@@ -91,7 +97,7 @@
         </div>
         <input class="file-input" id="excelInput" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
       </div>
-      <div class="match-summary" aria-live="polite"><span class="match-metric"><span>単語</span><strong id="wordCount">0</strong></span><span class="match-metric"><span>例文</span><strong id="exampleCount">0</strong></span></div>
+      <div class="match-summary" aria-live="polite"><button class="reload-button" id="reloadButton" type="button" aria-label="アプリを最新版に更新"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.35 5.65"/><path d="M20 4v7h-7"/></svg></button><div class="match-counts"><span class="match-metric"><span>単語</span><strong id="wordCount">0</strong></span><span class="match-metric"><span>例文</span><strong id="exampleCount">0</strong></span></div></div>
     </header>
     <main class="scroll" id="mainScroll">
       <div class="stack">
@@ -153,6 +159,7 @@
     const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US','発音記号UK','品詞','意味','日本語文','英文','備考','S','W','理解度','データチェック'];
     const importButton=document.getElementById('importButton');
     const exportButton=document.getElementById('exportButton');
+    const reloadButton=document.getElementById('reloadButton');
     const templateButton=document.getElementById('templateButton');
     const excelInput=document.getElementById('excelInput');
     const text=value=>String(value??'').trim();
@@ -217,6 +224,22 @@
       });
       return [...new Set(errors)];
     };
+    reloadButton.addEventListener('click',async()=>{
+      if(!navigator.onLine){alert('オフラインのため更新できません。通信を確認してください。');return}
+      reloadButton.disabled=true;
+      reloadButton.classList.add('loading');
+      try{
+        const registration=await navigator.serviceWorker?.getRegistration();
+        await registration?.update();
+        const cacheNames=await caches.keys();
+        await Promise.all(cacheNames.filter(name=>name.startsWith('flovo-')).map(name=>caches.delete(name)));
+        location.reload();
+      }catch(error){
+        reloadButton.disabled=false;
+        reloadButton.classList.remove('loading');
+        alert('更新に失敗しました。通信を確認してもう一度お試しください。');
+      }
+    });
     templateButton.addEventListener('click',async()=>{
       if(!confirm('Excelの雛形をダウンロードしますか？'))return;
       templateButton.disabled=true;
