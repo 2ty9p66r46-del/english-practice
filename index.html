@@ -27,11 +27,8 @@
     .header-action svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
     .header-action:active{transform:scale(.96)}
     .match-summary{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:9px;color:#7a8495;font-size:.75rem;font-weight:700}
-    .match-counts{display:grid;min-width:132px;grid-template-columns:auto auto;grid-template-rows:auto auto;align-items:center;column-gap:9px;row-gap:2px}
-    .match-metric{display:grid;grid-column:2;grid-template-columns:38px 5ch;align-items:baseline;column-gap:5px;white-space:nowrap}
-    .match-metric:nth-of-type(2){grid-row:1}
-    .match-metric:nth-of-type(3){grid-row:2}
-    .match-label{grid-column:1;grid-row:1/3;align-self:center;color:#7a8495;font-size:.72rem;font-weight:800;white-space:nowrap}
+    .match-counts{display:flex;min-width:104px;flex-direction:column;align-items:stretch;gap:2px}
+    .match-metric{display:grid;grid-template-columns:52px 5ch;align-items:baseline;column-gap:5px;white-space:nowrap}
     .match-summary strong{display:flex;width:5ch;justify-content:flex-end;color:#344054;font-size:.82rem;font-variant-numeric:tabular-nums;text-align:right}
     .count-padding{color:#c7ccd5}
     .count-value{color:#344054}
@@ -133,7 +130,7 @@
         </div>
         <input class="file-input" id="excelInput" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
       </div>
-      <div class="match-summary" aria-live="polite"><button class="reload-button" id="reloadButton" type="button" aria-label="アプリを最新版に更新"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.35 5.65"/><path d="M20 4v7h-7"/></svg><span>リロード</span></button><div class="match-counts"><span class="match-label">該当数</span><span class="match-metric"><span>単語</span><strong id="wordCount">0</strong></span><span class="match-metric"><span>例文</span><strong id="exampleCount">0</strong></span></div></div>
+      <div class="match-summary" aria-live="polite"><button class="reload-button" id="reloadButton" type="button" aria-label="アプリを最新版に更新"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.35 5.65"/><path d="M20 4v7h-7"/></svg><span>リロード</span></button><div class="match-counts"><span class="match-metric"><span>該当単語</span><strong id="wordCount">0</strong></span><span class="match-metric"><span>該当例文</span><strong id="exampleCount">0</strong></span></div></div>
     </header>
     <main class="scroll" id="mainScroll">
       <div class="stack">
