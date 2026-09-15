@@ -118,7 +118,7 @@
     .help-note{margin:14px 1px 0;color:#647086;font-size:.72rem;line-height:1.65}
     .help-change-list{display:grid;gap:6px;margin:14px 0 0;padding-left:1.25rem;color:#526078;font-size:.72rem;line-height:1.5}
         .bottom-space{height:4px}
-    .nav{flex:0 0 auto;display:flex;height:calc(72px + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);background:#fff;border-top:1px solid #e1e4e9;box-shadow:0 -8px 25px #26354a08;overflow:hidden}
+    .nav{position:relative;z-index:90;flex:0 0 auto;display:flex;height:calc(72px + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);background:#fff;border-top:1px solid #e1e4e9;box-shadow:0 -8px 25px #26354a08;overflow:hidden}
     .nav-home{position:relative;z-index:2;flex:0 0 88px;background:#fff;box-shadow:8px 0 18px #26354a0d}
     .nav-scroll{display:flex;flex:1 1 auto;min-width:0;overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
     .nav-scroll::-webkit-scrollbar{display:none}
@@ -128,11 +128,10 @@
     @media (min-width:700px){body{background:#e7e8ee}.shell{box-shadow:0 0 50px #26354a20}}
 
 /* Practice screen prototype — uses the Home screen design tokens and surfaces. */
-.practice-screen{position:absolute;z-index:80;inset:0;display:flex;min-height:0;flex-direction:column;background:#f5f5fa}
+.practice-screen{position:absolute;z-index:80;inset:0 0 calc(72px + env(safe-area-inset-bottom));display:flex;min-height:0;flex-direction:column;background:#f5f5fa}
 .practice-screen[hidden]{display:none}
-.practice-screen-header{display:grid;flex:0 0 auto;grid-template-columns:82px minmax(0,1fr) 64px;align-items:center;gap:8px;padding:calc(12px + env(safe-area-inset-top)) 16px 12px;border-bottom:1px solid #e1e5ec;background:#f7f7fb}
-.practice-exit{display:flex;min-height:36px;align-items:center;gap:3px;padding:0 8px;border:1px solid #dce2eb;border-radius:var(--radius-pill);background:#fff;color:#526078;font-size:.69rem;font-weight:800}
-.practice-exit svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.15;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}
+.practice-screen-header{display:grid;flex:0 0 auto;grid-template-columns:92px minmax(0,1fr) 64px;align-items:center;gap:8px;padding:calc(12px + env(safe-area-inset-top)) 16px 12px;border-bottom:1px solid #e1e5ec;background:#f7f7fb}
+.practice-header-number{color:#526078;font-size:.68rem;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:.02em;white-space:nowrap}
 .practice-brand{display:flex;min-width:0;flex-direction:column;align-items:center;gap:0}
 .practice-brand img{display:block;width:86px;height:34px;object-fit:contain}
 .practice-brand small{margin-top:-5px;color:#65728a;font-size:.38rem;font-weight:850;letter-spacing:.13em;white-space:nowrap}
@@ -140,13 +139,15 @@
 .practice-screen-main{display:flex;flex:1 1 auto;min-height:0;flex-direction:column;gap:10px;padding:12px 14px calc(14px + env(safe-area-inset-bottom));overflow-y:auto}
 .practice-exercise-card{display:grid;flex:1 1 520px;min-height:510px;grid-template-rows:auto minmax(0,1fr) 1px minmax(0,1fr) auto auto;padding:18px;border-radius:23px;background:#fff;box-shadow:0 1px 1px #1822350d,0 9px 25px #27344d0a;touch-action:pan-y;will-change:transform,opacity}
 .practice-question-meta{padding:0 4px 12px;border-bottom:1px solid #e0e5ed}
-.practice-number{display:block;color:#6f7b8e;font-size:.65rem;font-weight:850;font-variant-numeric:tabular-nums;letter-spacing:.04em}
-.practice-keyword-row{display:flex;align-items:center;gap:6px;min-width:0;margin-top:7px;flex-wrap:wrap}
-.practice-keyword-label{color:#758196;font-size:.62rem;font-weight:800;letter-spacing:.06em}
-.practice-keyword{min-width:0;color:#0876ee;font-size:1.12rem;line-height:1.1;overflow:hidden;text-overflow:ellipsis}
+.practice-chip-row{display:flex;align-items:center;gap:6px;min-width:0;flex-wrap:wrap}
+.practice-hint-row{display:flex;align-items:center;gap:7px;min-width:0;margin-top:8px}
+.practice-hint-icon{display:grid;width:25px;height:25px;flex:0 0 25px;place-items:center;border-radius:50%;background:#fff5bf;color:#b77900}
+.practice-hint-icon svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.practice-hint-divider{width:1px;height:21px;flex:0 0 1px;background:#d9dee7}
+.practice-keyword{min-width:0;color:#0876ee;font-size:1.12rem;line-height:1.1;text-transform:capitalize;overflow:hidden;text-overflow:ellipsis}
 .practice-level-chips{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
 .practice-meta-chip{display:inline-flex;min-height:25px;align-items:center;padding:3px 8px;border:2px solid var(--line,#cfd5df);border-radius:var(--radius-pill);background:linear-gradient(180deg,var(--wash-top,#f8f9fb),var(--wash-bottom,#eef1f5));color:var(--tone,#59667b);font-size:.61rem;font-weight:900;white-space:nowrap;box-shadow:inset 0 1px 0 #fff}
-.practice-meaning{margin:8px 0 0;color:#344054;font-size:.76rem;font-weight:750;line-height:1.4}
+.practice-meaning{min-width:0;margin:0;color:#344054;font-size:.76rem;font-weight:750;line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .practice-language{display:grid;min-height:0;grid-template-rows:43px minmax(0,1fr);align-items:stretch;padding:8px 4px}
 .practice-japanese,.practice-answer{align-self:center}
 .practice-language-label{align-self:center}
@@ -166,7 +167,8 @@
 .practice-nav-button{display:grid;width:48px;height:38px;place-items:center;border:1px solid #dce2eb;border-radius:var(--radius-pill);background:#f5f7fa;color:#526078;font-size:1.15rem;font-weight:850}
 .practice-nav-button:disabled{color:#c5cad2;opacity:.65}
 .practice-rating-panel,.practice-meta-panel{flex:0 0 auto;padding:12px 14px;border-radius:16px;background:#fff;box-shadow:0 4px 14px #27344d0a}
-.practice-rating-panel{display:grid;grid-template-columns:76px minmax(0,1fr);align-items:center;gap:6px;margin:12px -18px -18px;padding:12px 18px;border-top:1px solid #e0e5ed;background:#fbfcfe}
+.practice-rating-panel{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;margin:12px -18px -18px;padding:11px 18px 12px;border-top:1px solid #e0e5ed;background:#fbfcfe}
+.practice-rating-panel .practice-panel-label{display:block}
 .practice-rating-options{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}
 .practice-rating-button{height:38px;min-width:0;padding:0 1px;border:2px solid transparent;border-radius:var(--radius-pill);font-size:.61rem;font-weight:850;white-space:nowrap}
 .rating-zero{background:#fbe1e4;color:#a92b39}
