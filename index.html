@@ -19,8 +19,8 @@
     .toprow{display:flex;align-items:center;justify-content:space-between;gap:12px}
     .brand-logo{display:flex;align-items:center;width:138px;height:44px;transform:translateY(1px)}
     .brand-logo img{display:block;width:100%;height:auto;filter:drop-shadow(0 2px 3px #173c7a1f)}
-    .header-actions{display:flex;align-items:center;gap:7px}
-    .header-action{display:flex;width:57px;height:50px;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:1px solid #dce2ec;border-radius:14px;background:#fff;color:#526078;box-shadow:0 3px 10px #26354a0b;font-size:.62rem;font-weight:800}
+    .header-actions{display:flex;align-items:center;gap:5px}
+    .header-action{display:flex;width:53px;height:50px;text-decoration:none;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:1px solid #dce2ec;border-radius:14px;background:#fff;color:#526078;box-shadow:0 3px 10px #26354a0b;font-size:.62rem;font-weight:800}
     .header-action:first-child{color:#087cff;background:#f5f9ff;border-color:#d6e8ff}
     .header-action svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
     .header-action:active{transform:scale(.96)}
@@ -73,6 +73,7 @@
         <div class="header-actions" aria-label="Excelメニュー">
           <button class="header-action" type="button" data-coming aria-label="Excelを読み込む"><svg viewBox="0 0 24 24"><path d="M12 3v12M7.5 10.5 12 15l4.5-4.5"/><path d="M5 19h14"/></svg><span>読込</span></button>
           <button class="header-action" type="button" data-coming aria-label="Excelを書き出す"><svg viewBox="0 0 24 24"><path d="M12 15V3M7.5 7.5 12 3l4.5 4.5"/><path d="M5 19h14"/></svg><span>書出</span></button>
+          <a class="header-action" href="./Import-data_format.xlsx" download="Import-data_format.xlsx" aria-label="Excel雛形をダウンロード"><svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h5M12 11v6M9.5 14.5 12 17l2.5-2.5"/></svg><span>雛形</span></a>
         </div>
       </div>
     </header>
