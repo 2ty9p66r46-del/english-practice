@@ -179,6 +179,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     const selectAllFilters=document.getElementById('selectAllFilters');
     const overallFilterWarning=document.getElementById('overallFilterWarning');
     const practiceScreen=document.getElementById('practiceScreen');
+    const practiceExerciseCard=document.getElementById('practiceExerciseCard');
     const practiceExit=document.getElementById('practiceExit');
     const practiceProgress=document.getElementById('practiceProgress');
     const practiceJapanese=document.getElementById('practiceJapanese');
@@ -188,6 +189,8 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     const practicePrev=document.getElementById('practicePrev');
     const practiceNext=document.getElementById('practiceNext');
     const practiceWord=document.getElementById('practiceWord');
+    const practiceNo=document.getElementById('practiceNo');
+    const practiceSubNo=document.getElementById('practiceSubNo');
     const practicePart=document.getElementById('practicePart');
     const practiceLevels=document.getElementById('practiceLevels');
     const practiceMeaning=document.getElementById('practiceMeaning');
@@ -364,7 +367,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       practiceAudio.disabled=!visible||!('speechSynthesis' in window);
     };
     const syncPracticeRating=row=>{
-      const value=text(row?.[13]);
+      const value=text(row?.[13])||'未登録';
       practiceRatingButtons.forEach(button=>button.classList.toggle('selected',button.dataset.value===value));
     };
     const renderPracticeQuestion=()=>{
@@ -376,6 +379,8 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       practiceJapanese.textContent=text(row[8]);
       practiceEnglish.textContent=text(row[9]);
       practiceWord.textContent=text(row[3])||'—';
+      practiceNo.textContent=`単語No ${text(row[1])||'—'}`;
+      practiceSubNo.textContent=`Sub No ${text(row[2])||'—'}`;
       practicePart.textContent=text(row[6])||'—';
       practiceLevels.textContent=[text(row[11]),text(row[12])].filter(Boolean).join(' / ')||'—';
       practiceMeaning.textContent=text(row[7])||'意味未登録';
@@ -384,11 +389,21 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       syncPracticeRating(row);
       setAnswerVisible(false);
     };
-    const movePractice=delta=>{
+    let practiceMoving=false;
+    const movePractice=async delta=>{
       const next=Math.max(0,Math.min(practiceRows.length-1,practiceIndex+delta));
-      if(next===practiceIndex)return;
+      if(next===practiceIndex||practiceMoving)return;
+      practiceMoving=true;
+      const outX=delta>0?-42:42;
+      if(practiceExerciseCard.animate){
+        try{await practiceExerciseCard.animate([{transform:'translateX(0)',opacity:1},{transform:`translateX(${outX}px)`,opacity:.16}],{duration:150,easing:'cubic-bezier(.4,0,1,1)'}).finished}catch{}
+      }
       practiceIndex=next;
       renderPracticeQuestion();
+      if(practiceExerciseCard.animate){
+        try{await practiceExerciseCard.animate([{transform:`translateX(${-outX}px)`,opacity:.16},{transform:'translateX(0)',opacity:1}],{duration:240,easing:'cubic-bezier(.16,.78,.24,1)'}).finished}catch{}
+      }
+      practiceMoving=false;
     };
     const shuffleRows=rows=>{
       const result=[...rows];
@@ -424,6 +439,20 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     practiceReveal.addEventListener('click',()=>setAnswerVisible(true));
     practicePrev.addEventListener('click',()=>movePractice(-1));
     practiceNext.addEventListener('click',()=>movePractice(1));
+    let practiceSwipeStart=null;
+    practiceExerciseCard.addEventListener('pointerdown',event=>{
+      if((event.pointerType==='mouse'&&event.button!==0)||event.target.closest('button'))return;
+      practiceSwipeStart={id:event.pointerId,x:event.clientX,y:event.clientY,time:performance.now()};
+    });
+    practiceExerciseCard.addEventListener('pointerup',event=>{
+      if(!practiceSwipeStart||practiceSwipeStart.id!==event.pointerId)return;
+      const dx=event.clientX-practiceSwipeStart.x;
+      const dy=event.clientY-practiceSwipeStart.y;
+      const elapsed=performance.now()-practiceSwipeStart.time;
+      practiceSwipeStart=null;
+      if(Math.abs(dx)>=44&&Math.abs(dx)>Math.abs(dy)*1.15&&elapsed<700)movePractice(dx<0?1:-1);
+    });
+    practiceExerciseCard.addEventListener('pointercancel',()=>{practiceSwipeStart=null});
     practiceAudio.addEventListener('click',()=>{
       if(!answerVisible||!('speechSynthesis' in window))return;
       speechSynthesis.cancel();
