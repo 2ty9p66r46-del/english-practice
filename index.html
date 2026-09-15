@@ -2,68 +2,140 @@
 <html lang="ja">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#123b5d">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#f6f6fb">
   <meta name="description" content="瞬間英作文の練習用アプリ">
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" href="./icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="./icon.svg">
   <title>瞬間英作文</title>
   <style>
-    :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif;color:#153047;background:#edf4f8;font-synthesis:none}
+    :root{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue","Noto Sans JP",sans-serif;color:#111827;background:#f5f5fa;font-synthesis:none;--blue:#087cff;--ink:#111827;--muted:#6f7b8e;--soft:#edeef3;--card:#fff}
     *{box-sizing:border-box}
-    body{margin:0;min-height:100svh;background:linear-gradient(180deg,#123b5d 0 35%,#edf4f8 35%);-webkit-tap-highlight-color:transparent}
-    button{font:inherit;cursor:pointer}
-    .app{width:min(100%,480px);min-height:100svh;margin:auto;padding:max(22px,env(safe-area-inset-top)) 20px max(24px,env(safe-area-inset-bottom))}
-    header{display:flex;align-items:center;justify-content:space-between;color:#fff}
-    .brand{display:flex;align-items:center;gap:11px;font-size:1rem;font-weight:750;letter-spacing:.02em}
-    .mark{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:#fff;color:#123b5d;font-weight:900;box-shadow:0 7px 20px #08253a55}
-    .settings{width:42px;height:42px;border:0;border-radius:50%;background:#ffffff1a;color:#fff;font-size:1.3rem}
-    .intro{padding:44px 4px 32px;color:#fff}
-    h1{max-width:330px;margin:0;font-size:clamp(2rem,9vw,3rem);line-height:1.13;letter-spacing:-.04em}
-    .intro p{margin:15px 0 0;color:#d9e9f4;font-size:1rem;line-height:1.65}
-    main{display:grid;gap:14px}
-    .card{padding:22px;border:1px solid #fff;border-radius:24px;background:#fff;box-shadow:0 18px 45px #25485e18}
-    .eyebrow{margin:0 0 8px;color:#52738a;font-size:.78rem;font-weight:800;letter-spacing:.12em}
-    h2{margin:0;font-size:1.4rem;letter-spacing:-.02em}
-    .primary{width:100%;min-height:58px;margin-top:22px;border:0;border-radius:17px;background:#f0a635;color:#172b3b;font-size:1.05rem;font-weight:850;box-shadow:0 9px 20px #c47f1b35}
-    .primary:active,.secondary:active,.settings:active{transform:scale(.98)}
-    .secondary{width:100%;min-height:53px;border:1px solid #cadbe5;border-radius:17px;background:#f8fbfd;color:#23465e;font-weight:750}
-    .note{display:flex;align-items:center;gap:10px;margin:14px 2px 0;color:#617b8d;font-size:.82rem}
-    .dot{width:8px;height:8px;border-radius:50%;background:#2b9b77}
-    .status{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .mini{padding:17px 18px;border-radius:19px;background:#dfeaf0;color:#25495f}
-    .mini strong{display:block;margin-top:4px;font-size:1.2rem}
-    @media (min-width:700px){body{background:#dce9f0}.app{margin-block:28px;min-height:auto;border-radius:34px;background:linear-gradient(180deg,#123b5d 0 43%,#edf4f8 43%);box-shadow:0 25px 80px #17394c33}}
-    @media (prefers-reduced-motion:no-preference){.card{animation:rise .45s ease both}@keyframes rise{from{opacity:0;transform:translateY(12px)}}}
+    html,body{position:fixed;inset:0;width:100%;height:100%;margin:0;overflow:hidden;background:#f5f5fa}
+    button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}
+    .shell{display:flex;flex-direction:column;width:min(100%,520px);height:100dvh;margin:auto;background:#f5f5fa;overflow:hidden}
+    .topbar{flex:0 0 auto;padding:calc(24px + env(safe-area-inset-top)) 24px 24px;background:#f7f7fb;border-bottom:1px solid #eef0f4}
+    .toprow{display:flex;align-items:center;justify-content:space-between}
+    .overline{margin:0 0 3px;color:#9699a3;font-size:.78rem;font-weight:800;letter-spacing:.17em}
+    h1{margin:0;font-size:2rem;font-weight:500;line-height:1.13;letter-spacing:-.045em}
+    .count{display:grid;place-items:center;min-width:57px;height:57px;padding:0 15px;border-radius:50%;background:#e9e9ee;color:#666;font-size:1rem;font-weight:750}
+    .scroll{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior-y:none;-webkit-overflow-scrolling:touch;padding:18px 20px 34px;scrollbar-width:none}
+    .scroll::-webkit-scrollbar{display:none}
+    .stack{display:grid;gap:16px}
+    .card{padding:22px;border-radius:23px;background:var(--card);box-shadow:0 1px 1px #1822350d,0 9px 25px #27344d0a}
+    .quick{padding:14px}
+    .practice{width:100%;min-height:65px;border:0;border-radius:18px;background:var(--blue);color:#fff;font-size:1.18rem;font-weight:800}
+    .practice:active,.wide-button:active,.choice:active,.tab:active{transform:scale(.98)}
+    h2{margin:0 0 20px;font-size:1.25rem;line-height:1.35;letter-spacing:-.025em}
+    .wide-button{width:100%;min-height:62px;border:0;border-radius:18px;background:#f0f1f6;color:var(--blue);font-size:1.05rem;font-weight:800}
+    .file-state{display:flex;gap:12px;align-items:center;margin-top:12px;padding:14px;border-radius:14px;background:#f7f8fa;color:var(--muted);font-size:.86rem}
+    .file-state strong{color:#344054}
+    .helper{margin:12px 2px 0;color:#6c7890;font-size:.86rem;line-height:1.65}
+    .section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:19px}
+    .section-head h2{margin:0}
+    .small-count{padding:8px 12px;border-radius:999px;background:#edf5ff;color:var(--blue);font-weight:800}
+    .label{margin:20px 0 11px;color:#475569;font-size:.91rem;font-weight:800}
+    .level-grid,.choice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    .choice{min-height:51px;border:0;border-radius:15px;background:#e4e6eb;color:#111;font-weight:750}
+    .level{border:2px solid}
+    .red{border-color:#a51f21;background:#ffe1e2;color:#a51f21}.orange{border-color:#a43b14;background:#ffead0;color:#a43b14}.yellow{border-color:#925a10;background:#fff1bf;color:#925a10}
+    .purple{border-color:#6927df;background:#eee8ff;color:#6927df}.green{border-color:#116b3a;background:#d8f7e3;color:#116b3a}
+    .group{margin-top:18px}
+    .group-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;color:#334155;font-weight:800}
+    .all{min-height:40px;padding:0 16px;border:0;border-radius:13px;background:#e4e6eb}
+    .understanding{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+    .understanding .choice{min-height:47px;font-size:.82rem}
+    .segmented{display:grid;grid-template-columns:1fr 1fr;padding:3px;border-radius:16px;background:#ececef}
+    .segment{min-height:53px;border:0;border-radius:13px;background:transparent;color:#748095;font-weight:800}
+    .segment.active{background:#fff;color:var(--blue);box-shadow:0 2px 8px #2030471c}
+    .back-top{justify-self:center;min-height:47px;padding:0 22px;border:1px solid #d1d8e3;border-radius:999px;background:#fff;color:#435168;font-weight:750}
+    .bottom-space{height:4px}
+    .nav{flex:0 0 auto;display:grid;grid-template-columns:repeat(4,1fr);height:calc(72px + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);background:#fff;border-top:1px solid #e1e4e9;box-shadow:0 -8px 25px #26354a08}
+    .tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:0;background:#fff;color:#92959c;font-size:.7rem;font-weight:700}
+    .tab.active{color:var(--blue)}
+    .tab svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+    @media (min-width:700px){body{background:#e7e8ee}.shell{box-shadow:0 0 50px #26354a20}}
   </style>
 </head>
 <body>
-  <div class="app">
-    <header>
-      <div class="brand"><span class="mark">E</span><span>English Practice</span></div>
-      <button class="settings" type="button" aria-label="設定" data-coming>⚙︎</button>
-    </header>
-    <section class="intro">
-      <h1>瞬間英作文</h1>
-      <p>考えた英文を、迷わず口に出せるように。</p>
-    </section>
-    <main>
-      <section class="card">
-        <p class="eyebrow">TODAY'S PRACTICE</p>
-        <h2>今日の練習を始める</h2>
-        <button class="primary" type="button" data-coming>練習をはじめる</button>
-        <p class="note"><span class="dot"></span>問題データはまだ登録されていません</p>
-      </section>
-      <div class="status" aria-label="学習状況">
-        <div class="mini">登録問題<strong>0問</strong></div>
-        <div class="mini">今日の学習<strong>0問</strong></div>
+  <div class="shell">
+    <header class="topbar">
+      <div class="toprow">
+        <div><p class="overline">ENGLISH TRAINING</p><h1>瞬間英作文</h1></div>
+        <div class="count">5問</div>
       </div>
-      <button class="secondary" type="button" data-coming>Excelを読み込む</button>
+    </header>
+    <main class="scroll" id="mainScroll">
+      <div class="stack">
+        <section class="card quick"><button class="practice" type="button" data-coming>5問を練習する</button></section>
+        <section class="card">
+          <h2>Excelデータを更新</h2>
+          <button class="wide-button" type="button" data-coming>Excelを選ぶ</button>
+          <div class="file-state"><span>読み込みファイル</span><strong>未選択</strong></div>
+          <p class="helper">「単語リスト」シートの例文訳と例文が入っている行を読み込みます。理解度はそのまま残ります。</p>
+        </section>
+        <section class="card">
+          <div class="section-head"><h2>練習する範囲</h2><span class="small-count">5問</span></div>
+          <p class="label">レベル</p>
+          <div class="level-grid">
+            <button class="choice level red">S1</button><button class="choice level orange">S2</button><button class="choice level yellow">S3</button>
+            <button class="choice level red">W1</button><button class="choice level orange">W2</button><button class="choice level yellow">W3</button>
+          </div>
+          <p class="label">品詞</p>
+          <div class="group">
+            <div class="group-title"><span>S</span><button class="all">すべて</button></div>
+            <div class="choice-grid"><button class="choice">動詞</button><button class="choice">名詞</button><button class="choice red level">形容詞</button></div>
+          </div>
+          <div class="group">
+            <div class="group-title"><span>A</span><button class="all">すべて</button></div>
+            <div class="choice-grid"><button class="choice">前置詞</button><button class="choice">副詞</button><button class="choice">接続詞</button><button class="choice">法助動詞</button></div>
+          </div>
+          <div class="group">
+            <div class="group-title"><span>B</span><button class="all">すべて</button></div>
+            <div class="choice-grid"><button class="choice">限定詞</button><button class="choice">代名詞</button><button class="choice">助動詞</button></div>
+          </div>
+          <div class="group">
+            <div class="group-title"><span>C</span><button class="all">すべて</button></div>
+            <div class="choice-grid"><button class="choice">前限定詞</button><button class="choice">間投詞</button><button class="choice">数詞</button></div>
+          </div>
+          <div class="group">
+            <div class="group-title"><span>D</span><button class="all">すべて</button></div>
+            <div class="choice-grid"><button class="choice">不定冠詞</button><button class="choice">定冠詞</button></div>
+          </div>
+          <p class="label">理解度</p>
+          <div class="understanding">
+            <button class="choice level purple">未登録</button><button class="choice level red">0%</button><button class="choice level orange">50%</button><button class="choice level yellow">80%</button><button class="choice level green">100%</button>
+          </div>
+          <p class="label">出題順</p>
+          <div class="segmented"><button class="segment active">シャッフル</button><button class="segment">順番通り</button></div>
+          <p class="label">テスト量</p>
+          <div class="segmented"><button class="segment active">指定範囲すべて</button><button class="segment">数量指定</button></div>
+        </section>
+        <button class="back-top" id="backTop" type="button">↑ トップへ戻る</button>
+        <section class="card">
+          <h2>Excelをエクスポート</h2>
+          <button class="wide-button" type="button" data-coming>Excelを書き出す</button>
+          <p class="helper">元のExcelの書式・空欄セル・他のシートを残し、理解度やアプリで追加した例文を反映して書き出します。</p>
+        </section>
+        <div class="bottom-space"></div>
+      </div>
     </main>
+    <nav class="nav" aria-label="メインメニュー">
+      <button class="tab active" type="button"><svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8v9a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg><span>ホーム</span></button>
+      <button class="tab" type="button" data-coming><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>練習</span></button>
+      <button class="tab" type="button" data-coming><svg viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4zM15 9a4 4 0 0 1 0 6M18 6a8 8 0 0 1 0 12"/></svg><span>音声</span></button>
+      <button class="tab" type="button" data-coming><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9h8M8 13h8M8 17h5"/></svg><span>編集</span></button>
+    </nav>
   </div>
   <script>
+    const scroller=document.getElementById('mainScroll');
+    let touchStartY=0;
+    scroller.addEventListener('touchstart',e=>{touchStartY=e.touches[0].clientY},{passive:true});
+    scroller.addEventListener('touchmove',e=>{if(scroller.scrollTop<=0&&e.touches[0].clientY>touchStartY)e.preventDefault()},{passive:false});
+    document.getElementById('backTop').addEventListener('click',()=>scroller.scrollTo({top:0,behavior:'smooth'}));
     document.querySelectorAll('[data-coming]').forEach(button=>button.addEventListener('click',()=>alert('この機能は次の段階で追加します。')));
+    document.querySelectorAll('.segment').forEach(button=>button.addEventListener('click',()=>{const box=button.parentElement;box.querySelectorAll('.segment').forEach(x=>x.classList.remove('active'));button.classList.add('active')}));
     if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js'))}
   </script>
 </body>
