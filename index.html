@@ -24,6 +24,9 @@
     .header-action{display:flex;width:53px;height:50px;text-decoration:none;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:1px solid #dce2ec;border-radius:14px;background:#fff;color:#526078;box-shadow:0 3px 10px #26354a0b;font-size:.62rem;font-weight:800}
     .header-action svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
     .header-action:active{transform:scale(.96)}
+    .match-summary{display:flex;align-items:center;justify-content:flex-end;gap:6px;margin-top:9px;color:#7a8495;font-size:.75rem;font-weight:700}
+    .match-summary::before{content:"";width:6px;height:6px;border-radius:50%;background:#087cff;box-shadow:0 0 0 4px #087cff14}
+    .match-summary strong{color:#344054;font-size:.8rem}
     .file-input{display:none}
     .scroll{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior-y:auto;-webkit-overflow-scrolling:touch;padding:18px 20px 34px;scrollbar-width:none}
     .scroll::-webkit-scrollbar{display:none}
@@ -87,6 +90,7 @@
         </div>
         <input class="file-input" id="excelInput" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
       </div>
+      <div class="match-summary" aria-live="polite"><span>例文あり</span><strong id="matchCount">0組</strong></div>
     </header>
     <main class="scroll" id="mainScroll">
       <div class="stack">
@@ -288,6 +292,7 @@
     const stack=scroller.querySelector('.stack');
     const backTop=document.getElementById('backTop');
     const practiceButton=document.getElementById('practiceButton');
+    const matchCount=document.getElementById('matchCount');
     const levelChoices=[...document.querySelectorAll('.level-grid .choice')];
     const partChoices=[...document.querySelectorAll('.group .choice')];
     const understandingChoices=[...document.querySelectorAll('.understanding .choice')];
@@ -306,18 +311,28 @@
       const levels=selectedValues(levelChoices);
       const parts=selectedValues(partChoices);
       const understandings=selectedValues(understandingChoices);
-      const count=rows.filter(row=>{
+      const matchingRows=rows.filter(row=>{
         if(!text(row[8])||!text(row[9]))return false;
         if(levels.size&&![text(row[11]),text(row[12])].some(value=>levels.has(value)))return false;
         if(parts.size&&!parts.has(text(row[6])))return false;
         const understanding=text(row[13])||'未登録';
         if(understandings.size&&!understandings.has(understanding))return false;
         return true;
-      }).length;
-      practiceButton.dataset.questionCount=String(count);
+      });
+      const pairCount=new Set(matchingRows.map(row=>`${text(row[3]).toLowerCase()}\\t${text(row[6])}`)).size;
+      practiceButton.dataset.questionCount=String(matchingRows.length);
+      practiceButton.dataset.pairCount=String(pairCount);
+      matchCount.textContent=`${pairCount}組`;
+    };
+    const syncGroupAll=group=>{
+      if(!group)return;
+      const choices=[...group.querySelectorAll('.choice')];
+      const allButton=group.querySelector('.all');
+      allButton?.classList.toggle('selected',choices.length>0&&choices.every(choice=>choice.classList.contains('selected')));
     };
     [...levelChoices,...partChoices,...understandingChoices].forEach(button=>button.addEventListener('click',()=>{
       button.classList.toggle('selected');
+      syncGroupAll(button.closest('.group'));
       refreshQuestionCount();
     }));
     document.querySelectorAll('.group .all').forEach(button=>button.addEventListener('click',()=>{
