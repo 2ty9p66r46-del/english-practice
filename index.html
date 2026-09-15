@@ -42,7 +42,7 @@
     @keyframes topBounce{0%{transform:translateY(0)}48%{transform:translateY(13px)}100%{transform:translateY(0)}}
     .card{padding:22px;border-radius:23px;background:var(--card);box-shadow:0 1px 1px #1822350d,0 9px 25px #27344d0a}
     .quick{display:grid;gap:9px;padding:14px}
-    .practice-options{display:grid;grid-template-columns:1.35fr .85fr;gap:8px}
+    .practice-options{display:grid;grid-template-columns:minmax(0,1fr) 92px;gap:8px}
     .practice-control{min-width:0;padding:7px 8px 8px;border:1px solid #e0e4eb;border-radius:13px;background:linear-gradient(#f7f8fa,#f0f2f5);box-shadow:inset 0 1px 0 #ffffffd9}
     .practice-control-title{display:block;margin:0 3px 5px;color:#7a8495;font-size:.64rem;font-weight:700}
     .order-switch{position:relative;display:grid;width:100%;height:34px;touch-action:pan-y;grid-template-columns:1fr 1fr;align-items:center;padding:2px;border:0;border-radius:10px;background:#e5e8ee;color:#727c8e;overflow:hidden}
@@ -51,9 +51,9 @@
     .order-switch span{position:relative;z-index:1;font-size:.68rem;font-weight:800;transition:color .2s ease}
     .order-switch span:first-of-type,.order-switch.ordered span:last-of-type{color:#0876ee}
     .order-switch.ordered span:first-of-type{color:#727c8e}
-    .question-picker{position:relative}
+    .question-picker{position:relative;padding-left:6px;padding-right:6px}
     .question-picker::after{content:"⌄";position:absolute;right:9px;bottom:8px;color:#7a8495;font-size:.85rem;pointer-events:none}
-    .question-picker select{width:100%;height:34px;padding:0 25px 0 10px;border:0;border-radius:10px;appearance:none;-webkit-appearance:none;background:#fff;color:#344054;box-shadow:0 2px 7px #26354a14;font:800 .78rem/1 -apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif}
+    .question-picker select{width:100%;height:34px;padding:0 20px 0 7px;text-align:center;border:0;border-radius:10px;appearance:none;-webkit-appearance:none;background:#fff;color:#344054;box-shadow:0 2px 7px #26354a14;font:800 .78rem/1 -apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif}
     .practice{width:100%;min-height:60px;border:0;border-radius:17px;background:linear-gradient(135deg,#087cff,#0a6be8);color:#fff;font-size:1.08rem;font-weight:800;letter-spacing:.02em;box-shadow:0 8px 18px #087cff2b}
     .practice:active,.wide-button:active,.choice:active,.tab:active{transform:scale(.98)}
     h2{margin:0 0 20px;font-size:1.25rem;line-height:1.35;letter-spacing:-.025em}
