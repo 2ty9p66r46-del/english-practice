@@ -16,11 +16,10 @@
     button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}
     .shell{display:flex;flex-direction:column;width:min(100%,520px);height:100dvh;margin:auto;background:#f5f5fa;overflow:hidden}
     .topbar{flex:0 0 auto;padding:calc(24px + env(safe-area-inset-top)) 24px 24px;background:#f7f7fb;border-bottom:1px solid #eef0f4}
-    .toprow{display:flex;align-items:center;justify-content:space-between}
+    .toprow{display:flex;align-items:center}
     .brand-logo{display:flex;align-items:center;width:178px;height:55px;transform:translateY(1px)}
     .brand-logo img{display:block;width:100%;height:auto;filter:drop-shadow(0 2px 3px #173c7a1f)}
-    .count{display:grid;place-items:center;min-width:57px;height:57px;padding:0 15px;border-radius:50%;background:#e9e9ee;color:#666;font-size:1rem;font-weight:750}
-    .scroll{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior-y:none;-webkit-overflow-scrolling:touch;padding:18px 20px 34px;scrollbar-width:none}
+    .scroll{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior-y:auto;-webkit-overflow-scrolling:touch;padding:18px 20px 34px;scrollbar-width:none}
     .scroll::-webkit-scrollbar{display:none}
     .stack{display:grid;gap:16px}
     .card{padding:22px;border-radius:23px;background:var(--card);box-shadow:0 1px 1px #1822350d,0 9px 25px #27344d0a}
@@ -63,7 +62,6 @@
     <header class="topbar">
       <div class="toprow">
         <div class="brand-logo"><img src="./flovo-wordmark.svg" alt="FloVo"></div>
-        <div class="count">5問</div>
       </div>
     </header>
     <main class="scroll" id="mainScroll">
@@ -130,9 +128,6 @@
   </div>
   <script>
     const scroller=document.getElementById('mainScroll');
-    let touchStartY=0;
-    scroller.addEventListener('touchstart',e=>{touchStartY=e.touches[0].clientY},{passive:true});
-    scroller.addEventListener('touchmove',e=>{if(scroller.scrollTop<=0&&e.touches[0].clientY>touchStartY)e.preventDefault()},{passive:false});
     document.getElementById('backTop').addEventListener('click',()=>scroller.scrollTo({top:0,behavior:'smooth'}));
     document.querySelectorAll('[data-coming]').forEach(button=>button.addEventListener('click',()=>alert('この機能は次の段階で追加します。')));
     document.querySelectorAll('.segment').forEach(button=>button.addEventListener('click',()=>{const box=button.parentElement;box.querySelectorAll('.segment').forEach(x=>x.classList.remove('active'));button.classList.add('active')}));
