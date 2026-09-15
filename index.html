@@ -81,6 +81,8 @@
     .filter-section-actions{display:flex;align-items:center;gap:5px}
     .section-filter-button{min-height:28px;padding:0 9px;border:1px solid #dfe3ea;border-radius:999px;background:linear-gradient(#f4f5f7,#e9ecf0);color:#6f7a8d;font-size:.61rem;font-weight:800;white-space:nowrap;box-shadow:inset 0 1px 0 #fff,0 1px 2px #26354a0b}
     .section-filter-button.selected{color:#fff;border-color:#087cff;background:linear-gradient(135deg,#087cff,#0a6be8);box-shadow:0 4px 10px #087cff2e}
+    .filter-warning{margin:2px 2px 9px;color:#c93645;font-size:.64rem;font-weight:750;line-height:1.35}
+    .filter-warning[hidden]{display:none}
     .section-filter-button:active{transform:scale(.96)}
     .label{margin:20px 0 11px;color:#475569;font-size:.91rem;font-weight:800}
     .level-grid,.choice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
@@ -138,7 +140,7 @@
         <section class="card">
           <div class="section-head"><h2>絞り込み条件</h2><div class="filter-bulk-actions"><button class="bulk-filter-button select" id="selectAllFilters" type="button">すべて選択</button></div></div>
           <div class="filter-section" data-filter-section="word">
-            <div class="filter-section-head"><h3>1. 単語レベル</h3><div class="filter-section-actions"><button class="section-filter-button select" type="button" data-section-action="select">すべて選択</button></div></div>
+            <div class="filter-section-head"><h3>条件1 単語レベル</h3><div class="filter-section-actions"><button class="section-filter-button select" type="button" data-section-action="select">すべて選択</button></div></div><p class="filter-warning" hidden>条件1がひとつも選択されていません。</p>
           <div class="group level-group">
             <div class="group-title"><span>Speaking</span></div>
             <div class="choice-grid"><button class="choice level red">S1</button><button class="choice level orange">S2</button><button class="choice level yellow">S3</button></div>
@@ -411,6 +413,8 @@
       const choices=[...section.querySelectorAll('.choice')];
       const selectedCount=choices.filter(choice=>choice.classList.contains('selected')).length;
       section.querySelector('[data-section-action="select"]')?.classList.toggle('selected',choices.length>0&&selectedCount===choices.length);
+      const warning=section.querySelector('.filter-warning');
+      if(warning)warning.hidden=selectedCount>0;
       syncGlobalControls();
     };
     [...levelChoices,...partChoices,...understandingChoices].forEach(button=>button.addEventListener('click',()=>{
