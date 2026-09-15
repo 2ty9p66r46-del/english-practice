@@ -22,7 +22,6 @@
     .brand-logo img{display:block;width:100%;height:auto;filter:drop-shadow(0 2px 3px #173c7a1f)}
     .header-actions{display:flex;align-items:center;gap:5px}
     .header-action{display:flex;width:53px;height:50px;text-decoration:none;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:1px solid #dce2ec;border-radius:14px;background:#fff;color:#526078;box-shadow:0 3px 10px #26354a0b;font-size:.62rem;font-weight:800}
-    .header-action:first-child{color:#087cff;background:#f5f9ff;border-color:#d6e8ff}
     .header-action svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
     .header-action:active{transform:scale(.96)}
     .file-input{display:none}
@@ -75,7 +74,7 @@
         <div class="header-actions" aria-label="Excelメニュー">
           <button class="header-action" id="importButton" type="button" aria-label="Excelを読み込む"><svg viewBox="0 0 24 24"><path d="M12 3v12M7.5 10.5 12 15l4.5-4.5"/><path d="M5 19h14"/></svg><span>読込</span></button>
           <button class="header-action" type="button" data-coming aria-label="Excelを書き出す"><svg viewBox="0 0 24 24"><path d="M12 15V3M7.5 7.5 12 3l4.5 4.5"/><path d="M5 19h14"/></svg><span>書出</span></button>
-          <a class="header-action" id="templateButton" href="./Import-data_format.xlsx" target="_blank" rel="noopener" aria-label="Excel雛形をダウンロード"><svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h5M12 11v6M9.5 14.5 12 17l2.5-2.5"/></svg><span>雛形</span></a>
+          <button class="header-action" id="templateButton" type="button" aria-label="Excel雛形をダウンロード"><svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h5M12 11v6M9.5 14.5 12 17l2.5-2.5"/></svg><span>雛形</span></button>
         </div>
         <input class="file-input" id="excelInput" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
       </div>
@@ -178,8 +177,31 @@
       });
       return [...new Set(errors)];
     };
-    templateButton.addEventListener('click',event=>{
-      if(!confirm('Excelの雛形をダウンロードしますか？'))event.preventDefault();
+    templateButton.addEventListener('click',async()=>{
+      if(!confirm('Excelの雛形をダウンロードしますか？'))return;
+      templateButton.disabled=true;
+      try{
+        const response=await fetch('./Import-data_format.xlsx',{cache:'no-store'});
+        if(!response.ok)throw new Error('雛形ファイルを取得できませんでした。');
+        const file=new File([await response.blob()],'Import-data_format.xlsx',{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+        if(navigator.canShare?.({files:[file]})){
+          await navigator.share({files:[file],title:'FloVo インポート雛形'});
+        }else{
+          const url=URL.createObjectURL(file);
+          const link=document.createElement('a');
+          link.href=url;
+          link.download=file.name;
+          link.style.display='none';
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          setTimeout(()=>URL.revokeObjectURL(url),30000);
+        }
+      }catch(error){
+        if(error?.name!=='AbortError')alert(error?.message||'雛形の保存に失敗しました。');
+      }finally{
+        templateButton.disabled=false;
+      }
     });
     importButton.addEventListener('click',()=>{
       if(typeof XLSX==='undefined'){alert('Excel読込機能を準備できませんでした。通信状態を確認して、アプリを開き直してください。');return}
