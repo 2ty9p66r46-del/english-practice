@@ -32,32 +32,32 @@
     @keyframes topBounce{0%{transform:translateY(0)}48%{transform:translateY(13px)}100%{transform:translateY(0)}}
     .card{padding:22px;border-radius:23px;background:var(--card);box-shadow:0 1px 1px #1822350d,0 9px 25px #27344d0a}
     .quick{padding:14px}
-    .practice{width:100%;min-height:65px;border:0;border-radius:18px;background:var(--blue);color:#fff;font-size:1.18rem;font-weight:800}
+    .practice{width:100%;min-height:60px;border:0;border-radius:17px;background:linear-gradient(135deg,#087cff,#0a6be8);color:#fff;font-size:1.08rem;font-weight:800;letter-spacing:.02em;box-shadow:0 8px 18px #087cff2b}
     .practice:active,.wide-button:active,.choice:active,.tab:active{transform:scale(.98)}
     h2{margin:0 0 20px;font-size:1.25rem;line-height:1.35;letter-spacing:-.025em}
     .wide-button{width:100%;min-height:62px;border:0;border-radius:18px;background:#f0f1f6;color:var(--blue);font-size:1.05rem;font-weight:800}
     .file-state{display:flex;gap:12px;align-items:center;margin-top:12px;padding:14px;border-radius:14px;background:#f7f8fa;color:var(--muted);font-size:.86rem}
     .file-state strong{color:#344054}
     .helper{margin:12px 2px 0;color:#6c7890;font-size:.86rem;line-height:1.65}
-    .section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:19px}
+    .section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
     .section-head h2{margin:0}
-    .small-count{padding:8px 12px;border-radius:999px;background:#edf5ff;color:var(--blue);font-weight:800}
     .label{margin:20px 0 11px;color:#475569;font-size:.91rem;font-weight:800}
-    .level-grid,.choice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-    .choice{min-height:51px;border:0;border-radius:15px;background:#e4e6eb;color:#111;font-weight:750;transition:transform .14s ease,box-shadow .14s ease,filter .14s ease}
-    .choice.selected{box-shadow:0 0 0 3px var(--blue),0 4px 12px #087cff24;filter:saturate(1.08)}
-    .all.selected{background:#dcecff;color:var(--blue);box-shadow:0 0 0 2px var(--blue)}
-    .level{border:2px solid}
-    .red{border-color:#a51f21;background:#ffe1e2;color:#a51f21}.orange{border-color:#a43b14;background:#ffead0;color:#a43b14}.yellow{border-color:#925a10;background:#fff1bf;color:#925a10}
-    .purple{border-color:#6927df;background:#eee8ff;color:#6927df}.green{border-color:#116b3a;background:#d8f7e3;color:#116b3a}
-    .group{margin-top:18px}
-    .group-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;color:#334155;font-weight:800}
-    .all{min-height:40px;padding:0 16px;border:0;border-radius:13px;background:#e4e6eb}
+    .level-grid,.choice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+    .choice{position:relative;min-height:49px;padding:0 10px;border:1px solid #e1e5ec;border-radius:14px;background:#f3f4f7;color:#263247;font-weight:750;box-shadow:0 1px 2px #1f29370a;transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease}
+    .choice.selected{border-color:#83baff;background:#edf6ff;color:#0872e8;box-shadow:0 3px 10px #087cff16}
+    .choice.selected::after{content:"";position:absolute;top:7px;right:7px;width:6px;height:6px;border-radius:50%;background:#087cff}
+    .all.selected{border-color:#83baff;background:#edf6ff;color:#0872e8;box-shadow:none}
+    .level{border-width:1px}
+    .red{border-color:#efc8ca;background:#fff2f2;color:#a9292b}.orange{border-color:#f0d2bc;background:#fff5e9;color:#a4451d}.yellow{border-color:#eadba8;background:#fff9df;color:#876018}
+    .purple{border-color:#d7c7f4;background:#f6f1ff;color:#6d35ce}.green{border-color:#b9dfc8;background:#eefaf2;color:#167040}
+    .group{margin-top:16px}
+    .group-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;color:#526078;font-size:.86rem;font-weight:800}
+    .all{min-height:34px;padding:0 14px;border:1px solid #e1e5ec;border-radius:999px;background:#f5f6f8;color:#526078;font-size:.82rem}
     .understanding{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
     .understanding .choice{min-height:47px;font-size:.82rem}
-    .segmented{display:grid;grid-template-columns:1fr 1fr;padding:3px;border-radius:16px;background:#ececef}
-    .segment{min-height:53px;border:0;border-radius:13px;background:transparent;color:#748095;font-weight:800}
-    .segment.active{background:#fff;color:var(--blue);box-shadow:0 2px 8px #2030471c}
+    .segmented{display:grid;grid-template-columns:1fr 1fr;padding:4px;border:1px solid #e3e6ec;border-radius:16px;background:#f0f1f4}
+    .segment{min-height:49px;border:0;border-radius:12px;background:transparent;color:#748095;font-weight:800}
+    .segment.active{background:#fff;color:var(--blue);box-shadow:0 3px 10px #20304718}
     .floating-top{position:absolute;z-index:5;right:14px;bottom:calc(82px + env(safe-area-inset-bottom));display:grid;width:43px;height:43px;place-items:center;border:1px solid #d7dce5;border-radius:50%;background:#fffffff0;color:#526078;box-shadow:0 5px 16px #26354a24;opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .2s ease,transform .2s ease}
     .floating-top.visible{opacity:.88;pointer-events:auto;transform:translateY(0)}
     .floating-top:active{transform:scale(.94)}
@@ -88,9 +88,9 @@
     </header>
     <main class="scroll" id="mainScroll">
       <div class="stack">
-        <section class="card quick"><button class="practice" id="practiceButton" type="button" data-coming>0問を練習する</button></section>
+        <section class="card quick"><button class="practice" id="practiceButton" type="button" data-coming>練習する</button></section>
         <section class="card">
-          <div class="section-head"><h2>練習する範囲</h2><span class="small-count" id="questionCount">0問</span></div>
+          <div class="section-head"><h2>練習する範囲</h2></div>
           <p class="label">レベル</p>
           <div class="level-grid">
             <button class="choice level red">S1</button><button class="choice level orange">S2</button><button class="choice level yellow">S3</button>
@@ -285,7 +285,6 @@
     const scroller=document.getElementById('mainScroll');
     const stack=scroller.querySelector('.stack');
     const backTop=document.getElementById('backTop');
-    const questionCount=document.getElementById('questionCount');
     const practiceButton=document.getElementById('practiceButton');
     const levelChoices=[...document.querySelectorAll('.level-grid .choice')];
     const partChoices=[...document.querySelectorAll('.group .choice')];
@@ -305,8 +304,7 @@
         if(understandings.size&&!understandings.has(understanding))return false;
         return true;
       }).length;
-      questionCount.textContent=`${count}問`;
-      practiceButton.textContent=`${count}問を練習する`;
+      practiceButton.dataset.questionCount=String(count);
     };
     [...levelChoices,...partChoices,...understandingChoices].forEach(button=>button.addEventListener('click',()=>{
       button.classList.toggle('selected');
