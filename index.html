@@ -185,7 +185,7 @@
         if(!response.ok)throw new Error('雛形ファイルを取得できませんでした。');
         const file=new File([await response.blob()],'Import-data_format.xlsx',{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
         if(navigator.canShare?.({files:[file]})){
-          await navigator.share({files:[file],title:'FloVo インポート雛形'});
+          await navigator.share({files:[file]});
         }else{
           const url=URL.createObjectURL(file);
           const link=document.createElement('a');
