@@ -78,6 +78,7 @@
     .red{--tone:#a92b39;--line:#d9969f;--wash-top:#fff5f6;--wash-bottom:#fbe4e7;--shadow:#a92b391f}
     .orange{--tone:#a94d1d;--line:#dda17d;--wash-top:#fff8f1;--wash-bottom:#fbe8d9;--shadow:#a94d1d1f}
     .yellow{--tone:#7f5a08;--line:#d2b65e;--wash-top:#fffbed;--wash-bottom:#f7edc9;--shadow:#7f5a081c}
+    .blue{--tone:#0876ee;--line:#8fc1f5;--wash-top:#f4f9ff;--wash-bottom:#e2f0ff;--shadow:#0876ee1c}
     .green{--tone:#176c47;--line:#7db99b;--wash-top:#f3fbf7;--wash-bottom:#dcf1e6;--shadow:#176c471c}
     .purple{--tone:#60399f;--line:#ad93d4;--wash-top:#faf7ff;--wash-bottom:#ebe3f8;--shadow:#60399f1f}
     .group{margin-top:13px}
@@ -121,31 +122,33 @@
       <div class="stack">
         <section class="card quick"><button class="practice" id="practiceButton" type="button" data-coming>練習する</button><div class="practice-options"><div class="practice-control"><span class="practice-control-title">出題順</span><button class="order-switch" id="orderSwitch" type="button" aria-pressed="false"><i class="order-thumb"></i><span>シャッフル</span><span>順番通り</span></button></div><div class="practice-control question-picker" id="questionPicker"><span class="practice-control-title">出題数</span><button class="question-trigger" id="questionLimit" type="button" aria-haspopup="listbox" aria-expanded="false"><span id="questionLimitValue">すべて</span><span class="question-chevron">⌄</span></button><div class="question-menu" id="questionMenu" role="listbox" aria-label="出題数" hidden></div></div></div></section>
         <section class="card">
-          <div class="section-head"><h2>練習する範囲</h2></div>
-          <p class="label">レベル</p>
-          <div class="level-grid">
-            <button class="choice level red">S1</button><button class="choice level orange">S2</button><button class="choice level yellow">S3</button>
-            <button class="choice level red">W1</button><button class="choice level orange">W2</button><button class="choice level yellow">W3</button>
+          <div class="section-head"><h2>絞り込み条件</h2></div>
+          <div class="group level-group">
+            <div class="group-title"><span>レベル（Speaking）</span><button class="all blue">すべて</button></div>
+            <div class="choice-grid"><button class="choice level red">S1</button><button class="choice level orange">S2</button><button class="choice level yellow">S3</button></div>
           </div>
-          <p class="label">品詞</p>
-          <div class="group">
-            <div class="group-title"><span>S</span><button class="all">すべて</button></div>
+          <div class="group level-group">
+            <div class="group-title"><span>レベル（Writing）</span><button class="all blue">すべて</button></div>
+            <div class="choice-grid"><button class="choice level red">W1</button><button class="choice level orange">W2</button><button class="choice level yellow">W3</button></div>
+          </div>
+          <div class="group part-group">
+            <div class="group-title"><span>品詞ランクS</span><button class="all">すべて</button></div>
             <div class="choice-grid"><button class="choice">動詞</button><button class="choice">名詞</button><button class="choice">形容詞</button></div>
           </div>
-          <div class="group">
-            <div class="group-title"><span>A</span><button class="all">すべて</button></div>
+          <div class="group part-group">
+            <div class="group-title"><span>品詞ランクA</span><button class="all">すべて</button></div>
             <div class="choice-grid"><button class="choice">前置詞</button><button class="choice">副詞</button><button class="choice">接続詞</button><button class="choice">法助動詞</button></div>
           </div>
-          <div class="group">
-            <div class="group-title"><span>B</span><button class="all">すべて</button></div>
+          <div class="group part-group">
+            <div class="group-title"><span>品詞ランクB</span><button class="all">すべて</button></div>
             <div class="choice-grid"><button class="choice">限定詞</button><button class="choice">代名詞</button><button class="choice">助動詞</button></div>
           </div>
-          <div class="group">
-            <div class="group-title"><span>C</span><button class="all">すべて</button></div>
+          <div class="group part-group">
+            <div class="group-title"><span>品詞ランクC</span><button class="all">すべて</button></div>
             <div class="choice-grid"><button class="choice">前限定詞</button><button class="choice">間投詞</button><button class="choice">数詞</button></div>
           </div>
-          <div class="group">
-            <div class="group-title"><span>D</span><button class="all">すべて</button></div>
+          <div class="group part-group">
+            <div class="group-title"><span>品詞ランクD</span><button class="all">すべて</button></div>
             <div class="choice-grid"><button class="choice">不定冠詞</button><button class="choice">定冠詞</button></div>
           </div>
           <p class="label">理解度</p>
@@ -332,12 +335,12 @@
     const practiceButton=document.getElementById('practiceButton');
     const wordCount=document.getElementById('wordCount');
     const exampleCount=document.getElementById('exampleCount');
-    const levelChoices=[...document.querySelectorAll('.level-grid .choice')];
-    const partChoices=[...document.querySelectorAll('.group .choice')];
+    const levelChoices=[...document.querySelectorAll('.level-group .choice')];
+    const partChoices=[...document.querySelectorAll('.part-group .choice')];
     const understandingChoices=[...document.querySelectorAll('.understanding .choice')];
     levelChoices.forEach(button=>button.classList.add(button.textContent.trim().endsWith('1')?'red':button.textContent.trim().endsWith('2')?'orange':'yellow'));
-    document.querySelectorAll('.group').forEach(group=>{
-      const rank=group.querySelector('.group-title span')?.textContent.trim();
+    document.querySelectorAll('.part-group').forEach(group=>{
+      const rank=group.querySelector('.group-title span')?.textContent.trim().slice(-1);
       const tone={S:'red',A:'orange',B:'yellow',C:'green',D:'purple'}[rank];
       if(tone)group.querySelectorAll('.choice,.all').forEach(button=>button.classList.add(tone));
     });
