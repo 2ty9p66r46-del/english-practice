@@ -71,8 +71,12 @@
     .file-state{display:flex;gap:12px;align-items:center;margin-top:12px;padding:14px;border-radius:14px;background:#f7f8fa;color:var(--muted);font-size:.86rem}
     .file-state strong{color:#344054}
     .helper{margin:12px 2px 0;color:#6c7890;font-size:.86rem;line-height:1.65}
-    .section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+    .section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:16px}
     .section-head h2{margin:0}
+    .filter-bulk-actions{display:flex;align-items:center;gap:5px}
+    .bulk-filter-button{min-height:29px;padding:0 9px;border:1px solid #dfe3ea;border-radius:999px;background:linear-gradient(#f6f7f9,#eceff3);color:#687489;font-size:.66rem;font-weight:800;white-space:nowrap;box-shadow:inset 0 1px 0 #fff,0 1px 2px #26354a0b}
+    .bulk-filter-button.select{color:#0876ee;border-color:#b8d7f8;background:linear-gradient(#f7fbff,#eaf4ff)}
+    .bulk-filter-button:active{transform:scale(.96)}
     .label{margin:20px 0 11px;color:#475569;font-size:.91rem;font-weight:800}
     .level-grid,.choice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
     .choice{min-height:41px;padding:0 8px;border:1px solid #e0e3e9;border-radius:11px;background:linear-gradient(#f0f2f5,#eaedf1);color:#737c8d;font-weight:750;box-shadow:inset 0 1px 0 #ffffffbf,0 1px 2px #1822370a;transition:transform .14s ease,box-shadow .14s ease,border-color .14s ease,background .14s ease}
@@ -127,39 +131,39 @@
       <div class="stack">
         <section class="card quick"><button class="practice" id="practiceButton" type="button" data-coming>練習する</button><div class="practice-options"><div class="practice-control"><span class="practice-control-title">出題順</span><button class="order-switch" id="orderSwitch" type="button" aria-pressed="false"><i class="order-thumb"></i><span>シャッフル</span><span>順番通り</span></button></div><div class="practice-control question-picker" id="questionPicker"><span class="practice-control-title">出題数</span><button class="question-trigger" id="questionLimit" type="button" aria-haspopup="listbox" aria-expanded="false"><span id="questionLimitValue">すべて</span><span class="question-chevron">⌄</span></button><div class="question-menu" id="questionMenu" role="listbox" aria-label="出題数" hidden></div></div></div></section>
         <section class="card">
-          <div class="section-head"><h2>絞り込み条件</h2></div>
+          <div class="section-head"><h2>絞り込み条件</h2><div class="filter-bulk-actions"><button class="bulk-filter-button select" id="selectAllFilters" type="button">すべて選択</button><button class="bulk-filter-button" id="clearAllFilters" type="button">すべて解除</button></div></div>
           <p class="label part-label">単語レベル</p>
           <div class="group level-group">
-            <div class="group-title"><span>Speaking</span><button class="all blue">ALL</button></div>
+            <div class="group-title"><span>Speaking</span><button class="all blue">すべて</button></div>
             <div class="choice-grid"><button class="choice level red">S1</button><button class="choice level orange">S2</button><button class="choice level yellow">S3</button></div>
           </div>
           <div class="group level-group">
-            <div class="group-title"><span>Writing</span><button class="all blue">ALL</button></div>
+            <div class="group-title"><span>Writing</span><button class="all blue">すべて</button></div>
             <div class="choice-grid"><button class="choice level red">W1</button><button class="choice level orange">W2</button><button class="choice level yellow">W3</button></div>
           </div>
           <p class="label part-label">品詞レベル</p>
           <div class="group part-group">
-            <div class="group-title"><span>RANK S</span><button class="all blue">ALL</button></div>
+            <div class="group-title"><span>RANK S</span><button class="all blue">すべて</button></div>
             <div class="choice-grid"><button class="choice" data-value="動詞"><span class="choice-main">動詞</span><small>verb</small></button><button class="choice" data-value="名詞"><span class="choice-main">名詞</span><small>noun</small></button><button class="choice" data-value="形容詞"><span class="choice-main">形容詞</span><small>adjective</small></button></div>
           </div>
           <div class="group part-group">
-            <div class="group-title"><span>RANK A</span><button class="all blue">ALL</button></div>
+            <div class="group-title"><span>RANK A</span><button class="all blue">すべて</button></div>
             <div class="choice-grid"><button class="choice" data-value="前置詞"><span class="choice-main">前置詞</span><small>preposition</small></button><button class="choice" data-value="副詞"><span class="choice-main">副詞</span><small>adverb</small></button><button class="choice" data-value="接続詞"><span class="choice-main">接続詞</span><small>conjunction</small></button><button class="choice" data-value="法助動詞"><span class="choice-main">法助動詞</span><small>modal verb</small></button></div>
           </div>
           <div class="group part-group">
-            <div class="group-title"><span>RANK B</span><button class="all blue">ALL</button></div>
+            <div class="group-title"><span>RANK B</span><button class="all blue">すべて</button></div>
             <div class="choice-grid"><button class="choice" data-value="限定詞"><span class="choice-main">限定詞</span><small>determiner</small></button><button class="choice" data-value="代名詞"><span class="choice-main">代名詞</span><small>pronoun</small></button><button class="choice" data-value="助動詞"><span class="choice-main">助動詞</span><small>auxiliary verb</small></button></div>
           </div>
           <div class="group part-group">
-            <div class="group-title"><span>RANK C</span><button class="all blue">ALL</button></div>
+            <div class="group-title"><span>RANK C</span><button class="all blue">すべて</button></div>
             <div class="choice-grid"><button class="choice" data-value="前限定詞"><span class="choice-main">前限定詞</span><small>predeterminer</small></button><button class="choice" data-value="間投詞"><span class="choice-main">間投詞</span><small>interjection</small></button><button class="choice" data-value="数詞"><span class="choice-main">数詞</span><small>numeral</small></button></div>
           </div>
           <div class="group part-group">
-            <div class="group-title"><span>RANK D</span><button class="all blue">ALL</button></div>
+            <div class="group-title"><span>RANK D</span><button class="all blue">すべて</button></div>
             <div class="choice-grid"><button class="choice" data-value="不定冠詞"><span class="choice-main">不定冠詞</span><small>indefinite article</small></button><button class="choice" data-value="定冠詞"><span class="choice-main">定冠詞</span><small>definite article</small></button></div>
           </div>
           <div class="group understanding-group">
-            <div class="group-title"><span>理解度</span><button class="all blue">ALL</button></div>
+            <div class="group-title"><span>理解度</span><button class="all blue">すべて</button></div>
             <div class="understanding">
             <button class="choice level red">0%</button><button class="choice level orange">50%</button><button class="choice level yellow">80%</button><button class="choice level green">100%</button><button class="choice level purple">未登録</button>
             </div>
@@ -344,6 +348,8 @@
     const levelChoices=[...document.querySelectorAll('.level-group .choice')];
     const partChoices=[...document.querySelectorAll('.part-group .choice')];
     const understandingChoices=[...document.querySelectorAll('.understanding .choice')];
+    const selectAllFilters=document.getElementById('selectAllFilters');
+    const clearAllFilters=document.getElementById('clearAllFilters');
     levelChoices.forEach(button=>button.classList.add(button.textContent.trim().endsWith('1')?'red':button.textContent.trim().endsWith('2')?'orange':'yellow'));
     document.querySelectorAll('.part-group').forEach(group=>{
       const rank=group.querySelector('.group-title span')?.textContent.trim().slice(-1);
@@ -361,10 +367,10 @@
       const understandings=selectedValues(understandingChoices);
       const matchingRows=rows.filter(row=>{
         if(!text(row[8])||!text(row[9]))return false;
-        if(levels.size&&![text(row[11]),text(row[12])].some(value=>levels.has(value)))return false;
-        if(parts.size&&!parts.has(text(row[6])))return false;
+        if(!levels.size||![text(row[11]),text(row[12])].some(value=>levels.has(value)))return false;
+        if(!parts.size||!parts.has(text(row[6])))return false;
         const understanding=text(row[13])||'未登録';
-        if(understandings.size&&!understandings.has(understanding))return false;
+        if(!understandings.size||!understandings.has(understanding))return false;
         return true;
       });
       const pairCount=new Set(matchingRows.map(row=>`${text(row[3]).toLowerCase()}\\t${text(row[6])}`)).size;
@@ -397,7 +403,15 @@
       button.classList.toggle('selected',selectAll);
       refreshQuestionCount();
     }));
-    refreshQuestionCount();
+    const allFilterChoices=[...levelChoices,...partChoices,...understandingChoices];
+    const setAllFilters=selected=>{
+      allFilterChoices.forEach(choice=>choice.classList.toggle('selected',selected));
+      document.querySelectorAll('.group .all').forEach(button=>button.classList.toggle('selected',selected));
+      refreshQuestionCount();
+    };
+    selectAllFilters.addEventListener('click',()=>setAllFilters(true));
+    clearAllFilters.addEventListener('click',()=>setAllFilters(false));
+    setAllFilters(true);
     document.querySelectorAll('[data-coming]').forEach(button=>button.addEventListener('click',()=>alert('この機能は次の段階で追加します。')));
     const orderSwitch=document.getElementById('orderSwitch');
     const questionLimit=document.getElementById('questionLimit');
