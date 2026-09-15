@@ -1,4 +1,4 @@
-const CACHE='flovo-v37';
+const CACHE='flovo-v38';
 const ASSETS=['./','./index.html','./manifest.webmanifest','./icon.svg','./flovo-wordmark-v2.png','./Import-data_format.xlsx'];
 self.addEventListener('install',event=>{self.skipWaiting();event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)))});
 self.addEventListener('activate',event=>event.waitUntil(Promise.all([self.clients.claim(),caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key))))])));
