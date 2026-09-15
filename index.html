@@ -4,11 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
   <meta name="theme-color" content="#f6f6fb">
-  <meta name="description" content="瞬間英作文の練習用アプリ">
+  <meta name="description" content="FloVo — 英語を声に変える練習アプリ">
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" href="./icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="./icon.svg">
-  <title>瞬間英作文</title>
+  <title>FloVo</title>
   <style>
     :root{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue","Noto Sans JP",sans-serif;color:#111827;background:#f5f5fa;font-synthesis:none;--blue:#087cff;--ink:#111827;--muted:#6f7b8e;--soft:#edeef3;--card:#fff}
     *{box-sizing:border-box}
@@ -17,8 +17,9 @@
     .shell{display:flex;flex-direction:column;width:min(100%,520px);height:100dvh;margin:auto;background:#f5f5fa;overflow:hidden}
     .topbar{flex:0 0 auto;padding:calc(24px + env(safe-area-inset-top)) 24px 24px;background:#f7f7fb;border-bottom:1px solid #eef0f4}
     .toprow{display:flex;align-items:center;justify-content:space-between}
-    .overline{margin:0 0 3px;color:#9699a3;font-size:.78rem;font-weight:800;letter-spacing:.17em}
-    h1{margin:0;font-size:2rem;font-weight:500;line-height:1.13;letter-spacing:-.045em}
+    .brand-logo{display:flex;align-items:center;height:52px;color:var(--ink);font-size:2.35rem;font-weight:850;line-height:1;letter-spacing:-.085em}
+    .brand-logo .wave-v{width:46px;height:44px;margin:0 -3px 0 -1px;overflow:visible}
+    .brand-logo .wave-v path{fill:none;stroke:var(--blue);stroke-width:6;stroke-linecap:round;stroke-linejoin:round}
     .count{display:grid;place-items:center;min-width:57px;height:57px;padding:0 15px;border-radius:50%;background:#e9e9ee;color:#666;font-size:1rem;font-weight:750}
     .scroll{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior-y:none;-webkit-overflow-scrolling:touch;padding:18px 20px 34px;scrollbar-width:none}
     .scroll::-webkit-scrollbar{display:none}
@@ -62,7 +63,7 @@
   <div class="shell">
     <header class="topbar">
       <div class="toprow">
-        <div><p class="overline">ENGLISH TRAINING</p><h1>瞬間英作文</h1></div>
+        <div class="brand-logo" role="img" aria-label="FloVo"><span>Flo</span><svg class="wave-v" viewBox="0 0 48 44" aria-hidden="true"><path d="M2 22h5c4 0 5-12 9-12s5 24 9 24 6-24 10-24 4 12 9 12h2"/></svg><span>o</span></div>
         <div class="count">5問</div>
       </div>
     </header>
