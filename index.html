@@ -96,6 +96,16 @@
       </header>
       <main class="practice-screen-main">
         <article class="practice-exercise-card" id="practiceExerciseCard">
+          <section class="practice-question-meta" aria-label="問題情報">
+            <span class="practice-number" id="practiceNumber">No 00000-00</span>
+            <div class="practice-keyword-row">
+              <span class="practice-keyword-label">keyword</span>
+              <strong class="practice-keyword" id="practiceWord">—</strong>
+              <span class="practice-meta-chip" id="practicePart">—</span>
+              <span class="practice-level-chips" id="practiceLevels"></span>
+            </div>
+            <p class="practice-meaning" id="practiceMeaning">—</p>
+          </section>
           <section class="practice-language practice-japanese-block">
             <span class="practice-language-label">Japanese</span>
             <p class="practice-japanese" id="practiceJapanese">日本語の例文</p>
@@ -117,24 +127,18 @@
             <button class="practice-nav-button" id="practicePrev" type="button" aria-label="前の問題">←</button>
             <button class="practice-nav-button" id="practiceNext" type="button" aria-label="次の問題">→</button>
           </div>
+          <section class="practice-rating-panel">
+            <span class="practice-panel-label">理解度選択</span>
+            <div class="practice-rating-options" id="practiceRatingOptions">
+              <button class="practice-rating-button rating-zero" type="button" data-value="0%">0%</button>
+              <button class="practice-rating-button rating-fifty" type="button" data-value="50%">50%</button>
+              <button class="practice-rating-button rating-eighty" type="button" data-value="80%">80%</button>
+              <button class="practice-rating-button rating-full" type="button" data-value="100%">100%</button>
+              <button class="practice-rating-button rating-unregistered" type="button" data-value="未登録">未登録</button>
+            </div>
+          </section>
         </article>
-        <section class="practice-rating-panel">
-          <span class="practice-panel-label">理解度選択</span>
-          <div class="practice-rating-options" id="practiceRatingOptions">
-            <button class="practice-rating-button rating-zero" type="button" data-value="0%">0%</button>
-            <button class="practice-rating-button rating-fifty" type="button" data-value="50%">50%</button>
-            <button class="practice-rating-button rating-eighty" type="button" data-value="80%">80%</button>
-            <button class="practice-rating-button rating-full" type="button" data-value="100%">100%</button>
-            <button class="practice-rating-button rating-unregistered" type="button" data-value="未登録">未登録</button>
-          </div>
-        </section>
-        <section class="practice-meta-panel">
-          <div class="practice-meta-id-row"><span id="practiceNo">単語No —</span><span id="practiceSubNo">Sub No —</span></div>
-          <div class="practice-meta-top"><strong id="practiceWord">—</strong><span id="practicePart">—</span><span id="practiceLevels">—</span></div>
-          <p id="practiceMeaning">—</p>
-        </section>
-      </main>
-    </section>
+      </main>    </section>
     <div class="help-overlay" id="helpOverlay" hidden>
       <section class="help-sheet" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
         <div class="help-head"><h2 id="helpTitle">ヘルプ</h2><button class="help-close" id="helpClose" type="button" aria-label="閉じる">×</button></div>
