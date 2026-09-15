@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#123b5d">
+  <meta name="description" content="瞬間英作文の練習用アプリ">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./icon.svg">
+  <title>瞬間英作文</title>
+  <style>
+    :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif;color:#153047;background:#edf4f8;font-synthesis:none}
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100svh;background:linear-gradient(180deg,#123b5d 0 35%,#edf4f8 35%);-webkit-tap-highlight-color:transparent}
+    button{font:inherit;cursor:pointer}
+    .app{width:min(100%,480px);min-height:100svh;margin:auto;padding:max(22px,env(safe-area-inset-top)) 20px max(24px,env(safe-area-inset-bottom))}
+    header{display:flex;align-items:center;justify-content:space-between;color:#fff}
+    .brand{display:flex;align-items:center;gap:11px;font-size:1rem;font-weight:750;letter-spacing:.02em}
+    .mark{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:#fff;color:#123b5d;font-weight:900;box-shadow:0 7px 20px #08253a55}
+    .settings{width:42px;height:42px;border:0;border-radius:50%;background:#ffffff1a;color:#fff;font-size:1.3rem}
+    .intro{padding:44px 4px 32px;color:#fff}
+    h1{max-width:330px;margin:0;font-size:clamp(2rem,9vw,3rem);line-height:1.13;letter-spacing:-.04em}
+    .intro p{margin:15px 0 0;color:#d9e9f4;font-size:1rem;line-height:1.65}
+    main{display:grid;gap:14px}
+    .card{padding:22px;border:1px solid #fff;border-radius:24px;background:#fff;box-shadow:0 18px 45px #25485e18}
+    .eyebrow{margin:0 0 8px;color:#52738a;font-size:.78rem;font-weight:800;letter-spacing:.12em}
+    h2{margin:0;font-size:1.4rem;letter-spacing:-.02em}
+    .primary{width:100%;min-height:58px;margin-top:22px;border:0;border-radius:17px;background:#f0a635;color:#172b3b;font-size:1.05rem;font-weight:850;box-shadow:0 9px 20px #c47f1b35}
+    .primary:active,.secondary:active,.settings:active{transform:scale(.98)}
+    .secondary{width:100%;min-height:53px;border:1px solid #cadbe5;border-radius:17px;background:#f8fbfd;color:#23465e;font-weight:750}
+    .note{display:flex;align-items:center;gap:10px;margin:14px 2px 0;color:#617b8d;font-size:.82rem}
+    .dot{width:8px;height:8px;border-radius:50%;background:#2b9b77}
+    .status{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .mini{padding:17px 18px;border-radius:19px;background:#dfeaf0;color:#25495f}
+    .mini strong{display:block;margin-top:4px;font-size:1.2rem}
+    @media (min-width:700px){body{background:#dce9f0}.app{margin-block:28px;min-height:auto;border-radius:34px;background:linear-gradient(180deg,#123b5d 0 43%,#edf4f8 43%);box-shadow:0 25px 80px #17394c33}}
+    @media (prefers-reduced-motion:no-preference){.card{animation:rise .45s ease both}@keyframes rise{from{opacity:0;transform:translateY(12px)}}}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="brand"><span class="mark">E</span><span>English Practice</span></div>
+      <button class="settings" type="button" aria-label="設定" data-coming>⚙︎</button>
+    </header>
+    <section class="intro">
+      <h1>瞬間英作文</h1>
+      <p>考えた英文を、迷わず口に出せるように。</p>
+    </section>
+    <main>
+      <section class="card">
+        <p class="eyebrow">TODAY'S PRACTICE</p>
+        <h2>今日の練習を始める</h2>
+        <button class="primary" type="button" data-coming>練習をはじめる</button>
+        <p class="note"><span class="dot"></span>問題データはまだ登録されていません</p>
+      </section>
+      <div class="status" aria-label="学習状況">
+        <div class="mini">登録問題<strong>0問</strong></div>
+        <div class="mini">今日の学習<strong>0問</strong></div>
+      </div>
+      <button class="secondary" type="button" data-coming>Excelを読み込む</button>
+    </main>
+  </div>
+  <script>
+    document.querySelectorAll('[data-coming]').forEach(button=>button.addEventListener('click',()=>alert('この機能は次の段階で追加します。')));
+    if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js'))}
+  </script>
+</body>
+</html>
