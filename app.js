@@ -180,7 +180,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     const overallFilterWarning=document.getElementById('overallFilterWarning');
     const practiceScreen=document.getElementById('practiceScreen');
     const practiceExerciseCard=document.getElementById('practiceExerciseCard');
-    const practiceExit=document.getElementById('practiceExit');
+    const navHome=document.querySelector('.nav-home');
     const practiceProgress=document.getElementById('practiceProgress');
     const practiceJapanese=document.getElementById('practiceJapanese');
     const practiceEnglish=document.getElementById('practiceEnglish');
@@ -411,20 +411,25 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       setAnswerVisible(false);
     };
     let practiceMoving=false;
-    const movePractice=async delta=>{
+    const animatePracticeCard=async(keyframes,options)=>{
+      if(!practiceExerciseCard.animate)return;
+      try{await practiceExerciseCard.animate(keyframes,options).finished}catch{}
+    };
+    const resetPracticeDrag=()=>{practiceExerciseCard.style.transform='';practiceExerciseCard.style.opacity=''};
+    const movePractice=async(delta,fromX=0)=>{
       const next=Math.max(0,Math.min(practiceRows.length-1,practiceIndex+delta));
-      if(next===practiceIndex||practiceMoving)return;
+      if(next===practiceIndex||practiceMoving){
+        await animatePracticeCard([{transform:`translateX(${fromX}px)`},{transform:'translateX(0)'}],{duration:220,easing:'cubic-bezier(.2,.8,.2,1)'});
+        resetPracticeDrag();return;
+      }
       practiceMoving=true;
-      const outX=delta>0?-42:42;
-      if(practiceExerciseCard.animate){
-        try{await practiceExerciseCard.animate([{transform:'translateX(0)',opacity:1},{transform:`translateX(${outX}px)`,opacity:.16}],{duration:150,easing:'cubic-bezier(.4,0,1,1)'}).finished}catch{}
-      }
-      practiceIndex=next;
-      renderPracticeQuestion();
-      if(practiceExerciseCard.animate){
-        try{await practiceExerciseCard.animate([{transform:`translateX(${-outX}px)`,opacity:.16},{transform:'translateX(0)',opacity:1}],{duration:240,easing:'cubic-bezier(.16,.78,.24,1)'}).finished}catch{}
-      }
-      practiceMoving=false;
+      const distance=Math.max(innerWidth*.82,300);
+      const outX=delta>0?-distance:distance;
+      resetPracticeDrag();
+      await animatePracticeCard([{transform:`translateX(${fromX}px)`,opacity:Math.max(.55,1-Math.abs(fromX)/innerWidth*.55)},{transform:`translateX(${outX}px)`,opacity:.08}],{duration:Math.max(120,210-Math.min(Math.abs(fromX),140)),easing:'cubic-bezier(.4,0,1,1)'});
+      practiceIndex=next;renderPracticeQuestion();
+      await animatePracticeCard([{transform:`translateX(${-outX}px)`,opacity:.08},{transform:'translateX(0)',opacity:1}],{duration:260,easing:'cubic-bezier(.16,.78,.24,1)'});
+      resetPracticeDrag();practiceMoving=false;
     };
     const shuffleRows=rows=>{
       const result=[...rows];
@@ -456,24 +461,37 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       refreshQuestionCount();
     };
     practiceButton.addEventListener('click',()=>openPractice().catch(()=>alert('練習画面を開けませんでした。')));
-    practiceExit.addEventListener('click',closePractice);
+    navHome.addEventListener('click',()=>{if(!practiceScreen.hidden)closePractice()});
     practiceReveal.addEventListener('click',()=>setAnswerVisible(true));
     practicePrev.addEventListener('click',()=>movePractice(-1));
     practiceNext.addEventListener('click',()=>movePractice(1));
     let practiceSwipeStart=null;
     practiceExerciseCard.addEventListener('pointerdown',event=>{
-      if((event.pointerType==='mouse'&&event.button!==0)||event.target.closest('button'))return;
-      practiceSwipeStart={id:event.pointerId,x:event.clientX,y:event.clientY,time:performance.now()};
+      if(practiceMoving||(event.pointerType==='mouse'&&event.button!==0)||event.target.closest('button'))return;
+      practiceSwipeStart={id:event.pointerId,x:event.clientX,y:event.clientY,time:performance.now(),horizontal:false};
+      practiceExerciseCard.setPointerCapture?.(event.pointerId);
+    });
+    practiceExerciseCard.addEventListener('pointermove',event=>{
+      if(!practiceSwipeStart||practiceSwipeStart.id!==event.pointerId)return;
+      const dx=event.clientX-practiceSwipeStart.x,dy=event.clientY-practiceSwipeStart.y;
+      if(!practiceSwipeStart.horizontal&&Math.abs(dx)>9&&Math.abs(dx)>Math.abs(dy)*1.08)practiceSwipeStart.horizontal=true;
+      if(!practiceSwipeStart.horizontal)return;
+      const atEdge=(practiceIndex===0&&dx>0)||(practiceIndex===practiceRows.length-1&&dx<0);
+      const dragX=dx*(atEdge?.34:1);
+      practiceExerciseCard.style.transform=`translateX(${dragX}px)`;
+      practiceExerciseCard.style.opacity=String(Math.max(.62,1-Math.abs(dragX)/innerWidth*.5));
     });
     practiceExerciseCard.addEventListener('pointerup',event=>{
       if(!practiceSwipeStart||practiceSwipeStart.id!==event.pointerId)return;
-      const dx=event.clientX-practiceSwipeStart.x;
-      const dy=event.clientY-practiceSwipeStart.y;
-      const elapsed=performance.now()-practiceSwipeStart.time;
-      practiceSwipeStart=null;
-      if(Math.abs(dx)>=44&&Math.abs(dx)>Math.abs(dy)*1.15&&elapsed<700)movePractice(dx<0?1:-1);
+      const start=practiceSwipeStart;practiceSwipeStart=null;
+      const dx=event.clientX-start.x,elapsed=Math.max(1,performance.now()-start.time),velocity=dx/elapsed;
+      if(start.horizontal&&(Math.abs(dx)>=innerWidth*.18||Math.abs(velocity)>.45))movePractice(dx<0?1:-1,dx);
+      else animatePracticeCard([{transform:`translateX(${dx}px)`,opacity:practiceExerciseCard.style.opacity||1},{transform:'translateX(0)',opacity:1}],{duration:220,easing:'cubic-bezier(.2,.8,.2,1)'}).finally(resetPracticeDrag);
     });
-    practiceExerciseCard.addEventListener('pointercancel',()=>{practiceSwipeStart=null});
+    practiceExerciseCard.addEventListener('pointercancel',()=>{
+      practiceSwipeStart=null;
+      animatePracticeCard([{transform:practiceExerciseCard.style.transform||'translateX(0)'},{transform:'translateX(0)'}],{duration:180,easing:'ease-out'}).finally(resetPracticeDrag);
+    });
     practiceAudio.addEventListener('click',()=>{
       if(!answerVisible||!('speechSynthesis' in window))return;
       speechSynthesis.cancel();
