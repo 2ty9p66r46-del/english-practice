@@ -82,6 +82,8 @@
     .filter-section-actions{display:flex;align-items:center;gap:5px}
     .section-filter-button{min-height:28px;padding:0 9px;border:1px solid #dfe3ea;border-radius:999px;background:linear-gradient(#f4f5f7,#e9ecf0);color:#6f7a8d;font-size:.61rem;font-weight:800;white-space:nowrap;box-shadow:inset 0 1px 0 #fff,0 1px 2px #26354a0b}
     .section-filter-button.selected{color:#fff;border-color:#087cff;background:linear-gradient(135deg,#087cff,#0a6be8);box-shadow:0 4px 10px #087cff2e}
+    .overall-filter-warning{min-height:1.35em;margin:0 2px 10px;color:#c93645;font-size:.67rem;font-weight:750;line-height:1.35}
+    .overall-filter-warning[hidden]{display:block;visibility:hidden}
     .filter-warning{min-height:1.35em;margin:2px 2px 9px;color:#c93645;font-size:.64rem;font-weight:750;line-height:1.35}
     .filter-warning[hidden]{display:block;visibility:hidden}
     .section-filter-button:active{transform:scale(.96)}
@@ -139,7 +141,7 @@
       <div class="stack">
         <section class="card quick"><button class="practice" id="practiceButton" type="button" data-coming>練習する</button><div class="practice-options"><div class="practice-control"><span class="practice-control-title">出題順</span><button class="order-switch" id="orderSwitch" type="button" aria-pressed="false"><i class="order-thumb"></i><span>シャッフル</span><span>順番通り</span></button></div><div class="practice-control question-picker" id="questionPicker"><span class="practice-control-title">出題数</span><button class="question-trigger" id="questionLimit" type="button" aria-haspopup="listbox" aria-expanded="false"><span id="questionLimitValue">すべて</span><span class="question-chevron">⌄</span></button><div class="question-menu" id="questionMenu" role="listbox" aria-label="出題数" hidden></div></div></div></section>
         <section class="card">
-          <div class="section-head"><h2>絞り込み条件</h2><div class="filter-bulk-actions"><button class="bulk-filter-button select" id="selectAllFilters" type="button">すべて選択</button></div></div>
+          <div class="section-head"><h2>絞り込み条件</h2><div class="filter-bulk-actions"><button class="bulk-filter-button select" id="selectAllFilters" type="button">すべて選択</button></div></div><p class="overall-filter-warning" id="overallFilterWarning" hidden></p>
           <div class="filter-section" data-filter-section="word">
             <div class="filter-section-head"><h3><span class="condition-badge">条件1</span><span>単語レベル</span></h3><div class="filter-section-actions"><button class="section-filter-button select" type="button" data-section-action="select">すべて選択</button></div></div><p class="filter-warning" hidden>少なくともひとつ項目を選択してください。</p>
           <div class="group level-group">
@@ -365,6 +367,7 @@
     const understandingChoices=[...document.querySelectorAll('.understanding .choice')];
     const allFilterChoices=[...levelChoices,...partChoices,...understandingChoices];
     const selectAllFilters=document.getElementById('selectAllFilters');
+    const overallFilterWarning=document.getElementById('overallFilterWarning');
     levelChoices.forEach(button=>button.classList.add(button.textContent.trim().endsWith('1')?'red':button.textContent.trim().endsWith('2')?'orange':'yellow'));
     document.querySelectorAll('.part-group').forEach(group=>{
       const rank=group.querySelector('.group-title span')?.textContent.trim().slice(-1);
@@ -408,6 +411,9 @@
     const syncGlobalControls=()=>{
       const selectedCount=allFilterChoices.filter(choice=>choice.classList.contains('selected')).length;
       selectAllFilters.classList.toggle('selected',selectedCount===allFilterChoices.length);
+      const emptyConditions=[...document.querySelectorAll('.filter-section')].map((section,index)=>section.querySelector('.choice.selected')?null:index+1).filter(Boolean);
+      overallFilterWarning.textContent=emptyConditions.length?`条件${emptyConditions.join(',')}の項目がひとつも選択されていません`:'';
+      overallFilterWarning.hidden=emptyConditions.length===0;
     };
     const syncSectionControls=section=>{
       if(!section)return;
