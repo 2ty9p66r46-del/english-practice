@@ -19,7 +19,7 @@
     .topbar{flex:0 0 auto;padding:calc(24px + env(safe-area-inset-top)) 24px 24px;background:#f7f7fb;border-bottom:1px solid #eef0f4}
     .toprow{display:flex;align-items:center;justify-content:space-between;gap:12px}
     .brand-lockup{display:flex;min-width:0;flex:1 1 auto;flex-direction:column;align-items:center;justify-content:center;gap:1px}
-    .brand-logo{display:flex;align-items:center;width:138px;height:54px;transform:translateY(1px)}
+    .brand-logo{display:flex;align-items:center;width:138px;height:54px;transform:translate(-14px,1px)}
     .brand-logo img{display:block;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 2px 3px #173c7a1f)}
     .brand-subtitle{margin-top:-5px;color:#53627b;font-family:"Avenir Next Condensed","Arial Narrow",-apple-system,sans-serif;font-size:.47rem;font-weight:800;letter-spacing:.15em;line-height:1;text-transform:uppercase;white-space:nowrap}
     .header-actions{display:flex;align-items:center;gap:5px}
@@ -27,9 +27,11 @@
     .header-action svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
     .header-action:active{transform:scale(.96)}
     .match-summary{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:9px;color:#7a8495;font-size:.75rem;font-weight:700}
-    .match-counts{display:flex;min-width:84px;flex-direction:column;align-items:stretch;gap:2px}
-    .match-metric{display:grid;grid-template-columns:38px 5ch;align-items:baseline;column-gap:5px;white-space:nowrap}
-    .match-label{margin-bottom:2px;color:#7a8495;font-size:.72rem;font-weight:800;white-space:nowrap}
+    .match-counts{display:grid;min-width:132px;grid-template-columns:auto auto;grid-template-rows:auto auto;align-items:center;column-gap:9px;row-gap:2px}
+    .match-metric{display:grid;grid-column:2;grid-template-columns:38px 5ch;align-items:baseline;column-gap:5px;white-space:nowrap}
+    .match-metric:nth-of-type(2){grid-row:1}
+    .match-metric:nth-of-type(3){grid-row:2}
+    .match-label{grid-column:1;grid-row:1/3;align-self:center;color:#7a8495;font-size:.72rem;font-weight:800;white-space:nowrap}
     .match-summary strong{display:block;width:5ch;color:#344054;font-size:.82rem;font-variant-numeric:tabular-nums;text-align:right}
     .reload-button{display:flex;width:53px;height:48px;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:0;border:1px solid #e0e4eb;border-radius:12px;background:#fff;color:#647086;box-shadow:0 1px 3px #26354a0d;font-size:.56rem;font-weight:800}
     .reload-button:active{transform:scale(.94)}
@@ -131,37 +133,37 @@
           <div class="section-head"><h2>絞り込み条件</h2></div>
           <p class="label part-label">単語レベル</p>
           <div class="group level-group">
-            <div class="group-title"><span>Speaking</span><button class="all blue">すべて</button></div>
+            <div class="group-title"><span>Speaking</span><button class="all blue">ALL</button></div>
             <div class="choice-grid"><button class="choice level red">S1</button><button class="choice level orange">S2</button><button class="choice level yellow">S3</button></div>
           </div>
           <div class="group level-group">
-            <div class="group-title"><span>Writing</span><button class="all blue">すべて</button></div>
+            <div class="group-title"><span>Writing</span><button class="all blue">ALL</button></div>
             <div class="choice-grid"><button class="choice level red">W1</button><button class="choice level orange">W2</button><button class="choice level yellow">W3</button></div>
           </div>
           <p class="label part-label">品詞レベル</p>
           <div class="group part-group">
-            <div class="group-title"><span>RANK S</span><button class="all">すべて</button></div>
+            <div class="group-title"><span>RANK S</span><button class="all blue">ALL</button></div>
             <div class="choice-grid"><button class="choice" data-value="動詞"><span class="choice-main">動詞</span><small>verb</small></button><button class="choice" data-value="名詞"><span class="choice-main">名詞</span><small>noun</small></button><button class="choice" data-value="形容詞"><span class="choice-main">形容詞</span><small>adjective</small></button></div>
           </div>
           <div class="group part-group">
-            <div class="group-title"><span>RANK A</span><button class="all">すべて</button></div>
+            <div class="group-title"><span>RANK A</span><button class="all blue">ALL</button></div>
             <div class="choice-grid"><button class="choice" data-value="前置詞"><span class="choice-main">前置詞</span><small>preposition</small></button><button class="choice" data-value="副詞"><span class="choice-main">副詞</span><small>adverb</small></button><button class="choice" data-value="接続詞"><span class="choice-main">接続詞</span><small>conjunction</small></button><button class="choice" data-value="法助動詞"><span class="choice-main">法助動詞</span><small>modal verb</small></button></div>
           </div>
           <div class="group part-group">
-            <div class="group-title"><span>RANK B</span><button class="all">すべて</button></div>
+            <div class="group-title"><span>RANK B</span><button class="all blue">ALL</button></div>
             <div class="choice-grid"><button class="choice" data-value="限定詞"><span class="choice-main">限定詞</span><small>determiner</small></button><button class="choice" data-value="代名詞"><span class="choice-main">代名詞</span><small>pronoun</small></button><button class="choice" data-value="助動詞"><span class="choice-main">助動詞</span><small>auxiliary verb</small></button></div>
           </div>
           <div class="group part-group">
-            <div class="group-title"><span>RANK C</span><button class="all">すべて</button></div>
+            <div class="group-title"><span>RANK C</span><button class="all blue">ALL</button></div>
             <div class="choice-grid"><button class="choice" data-value="前限定詞"><span class="choice-main">前限定詞</span><small>predeterminer</small></button><button class="choice" data-value="間投詞"><span class="choice-main">間投詞</span><small>interjection</small></button><button class="choice" data-value="数詞"><span class="choice-main">数詞</span><small>numeral</small></button></div>
           </div>
           <div class="group part-group">
-            <div class="group-title"><span>RANK D</span><button class="all">すべて</button></div>
+            <div class="group-title"><span>RANK D</span><button class="all blue">ALL</button></div>
             <div class="choice-grid"><button class="choice" data-value="不定冠詞"><span class="choice-main">不定冠詞</span><small>indefinite article</small></button><button class="choice" data-value="定冠詞"><span class="choice-main">定冠詞</span><small>definite article</small></button></div>
           </div>
           <p class="label">理解度</p>
           <div class="understanding">
-            <button class="choice level purple">未登録</button><button class="choice level red">0%</button><button class="choice level orange">50%</button><button class="choice level yellow">80%</button><button class="choice level green">100%</button>
+            <button class="choice level red">0%</button><button class="choice level orange">50%</button><button class="choice level yellow">80%</button><button class="choice level green">100%</button><button class="choice level purple">未登録</button>
           </div>
         </section>
         <div class="bottom-space"></div>
@@ -350,7 +352,7 @@
     document.querySelectorAll('.part-group').forEach(group=>{
       const rank=group.querySelector('.group-title span')?.textContent.trim().slice(-1);
       const tone={S:'red',A:'orange',B:'yellow',C:'green',D:'purple'}[rank];
-      if(tone)group.querySelectorAll('.choice,.all').forEach(button=>button.classList.add(tone));
+      if(tone)group.querySelectorAll('.choice').forEach(button=>button.classList.add(tone));
     });
     const understandingTones={'未登録':'purple','0%':'red','50%':'orange','80%':'yellow','100%':'green'};
     understandingChoices.forEach(button=>button.classList.add(understandingTones[button.textContent.trim()]));
@@ -394,18 +396,26 @@
       refreshQuestionCount();
     }));
     backTop.addEventListener('click',()=>{
-      scroller.scrollTo({top:0,behavior:'smooth'});
-      const waitForTop=()=>{
-        if(scroller.scrollTop<=1){
-          stack.classList.remove('top-bounce');
-          void stack.offsetWidth;
-          stack.classList.add('top-bounce');
-          setTimeout(()=>stack.classList.remove('top-bounce'),380);
+      const startTop=scroller.scrollTop;
+      const duration=Math.min(780,Math.max(520,startTop*.28));
+      const startTime=performance.now();
+      stack.classList.remove('top-bounce');
+      const animate=now=>{
+        const progress=Math.min(1,(now-startTime)/duration);
+        const scrollProgress=Math.min(1,progress/.72);
+        const eased=1-Math.pow(1-scrollProgress,3);
+        scroller.scrollTop=startTop*(1-eased);
+        const bounceProgress=progress>.58?(progress-.58)/.42:0;
+        const overshoot=bounceProgress>0?Math.sin(bounceProgress*Math.PI)*10*(1-.15*bounceProgress):0;
+        stack.style.transform=`translateY(${overshoot}px)`;
+        if(progress<1){
+          requestAnimationFrame(animate);
         }else{
-          requestAnimationFrame(waitForTop);
+          scroller.scrollTop=0;
+          stack.style.transform='';
         }
       };
-      requestAnimationFrame(waitForTop);
+      requestAnimationFrame(animate);
     });
     scroller.addEventListener('scroll',()=>backTop.classList.toggle('visible',scroller.scrollTop>240),{passive:true});
     refreshQuestionCount();
