@@ -189,8 +189,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     const practicePrev=document.getElementById('practicePrev');
     const practiceNext=document.getElementById('practiceNext');
     const practiceWord=document.getElementById('practiceWord');
-    const practiceNo=document.getElementById('practiceNo');
-    const practiceSubNo=document.getElementById('practiceSubNo');
+    const practiceNumber=document.getElementById('practiceNumber');
     const practicePart=document.getElementById('practicePart');
     const practiceLevels=document.getElementById('practiceLevels');
     const practiceMeaning=document.getElementById('practiceMeaning');
@@ -379,10 +378,32 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       practiceJapanese.textContent=text(row[8]);
       practiceEnglish.textContent=text(row[9]);
       practiceWord.textContent=text(row[3])||'—';
-      practiceNo.textContent=`単語No ${text(row[1])||'—'}`;
-      practiceSubNo.textContent=`Sub No ${text(row[2])||'—'}`;
-      practicePart.textContent=text(row[6])||'—';
-      practiceLevels.textContent=[text(row[11]),text(row[12])].filter(Boolean).join(' / ')||'—';
+      const formatPracticeNumber=(value,digits)=>{
+        const raw=text(value);
+        return /^\d+$/.test(raw)?raw.padStart(digits,'0'):raw||'—';
+      };
+      practiceNumber.textContent=`No ${formatPracticeNumber(row[1],5)}-${formatPracticeNumber(row[2],2)}`;
+      const part=text(row[6])||'—';
+      const rank=text(row[0]).toUpperCase();
+      const rankTone={S:'red',A:'orange',B:'yellow',C:'green',D:'purple'}[rank]||'';
+      practicePart.textContent=part;
+      practicePart.className=`practice-meta-chip ${rankTone}`.trim();
+      practiceLevels.replaceChildren();
+      const levels=[text(row[11]),text(row[12])].filter(Boolean);
+      if(!levels.length){
+        const empty=document.createElement('span');
+        empty.className='practice-meta-chip';
+        empty.textContent='—';
+        practiceLevels.append(empty);
+      }else{
+        levels.forEach(level=>{
+          const chip=document.createElement('span');
+          const digit=level.match(/[123]$/)?.[0];
+          chip.className=`practice-meta-chip ${digit==='1'?'red':digit==='2'?'orange':'yellow'}`;
+          chip.textContent=level.toUpperCase();
+          practiceLevels.append(chip);
+        });
+      }
       practiceMeaning.textContent=text(row[7])||'意味未登録';
       practicePrev.disabled=practiceIndex===0;
       practiceNext.disabled=practiceIndex===practiceRows.length-1;
