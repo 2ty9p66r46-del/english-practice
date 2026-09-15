@@ -15,7 +15,7 @@
     *{box-sizing:border-box}
     html,body{position:fixed;inset:0;width:100%;height:100%;margin:0;overflow:hidden;background:#f5f5fa}
     button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent}
-    .shell{display:flex;flex-direction:column;width:min(100%,520px);height:100dvh;margin:auto;background:#f5f5fa;overflow:hidden}
+    .shell{position:relative;display:flex;flex-direction:column;width:min(100%,520px);height:100dvh;margin:auto;background:#f5f5fa;overflow:hidden}
     .topbar{flex:0 0 auto;padding:calc(24px + env(safe-area-inset-top)) 24px 24px;background:#f7f7fb;border-bottom:1px solid #eef0f4}
     .toprow{display:flex;align-items:center;justify-content:space-between;gap:12px}
     .brand-logo{display:flex;align-items:center;width:138px;height:44px;transform:translateY(1px)}
@@ -54,7 +54,10 @@
     .segmented{display:grid;grid-template-columns:1fr 1fr;padding:3px;border-radius:16px;background:#ececef}
     .segment{min-height:53px;border:0;border-radius:13px;background:transparent;color:#748095;font-weight:800}
     .segment.active{background:#fff;color:var(--blue);box-shadow:0 2px 8px #2030471c}
-    .back-top{justify-self:center;min-height:47px;padding:0 22px;border:1px solid #d1d8e3;border-radius:999px;background:#fff;color:#435168;font-weight:750}
+    .floating-top{position:absolute;z-index:5;right:14px;bottom:calc(82px + env(safe-area-inset-bottom));display:grid;width:43px;height:43px;place-items:center;border:1px solid #d7dce5;border-radius:50%;background:#fffffff0;color:#526078;box-shadow:0 5px 16px #26354a24;opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .2s ease,transform .2s ease}
+    .floating-top.visible{opacity:.88;pointer-events:auto;transform:translateY(0)}
+    .floating-top:active{transform:scale(.94)}
+    .floating-top svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round}
     .bottom-space{height:4px}
     .nav{flex:0 0 auto;display:flex;height:calc(72px + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);background:#fff;border-top:1px solid #e1e4e9;box-shadow:0 -8px 25px #26354a08;overflow:hidden}
     .nav-home{position:relative;z-index:2;flex:0 0 88px;background:#fff;box-shadow:8px 0 18px #26354a0d}
@@ -119,10 +122,10 @@
           <p class="label">テスト量</p>
           <div class="segmented"><button class="segment active">指定範囲すべて</button><button class="segment">数量指定</button></div>
         </section>
-        <button class="back-top" id="backTop" type="button">↑ トップへ戻る</button>
         <div class="bottom-space"></div>
       </div>
     </main>
+    <button class="floating-top" id="backTop" type="button" aria-label="トップへ戻る"><svg viewBox="0 0 24 24"><path d="m6 14 6-6 6 6"/></svg></button>
     <nav class="nav" aria-label="メインメニュー">
       <button class="tab nav-home active" type="button"><svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8v9a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg><span>ホーム</span></button>
       <div class="nav-scroll">
@@ -275,7 +278,9 @@
       }
     });
     const scroller=document.getElementById('mainScroll');
-    document.getElementById('backTop').addEventListener('click',()=>scroller.scrollTo({top:0,behavior:'smooth'}));
+    const backTop=document.getElementById('backTop');
+    backTop.addEventListener('click',()=>scroller.scrollTo({top:0,behavior:'smooth'}));
+    scroller.addEventListener('scroll',()=>backTop.classList.toggle('visible',scroller.scrollTop>240),{passive:true});
     document.querySelectorAll('[data-coming]').forEach(button=>button.addEventListener('click',()=>alert('この機能は次の段階で追加します。')));
     document.querySelectorAll('.segment').forEach(button=>button.addEventListener('click',()=>{const box=button.parentElement;box.querySelectorAll('.segment').forEach(x=>x.classList.remove('active'));button.classList.add('active')}));
     if('serviceWorker' in navigator){
