@@ -73,7 +73,7 @@
         <div class="brand-logo"><img src="./flovo-wordmark.svg" alt="FloVo"></div>
         <div class="header-actions" aria-label="Excelメニュー">
           <button class="header-action" id="importButton" type="button" aria-label="Excelを読み込む"><svg viewBox="0 0 24 24"><path d="M12 3v12M7.5 10.5 12 15l4.5-4.5"/><path d="M5 19h14"/></svg><span>読込</span></button>
-          <button class="header-action" type="button" data-coming aria-label="Excelを書き出す"><svg viewBox="0 0 24 24"><path d="M12 15V3M7.5 7.5 12 3l4.5 4.5"/><path d="M5 19h14"/></svg><span>書出</span></button>
+          <button class="header-action" id="exportButton" type="button" aria-label="Excelを書き出す"><svg viewBox="0 0 24 24"><path d="M12 15V3M7.5 7.5 12 3l4.5 4.5"/><path d="M5 19h14"/></svg><span>書出</span></button>
           <button class="header-action" id="templateButton" type="button" aria-label="Excel雛形をダウンロード"><svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h5M12 11v6M9.5 14.5 12 17l2.5-2.5"/></svg><span>雛形</span></button>
         </div>
         <input class="file-input" id="excelInput" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
@@ -138,6 +138,7 @@
   <script>
     const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US','発音記号UK','品詞','意味','日本語文','英文','備考','S','W','理解度','データチェック'];
     const importButton=document.getElementById('importButton');
+    const exportButton=document.getElementById('exportButton');
     const templateButton=document.getElementById('templateButton');
     const excelInput=document.getElementById('excelInput');
     const text=value=>String(value??'').trim();
@@ -156,6 +157,31 @@
         transaction.onerror=()=>reject(transaction.error);
       });
       database.close();
+    };
+    const loadImportedData=async()=>{
+      const database=await openDatabase();
+      const result=await new Promise((resolve,reject)=>{
+        const request=database.transaction('app','readonly').objectStore('app').get('importedExcel');
+        request.onsuccess=()=>resolve(request.result);
+        request.onerror=()=>reject(request.error);
+      });
+      database.close();
+      return result;
+    };
+    const saveFileToDevice=async file=>{
+      if(navigator.canShare?.({files:[file]})){
+        await navigator.share({files:[file]});
+        return;
+      }
+      const url=URL.createObjectURL(file);
+      const link=document.createElement('a');
+      link.href=url;
+      link.download=file.name;
+      link.style.display='none';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),30000);
     };
     const validateRows=rows=>{
       const errors=[];
@@ -184,23 +210,33 @@
         const response=await fetch('./Import-data_format.xlsx',{cache:'no-store'});
         if(!response.ok)throw new Error('雛形ファイルを取得できませんでした。');
         const file=new File([await response.blob()],'Import-data_format.xlsx',{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
-        if(navigator.canShare?.({files:[file]})){
-          await navigator.share({files:[file]});
-        }else{
-          const url=URL.createObjectURL(file);
-          const link=document.createElement('a');
-          link.href=url;
-          link.download=file.name;
-          link.style.display='none';
-          document.body.appendChild(link);
-          link.click();
-          link.remove();
-          setTimeout(()=>URL.revokeObjectURL(url),30000);
-        }
+        await saveFileToDevice(file);
       }catch(error){
         if(error?.name!=='AbortError')alert(error?.message||'雛形の保存に失敗しました。');
       }finally{
         templateButton.disabled=false;
+      }
+    });
+    exportButton.addEventListener('click',async()=>{
+      exportButton.disabled=true;
+      try{
+        const stored=await loadImportedData();
+        if(!stored)throw new Error('書き出すデータがありません。先にExcelを読み込んでください。');
+        let bytes=stored.fileBytes;
+        if(!bytes||stored.modified){
+          if(typeof XLSX==='undefined')throw new Error('Excel書出機能を準備できませんでした。通信状態を確認してください。');
+          const sheet=XLSX.utils.aoa_to_sheet([stored.headers,...stored.rows]);
+          const workbook=XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(workbook,sheet,'単語リスト');
+          bytes=XLSX.write(workbook,{bookType:'xlsx',type:'array'});
+        }
+        const fileName=stored.fileName||'FloVo_export.xlsx';
+        const file=new File([bytes],fileName,{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+        await saveFileToDevice(file);
+      }catch(error){
+        if(error?.name!=='AbortError')alert(error?.message||'Excelの書き出しに失敗しました。');
+      }finally{
+        exportButton.disabled=false;
       }
     });
     importButton.addEventListener('click',()=>{
@@ -212,7 +248,8 @@
       if(!file)return;
       importButton.disabled=true;
       try{
-        const workbook=XLSX.read(await file.arrayBuffer(),{type:'array',cellFormula:true});
+        const fileBytes=await file.arrayBuffer();
+        const workbook=XLSX.read(fileBytes,{type:'array',cellFormula:true});
         const sheet=workbook.Sheets['単語リスト']||workbook.Sheets[workbook.SheetNames[0]];
         if(!sheet)throw new Error('読み込めるシートがありません。');
         const allRows=XLSX.utils.sheet_to_json(sheet,{header:1,defval:'',raw:false});
@@ -223,7 +260,7 @@
         if(!rows.length)throw new Error('読み込めるデータがありません。');
         const errors=validateRows(rows);
         if(errors.length)throw new Error(`データにエラーがあります。\\n\\n${errors.slice(0,5).join('\\n')}${errors.length>5?`\\nほか${errors.length-5}件`:''}`);
-        await saveImportedData({headers,rows,fileName:file.name,importedAt:new Date().toISOString()});
+        await saveImportedData({headers,rows,fileName:file.name,fileBytes,modified:false,importedAt:new Date().toISOString()});
         alert(`${rows.length}行のデータを読み込みました。`);
       }catch(error){
         alert(error?.message||'Excelの読み込みに失敗しました。');
