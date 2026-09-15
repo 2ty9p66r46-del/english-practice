@@ -19,7 +19,7 @@
     .topbar{flex:0 0 auto;padding:calc(24px + env(safe-area-inset-top)) 24px 24px;background:#f7f7fb;border-bottom:1px solid #eef0f4}
     .toprow{display:flex;align-items:center;justify-content:space-between;gap:12px}
     .brand-lockup{display:flex;min-width:0;flex:1 1 auto;flex-direction:column;align-items:center;justify-content:center;gap:1px}
-    .brand-logo{display:flex;align-items:center;width:138px;height:54px;transform:translate(-14px,1px)}
+    .brand-logo{display:flex;align-items:center;width:138px;height:54px;transform:translateY(1px)}
     .brand-logo img{display:block;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 2px 3px #173c7a1f)}
     .brand-subtitle{margin-top:-5px;color:#53627b;font-family:"Avenir Next Condensed","Arial Narrow",-apple-system,sans-serif;font-size:.47rem;font-weight:800;letter-spacing:.15em;line-height:1;text-transform:uppercase;white-space:nowrap}
     .header-actions{display:flex;align-items:center;gap:5px}
@@ -32,7 +32,9 @@
     .match-metric:nth-of-type(2){grid-row:1}
     .match-metric:nth-of-type(3){grid-row:2}
     .match-label{grid-column:1;grid-row:1/3;align-self:center;color:#7a8495;font-size:.72rem;font-weight:800;white-space:nowrap}
-    .match-summary strong{display:block;width:5ch;color:#344054;font-size:.82rem;font-variant-numeric:tabular-nums;text-align:right}
+    .match-summary strong{display:flex;width:5ch;justify-content:flex-end;color:#344054;font-size:.82rem;font-variant-numeric:tabular-nums;text-align:right}
+    .count-padding{color:#c7ccd5}
+    .count-value{color:#344054}
     .reload-button{display:flex;width:53px;height:48px;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:0;border:1px solid #e0e4eb;border-radius:12px;background:#fff;color:#647086;box-shadow:0 1px 3px #26354a0d;font-size:.56rem;font-weight:800}
     .reload-button:active{transform:scale(.94)}
     .reload-button svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
@@ -42,8 +44,6 @@
     .scroll{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior-y:auto;-webkit-overflow-scrolling:touch;padding:18px 20px 34px;scrollbar-width:none}
     .scroll::-webkit-scrollbar{display:none}
     .stack{display:grid;gap:16px}
-    .stack.top-bounce{animation:topBounce .34s cubic-bezier(.2,.75,.35,1)}
-    @keyframes topBounce{0%{transform:translateY(0)}48%{transform:translateY(13px)}100%{transform:translateY(0)}}
     .card{padding:22px;border-radius:23px;background:var(--card);box-shadow:0 1px 1px #1822350d,0 9px 25px #27344d0a}
     .quick{display:grid;gap:9px;padding:14px}
     .practice-options{display:grid;grid-template-columns:minmax(0,1fr) 72px;gap:7px}
@@ -97,10 +97,6 @@
     .segmented{display:grid;grid-template-columns:1fr 1fr;padding:4px;border:1px solid #e3e6ec;border-radius:16px;background:#f0f1f4}
     .segment{min-height:49px;border:0;border-radius:12px;background:transparent;color:#748095;font-weight:800}
     .segment.active{background:#fff;color:var(--blue);box-shadow:0 3px 10px #20304718}
-    .floating-top{position:absolute;z-index:5;right:14px;bottom:calc(82px + env(safe-area-inset-bottom));display:grid;width:43px;height:43px;place-items:center;border:1px solid #d7dce5;border-radius:50%;background:#fffffff0;color:#526078;box-shadow:0 5px 16px #26354a24;opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .2s ease,transform .2s ease}
-    .floating-top.visible{opacity:.88;pointer-events:auto;transform:translateY(0)}
-    .floating-top:active{transform:scale(.94)}
-    .floating-top svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round}
     .bottom-space{height:4px}
     .nav{flex:0 0 auto;display:flex;height:calc(72px + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);background:#fff;border-top:1px solid #e1e4e9;box-shadow:0 -8px 25px #26354a08;overflow:hidden}
     .nav-home{position:relative;z-index:2;flex:0 0 88px;background:#fff;box-shadow:8px 0 18px #26354a0d}
@@ -116,7 +112,7 @@
   <div class="shell">
     <header class="topbar">
       <div class="toprow">
-        <div class="brand-lockup"><div class="brand-logo"><img src="./flovo-wordmark-v2.png" alt="FloVo"></div><div class="brand-subtitle">English Composition Practice</div></div>
+        <div class="brand-lockup"><div class="brand-logo"><img src="./flovo-wordmark-v3.png" alt="FloVo"></div><div class="brand-subtitle">English Composition Practice</div></div>
         <div class="header-actions" aria-label="Excelメニュー">
           <button class="header-action" id="importButton" type="button" aria-label="Excelを読み込む"><svg viewBox="0 0 24 24"><path d="M12 3v12M7.5 10.5 12 15l4.5-4.5"/><path d="M5 19h14"/></svg><span>読込</span></button>
           <button class="header-action" id="exportButton" type="button" aria-label="Excelを書き出す"><svg viewBox="0 0 24 24"><path d="M12 15V3M7.5 7.5 12 3l4.5 4.5"/><path d="M5 19h14"/></svg><span>書出</span></button>
@@ -161,15 +157,16 @@
             <div class="group-title"><span>RANK D</span><button class="all blue">ALL</button></div>
             <div class="choice-grid"><button class="choice" data-value="不定冠詞"><span class="choice-main">不定冠詞</span><small>indefinite article</small></button><button class="choice" data-value="定冠詞"><span class="choice-main">定冠詞</span><small>definite article</small></button></div>
           </div>
-          <p class="label">理解度</p>
-          <div class="understanding">
+          <div class="group understanding-group">
+            <div class="group-title"><span>理解度</span><button class="all blue">ALL</button></div>
+            <div class="understanding">
             <button class="choice level red">0%</button><button class="choice level orange">50%</button><button class="choice level yellow">80%</button><button class="choice level green">100%</button><button class="choice level purple">未登録</button>
+            </div>
           </div>
         </section>
         <div class="bottom-space"></div>
       </div>
     </main>
-    <button class="floating-top" id="backTop" type="button" aria-label="トップへ戻る"><svg viewBox="0 0 24 24"><path d="m6 14 6-6 6 6"/></svg></button>
     <nav class="nav" aria-label="メインメニュー">
       <button class="tab nav-home active" type="button"><svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8v9a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg><span>ホーム</span></button>
       <div class="nav-scroll">
@@ -340,8 +337,6 @@
       }
     });
     const scroller=document.getElementById('mainScroll');
-    const stack=scroller.querySelector('.stack');
-    const backTop=document.getElementById('backTop');
     const practiceButton=document.getElementById('practiceButton');
     const wordCount=document.getElementById('wordCount');
     const exampleCount=document.getElementById('exampleCount');
@@ -374,8 +369,14 @@
       const pairCount=new Set(matchingRows.map(row=>`${text(row[3]).toLowerCase()}\\t${text(row[6])}`)).size;
       practiceButton.dataset.questionCount=String(matchingRows.length);
       practiceButton.dataset.pairCount=String(pairCount);
-      wordCount.textContent=String(pairCount);
-      exampleCount.textContent=String(matchingRows.length);
+      const renderFiveDigitCount=(element,value)=>{
+        const number=Math.min(99999,Math.max(0,Math.trunc(Number(value)||0)));
+        const digits=String(number);
+        const padding='0'.repeat(5-digits.length);
+        element.innerHTML=`<span class="count-padding">${padding}</span><span class="count-value">${digits}</span>`;
+      };
+      renderFiveDigitCount(wordCount,pairCount);
+      renderFiveDigitCount(exampleCount,matchingRows.length);
     };
     const syncGroupAll=group=>{
       if(!group)return;
@@ -395,29 +396,6 @@
       button.classList.toggle('selected',selectAll);
       refreshQuestionCount();
     }));
-    backTop.addEventListener('click',()=>{
-      const startTop=scroller.scrollTop;
-      const duration=Math.min(780,Math.max(520,startTop*.28));
-      const startTime=performance.now();
-      stack.classList.remove('top-bounce');
-      const animate=now=>{
-        const progress=Math.min(1,(now-startTime)/duration);
-        const scrollProgress=Math.min(1,progress/.72);
-        const eased=1-Math.pow(1-scrollProgress,3);
-        scroller.scrollTop=startTop*(1-eased);
-        const bounceProgress=progress>.58?(progress-.58)/.42:0;
-        const overshoot=bounceProgress>0?Math.sin(bounceProgress*Math.PI)*10*(1-.15*bounceProgress):0;
-        stack.style.transform=`translateY(${overshoot}px)`;
-        if(progress<1){
-          requestAnimationFrame(animate);
-        }else{
-          scroller.scrollTop=0;
-          stack.style.transform='';
-        }
-      };
-      requestAnimationFrame(animate);
-    });
-    scroller.addEventListener('scroll',()=>backTop.classList.toggle('visible',scroller.scrollTop>240),{passive:true});
     refreshQuestionCount();
     document.querySelectorAll('[data-coming]').forEach(button=>button.addEventListener('click',()=>alert('この機能は次の段階で追加します。')));
     const orderSwitch=document.getElementById('orderSwitch');
