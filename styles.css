@@ -137,13 +137,13 @@
 .practice-brand small{margin-top:-5px;color:#65728a;font-size:.38rem;font-weight:850;letter-spacing:.13em;white-space:nowrap}
 .practice-progress{display:block;width:100%;align-self:center;justify-self:stretch;margin-bottom:9px;padding-bottom:10px;border-bottom:1.5px solid #cfd5df;color:#65728a;font-size:.72rem;font-variant-numeric:tabular-nums;text-align:center}
 .practice-screen-main{position:relative;display:flex;flex:1 1 auto;min-height:0;flex-direction:column;gap:10px;padding:12px 14px calc(14px + env(safe-area-inset-bottom));overflow-y:auto}
-.practice-exercise-card{display:grid;flex:1 1 520px;min-height:510px;grid-template-rows:auto auto minmax(0,1fr) 1px minmax(0,1fr) auto;padding:14px 18px 18px;border-radius:23px;background:#fff;box-shadow:0 1px 1px #1822350d,0 9px 25px #27344d0a;touch-action:pan-y;will-change:transform,opacity}
+.practice-exercise-card{display:grid;flex:1 1 520px;min-height:510px;grid-template-rows:max-content max-content minmax(0,1fr) 1px minmax(0,1fr) auto;padding:14px 18px 18px;border-radius:23px;background:#fff;box-shadow:0 1px 1px #1822350d,0 9px 25px #27344d0a;touch-action:pan-y;will-change:transform,opacity}
 .practice-question-meta{position:relative;padding:0 4px 12px;border-bottom:1px solid #e0e5ed}
 .practice-info-row{display:flex;align-items:center;gap:7px;min-width:0}
-.practice-info-primary{min-height:40px;margin:0 -4px;padding:8px 150px 8px 4px;border-bottom:1.5px solid #cfd5df}
+.practice-info-primary{height:44px;margin:0 -4px;padding:0 4px;border-bottom:1.5px solid #cfd5df}
 .practice-info-keyword{display:grid;grid-template-columns:minmax(62px,.9fr) 1.5px minmax(54px,1fr) 1.5px minmax(96px,1.35fr);align-items:center;gap:7px;margin-top:10px}
 .practice-number{color:#526078;font-size:.68rem;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:.02em;white-space:nowrap}
-.practice-top-chips{position:absolute;top:8px;right:4px;display:flex;align-items:center;gap:6px}
+.practice-top-chips{position:static;display:flex;align-items:center;gap:6px;margin-left:auto}
 .practice-level-chips{display:flex;align-items:center;gap:5px}
 .practice-level-chips .practice-meta-chip{width:20px;height:20px;min-height:20px;justify-content:center;padding:0;border:1.5px solid var(--solid-line,var(--line,#cfd5df));border-radius:50%;background:linear-gradient(180deg,var(--solid-hi,#f7f9fc) 0%,var(--solid,#e9edf3) 52%,var(--solid-lo,#d4dae4) 100%);color:#fff;font-size:.42rem;text-shadow:0 1px 1px #00000045;box-shadow:inset 0 1px 0 #ffffffb8,inset 0 -1px 0 #00000020,0 2px 4px var(--solid-shadow,#26354a22)}
 .practice-info-divider{width:1.5px;height:30px;background:#cfd5df}
