@@ -257,3 +257,7 @@
 
 /* Meaning remains blue but is 80% of the keyword size. */
 .practice-meaning{font-size:1.04rem}
+
+/* Meaning uses black text; notes wrap to at most two lines. */
+.practice-meaning{color:#111827}
+.practice-note{display:-webkit-box;white-space:normal;text-overflow:clip;overflow:hidden;overflow-wrap:anywhere;-webkit-box-orient:vertical;-webkit-line-clamp:2}
