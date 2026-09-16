@@ -90,15 +90,11 @@
     </nav>
     <section class="practice-screen" id="practiceScreen" aria-label="英作文練習" hidden>
       <header class="practice-screen-header">
-        <span class="practice-header-spacer" aria-hidden="true"></span>
+        <button class="practice-nav-button" id="practicePrev" type="button" aria-label="前の問題">←</button>
         <div class="practice-brand"><img src="./flovo-wordmark-v3.png" alt="FloVo"><small>COMPOSITION PRACTICE</small></div>
-        <span class="practice-header-spacer" aria-hidden="true"></span>
+        <button class="practice-nav-button" id="practiceNext" type="button" aria-label="次の問題">→</button>
       </header>
       <main class="practice-screen-main">
-        <div class="practice-question-nav">
-          <button class="practice-nav-button" id="practicePrev" type="button" aria-label="前の問題">←</button>
-          <button class="practice-nav-button" id="practiceNext" type="button" aria-label="次の問題">→</button>
-        </div>
         <article class="practice-exercise-card" id="practiceExerciseCard">
           <strong class="practice-progress" id="practiceProgress">0 / 0</strong>
           <section class="practice-question-meta" aria-label="問題情報">
@@ -136,11 +132,11 @@
           <section class="practice-rating-panel">
             <span class="practice-panel-label">理解度選択</span>
             <div class="practice-rating-options" id="practiceRatingOptions">
-              <button class="practice-rating-button rating-zero" type="button" data-value="0%">0%</button>
-              <button class="practice-rating-button rating-fifty" type="button" data-value="50%">50%</button>
-              <button class="practice-rating-button rating-eighty" type="button" data-value="80%">80%</button>
-              <button class="practice-rating-button rating-full" type="button" data-value="100%">100%</button>
-              <button class="practice-rating-button rating-unregistered" type="button" data-value="未登録">未登録</button>
+              <button class="practice-rating-button rating-zero red" type="button" data-value="0%">0%</button>
+              <button class="practice-rating-button rating-fifty orange" type="button" data-value="50%">50%</button>
+              <button class="practice-rating-button rating-eighty yellow" type="button" data-value="80%">80%</button>
+              <button class="practice-rating-button rating-full green" type="button" data-value="100%">100%</button>
+              <button class="practice-rating-button rating-unregistered purple" type="button" data-value="未登録">未登録</button>
             </div>
           </section>
         </article>
