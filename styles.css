@@ -277,3 +277,6 @@
 /* Center the No chip above the centered keyword. */
 .practice-word-stack .practice-number{justify-self:center}
 .tab:disabled{color:#c5cad3;opacity:.55;pointer-events:none}
+
+/* The home quick card is now a settings-only question method card. */
+.method-head{margin-bottom:10px}
