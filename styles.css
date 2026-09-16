@@ -309,3 +309,16 @@
 
 .practice-play-icon{display:grid;width:29px;height:25px;place-items:center;font-size:1.05rem;line-height:1}
 #languageModeIcon{width:39px;font-size:.5rem;letter-spacing:-.02em}
+
+/* App-native playback and repeat icons. */
+.visually-hidden{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+.practice-play-svg{width:29px!important;height:29px!important;fill:currentColor!important;stroke:none!important;filter:drop-shadow(0 2px 3px #087cff2b)}
+.practice-play-svg .pause-mark{display:none}
+#autoPlayTab.is-playing .practice-play-svg .play-mark{display:none}
+#autoPlayTab.is-playing .practice-play-svg .pause-mark{display:block}
+#languageModeIcon{box-sizing:border-box;width:42px;max-width:calc(100% - 8px);height:28px;overflow:hidden;font-size:.48rem;letter-spacing:-.03em;white-space:nowrap}
+.repeat-mode-icon{width:31px!important;height:29px!important;fill:none!important;stroke:currentColor!important;stroke-width:2.3!important;stroke-linecap:round!important;stroke-linejoin:round!important}
+.repeat-mode-icon>g{display:none}
+#repeatModeTab.repeat-current .repeat-current-mark,#repeatModeTab.repeat-all .repeat-all-mark,#repeatModeTab.repeat-once .repeat-once-mark{display:block}
+.repeat-current-mark circle{fill:var(--blue);stroke:#fff;stroke-width:1.5}
+.repeat-current-mark text{fill:#fff;stroke:none;font-size:7px;font-weight:900;text-anchor:middle}
