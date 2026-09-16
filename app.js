@@ -195,6 +195,8 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     const practiceMeaning=document.getElementById('practiceMeaning');
     const practicePronUs=document.getElementById('practicePronUs');
     const practicePronUk=document.getElementById('practicePronUk');
+    const practicePronUsAudio=document.getElementById('practicePronUsAudio');
+    const practicePronUkAudio=document.getElementById('practicePronUkAudio');
     const practiceNote=document.getElementById('practiceNote');
     const practiceRatingButtons=[...document.querySelectorAll('.practice-rating-button')];
     levelChoices.forEach(button=>button.classList.add(button.textContent.trim().endsWith('1')?'red':button.textContent.trim().endsWith('2')?'orange':'yellow'));
@@ -410,6 +412,8 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       practicePronUs.textContent=text(row[4])||'—';
       practicePronUk.textContent=text(row[5])||'—';
       practiceMeaning.textContent=text(row[7])||'意味未登録';
+      practicePronUsAudio.disabled=!('speechSynthesis' in window);
+      practicePronUkAudio.disabled=!('speechSynthesis' in window);
       const note=text(row[10]);
       practiceNote.textContent=note;
       practiceNote.closest('.practice-note-row').classList.toggle('is-empty',!note);
@@ -501,6 +505,18 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       practiceSwipeStart=null;
       animatePracticeCard([{transform:practiceExerciseCard.style.transform||'translateX(0)'},{transform:'translateX(0)'}],{duration:180,easing:'ease-out'}).finally(resetPracticeDrag);
     });
+    const speakPracticeWord=(lang,button)=>{
+      if(!('speechSynthesis' in window))return;
+      speechSynthesis.cancel();
+      const utterance=new SpeechSynthesisUtterance(practiceWord.textContent);
+      utterance.lang=lang;
+      utterance.rate=.82;
+      utterance.onstart=()=>button.classList.add('speaking');
+      utterance.onend=utterance.onerror=()=>button.classList.remove('speaking');
+      speechSynthesis.speak(utterance);
+    };
+    practicePronUsAudio.addEventListener('click',()=>speakPracticeWord('en-US',practicePronUsAudio));
+    practicePronUkAudio.addEventListener('click',()=>speakPracticeWord('en-GB',practicePronUkAudio));
     practiceAudio.addEventListener('click',()=>{
       if(!answerVisible||!('speechSynthesis' in window))return;
       speechSynthesis.cancel();
