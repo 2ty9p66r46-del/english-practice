@@ -346,3 +346,8 @@
 .practice-info-primary .practice-number{justify-self:start;align-self:center;padding:4px 8px;border-radius:var(--radius-pill);background:#111827;color:#fff}
 .practice-info-primary .practice-top-chips{justify-self:end;align-self:center;margin-left:0}
 .practice-word-stack{grid-template-rows:auto}
+
+/* A compact stop control appears beside the active sentence language only. */
+.practice-inline-stop{display:grid;width:24px;height:24px;place-items:center;padding:0;border:1.5px solid #9fc9ff;border-radius:7px;background:#eef6ff;color:var(--blue);box-shadow:inset 0 1px 0 #fff,0 2px 5px #087cff18}
+.practice-inline-stop[hidden]{display:none}
+.practice-inline-stop svg{width:14px;height:14px;fill:currentColor;stroke:none}
