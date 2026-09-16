@@ -399,3 +399,20 @@
 /* Rating controls are intentionally larger than metadata badges for easier tapping. */
 .practice-rating-inline .practice-rating-button{box-sizing:border-box;width:32px;height:32px;min-width:32px;min-height:32px;padding:0;border-width:2px;font-size:.5rem;line-height:1}
 .practice-rating-inline .practice-rating-button.selected{border-width:2px}
+
+
+/* Practice settings use the same blue trigger and vertical picker as question count. */
+.practice-setting-row{position:relative;overflow:visible}
+.practice-setting-row>span{min-width:0;padding-right:10px}
+.practice-setting-picker{position:relative;flex:0 0 104px}
+.practice-setting-trigger{display:flex;width:104px;height:38px;align-items:center;justify-content:center;gap:5px;padding:0 9px;border:var(--action-border-width) solid var(--action-border-color);border-radius:var(--radius-pill);background:linear-gradient(180deg,var(--action-top) 0%,var(--action-mid) 46%,var(--action-bottom) 100%);color:#fff;box-shadow:inset 0 1px 0 #ffffff9c,0 4px 10px #087cff30;font-size:.75rem;font-weight:850;white-space:nowrap}
+.practice-setting-trigger:active{transform:scale(.97)}
+.practice-setting-value{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.practice-setting-chevron{flex:0 0 auto;color:#dcecff;font-size:.72rem;transform:translateY(-1px)}
+.practice-setting-menu{position:absolute;z-index:150;top:calc(100% + 6px);right:0;width:104px;max-height:240px;overflow-y:auto;padding:5px;border:1px solid #ffffff24;border-radius:16px;background:#50535af5;box-shadow:0 12px 30px #18223542;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.practice-setting-menu.open-up{top:auto;bottom:calc(100% + 6px)}
+.practice-setting-menu[hidden]{display:none}
+.practice-setting-menu::-webkit-scrollbar{display:none}
+.practice-setting-option{display:block;width:100%;height:42px;padding:0 4px;border:0;border-radius:11px;background:transparent;color:#fff;font-size:.86rem;font-weight:650;text-align:center;white-space:nowrap}
+.practice-setting-option.selected{background:linear-gradient(135deg,#1686ff,#0a6be8);box-shadow:0 2px 7px #087cff40;font-weight:850}
+.practice-setting-option:active{background:#ffffff2e}
