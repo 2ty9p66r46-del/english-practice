@@ -261,3 +261,7 @@
 /* Meaning uses black text; notes wrap to at most two lines. */
 .practice-meaning{color:#111827}
 .practice-note{display:-webkit-box;white-space:normal;text-overflow:clip;overflow:hidden;overflow-wrap:anywhere;-webkit-box-orient:vertical;-webkit-line-clamp:2}
+
+/* Example sentences match the meaning size, stay bold, and reserve four lines. */
+.practice-japanese,.practice-english{display:-webkit-box;width:100%;height:6.04rem;min-height:6.04rem;max-height:6.04rem;margin:0;color:#111827;font-size:1.04rem;font-weight:800;line-height:1.45;letter-spacing:0;overflow:hidden;overflow-wrap:anywhere;-webkit-box-orient:vertical;-webkit-line-clamp:4}
+.practice-english[hidden]{display:none}
