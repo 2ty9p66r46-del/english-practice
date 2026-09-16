@@ -206,3 +206,8 @@
 .screen-fade{position:fixed;z-index:9999;inset:0;background:#0d1420;opacity:0;pointer-events:none;transition:opacity 220ms cubic-bezier(.4,0,.2,1)}
 .screen-fade.active{opacity:1;pointer-events:auto}
 @media (prefers-reduced-motion:reduce){.screen-fade{transition-duration:80ms}}
+
+/* Practice language headings: inline blue audio glyphs without circular chrome. */
+.practice-language-label{color:var(--blue)}
+.practice-audio{border:0;border-radius:0;background:transparent;color:var(--blue);box-shadow:none}
+.practice-audio:disabled{border:0;background:transparent;color:#abb2bd;box-shadow:none}
