@@ -284,3 +284,6 @@
 /* Practice mode exposes only the Home tab. */
 .nav.practice-mode .nav-scroll{display:none}
 .nav.practice-mode .nav-home{flex:1 1 auto;color:var(--blue);box-shadow:none}
+
+/* Keep Home in its normal fixed left position during practice. */
+.nav.practice-mode .nav-home{flex:0 0 88px;box-shadow:8px 0 18px #26354a0d}
