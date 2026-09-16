@@ -370,7 +370,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       answerVisible=visible;
       practiceReveal.hidden=visible;
       practiceEnglish.hidden=!visible;
-      practiceAudio.disabled=!visible||!('speechSynthesis' in window);
+      practiceAudio.disabled=!('speechSynthesis' in window);
     };
     const syncPracticeRating=row=>{
       const value=text(row?.[13])||'未登録';
@@ -551,7 +551,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       speechSynthesis.speak(utterance);
     });
     practiceAudio.addEventListener('click',()=>{
-      if(!answerVisible||!('speechSynthesis' in window))return;
+      if(!('speechSynthesis' in window))return;
       speechSynthesis.cancel();
       const utterance=new SpeechSynthesisUtterance(practiceEnglish.textContent);
       utterance.lang='en-US';
