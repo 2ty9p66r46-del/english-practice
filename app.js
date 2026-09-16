@@ -515,7 +515,6 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       utterance.onend=utterance.onerror=()=>button.classList.remove('speaking');
       speechSynthesis.speak(utterance);
     };
-    practiceWord.addEventListener('click',()=>speakPracticeWord('en-US',practiceWord));
     practicePronUsAudio.addEventListener('click',()=>speakPracticeWord('en-US',practicePronUsAudio));
     practicePronUkAudio.addEventListener('click',()=>speakPracticeWord('en-GB',practicePronUkAudio));
     practiceAudio.addEventListener('click',()=>{
