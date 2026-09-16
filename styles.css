@@ -372,23 +372,10 @@
 .subtitle-accent-a{color:#00aeea}
 .subtitle-accent-v{color:#654cff}
 
-/* Active Word can be hidden from the card and restored by tapping its reveal control. */
-.active-word-content[hidden]{display:none}
-.active-word-reveal{width:100%;min-height:78px;margin:8px 0 0;border:1.5px dashed #9fc9ff;border-radius:14px;background:linear-gradient(180deg,#f7fbff 0%,#edf6ff 100%);color:var(--blue);font-size:.82rem;font-weight:850;letter-spacing:.02em}
-.active-word-content{cursor:pointer}
-.practice-setting-toggle{position:relative;width:45px;height:27px;flex:0 0 45px;appearance:none;border:1px solid #cdd4df;border-radius:999px;background:#dfe4eb;box-shadow:inset 0 1px 3px #26354a1f;transition:background .18s ease,border-color .18s ease}
-.practice-setting-toggle::after{content:"";position:absolute;top:2px;left:2px;width:21px;height:21px;border-radius:50%;background:#fff;box-shadow:0 2px 5px #26354a38;transition:transform .18s ease}
-.practice-setting-toggle:checked{border-color:#0568d6;background:linear-gradient(180deg,#2995ff,#087cff)}
-.practice-setting-toggle:checked::after{transform:translateX(18px)}
 
 /* Subtitle accents color the glyphs only, without glow or background. */
 .subtitle-accent{text-shadow:none;background:transparent;box-shadow:none}
 
-/* Active Word keeps a fixed footprint and uses the same hidden-state treatment as English. */
-.active-word-content,.active-word-reveal{box-sizing:border-box;width:100%;height:150px;min-height:150px;max-height:150px}
-.active-word-content{overflow:hidden}
-.active-word-reveal{margin:0;padding:16px;border:1px solid #e0e4ea;border-radius:15px;background:linear-gradient(180deg,#f1f2f5 0%,#e6e8ed 100%);color:#69758a;font-size:.78rem;font-weight:850;box-shadow:inset 0 1px 0 #fff,0 3px 9px #26354a0b}
-.active-word-reveal:active{background:linear-gradient(180deg,#e7e9ed 0%,#dde0e5 100%);transform:scale(.995)}
 
 /* A and V share the same cyan subtitle accent. */
 .subtitle-accent-v{color:#00aeea}
@@ -396,3 +383,6 @@
 /* Label the inline rating controls without changing their layout position. */
 .practice-rating-inline{position:relative}
 .practice-rating-inline::before{content:"理解度";position:absolute;left:0;right:0;top:-10px;color:#7b8596;font-size:.43rem;font-weight:850;line-height:1;text-align:center;letter-spacing:.06em;pointer-events:none}
+
+/* Rating label sits to the left while the buttons retain their exact position. */
+.practice-rating-inline::before{left:-44px;right:auto;top:50%;width:40px;transform:translateY(-50%);font-size:.5rem;white-space:nowrap}
