@@ -137,7 +137,7 @@
 .practice-brand small{margin-top:-5px;color:#65728a;font-size:.38rem;font-weight:850;letter-spacing:.13em;white-space:nowrap}
 .practice-progress{display:block;width:100%;align-self:center;justify-self:stretch;margin-bottom:9px;padding-bottom:10px;border-bottom:1.5px solid #cfd5df;color:#65728a;font-size:.72rem;font-variant-numeric:tabular-nums;text-align:center}
 .practice-screen-main{position:relative;display:flex;flex:1 1 auto;min-height:0;flex-direction:column;gap:10px;padding:12px 14px calc(14px + env(safe-area-inset-bottom));overflow-y:auto}
-.practice-exercise-card{display:grid;flex:1 1 520px;min-height:510px;grid-template-rows:max-content minmax(0,1fr) 1px minmax(0,1fr) auto;padding:14px 18px 18px;border-radius:23px;background:#fff;box-shadow:0 1px 1px #1822350d,0 9px 25px #27344d0a;touch-action:pan-y;will-change:transform,opacity}
+.practice-exercise-card{display:grid;flex:1 1 520px;min-height:510px;grid-template-rows:max-content max-content minmax(0,1fr) 1px minmax(0,1fr) auto;padding:14px 18px 18px;border-radius:23px;background:#fff;box-shadow:0 1px 1px #1822350d,0 9px 25px #27344d0a;touch-action:pan-y;will-change:transform,opacity}
 .practice-question-meta{position:relative;padding:0 4px 12px;border-bottom:1px solid #e0e5ed}
 .practice-info-row{display:flex;align-items:center;gap:7px;min-width:0}
 .practice-info-primary{height:44px;margin:0 -4px;padding:0 4px;border-bottom:1.5px solid #cfd5df}
@@ -231,3 +231,9 @@
 .practice-meaning-column{padding:0;border:0;border-radius:0;background:transparent;box-shadow:none}
 .practice-meaning{font-size:1.14rem;font-weight:600}
 .practice-note-row{border-top:0}
+
+/* Practice header: progress centered above the No / metadata row. */
+.practice-exercise-card>.practice-progress{display:block;width:100%;align-self:start;justify-self:stretch;margin:0;padding:1px 0 3px;border:0;font-size:.72rem;text-align:center;white-space:nowrap}
+.practice-info-primary{display:grid;height:38px;grid-template-columns:minmax(0,1fr) auto;align-items:center;margin:0 -4px;padding:0 4px;border-bottom:1.5px solid #cfd5df}
+.practice-info-primary .practice-number{justify-self:start;align-self:center}
+.practice-info-primary .practice-top-chips{justify-self:end;align-self:center;margin-left:0}
