@@ -225,3 +225,9 @@
 .practice-info-primary .practice-number{justify-self:start;align-self:center}
 .practice-info-primary .practice-progress{display:block;width:auto;align-self:start;justify-self:center;margin:0;padding:2px 0 0;border:0;font-size:.72rem;text-align:center;white-space:nowrap}
 .practice-info-primary .practice-top-chips{justify-self:end;align-self:center;margin-left:0}
+
+/* Practice vocabulary separators and meaning typography. */
+.practice-info-primary{border-bottom:1.5px solid #cfd5df}
+.practice-meaning-column{padding:0;border:0;border-radius:0;background:transparent;box-shadow:none}
+.practice-meaning{font-size:1.14rem;font-weight:600}
+.practice-note-row{border-top:0}
