@@ -339,3 +339,10 @@
 
 /* Word section heading follows the Japanese / English heading treatment. */
 .practice-word-section-heading{height:34px;padding:0 4px}
+
+/* Practice meta order: progress, divider, then No left and rank chips right. */
+.practice-question-meta>.practice-progress{display:block;width:100%;margin:0;padding:1px 0 8px;border:0;border-bottom:1.5px solid #cfd5df;color:#65728a;font-size:.72rem;font-weight:900;text-align:center}
+.practice-info-primary{display:grid;height:38px;grid-template-columns:minmax(0,1fr) auto;align-items:center;margin:0 -4px;padding:0 4px;border-bottom:0}
+.practice-info-primary .practice-number{justify-self:start;align-self:center;padding:4px 8px;border-radius:var(--radius-pill);background:#111827;color:#fff}
+.practice-info-primary .practice-top-chips{justify-self:end;align-self:center;margin-left:0}
+.practice-word-stack{grid-template-rows:auto}
