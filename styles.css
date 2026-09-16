@@ -141,7 +141,7 @@
 .practice-question-meta{position:relative;padding:0 4px 12px;border-bottom:1px solid #e0e5ed}
 .practice-info-row{display:flex;align-items:center;gap:7px;min-width:0}
 .practice-info-primary{height:44px;margin:0 -4px;padding:0 4px;border-bottom:1.5px solid #cfd5df}
-.practice-detail-grid{display:grid;grid-template-columns:minmax(0,1.2fr) 1.5px minmax(112px,1fr);align-items:center;column-gap:10px;row-gap:10px;min-height:88px;margin-top:10px}
+.practice-detail-grid{display:grid;grid-template-columns:minmax(0,1fr) 1.5px minmax(0,1fr);align-items:center;column-gap:10px;row-gap:10px;min-height:88px;margin-top:10px}
 .practice-number{color:#526078;font-size:.68rem;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:.02em;white-space:nowrap}
 .practice-top-chips{position:static;display:flex;align-items:center;gap:6px;margin-left:auto}
 .practice-level-chips{display:flex;align-items:center;gap:5px}
