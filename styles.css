@@ -500,3 +500,7 @@
 /* Make the single-question repeat badge readable at tab size. */
 .practice-nav-controls .repeat-current-mark circle{stroke-width:1.35}
 .practice-nav-controls .repeat-current-mark text{font-size:7.5px;font-weight:950}
+
+
+/* Force a clearly readable language glyph at approximately icon scale. */
+.nav.practice-mode .practice-nav-controls .tab>.practice-language-mark{width:72px;max-width:100%;height:25px;font-size:1.65rem!important;font-weight:950;line-height:25px;letter-spacing:-.14em}
