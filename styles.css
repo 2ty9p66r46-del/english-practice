@@ -215,3 +215,6 @@
 /* Practice card badges: one step larger while preserving the header layout. */
 .practice-top-chips>.practice-meta-chip{min-height:29px;padding:4px 10px;font-size:.68rem}
 .practice-level-chips .practice-meta-chip{width:24px;height:24px;min-height:24px;border-width:2px;font-size:.5rem}
+
+/* Practice meaning: a distinct rounded card within the vocabulary area. */
+.practice-meaning-column{padding:10px 12px;border:1px solid #dfe5ee;border-radius:13px;background:#f5f7fb;box-shadow:inset 0 1px 0 #fff,0 2px 7px #27344d0a}
