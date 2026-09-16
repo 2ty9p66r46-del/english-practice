@@ -461,11 +461,11 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       if(screenTransitionBusy)return false;
       screenTransitionBusy=true;
       screenFade.classList.add('active');
-      await wait(220);
+      await wait(480);
       changeScreen();
       await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
       screenFade.classList.remove('active');
-      await wait(290);
+      await wait(520);
       screenTransitionBusy=false;
       return true;
     };
