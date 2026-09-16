@@ -515,7 +515,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     try{playbackSettings={...playbackDefaults,...JSON.parse(localStorage.getItem(PLAYBACK_STORAGE_KEY)||'{}')}}catch{}
     const languageModes=['ja','en','both'];
     const repeatModes=['current','all','once'];
-    const languageLabels={ja:'JP',en:'EN',both:'JP/EN'};
+    const languageLabels={ja:'日',en:'英',both:'日・英'};
     const repeatLabels={current:'1問連続',all:'全問循環',once:'1周終了'};
     let autoPlaying=false;
     let playbackRun=0;
@@ -584,7 +584,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       autoPlayTab.classList.toggle('active',autoPlaying);
       autoPlayTab.classList.toggle('is-stopping',autoPlaying);
       languageModeIcon.textContent=languageLabels[playbackSettings.language];
-      languageModeLabel.textContent='言語';
+      languageModeLabel.textContent='音声';
       repeatModeLabel.textContent=repeatLabels[playbackSettings.repeat];
       repeatModeTab.classList.remove('repeat-current','repeat-all','repeat-once');
       repeatModeTab.classList.add('repeat-'+playbackSettings.repeat);
