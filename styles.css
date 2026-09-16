@@ -451,3 +451,17 @@
 .practice-settings-method .practice-options{grid-template-columns:minmax(0,1fr) 88px}
 .practice-settings-method .practice-control{padding:7px 8px 8px}
 .practice-settings-method .question-menu{z-index:170}
+
+
+/* Practice order is a bottom-tab toggle; only question count remains in Settings. */
+.practice-question-setting>.question-picker{flex:0 0 104px;padding:0;border:0;background:transparent;box-shadow:none}
+.practice-question-setting .question-menu{z-index:170}
+.practice-order-icon>g{display:none}
+.practice-order-icon .order-number-mark{display:block}
+#practiceOrderTab.random .order-number-mark{display:none}
+#practiceOrderTab.random .order-random-mark{display:block}
+.practice-order-icon text{fill:currentColor;stroke:none;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;font-size:5px;font-weight:850;text-anchor:middle}
+
+
+/* Home practice tab: a learner speaking English. */
+.practice-speaker-icon text{fill:currentColor;stroke:none;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;font-size:4.2px;font-weight:900;text-anchor:middle}
