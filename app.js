@@ -230,6 +230,9 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     const englishRepeatSetting=document.getElementById('englishRepeatSetting');
     const speechRateSetting=document.getElementById('speechRateSetting');
     const speechRateValue=document.getElementById('speechRateValue');
+    const activeWordContent=document.getElementById('activeWordContent');
+    const activeWordReveal=document.getElementById('activeWordReveal');
+    const activeWordVisibilitySetting=document.getElementById('activeWordVisibilitySetting');
     levelChoices.forEach(button=>button.classList.add(button.textContent.trim().endsWith('1')?'red':button.textContent.trim().endsWith('2')?'orange':'yellow'));
     document.querySelectorAll('.part-group').forEach(group=>{
       const rank=group.querySelector('.group-title span')?.textContent.trim().slice(-1);
@@ -507,7 +510,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     };
 
     const PLAYBACK_STORAGE_KEY='flovo-playback-settings';
-    const playbackDefaults={language:'both',repeat:'once',japanesePause:1,englishPause:1,englishRepeats:1,rate:.9};
+    const playbackDefaults={language:'both',repeat:'once',japanesePause:1,englishPause:1,englishRepeats:1,rate:.9,showActiveWord:true};
     let playbackSettings={...playbackDefaults};
     try{playbackSettings={...playbackDefaults,...JSON.parse(localStorage.getItem(PLAYBACK_STORAGE_KEY)||'{}')}}catch{}
     const languageModes=['ja','en','both'];
@@ -517,6 +520,17 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     let autoPlaying=false;
     let playbackRun=0;
     const savePlaybackSettings=()=>localStorage.setItem(PLAYBACK_STORAGE_KEY,JSON.stringify(playbackSettings));
+    const syncActiveWordVisibility=()=>{
+      const visible=playbackSettings.showActiveWord!==false;
+      activeWordContent.hidden=!visible;
+      activeWordReveal.hidden=visible;
+      activeWordVisibilitySetting.checked=visible;
+    };
+    const setActiveWordVisibility=visible=>{
+      playbackSettings.showActiveWord=Boolean(visible);
+      savePlaybackSettings();
+      syncActiveWordVisibility();
+    };
     const syncPlaybackControls=()=>{
       autoPlayTab.classList.toggle('is-playing',autoPlaying);
       autoPlayLabel.textContent=autoPlaying?'停止':'再生';
@@ -533,6 +547,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       speechRateSetting.value=String(playbackSettings.rate);
       speechRateValue.textContent=Number(playbackSettings.rate).toFixed(1)+'×';
       autoPlayTab.disabled=!('speechSynthesis' in window);
+      syncActiveWordVisibility();
     };
     const stopAutoPlayback=()=>{
       autoPlaying=false;
@@ -649,6 +664,9 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     englishPauseSetting.addEventListener('change',()=>{playbackSettings.englishPause=Number(englishPauseSetting.value);savePlaybackSettings()});
     englishRepeatSetting.addEventListener('change',()=>{playbackSettings.englishRepeats=Number(englishRepeatSetting.value);savePlaybackSettings()});
     speechRateSetting.addEventListener('input',()=>{playbackSettings.rate=Number(speechRateSetting.value);speechRateValue.textContent=playbackSettings.rate.toFixed(1)+'×';savePlaybackSettings()});
+    activeWordVisibilitySetting.addEventListener('change',()=>setActiveWordVisibility(activeWordVisibilitySetting.checked));
+    activeWordReveal.addEventListener('click',()=>setActiveWordVisibility(true));
+    activeWordContent.addEventListener('click',event=>{if(!event.target.closest('button'))setActiveWordVisibility(false)});
     navHome.addEventListener('click',()=>{if(!practiceScreen.hidden)closePractice()});
     practiceReveal.addEventListener('click',()=>setAnswerVisible(true));
     practiceEnglish.addEventListener('click',()=>setAnswerVisible(false));
