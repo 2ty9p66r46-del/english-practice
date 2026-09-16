@@ -280,3 +280,7 @@
 
 /* The home quick card is now a settings-only question method card. */
 .method-head{margin-bottom:10px}
+
+/* Practice mode exposes only the Home tab. */
+.nav.practice-mode .nav-scroll{display:none}
+.nav.practice-mode .nav-home{flex:1 1 auto;color:var(--blue);box-shadow:none}
