@@ -491,3 +491,7 @@
 
 /* Make the audio-mode mark more prominent while preserving the tab geometry. */
 .practice-nav-controls .tab>.practice-language-mark{width:58px;max-width:100%;font-size:1.2rem;font-weight:950;line-height:1;letter-spacing:-.12em}
+
+
+/* Audio language mark occupies roughly 80% of the icon area. */
+.practice-nav-controls .tab>.practice-language-mark{width:64px;max-width:100%;font-size:1.35rem;font-weight:950;line-height:1;letter-spacing:-.12em}
