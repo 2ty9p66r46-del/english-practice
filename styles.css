@@ -465,3 +465,7 @@
 
 /* Home practice tab: a learner speaking English. */
 .practice-speaker-icon text{fill:currentColor;stroke:none;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;font-size:4.2px;font-weight:900;text-anchor:middle}
+
+
+/* All individual Home filter choices use the same capsule silhouette as Select All. */
+.filter-section .choice{border-radius:var(--radius-pill)}
