@@ -487,3 +487,7 @@
 .nav .practice-nav-controls .tab:not(:disabled){color:var(--blue)}
 .nav .practice-nav-controls .tab.is-stopping{color:#d52b3f}
 .nav .tab:disabled{color:#c5cad3;opacity:.55}
+
+
+/* Make the audio-mode mark more prominent while preserving the tab geometry. */
+.practice-nav-controls .tab>.practice-language-mark{width:58px;max-width:100%;font-size:1.2rem;font-weight:950;line-height:1;letter-spacing:-.12em}
