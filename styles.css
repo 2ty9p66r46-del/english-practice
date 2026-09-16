@@ -137,7 +137,7 @@
 .practice-brand small{margin-top:-5px;color:#65728a;font-size:.38rem;font-weight:850;letter-spacing:.13em;white-space:nowrap}
 .practice-progress{display:block;width:100%;align-self:center;justify-self:stretch;margin-bottom:9px;padding-bottom:10px;border-bottom:1.5px solid #cfd5df;color:#65728a;font-size:.72rem;font-variant-numeric:tabular-nums;text-align:center}
 .practice-screen-main{position:relative;display:flex;flex:1 1 auto;min-height:0;flex-direction:column;gap:10px;padding:12px 14px calc(14px + env(safe-area-inset-bottom));overflow-y:auto}
-.practice-exercise-card{display:grid;flex:1 1 520px;min-height:510px;grid-template-rows:max-content max-content minmax(0,1fr) 1px minmax(0,1fr) auto;padding:14px 18px 18px;border-radius:23px;background:#fff;box-shadow:0 1px 1px #1822350d,0 9px 25px #27344d0a;touch-action:pan-y;will-change:transform,opacity}
+.practice-exercise-card{display:grid;flex:1 1 520px;min-height:510px;grid-template-rows:max-content minmax(0,1fr) 1px minmax(0,1fr) auto;padding:14px 18px 18px;border-radius:23px;background:#fff;box-shadow:0 1px 1px #1822350d,0 9px 25px #27344d0a;touch-action:pan-y;will-change:transform,opacity}
 .practice-question-meta{position:relative;padding:0 4px 12px;border-bottom:1px solid #e0e5ed}
 .practice-info-row{display:flex;align-items:center;gap:7px;min-width:0}
 .practice-info-primary{height:44px;margin:0 -4px;padding:0 4px;border-bottom:1.5px solid #cfd5df}
@@ -241,3 +241,10 @@
 /* Rating controls sit directly on the exercise card without a surrounding panel. */
 .practice-rating-panel{margin-top:8px;padding:8px 0 0;border:0;border-radius:0;background:transparent;box-shadow:none}
 .practice-info-primary .practice-number{padding:4px 8px;border-radius:var(--radius-pill);background:#111827;color:#fff;box-shadow:inset 0 1px 0 #ffffff29,0 2px 5px #11182724}
+
+/* Practice metadata: progress left, rank chips right; No moves beside the word. */
+.practice-info-primary .practice-progress{display:block;width:auto;align-self:center;justify-self:start;margin:0;padding:0;border:0;font-size:.72rem;text-align:left;white-space:nowrap}
+.practice-word-line{display:flex;min-width:0;align-items:center;gap:8px}
+.practice-word-line .practice-number{flex:0 0 auto}
+.practice-word-line .practice-keyword{min-width:0;flex:1 1 auto}
+.practice-keyword,.practice-meaning{color:#0876ee;font-size:1.3rem;font-weight:700}
