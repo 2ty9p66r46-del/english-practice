@@ -476,3 +476,7 @@
 .nav.practice-mode .practice-nav-controls::-webkit-scrollbar{display:none}
 .nav.practice-mode .practice-nav-controls .tab{flex:0 0 78px;min-width:78px;width:78px;padding:0;font-size:.7rem}
 .nav.practice-mode .nav-home{position:relative;z-index:2;flex:0 0 88px;width:88px;background:#fff;box-shadow:8px 0 18px #26354a0d}
+
+
+/* A larger, unmistakable person-and-speech-bubble icon for Home practice. */
+#practiceTab .practice-speaker-icon{width:29px;height:29px;stroke-width:2;overflow:visible}
