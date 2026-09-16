@@ -351,8 +351,8 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       practiceOrderTab.classList.toggle('random',random);
       practiceOrderTab.classList.toggle('active',random);
       practiceOrderTab.setAttribute('aria-pressed',String(random));
-      practiceOrderLabel.textContent='再生順';
-      practiceOrderTab.setAttribute('aria-label',random?'再生順：ランダム':'再生順：番号順');
+      practiceOrderLabel.textContent='順序';
+      practiceOrderTab.setAttribute('aria-label',random?'順序：ランダム':'順序：番号順');
       practiceButton.dataset.order=random?'random':'number';
     };
     practiceOrderTab.addEventListener('click',()=>{
@@ -599,7 +599,8 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       autoPlayTab.classList.toggle('is-stopping',autoPlaying);
       languageModeIcon.textContent=languageLabels[playbackSettings.language];
       languageModeLabel.textContent='音声';
-      repeatModeLabel.textContent=repeatLabels[playbackSettings.repeat];
+      repeatModeLabel.textContent='再生方法';
+      repeatModeTab.setAttribute('aria-label','再生方法：'+repeatLabels[playbackSettings.repeat]);
       repeatModeTab.classList.remove('repeat-current','repeat-all','repeat-once');
       repeatModeTab.classList.add('repeat-'+playbackSettings.repeat);
       syncPracticeSettingPickers();
