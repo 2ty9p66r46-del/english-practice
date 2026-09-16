@@ -229,7 +229,10 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     const englishPauseSetting=document.getElementById('englishPauseSetting');
     const englishRepeatSetting=document.getElementById('englishRepeatSetting');
     const speechRateSetting=document.getElementById('speechRateSetting');
-    const speechRateValue=document.getElementById('speechRateValue');
+    const japanesePauseMenu=document.getElementById('japanesePauseMenu');
+    const englishPauseMenu=document.getElementById('englishPauseMenu');
+    const englishRepeatMenu=document.getElementById('englishRepeatMenu');
+    const speechRateMenu=document.getElementById('speechRateMenu');
     levelChoices.forEach(button=>button.classList.add(button.textContent.trim().endsWith('1')?'red':button.textContent.trim().endsWith('2')?'orange':'yellow'));
     document.querySelectorAll('.part-group').forEach(group=>{
       const rank=group.querySelector('.group-title span')?.textContent.trim().slice(-1);
@@ -517,6 +520,64 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     let autoPlaying=false;
     let playbackRun=0;
     const savePlaybackSettings=()=>localStorage.setItem(PLAYBACK_STORAGE_KEY,JSON.stringify(playbackSettings));
+    const pauseOptions=[0,.5,1,1.5,2,3].map(value=>({value:String(value),label:value===0?'なし':value+'秒'}));
+    const repeatOptions=[1,2,3,4,5].map(value=>({value:String(value),label:value+'回'}));
+    const rateOptions=Array.from({length:8},(_,index)=>(.6+index*.1).toFixed(1)).map(value=>({value,label:value+'×'}));
+    const practiceSettingSpecs=[
+      {trigger:japanesePauseSetting,menu:japanesePauseMenu,key:'japanesePause',options:pauseOptions},
+      {trigger:englishPauseSetting,menu:englishPauseMenu,key:'englishPause',options:pauseOptions},
+      {trigger:englishRepeatSetting,menu:englishRepeatMenu,key:'englishRepeats',options:repeatOptions},
+      {trigger:speechRateSetting,menu:speechRateMenu,key:'rate',options:rateOptions}
+    ];
+    const closePracticeSettingMenus=except=>practiceSettingSpecs.forEach(spec=>{
+      if(spec===except)return;
+      spec.menu.hidden=true;
+      spec.trigger.setAttribute('aria-expanded','false');
+    });
+    const syncPracticeSettingPickers=()=>practiceSettingSpecs.forEach(spec=>{
+      const value=String(playbackSettings[spec.key]);
+      const option=spec.options.find(item=>Number(item.value)===Number(value))||spec.options[0];
+      spec.trigger.value=option.value;
+      spec.trigger.querySelector('.practice-setting-value').textContent=option.label;
+      spec.menu.querySelectorAll('.practice-setting-option').forEach(item=>{
+        const selected=Number(item.dataset.value)===Number(option.value);
+        item.classList.toggle('selected',selected);
+        item.setAttribute('aria-selected',String(selected));
+      });
+    });
+    practiceSettingSpecs.forEach(spec=>{
+      spec.options.forEach(item=>{
+        const option=document.createElement('button');
+        option.type='button';
+        option.className='practice-setting-option';
+        option.dataset.value=item.value;
+        option.setAttribute('role','option');
+        option.textContent=item.label;
+        option.addEventListener('click',event=>{
+          event.stopPropagation();
+          playbackSettings[spec.key]=Number(item.value);
+          savePlaybackSettings();
+          syncPracticeSettingPickers();
+          spec.menu.hidden=true;
+          spec.trigger.setAttribute('aria-expanded','false');
+        });
+        spec.menu.appendChild(option);
+      });
+      spec.trigger.addEventListener('click',event=>{
+        event.stopPropagation();
+        const opening=spec.menu.hidden;
+        closePracticeSettingMenus(spec);
+        spec.menu.hidden=!opening;
+        spec.trigger.setAttribute('aria-expanded',String(opening));
+        if(opening){
+          spec.menu.classList.remove('open-up');
+          const triggerRect=spec.trigger.getBoundingClientRect();
+          const menuHeight=Math.min(spec.menu.scrollHeight,240);
+          if(innerHeight-triggerRect.bottom<menuHeight+18&&triggerRect.top>menuHeight+18)spec.menu.classList.add('open-up');
+          requestAnimationFrame(()=>spec.menu.querySelector('.selected')?.scrollIntoView({block:'nearest'}));
+        }
+      });
+    });
     const syncPlaybackControls=()=>{
       autoPlayTab.classList.toggle('is-playing',autoPlaying);
       autoPlayLabel.textContent=autoPlaying?'停止':'再生';
@@ -527,11 +588,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       repeatModeLabel.textContent=repeatLabels[playbackSettings.repeat];
       repeatModeTab.classList.remove('repeat-current','repeat-all','repeat-once');
       repeatModeTab.classList.add('repeat-'+playbackSettings.repeat);
-      japanesePauseSetting.value=String(playbackSettings.japanesePause);
-      englishPauseSetting.value=String(playbackSettings.englishPause);
-      englishRepeatSetting.value=String(playbackSettings.englishRepeats);
-      speechRateSetting.value=String(playbackSettings.rate);
-      speechRateValue.textContent=Number(playbackSettings.rate).toFixed(1)+'×';
+      syncPracticeSettingPickers();
       autoPlayTab.disabled=!('speechSynthesis' in window);
     };
     const stopAutoPlayback=()=>{
@@ -642,13 +699,12 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       playbackSettings.repeat=repeatModes[(index+1)%repeatModes.length];
       savePlaybackSettings();syncPlaybackControls();
     });
-    practiceSettingsTab.addEventListener('click',()=>{syncPlaybackControls();practiceSettingsOverlay.hidden=false});
-    practiceSettingsClose.addEventListener('click',()=>{practiceSettingsOverlay.hidden=true});
-    practiceSettingsOverlay.addEventListener('click',event=>{if(event.target===practiceSettingsOverlay)practiceSettingsOverlay.hidden=true});
-    japanesePauseSetting.addEventListener('change',()=>{playbackSettings.japanesePause=Number(japanesePauseSetting.value);savePlaybackSettings()});
-    englishPauseSetting.addEventListener('change',()=>{playbackSettings.englishPause=Number(englishPauseSetting.value);savePlaybackSettings()});
-    englishRepeatSetting.addEventListener('change',()=>{playbackSettings.englishRepeats=Number(englishRepeatSetting.value);savePlaybackSettings()});
-    speechRateSetting.addEventListener('input',()=>{playbackSettings.rate=Number(speechRateSetting.value);speechRateValue.textContent=playbackSettings.rate.toFixed(1)+'×';savePlaybackSettings()});
+    practiceSettingsTab.addEventListener('click',()=>{syncPlaybackControls();closePracticeSettingMenus();practiceSettingsOverlay.hidden=false});
+    practiceSettingsClose.addEventListener('click',()=>{closePracticeSettingMenus();practiceSettingsOverlay.hidden=true});
+    practiceSettingsOverlay.addEventListener('click',event=>{
+      closePracticeSettingMenus();
+      if(event.target===practiceSettingsOverlay)practiceSettingsOverlay.hidden=true;
+    });
     navHome.addEventListener('click',()=>{if(!practiceScreen.hidden)closePractice()});
     practiceReveal.addEventListener('click',()=>setAnswerVisible(true));
     practiceEnglish.addEventListener('click',()=>setAnswerVisible(false));
