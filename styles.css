@@ -480,3 +480,10 @@
 
 /* A larger, unmistakable person-and-speech-bubble icon for Home practice. */
 #practiceTab .practice-speaker-icon{width:29px;height:29px;stroke-width:2;overflow:visible}
+
+
+/* Every available bottom-nav action uses the active blue on both screens. */
+.nav .nav-scroll .tab:not(:disabled),
+.nav .practice-nav-controls .tab:not(:disabled){color:var(--blue)}
+.nav .practice-nav-controls .tab.is-stopping{color:#d52b3f}
+.nav .tab:disabled{color:#c5cad3;opacity:.55}
