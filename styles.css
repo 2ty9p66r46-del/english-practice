@@ -443,3 +443,11 @@
 
 /* Enlarge the Japanese audio-mode mark without moving the tab title. */
 .practice-nav-controls .tab>.practice-language-mark{width:46px;max-width:100%;font-size:1rem;font-weight:950;letter-spacing:-.11em}
+
+
+/* Question method belongs to the practice settings sheet, not the Home screen. */
+.practice-settings-method{margin-bottom:8px;padding:0 0 14px;border-bottom:1.5px solid #d8dee8}
+.practice-settings-method h3{margin:0 0 9px;color:#344054;font-size:.82rem}
+.practice-settings-method .practice-options{grid-template-columns:minmax(0,1fr) 88px}
+.practice-settings-method .practice-control{padding:7px 8px 8px}
+.practice-settings-method .question-menu{z-index:170}
