@@ -186,6 +186,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     const practiceEnglish=document.getElementById('practiceEnglish');
     const practiceReveal=document.getElementById('practiceReveal');
     const practiceAudio=document.getElementById('practiceAudio');
+    const practiceJapaneseAudio=document.getElementById('practiceJapaneseAudio');
     const practicePrev=document.getElementById('practicePrev');
     const practiceNext=document.getElementById('practiceNext');
     const practiceWord=document.getElementById('practiceWord');
@@ -379,6 +380,8 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       if(!row)return;
       if('speechSynthesis' in window)speechSynthesis.cancel();
       practiceAudio.classList.remove('speaking');
+      practiceJapaneseAudio.classList.remove('speaking');
+      practiceJapaneseAudio.disabled=!('speechSynthesis' in window);
       practiceProgress.textContent=`${practiceIndex+1} / ${practiceRows.length}`;
       practiceJapanese.textContent=text(row[8]);
       practiceEnglish.textContent=text(row[9]);
@@ -517,6 +520,16 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     };
     practicePronUsAudio.addEventListener('click',()=>speakPracticeWord('en-US',practicePronUsAudio));
     practicePronUkAudio.addEventListener('click',()=>speakPracticeWord('en-GB',practicePronUkAudio));
+    practiceJapaneseAudio.addEventListener('click',()=>{
+      if(!('speechSynthesis' in window))return;
+      speechSynthesis.cancel();
+      const utterance=new SpeechSynthesisUtterance(practiceJapanese.textContent);
+      utterance.lang='ja-JP';
+      utterance.rate=.92;
+      utterance.onstart=()=>practiceJapaneseAudio.classList.add('speaking');
+      utterance.onend=utterance.onerror=()=>practiceJapaneseAudio.classList.remove('speaking');
+      speechSynthesis.speak(utterance);
+    });
     practiceAudio.addEventListener('click',()=>{
       if(!answerVisible||!('speechSynthesis' in window))return;
       speechSynthesis.cancel();
