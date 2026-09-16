@@ -360,3 +360,8 @@
 .practice-inline-stop{width:26px;height:26px;border:2px solid #981b2b;border-radius:50%;background:linear-gradient(180deg,#ee5366 0%,#c32238 58%,#a91529 100%);color:#fff;box-shadow:inset 0 1px 0 #ffffff75,inset 0 -2px 0 #720d1d55,0 3px 7px #bd243738}
 .practice-inline-stop:active{background:#a91529;transform:scale(.94)}
 .practice-inline-stop svg{width:13px;height:13px;fill:#fff}
+
+/* Stop button exactly follows the S1 badge size and red solid theme. */
+.practice-inline-stop{width:24px;height:24px;min-width:24px;min-height:24px;border:2px solid #8e1928;border-radius:50%;background:linear-gradient(180deg,#f19aa3 0%,#e36270 52%,#bd3a49 100%);color:#fff;box-shadow:inset 0 1px 0 #ffffffb8,inset 0 -1px 0 #00000020,0 2px 4px #8e19284d}
+.practice-inline-stop:active{background:linear-gradient(180deg,#e36270 0%,#bd3a49 100%);transform:scale(.94)}
+.practice-inline-stop svg{width:11px;height:11px;fill:#fff}
