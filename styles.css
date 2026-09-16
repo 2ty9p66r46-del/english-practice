@@ -394,3 +394,8 @@
 /* Inline rating buttons exactly match the 24px S1 badge. */
 .practice-rating-inline .practice-rating-button{box-sizing:border-box;width:24px;height:24px;min-width:24px;min-height:24px;border-width:2px;font-size:.4rem}
 .practice-rating-inline .practice-rating-button.selected{border-width:2px}
+
+
+/* Rating controls are intentionally larger than metadata badges for easier tapping. */
+.practice-rating-inline .practice-rating-button{box-sizing:border-box;width:32px;height:32px;min-width:32px;min-height:32px;padding:0;border-width:2px;font-size:.5rem;line-height:1}
+.practice-rating-inline .practice-rating-button.selected{border-width:2px}
