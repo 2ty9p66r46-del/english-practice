@@ -495,3 +495,8 @@
 
 /* Audio language mark occupies roughly 80% of the icon area. */
 .practice-nav-controls .tab>.practice-language-mark{width:64px;max-width:100%;font-size:1.35rem;font-weight:950;line-height:1;letter-spacing:-.12em}
+
+
+/* Make the single-question repeat badge readable at tab size. */
+.practice-nav-controls .repeat-current-mark circle{stroke-width:1.35}
+.practice-nav-controls .repeat-current-mark text{font-size:7.5px;font-weight:950}
