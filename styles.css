@@ -273,3 +273,7 @@
 .practice-rating-inline{display:flex;grid-template-columns:none;align-items:center;gap:4px;margin-left:auto}
 .practice-rating-inline .practice-rating-button{width:29px;height:29px;min-width:29px;padding:0;border-width:2px;border-radius:50%;font-size:.46rem;line-height:1}
 .practice-rating-inline .practice-rating-button.selected{border-width:2px}
+
+/* Center the No chip above the centered keyword. */
+.practice-word-stack .practice-number{justify-self:center}
+.tab:disabled{color:#c5cad3;opacity:.55;pointer-events:none}
