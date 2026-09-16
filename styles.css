@@ -380,3 +380,6 @@
 .practice-setting-toggle::after{content:"";position:absolute;top:2px;left:2px;width:21px;height:21px;border-radius:50%;background:#fff;box-shadow:0 2px 5px #26354a38;transition:transform .18s ease}
 .practice-setting-toggle:checked{border-color:#0568d6;background:linear-gradient(180deg,#2995ff,#087cff)}
 .practice-setting-toggle:checked::after{transform:translateX(18px)}
+
+/* Subtitle accents color the glyphs only, without glow or background. */
+.subtitle-accent{text-shadow:none;background:transparent;box-shadow:none}
