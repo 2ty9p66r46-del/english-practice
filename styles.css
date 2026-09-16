@@ -322,3 +322,9 @@
 #repeatModeTab.repeat-current .repeat-current-mark,#repeatModeTab.repeat-all .repeat-all-mark,#repeatModeTab.repeat-once .repeat-once-mark{display:block}
 .repeat-current-mark circle{fill:var(--blue);stroke:#fff;stroke-width:1.5}
 .repeat-current-mark text{fill:#fff;stroke:none;font-size:7px;font-weight:900;text-anchor:middle}
+
+/* Audio controls align to the right edge of their respective areas. */
+.practice-pronunciation-audio svg{margin-left:auto}
+.practice-language{position:relative}
+.practice-language .practice-audio{position:absolute;right:4px;bottom:8px;z-index:2}
+.practice-japanese,.practice-english{box-sizing:border-box;padding-right:34px}
