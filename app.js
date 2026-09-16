@@ -179,6 +179,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     const selectAllFilters=document.getElementById('selectAllFilters');
     const overallFilterWarning=document.getElementById('overallFilterWarning');
     const practiceScreen=document.getElementById('practiceScreen');
+    const screenFade=document.getElementById('screenFade');
     const practiceExerciseCard=document.getElementById('practiceExerciseCard');
     const navHome=document.querySelector('.nav-home');
     const practiceProgress=document.getElementById('practiceProgress');
@@ -454,7 +455,22 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       }
       return result;
     };
+    let screenTransitionBusy=false;
+    const wait=duration=>new Promise(resolve=>setTimeout(resolve,duration));
+    const transitionScreen=async changeScreen=>{
+      if(screenTransitionBusy)return false;
+      screenTransitionBusy=true;
+      screenFade.classList.add('active');
+      await wait(220);
+      changeScreen();
+      await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+      screenFade.classList.remove('active');
+      await wait(290);
+      screenTransitionBusy=false;
+      return true;
+    };
     const openPractice=async()=>{
+      if(screenTransitionBusy)return;
       const stored=await getImportedData();
       let rows=getMatchingRows(stored?.rows||[]);
       if(!rows.length){
@@ -466,13 +482,17 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       practiceRows=rows.slice(0,limit);
       practiceStored=stored;
       practiceIndex=0;
-      practiceScreen.hidden=false;
-      renderPracticeQuestion();
+      await transitionScreen(()=>{
+        practiceScreen.hidden=false;
+        renderPracticeQuestion();
+      });
     };
-    const closePractice=()=>{
+    const closePractice=async()=>{
+      if(screenTransitionBusy)return;
       if('speechSynthesis' in window)speechSynthesis.cancel();
       practiceAudio.classList.remove('speaking');
-      practiceScreen.hidden=true;
+      practiceJapaneseAudio.classList.remove('speaking');
+      await transitionScreen(()=>{practiceScreen.hidden=true});
       refreshQuestionCount();
     };
     practiceButton.addEventListener('click',()=>openPractice().catch(()=>alert('練習画面を開けませんでした。')));
