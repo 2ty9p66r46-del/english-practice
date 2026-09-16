@@ -431,3 +431,11 @@
 
 /* Language tab: unframed Japanese marks with a visible Audio label. */
 .practice-nav-controls .practice-language-mark{display:grid;width:25px;height:25px;place-items:center;border:0;background:transparent;color:currentColor;font-size:.78rem;font-weight:900;line-height:1;letter-spacing:-.08em;white-space:nowrap}
+
+
+/* Keep every practice-tab title on the same baseline as the fixed Home tab. */
+.practice-nav-controls .tab{font-size:.7rem;line-height:1}
+.practice-nav-controls .tab>svg,
+.practice-nav-controls .tab>.practice-language-mark{flex:0 0 25px;width:25px;height:25px}
+.practice-nav-controls .tab>span:last-child:not(.visually-hidden){display:flex;height:.7rem;align-items:center;justify-content:center;line-height:.7rem}
+.nav.practice-mode .nav-home>span:last-child{display:flex;height:.7rem;align-items:center;justify-content:center;line-height:.7rem}
