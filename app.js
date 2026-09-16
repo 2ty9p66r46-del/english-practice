@@ -205,10 +205,10 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     const practicePronUkAudio=document.getElementById('practicePronUkAudio');
     const practiceNote=document.getElementById('practiceNote');
     const practiceRatingButtons=[...document.querySelectorAll('.practice-rating-button')];
-    const setSentenceSpeaking=(button,active)=>{
+    const setSentenceSpeaking=(button,active,showStop=true)=>{
       button.classList.toggle('speaking',active);
       const stopButton=button===practiceJapaneseAudio?practiceJapaneseStop:practiceEnglishStop;
-      stopButton.hidden=!active;
+      stopButton.hidden=!active||!showStop;
     };
     const clearSentenceSpeaking=()=>{
       setSentenceSpeaking(practiceJapaneseAudio,false);
@@ -617,8 +617,8 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       const utterance=new SpeechSynthesisUtterance(value);
       utterance.lang=lang;
       utterance.rate=Number(playbackSettings.rate);
-      utterance.onstart=()=>setSentenceSpeaking(button,true);
-      utterance.onend=utterance.onerror=()=>{setSentenceSpeaking(button,false);resolve(run===playbackRun)};
+      utterance.onstart=()=>setSentenceSpeaking(button,true,false);
+      utterance.onend=utterance.onerror=()=>{setSentenceSpeaking(button,false,false);resolve(run===playbackRun)};
       speechSynthesis.speak(utterance);
     });
     const runAutoPlayback=async run=>{
