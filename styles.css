@@ -211,3 +211,7 @@
 .practice-language-label{color:var(--blue)}
 .practice-audio{border:0;border-radius:0;background:transparent;color:var(--blue);box-shadow:none}
 .practice-audio:disabled{border:0;background:transparent;color:#abb2bd;box-shadow:none}
+
+/* Practice card badges: one step larger while preserving the header layout. */
+.practice-top-chips>.practice-meta-chip{min-height:29px;padding:4px 10px;font-size:.68rem}
+.practice-level-chips .practice-meta-chip{width:24px;height:24px;min-height:24px;border-width:2px;font-size:.5rem}
