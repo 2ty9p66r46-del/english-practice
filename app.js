@@ -341,20 +341,21 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     helpOverlay.addEventListener('click',event=>{if(event.target===helpOverlay)closeHelp();});
     document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!helpOverlay.hidden)closeHelp();});
     document.querySelectorAll('[data-coming]').forEach(button=>button.addEventListener('click',()=>alert('この機能は次の段階で追加します。')));
-    const orderSwitch=document.getElementById('orderSwitch');
+    const practiceOrderTab=document.getElementById('practiceOrderTab');
+    const practiceOrderLabel=document.getElementById('practiceOrderLabel');
     const questionLimit=document.getElementById('questionLimit');
     const questionPicker=document.getElementById('questionPicker');
     const questionMenu=document.getElementById('questionMenu');
     const questionLimitValue=document.getElementById('questionLimitValue');
-    const orderThumb=orderSwitch.querySelector('.order-thumb');
     const setOrder=random=>{
-      orderThumb.style.transform='';
-      orderSwitch.classList.toggle('ordered',random);
-      orderSwitch.setAttribute('aria-pressed',String(random));
+      practiceOrderTab.classList.toggle('random',random);
+      practiceOrderTab.classList.toggle('active',random);
+      practiceOrderTab.setAttribute('aria-pressed',String(random));
+      practiceOrderLabel.textContent=random?'ランダム':'番号順';
       practiceButton.dataset.order=random?'random':'number';
     };
-    orderSwitch.addEventListener('click',()=>{
-      setOrder(!orderSwitch.classList.contains('ordered'));
+    practiceOrderTab.addEventListener('click',()=>{
+      setOrder(!practiceOrderTab.classList.contains('random'));
       applyPracticeMethodChange();
     });
     const questionValues=['all',...Array.from({length:20},(_,index)=>String((index+1)*5))];
