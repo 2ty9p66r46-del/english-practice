@@ -204,8 +204,10 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     const practiceNote=document.getElementById('practiceNote');
     const practiceRatingButtons=[...document.querySelectorAll('.practice-rating-button')];
     const autoPlayTab=document.getElementById('autoPlayTab');
+    const autoPlayIcon=document.getElementById('autoPlayIcon');
     const autoPlayLabel=document.getElementById('autoPlayLabel');
     const languageModeTab=document.getElementById('languageModeTab');
+    const languageModeIcon=document.getElementById('languageModeIcon');
     const languageModeLabel=document.getElementById('languageModeLabel');
     const repeatModeTab=document.getElementById('repeatModeTab');
     const repeatModeLabel=document.getElementById('repeatModeLabel');
@@ -449,11 +451,15 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     };
     const resetPracticeDrag=()=>{practiceExerciseCard.style.transform='';practiceExerciseCard.style.opacity=''};
     const movePractice=async(delta,fromX=0)=>{
-      if(autoPlaying)stopAutoPlayback();
       const next=Math.max(0,Math.min(practiceRows.length-1,practiceIndex+delta));
       if(next===practiceIndex||practiceMoving){
         await animatePracticeCard([{transform:`translateX(${fromX}px)`},{transform:'translateX(0)'}],{duration:220,easing:'cubic-bezier(.2,.8,.2,1)'});
         resetPracticeDrag();return;
+      }
+      const resumePlayback=autoPlaying;
+      if(resumePlayback){
+        playbackRun+=1;
+        if('speechSynthesis' in window)speechSynthesis.cancel();
       }
       practiceMoving=true;
       const distance=Math.max(innerWidth*.82,300);
@@ -463,6 +469,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       practiceIndex=next;renderPracticeQuestion();
       await animatePracticeCard([{transform:`translateX(${-outX}px)`,opacity:.08},{transform:'translateX(0)',opacity:1}],{duration:260,easing:'cubic-bezier(.16,.78,.24,1)'});
       resetPracticeDrag();practiceMoving=false;
+      if(resumePlayback)restartAutoPlayback();
     };
     const shuffleRows=rows=>{
       const result=[...rows];
@@ -493,16 +500,18 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     try{playbackSettings={...playbackDefaults,...JSON.parse(localStorage.getItem(PLAYBACK_STORAGE_KEY)||'{}')}}catch{}
     const languageModes=['ja','en','both'];
     const repeatModes=['current','all','once'];
-    const languageLabels={ja:'日',en:'英',both:'日・英'};
+    const languageLabels={ja:'JP',en:'EN',both:'JP/EN'};
     const repeatLabels={current:'1問連続',all:'全問循環',once:'1周終了'};
     let autoPlaying=false;
     let playbackRun=0;
     const savePlaybackSettings=()=>localStorage.setItem(PLAYBACK_STORAGE_KEY,JSON.stringify(playbackSettings));
     const syncPlaybackControls=()=>{
+      autoPlayIcon.textContent=autoPlaying?'⏸️':'▶️';
       autoPlayLabel.textContent=autoPlaying?'停止':'再生';
       autoPlayTab.classList.toggle('active',autoPlaying);
       autoPlayTab.classList.toggle('is-stopping',autoPlaying);
-      languageModeLabel.textContent=languageLabels[playbackSettings.language];
+      languageModeIcon.textContent=languageLabels[playbackSettings.language];
+      languageModeLabel.textContent='言語';
       repeatModeLabel.textContent=repeatLabels[playbackSettings.repeat];
       japanesePauseSetting.value=String(playbackSettings.japanesePause);
       englishPauseSetting.value=String(playbackSettings.englishPause);
@@ -561,6 +570,14 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       if(autoPlaying||!('speechSynthesis' in window))return;
       autoPlaying=true;
       playbackRun+=1;
+      const run=playbackRun;
+      syncPlaybackControls();
+      runAutoPlayback(run);
+    };
+    const restartAutoPlayback=()=>{
+      if(!autoPlaying||!('speechSynthesis' in window))return;
+      playbackRun+=1;
+      speechSynthesis.cancel();
       const run=playbackRun;
       syncPlaybackControls();
       runAutoPlayback(run);
