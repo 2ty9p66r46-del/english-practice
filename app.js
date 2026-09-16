@@ -333,11 +333,11 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     const questionMenu=document.getElementById('questionMenu');
     const questionLimitValue=document.getElementById('questionLimitValue');
     const orderThumb=orderSwitch.querySelector('.order-thumb');
-    const setOrder=ordered=>{
+    const setOrder=random=>{
       orderThumb.style.transform='';
-      orderSwitch.classList.toggle('ordered',ordered);
-      orderSwitch.setAttribute('aria-pressed',String(ordered));
-      practiceButton.dataset.order=ordered?'ordered':'shuffle';
+      orderSwitch.classList.toggle('ordered',random);
+      orderSwitch.setAttribute('aria-pressed',String(random));
+      practiceButton.dataset.order=random?'random':'number';
     };
     orderSwitch.addEventListener('click',()=>{
       setOrder(!orderSwitch.classList.contains('ordered'));
@@ -378,7 +378,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
         questionLimit.setAttribute('aria-expanded','false');
       }
     });
-    practiceButton.dataset.order='shuffle';
+    setOrder(false);
     practiceButton.dataset.questionLimit=selectedQuestionLimit;
 
     let practiceRows=[];
@@ -595,7 +595,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
         alert('選択した条件に該当する例文がありません。');
         return;
       }
-      if(practiceButton.dataset.order==='shuffle')rows=shuffleRows(rows);
+      if(practiceButton.dataset.order==='random')rows=shuffleRows(rows);
       const limit=practiceButton.dataset.questionLimit==='all'?rows.length:Number(practiceButton.dataset.questionLimit);
       practiceRows=rows.slice(0,limit);
       practiceStored=stored;
