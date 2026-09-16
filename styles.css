@@ -383,3 +383,9 @@
 
 /* Subtitle accents color the glyphs only, without glow or background. */
 .subtitle-accent{text-shadow:none;background:transparent;box-shadow:none}
+
+/* Active Word keeps a fixed footprint and uses the same hidden-state treatment as English. */
+.active-word-content,.active-word-reveal{box-sizing:border-box;width:100%;height:150px;min-height:150px;max-height:150px}
+.active-word-content{overflow:hidden}
+.active-word-reveal{margin:0;padding:16px;border:1px solid #e0e4ea;border-radius:15px;background:linear-gradient(180deg,#f1f2f5 0%,#e6e8ed 100%);color:#69758a;font-size:.78rem;font-weight:850;box-shadow:inset 0 1px 0 #fff,0 3px 9px #26354a0b}
+.active-word-reveal:active{background:linear-gradient(180deg,#e7e9ed 0%,#dde0e5 100%);transform:scale(.995)}
