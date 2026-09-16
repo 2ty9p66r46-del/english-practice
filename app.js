@@ -709,7 +709,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     practiceRatingButtons.forEach(button=>button.addEventListener('click',async()=>{
       const row=currentPracticeRow();
       if(!row||!practiceStored)return;
-      row[13]=button.dataset.value;
+      row[13]=text(row[13])===button.dataset.value?'':button.dataset.value;
       practiceStored.modified=true;
       syncPracticeRating(row);
       await saveImportedData(practiceStored);
