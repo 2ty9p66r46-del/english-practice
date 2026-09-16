@@ -507,3 +507,7 @@
 
 /* Audio language mark uses one consistent, unclipped horizontal label. */
 .nav.practice-mode .practice-nav-controls .tab>.practice-language-mark{position:static;width:62px;max-width:100%;height:25px;background:none;font-size:1.15rem!important;font-weight:950;line-height:25px;letter-spacing:-.08em;white-space:nowrap}
+
+
+/* Definitive override: the legacy 42px ID rule must not clip 日・英. */
+#languageModeIcon.practice-language-mark{box-sizing:border-box;width:66px!important;max-width:66px!important;height:25px!important;overflow:visible!important;font-size:1.15rem!important;line-height:25px!important;letter-spacing:-.08em!important;white-space:nowrap!important}
