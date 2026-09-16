@@ -598,7 +598,6 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       autoPlayTab.classList.toggle('active',autoPlaying);
       autoPlayTab.classList.toggle('is-stopping',autoPlaying);
       languageModeIcon.textContent=languageLabels[playbackSettings.language];
-      languageModeIcon.dataset.mode=playbackSettings.language;
       languageModeLabel.textContent='音声';
       repeatModeLabel.textContent='再生方法';
       repeatModeTab.setAttribute('aria-label','再生方法：'+repeatLabels[playbackSettings.repeat]);
