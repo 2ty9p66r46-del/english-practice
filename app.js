@@ -399,7 +399,9 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     const renderPracticeQuestion=()=>{
       const row=currentPracticeRow();
       if(!row)return;
-      stopAutoPlayback();
+      if('speechSynthesis' in window&&!autoPlaying)speechSynthesis.cancel();
+      practiceAudio.classList.remove('speaking');
+      practiceJapaneseAudio.classList.remove('speaking');
       practiceJapaneseAudio.disabled=!('speechSynthesis' in window);
       practiceProgress.textContent=`${practiceIndex+1} / ${practiceRows.length}`;
       practiceJapanese.textContent=text(row[8]);
@@ -506,13 +508,15 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     let playbackRun=0;
     const savePlaybackSettings=()=>localStorage.setItem(PLAYBACK_STORAGE_KEY,JSON.stringify(playbackSettings));
     const syncPlaybackControls=()=>{
-      autoPlayIcon.textContent=autoPlaying?'⏸️':'▶️';
+      autoPlayTab.classList.toggle('is-playing',autoPlaying);
       autoPlayLabel.textContent=autoPlaying?'停止':'再生';
       autoPlayTab.classList.toggle('active',autoPlaying);
       autoPlayTab.classList.toggle('is-stopping',autoPlaying);
       languageModeIcon.textContent=languageLabels[playbackSettings.language];
       languageModeLabel.textContent='言語';
       repeatModeLabel.textContent=repeatLabels[playbackSettings.repeat];
+      repeatModeTab.classList.remove('repeat-current','repeat-all','repeat-once');
+      repeatModeTab.classList.add('repeat-'+playbackSettings.repeat);
       japanesePauseSetting.value=String(playbackSettings.japanesePause);
       englishPauseSetting.value=String(playbackSettings.englishPause);
       englishRepeatSetting.value=String(playbackSettings.englishRepeats);
@@ -523,7 +527,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     const stopAutoPlayback=()=>{
       autoPlaying=false;
       playbackRun+=1;
-      if('speechSynthesis' in window)speechSynthesis.cancel();
+      if('speechSynthesis' in window&&!autoPlaying)speechSynthesis.cancel();
       practiceAudio.classList.remove('speaking');
       practiceJapaneseAudio.classList.remove('speaking');
       syncPlaybackControls();
