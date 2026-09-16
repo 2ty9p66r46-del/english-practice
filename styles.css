@@ -392,3 +392,7 @@
 
 /* A and V share the same cyan subtitle accent. */
 .subtitle-accent-v{color:#00aeea}
+
+/* Label the inline rating controls without changing their layout position. */
+.practice-rating-inline{position:relative}
+.practice-rating-inline::before{content:"理解度";position:absolute;left:0;right:0;top:-10px;color:#7b8596;font-size:.43rem;font-weight:850;line-height:1;text-align:center;letter-spacing:.06em;pointer-events:none}
