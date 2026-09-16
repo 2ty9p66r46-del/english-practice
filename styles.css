@@ -328,3 +328,11 @@
 .practice-language{position:relative}
 .practice-language .practice-audio{position:absolute;right:4px;bottom:8px;z-index:2}
 .practice-japanese,.practice-english{box-sizing:border-box;padding-right:34px}
+
+/* Text itself is now the audio control; speaker glyphs are removed. */
+.practice-language .practice-audio{position:static}
+.practice-language-audio{margin:0;padding:0;border:0;background:transparent;color:var(--blue);font:inherit;font-size:.69rem;font-weight:850;letter-spacing:.04em}
+.practice-language-audio:disabled{color:#abb2bd}
+.practice-language-audio.speaking{text-shadow:0 0 8px #087cff55}
+.practice-japanese,.practice-english{padding-right:0}
+.practice-pronunciation-audio{cursor:pointer}
