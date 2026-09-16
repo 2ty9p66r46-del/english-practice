@@ -287,3 +287,22 @@
 
 /* Keep Home in its normal fixed left position during practice. */
 .nav.practice-mode .nav-home{flex:0 0 88px;box-shadow:8px 0 18px #26354a0d}
+
+/* Practice-only playback tabs and audio settings sheet. */
+.practice-nav-controls{display:none;flex:1 1 auto;min-width:0}
+.nav.practice-mode .practice-nav-controls{display:flex}
+.practice-nav-controls .tab{min-width:0;flex:1 1 0;padding:0 2px;font-size:.62rem}
+.practice-nav-controls .tab.active{color:var(--blue)}
+.practice-nav-controls .tab.is-stopping{color:#d52b3f}
+.practice-tab-glyph{display:grid;width:27px;height:25px;place-items:center;border:2px solid currentColor;border-radius:7px;font-size:.58rem;font-weight:900;line-height:1}
+.practice-settings-overlay{position:absolute;z-index:130;inset:0;display:flex;align-items:flex-end;padding:16px 14px calc(88px + env(safe-area-inset-bottom));background:#11182766;backdrop-filter:blur(3px)}
+.practice-settings-overlay[hidden]{display:none}
+.practice-settings-sheet{width:100%;padding:18px;border-radius:22px;background:#fff;box-shadow:0 18px 45px #11182735}
+.practice-settings-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.practice-settings-head h2{margin:0;color:#111827;font-size:1.05rem}
+.practice-settings-head button{display:grid;width:34px;height:34px;place-items:center;border:0;border-radius:50%;background:#edf0f5;color:#526078;font-size:1.3rem}
+.practice-setting-row{display:flex;min-height:52px;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid #e3e7ee;color:#344054;font-size:.78rem;font-weight:800}
+.practice-setting-row select{min-width:92px;padding:8px 10px;border:1px solid #d6dce6;border-radius:10px;background:#f7f8fb;color:#111827;font:inherit}
+.practice-speed-row{display:grid;grid-template-columns:1fr;gap:8px;padding-top:10px}
+.practice-speed-row span{display:flex;justify-content:space-between}
+.practice-speed-row input{width:100%;accent-color:var(--blue)}
