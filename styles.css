@@ -336,3 +336,6 @@
 .practice-language-audio.speaking{text-shadow:0 0 8px #087cff55}
 .practice-japanese,.practice-english{padding-right:0}
 .practice-pronunciation-audio{cursor:pointer}
+
+/* Word section heading follows the Japanese / English heading treatment. */
+.practice-word-section-heading{height:34px;padding:0 4px}
