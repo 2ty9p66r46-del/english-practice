@@ -355,6 +355,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     };
     orderSwitch.addEventListener('click',()=>{
       setOrder(!orderSwitch.classList.contains('ordered'));
+      applyPracticeMethodChange();
     });
     const questionValues=['all',...Array.from({length:20},(_,index)=>String((index+1)*5))];
     const questionLabels=value=>value==='all'?'すべて':value;
@@ -378,6 +379,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
         });
         questionMenu.hidden=true;
         questionLimit.setAttribute('aria-expanded','false');
+        applyPracticeMethodChange();
       });
       questionMenu.appendChild(option);
     });
@@ -399,6 +401,16 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     let practiceIndex=0;
     let practiceStored=null;
     let answerVisible=false;
+    const applyPracticeMethodChange=()=>{
+      if(practiceScreen.hidden||!practiceStored)return;
+      let rows=getMatchingRows(practiceStored.rows||[]);
+      if(practiceButton.dataset.order==='random')rows=shuffleRows(rows);
+      const limit=practiceButton.dataset.questionLimit==='all'?rows.length:Number(practiceButton.dataset.questionLimit);
+      practiceRows=rows.slice(0,limit);
+      practiceIndex=0;
+      renderPracticeQuestion();
+      if(autoPlaying)restartAutoPlayback();
+    };
     const currentPracticeRow=()=>practiceRows[practiceIndex];
     const setAnswerVisible=visible=>{
       answerVisible=visible;
