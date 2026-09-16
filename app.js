@@ -182,6 +182,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     const screenFade=document.getElementById('screenFade');
     const practiceExerciseCard=document.getElementById('practiceExerciseCard');
     const navHome=document.querySelector('.nav-home');
+    const practiceTab=document.getElementById('practiceTab');
     const practiceProgress=document.getElementById('practiceProgress');
     const practiceJapanese=document.getElementById('practiceJapanese');
     const practiceEnglish=document.getElementById('practiceEnglish');
@@ -250,6 +251,8 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       overallFilterWarning.textContent=hasEmptyConditions?`条件${emptyConditions.join(',')}の項目がひとつも選択されていません`:'';
       overallFilterWarning.hidden=!hasEmptyConditions;
       practiceButton.disabled=hasEmptyConditions;
+      practiceTab.disabled=hasEmptyConditions;
+      practiceTab.setAttribute('aria-disabled',String(hasEmptyConditions));
       practiceButton.setAttribute('aria-disabled',String(hasEmptyConditions));
     };
     const syncSectionControls=(section,syncGlobal=true)=>{
@@ -484,6 +487,8 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       practiceIndex=0;
       await transitionScreen(()=>{
         practiceScreen.hidden=false;
+        navHome.classList.remove('active');
+        practiceTab.classList.add('active');
         renderPracticeQuestion();
       });
     };
@@ -492,10 +497,15 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       if('speechSynthesis' in window)speechSynthesis.cancel();
       practiceAudio.classList.remove('speaking');
       practiceJapaneseAudio.classList.remove('speaking');
-      await transitionScreen(()=>{practiceScreen.hidden=true});
+      await transitionScreen(()=>{
+        practiceScreen.hidden=true;
+        practiceTab.classList.remove('active');
+        navHome.classList.add('active');
+      });
       refreshQuestionCount();
     };
     practiceButton.addEventListener('click',()=>openPractice().catch(()=>alert('練習画面を開けませんでした。')));
+    practiceTab.addEventListener('click',()=>practiceButton.click());
     navHome.addEventListener('click',()=>{if(!practiceScreen.hidden)closePractice()});
     practiceReveal.addEventListener('click',()=>setAnswerVisible(true));
     practiceEnglish.addEventListener('click',()=>setAnswerVisible(false));
