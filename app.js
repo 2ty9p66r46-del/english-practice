@@ -516,7 +516,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     const languageModes=['ja','en','both'];
     const repeatModes=['current','all','once'];
     const languageLabels={ja:'日',en:'英',both:'日・英'};
-    const repeatLabels={current:'1問連続',all:'全問循環',once:'1周終了'};
+    const repeatLabels={current:'1問反復',all:'全問周回',once:'1周終了'};
     let autoPlaying=false;
     let playbackRun=0;
     const savePlaybackSettings=()=>localStorage.setItem(PLAYBACK_STORAGE_KEY,JSON.stringify(playbackSettings));
