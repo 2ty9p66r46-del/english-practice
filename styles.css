@@ -306,3 +306,6 @@
 .practice-speed-row{display:grid;grid-template-columns:1fr;gap:8px;padding-top:10px}
 .practice-speed-row span{display:flex;justify-content:space-between}
 .practice-speed-row input{width:100%;accent-color:var(--blue)}
+
+.practice-play-icon{display:grid;width:29px;height:25px;place-items:center;font-size:1.05rem;line-height:1}
+#languageModeIcon{width:39px;font-size:.5rem;letter-spacing:-.02em}
