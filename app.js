@@ -410,7 +410,9 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       practicePronUs.textContent=text(row[4])||'—';
       practicePronUk.textContent=text(row[5])||'—';
       practiceMeaning.textContent=text(row[7])||'意味未登録';
-      practiceNote.textContent=text(row[10])||'備考なし';
+      const note=text(row[10]);
+      practiceNote.textContent=note;
+      practiceNote.closest('.practice-note-row').classList.toggle('is-empty',!note);
       practicePrev.disabled=practiceIndex===0;
       practiceNext.disabled=practiceIndex===practiceRows.length-1;
       syncPracticeRating(row);
