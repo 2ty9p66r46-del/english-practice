@@ -471,6 +471,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     practiceButton.addEventListener('click',()=>openPractice().catch(()=>alert('練習画面を開けませんでした。')));
     navHome.addEventListener('click',()=>{if(!practiceScreen.hidden)closePractice()});
     practiceReveal.addEventListener('click',()=>setAnswerVisible(true));
+    practiceEnglish.addEventListener('click',()=>setAnswerVisible(false));
     practicePrev.addEventListener('click',()=>movePractice(-1));
     practiceNext.addEventListener('click',()=>movePractice(1));
     let practiceSwipeStart=null;
