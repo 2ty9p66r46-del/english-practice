@@ -351,7 +351,8 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       practiceOrderTab.classList.toggle('random',random);
       practiceOrderTab.classList.toggle('active',random);
       practiceOrderTab.setAttribute('aria-pressed',String(random));
-      practiceOrderLabel.textContent=random?'ランダム':'番号順';
+      practiceOrderLabel.textContent='再生順';
+      practiceOrderTab.setAttribute('aria-label',random?'再生順：ランダム':'再生順：番号順');
       practiceButton.dataset.order=random?'random':'number';
     };
     practiceOrderTab.addEventListener('click',()=>{
