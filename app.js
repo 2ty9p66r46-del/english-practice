@@ -224,6 +224,8 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     const repeatModeTab=document.getElementById('repeatModeTab');
     const repeatModeLabel=document.getElementById('repeatModeLabel');
     const practiceBackToList=document.getElementById('practiceBackToList');
+    const practiceFilterButton=document.getElementById('practiceFilterButton');
+    const mainScroll=document.getElementById('mainScroll');
     const practiceSettingsTab=document.getElementById('practiceSettingsTab');
     const practiceSettingsOverlay=document.getElementById('practiceSettingsOverlay');
     const practiceSettingsClose=document.getElementById('practiceSettingsClose');
@@ -856,6 +858,10 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     practiceTab.addEventListener('click',()=>practiceButton.click());
     autoPlayTab.addEventListener('click',()=>autoPlaying?stopAutoPlayback():startAutoPlayback());
     practiceBackToList.addEventListener('click',()=>returnToPracticeList());
+    practiceFilterButton.addEventListener('click',async()=>{
+      await closePractice();
+      requestAnimationFrame(()=>mainScroll?.scrollTo({top:0,behavior:'smooth'}));
+    });
     languageModeTab.addEventListener('click',()=>{
       const index=languageModes.indexOf(playbackSettings.language);
       playbackSettings.language=languageModes[(index+1)%languageModes.length];
