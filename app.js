@@ -654,11 +654,15 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     };
     const startAutoPlayback=()=>{
       if(autoPlaying||!('speechSynthesis' in window))return;
+      speechSynthesis.cancel();
+      clearSentenceSpeaking();
       autoPlaying=true;
       playbackRun+=1;
       const run=playbackRun;
       syncPlaybackControls();
-      runAutoPlayback(run);
+      setTimeout(()=>{
+        if(autoPlaying&&run===playbackRun)runAutoPlayback(run);
+      },40);
     };
     const restartAutoPlayback=()=>{
       if(!autoPlaying||!('speechSynthesis' in window))return;
