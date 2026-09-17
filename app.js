@@ -108,6 +108,59 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
         templateButton.disabled=false;
       }
     });
+    const writeRowsIntoOriginalWorkbook=stored=>{
+      const workbook=XLSX.read(stored.fileBytes,{type:'array',cellFormula:true,cellStyles:true,cellNF:true});
+      const sheetName=workbook.SheetNames.includes('単語リスト')?'単語リスト':workbook.SheetNames[0];
+      const sheet=workbook.Sheets[sheetName];
+      if(!sheet)throw new Error('元のExcelシートを読み込めませんでした。');
+      const originalRange=XLSX.utils.decode_range(sheet['!ref']||'A1:O1');
+      const values=[stored.headers,...stored.rows];
+      const lastRow=Math.max(originalRange.e.r,values.length-1);
+      const lastColumn=Math.max(originalRange.e.c,stored.headers.length-1);
+      const cloneFormat=source=>{
+        if(!source)return{};
+        const target={};
+        if(source.s)target.s=JSON.parse(JSON.stringify(source.s));
+        if(source.z!==undefined)target.z=source.z;
+        return target;
+      };
+      const rebaseFormula=(formula,fromRow,toRow)=>{
+        const offset=toRow-fromRow;
+        if(!offset)return formula;
+        return formula.replace(/(\$?[A-Z]{1,3})(\$?)(\d+)/g,(match,column,absoluteRow,rowNumber)=>{
+          if(absoluteRow)return match;
+          return `${column}${Math.max(1,Number(rowNumber)+offset)}`;
+        });
+      };
+      for(let rowIndex=0;rowIndex<=lastRow;rowIndex+=1){
+        const row=values[rowIndex]||[];
+        const templateRow=Math.max(0,Math.min(rowIndex,originalRange.e.r));
+        for(let columnIndex=0;columnIndex<stored.headers.length;columnIndex+=1){
+          const address=XLSX.utils.encode_cell({r:rowIndex,c:columnIndex});
+          const templateAddress=XLSX.utils.encode_cell({r:templateRow,c:columnIndex});
+          const existing=sheet[address];
+          const template=sheet[templateAddress];
+          const cell=existing||cloneFormat(template);
+          const value=row[columnIndex]??'';
+          cell.v=value;
+          cell.t=typeof value==='number'?'n':typeof value==='boolean'?'b':'s';
+          const formulaSource=existing?.f?existing:template?.f?template:null;
+          if(formulaSource?.f){
+            cell.f=rebaseFormula(formulaSource.f,formulaSource===existing?rowIndex:templateRow,rowIndex);
+          }else{
+            delete cell.f;delete cell.F;
+          }
+          delete cell.w;delete cell.h;
+          sheet[address]=cell;
+        }
+      }
+      if(sheet['!rows']?.length&&values.length>sheet['!rows'].length){
+        const templateRow=sheet['!rows'][Math.max(1,sheet['!rows'].length-1)];
+        while(sheet['!rows'].length<values.length)sheet['!rows'].push(templateRow?{...templateRow}:{});
+      }
+      sheet['!ref']=XLSX.utils.encode_range({s:{r:0,c:0},e:{r:lastRow,c:lastColumn}});
+      return XLSX.write(workbook,{bookType:'xlsx',type:'array',cellStyles:true});
+    };
     exportButton.addEventListener('click',async()=>{
       exportButton.disabled=true;
       try{
@@ -116,10 +169,13 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
         let bytes=stored.fileBytes;
         if(!bytes||stored.modified){
           if(typeof XLSX==='undefined')throw new Error('Excel書出機能を準備できませんでした。通信状態を確認してください。');
-          const sheet=XLSX.utils.aoa_to_sheet([stored.headers,...stored.rows]);
-          const workbook=XLSX.utils.book_new();
-          XLSX.utils.book_append_sheet(workbook,sheet,'単語リスト');
-          bytes=XLSX.write(workbook,{bookType:'xlsx',type:'array'});
+          if(stored.fileBytes)bytes=writeRowsIntoOriginalWorkbook(stored);
+          else{
+            const sheet=XLSX.utils.aoa_to_sheet([stored.headers,...stored.rows]);
+            const workbook=XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook,sheet,'単語リスト');
+            bytes=XLSX.write(workbook,{bookType:'xlsx',type:'array',cellStyles:true});
+          }
         }
         const now=new Date();
         const pad=value=>String(value).padStart(2,'0');
