@@ -170,6 +170,9 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     const practiceButton=document.getElementById('practiceButton');
     const wordCount=document.getElementById('wordCount');
     const exampleCount=document.getElementById('exampleCount');
+    const homeWordCount=document.getElementById('homeWordCount');
+    const homeExampleCount=document.getElementById('homeExampleCount');
+    const homeImportFileName=document.getElementById('homeImportFileName');
     const filterSections=[...document.querySelectorAll('.filter-section')];
     const subgroupAllButtons=[...document.querySelectorAll('.group .all')];
     const levelChoices=[...document.querySelectorAll('.level-group .choice')];
@@ -277,6 +280,11 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       };
       renderFiveDigitCount(wordCount,pairCount);
       renderFiveDigitCount(exampleCount,matchingRows.length);
+      renderFiveDigitCount(homeWordCount,pairCount);
+      renderFiveDigitCount(homeExampleCount,matchingRows.length);
+      const importedName=stored?.fileName||'未読込';
+      homeImportFileName.textContent=importedName;
+      homeImportFileName.title=importedName;
     };
     const syncSubgroupAll=group=>{
       if(!group)return;
