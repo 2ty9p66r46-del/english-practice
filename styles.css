@@ -646,3 +646,8 @@
 .practice-header-counts .count-padding{color:#c7ccd5}
 .practice-header-counts .count-value{color:#344054}
 .practice-header-left .practice-back-to-list{position:absolute;left:0;top:6px}
+
+
+/* Practice header is intentionally unbranded: counts/back left, filter right. */
+.practice-header-left{grid-column:1}
+.practice-filter-button{grid-column:3}
