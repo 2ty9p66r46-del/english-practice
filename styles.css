@@ -725,3 +725,10 @@
 .practice-list-header .practice-header-counts strong{display:flex;width:5ch;justify-content:flex-end;color:#344054;font-size:.6rem;font-weight:900;font-variant-numeric:tabular-nums}
 .practice-list-header .practice-header-counts .count-padding{color:#c7ccd5}
 .practice-list-header .practice-header-counts .count-value{color:#344054}
+
+
+/* Home and Play stay fixed; the remaining practice controls scroll horizontally. */
+.practice-play-fixed{display:none}
+.nav.practice-mode .practice-play-fixed{position:relative;z-index:2;display:flex;flex:0 0 78px;min-width:78px;width:78px;padding:0;background:#fff;color:var(--blue);box-shadow:8px 0 18px #26354a0d}
+.nav.practice-mode .practice-play-fixed.is-stopping{color:#d52b3f}
+.nav.practice-mode .practice-play-fixed svg{width:25px!important;height:25px!important}
