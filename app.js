@@ -225,7 +225,12 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     const repeatModeLabel=document.getElementById('repeatModeLabel');
     const practiceBackToList=document.getElementById('practiceBackToList');
     const practiceFilterButton=document.getElementById('practiceFilterButton');
-    const mainScroll=document.getElementById('mainScroll');
+    const practiceFilterOverlay=document.getElementById('practiceFilterOverlay');
+    const practiceFilterSheetBody=document.getElementById('practiceFilterSheetBody');
+    const practiceFilterClose=document.getElementById('practiceFilterClose');
+    const filterCard=document.getElementById('filterCard');
+    const filterCardHomeParent=filterCard.parentNode;
+    const filterCardHomeNext=filterCard.nextSibling;
     const practiceSettingsTab=document.getElementById('practiceSettingsTab');
     const practiceSettingsOverlay=document.getElementById('practiceSettingsOverlay');
     const practiceSettingsClose=document.getElementById('practiceSettingsClose');
@@ -820,6 +825,34 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       }
       practiceViewTransitioning=false;
     };
+    let practiceFilterOpen=false;
+    const restoreFilterCard=()=>{
+      if(filterCardHomeNext?.parentNode===filterCardHomeParent)filterCardHomeParent.insertBefore(filterCard,filterCardHomeNext);
+      else filterCardHomeParent.append(filterCard);
+    };
+    const openPracticeFilter=()=>{
+      if(practiceFilterOpen)return;
+      practiceFilterOpen=true;
+      if(autoPlaying)stopAutoPlayback();
+      practiceFilterSheetBody.append(filterCard);
+      practiceFilterOverlay.hidden=false;
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{
+        practiceFilterOverlay.classList.add('open');
+        practiceFilterClose.focus({preventScroll:true});
+      }));
+    };
+    const closePracticeFilter=async(applyFilters=true)=>{
+      if(!practiceFilterOpen)return;
+      practiceFilterOpen=false;
+      practiceFilterOverlay.classList.remove('open');
+      await wait(340);
+      restoreFilterCard();
+      practiceFilterOverlay.hidden=true;
+      if(applyFilters){
+        applyPracticeMethodChange();
+        setPracticeViewMode('list');
+      }
+    };
     const openPractice=async()=>{
       if(screenTransitionBusy)return;
       const stored=await getImportedData();
@@ -844,6 +877,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     };
     const closePractice=async()=>{
       if(screenTransitionBusy)return;
+      if(practiceFilterOpen)await closePracticeFilter(false);
       stopAutoPlayback();
       practiceSettingsOverlay.hidden=true;
       await transitionScreen(()=>{
@@ -858,9 +892,10 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     practiceTab.addEventListener('click',()=>practiceButton.click());
     autoPlayTab.addEventListener('click',()=>autoPlaying?stopAutoPlayback():startAutoPlayback());
     practiceBackToList.addEventListener('click',()=>returnToPracticeList());
-    practiceFilterButton.addEventListener('click',async()=>{
-      await closePractice();
-      requestAnimationFrame(()=>mainScroll?.scrollTo({top:0,behavior:'smooth'}));
+    practiceFilterButton.addEventListener('click',openPracticeFilter);
+    practiceFilterClose.addEventListener('click',()=>closePracticeFilter());
+    practiceFilterOverlay.addEventListener('click',event=>{
+      if(event.target===practiceFilterOverlay)closePracticeFilter();
     });
     languageModeTab.addEventListener('click',()=>{
       const index=languageModes.indexOf(playbackSettings.language);
@@ -961,7 +996,9 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       await saveImportedData(practiceStored);
     }));
     document.addEventListener('keydown',event=>{
-      if(practiceScreen.hidden||practiceViewMode==='list')return;
+      if(practiceScreen.hidden)return;
+      if(event.key==='Escape'&&practiceFilterOpen){closePracticeFilter();return}
+      if(practiceViewMode==='list')return;
       if(event.key==='ArrowLeft')movePractice(-1);
       if(event.key==='ArrowRight')movePractice(1);
       if(event.key==='Escape')closePractice();
