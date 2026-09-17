@@ -801,10 +801,9 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
         practiceExerciseCard.hidden=false;
         try{
           const cardExit=practiceExerciseCard.animate([
-            {transform:'translateX(0) rotate(0deg)',opacity:1,offset:0},
-            {transform:'translateX(7%) rotate(.15deg)',opacity:.98,offset:.22},
-            {transform:'translateX(112%) rotate(.8deg)',opacity:.45,offset:1}
-          ],{duration:360,easing:'cubic-bezier(.52,.02,.86,.34)',fill:'forwards'});
+            {transform:'translateX(0)',opacity:1},
+            {transform:'translateX(105%)',opacity:.65}
+          ],{duration:380,easing:'cubic-bezier(.16,.82,.24,1)',fill:'forwards'});
           const listEnter=practiceListPlaceholder.animate([
             {transform:'translateX(-28%)',opacity:.72},
             {transform:'translateX(0)',opacity:1}
