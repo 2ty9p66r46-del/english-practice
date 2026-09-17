@@ -293,6 +293,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     const practicePronUkAudio=document.getElementById('practicePronUkAudio');
     const practiceNote=document.getElementById('practiceNote');
     const practiceCardAdd=document.getElementById('practiceCardAdd');
+    const practiceCardMenu=document.getElementById('practiceCardMenu');
     const cardActionsOverlay=document.getElementById('cardActionsOverlay');
     const cardActionsWord=document.getElementById('cardActionsWord');
     const cardActionsNumber=document.getElementById('cardActionsNumber');
@@ -303,6 +304,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     const cardEditorTitle=document.getElementById('cardEditorTitle');
     const cardEditorCancel=document.getElementById('cardEditorCancel');
     const cardEditorSave=document.getElementById('cardEditorSave');
+    const cardEditorDelete=document.getElementById('cardEditorDelete');
     const cardWordSearch=document.getElementById('cardWordSearch');
     const cardWordResults=document.getElementById('cardWordResults');
     const cardSelectedWord=document.getElementById('cardSelectedWord');
@@ -648,13 +650,6 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
         japanese.textContent=text(row[8])||text(row[7])||'日本語未登録';
         copy.append(heading,japanese);
 
-        const rowActions=document.createElement('span');
-        rowActions.className='practice-list-actions';
-        const menuButton=document.createElement('button');
-        menuButton.type='button';
-        menuButton.className='practice-list-menu';
-        menuButton.textContent='•••';
-        menuButton.setAttribute('aria-label',`${text(row[3])||'単語未登録'}のカードを編集または削除`);
         const openButton=document.createElement('button');
         openButton.type='button';
         openButton.className='practice-list-open';
@@ -668,8 +663,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
         chevron.append(path);
         openButton.append(chevron);
 
-        rowActions.append(menuButton,openButton);
-        item.append(copy,rowActions);
+        item.append(copy,openButton);
         const playFromItem=()=>{
           practiceIndex=index;
           renderPracticeQuestion();
@@ -685,10 +679,6 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
         openButton.addEventListener('click',event=>{
           event.stopPropagation();
           openPracticeCard(index);
-        });
-        menuButton.addEventListener('click',event=>{
-          event.stopPropagation();
-          openCardActions(row);
         });
         practiceList.append(item);
       });
@@ -768,6 +758,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       cardNoteInput.value=mode==='edit'?text(row[10]):'';
       cardWordResults.replaceChildren();cardWordResults.hidden=mode==='edit';
       cardWordSearch.setAttribute('aria-expanded',String(mode!=='edit'));
+      cardEditorDelete.hidden=mode!=='edit';
       cardEditorOverlay.hidden=false;
       if(mode==='add')requestAnimationFrame(()=>{cardWordSearch.focus();renderWordResults()});
       else requestAnimationFrame(()=>cardJapaneseInput.focus());
@@ -782,6 +773,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       if(practiceRows.length)renderPracticeQuestion();
     };
     practiceCardAdd.addEventListener('click',()=>openCardEditor('add'));
+    practiceCardMenu.addEventListener('click',()=>{const row=currentPracticeRow();if(row)openCardEditor('edit',row)});
     cardWordSearch.addEventListener('input',()=>{if(!cardWordSearch.disabled)renderWordResults()});
     cardEditorCancel.addEventListener('click',closeCardEditor);
     cardEditorOverlay.addEventListener('click',event=>{if(event.target===cardEditorOverlay)closeCardEditor()});
@@ -815,9 +807,8 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     cardActionCancel.addEventListener('click',closeCardActions);
     cardActionsOverlay.addEventListener('click',event=>{if(event.target===cardActionsOverlay)closeCardActions()});
     cardActionEdit.addEventListener('click',()=>{const row=cardActionRow;closeCardActions();if(row)openCardEditor('edit',row)});
-    cardActionDelete.addEventListener('click',async()=>{
-      const row=cardActionRow;if(!row)return;
-      closeCardActions();
+    const deleteCardRow=async row=>{
+      if(!row)return false;
       if(!confirm(`「${text(row[3])}」のこのカードを削除しますか？\n\n単語データは削除されません。`))return;
       const index=practiceStored.rows.indexOf(row);if(index<0)return;
       const hasAnotherCard=practiceStored.rows.some((candidate,candidateIndex)=>candidateIndex!==index&&vocabularyKey(candidate)===vocabularyKey(row)&&text(candidate[8])&&text(candidate[9]));
@@ -832,12 +823,18 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
         row[14]='';
       }
       practiceStored.rows.filter(candidate=>vocabularyKey(candidate)===vocabularyKey(row)).forEach((candidate,pairIndex)=>{candidate[2]=String(pairIndex+1)});
-      try{await persistPracticeData();refreshPracticeAfterMutation()}
+      try{await persistPracticeData();refreshPracticeAfterMutation();return true}
       catch{
         if(hasAnotherCard)practiceStored.rows.splice(index,0,row);
         else backup.forEach((value,column)=>{row[column]=value});
         alert('カードを削除できませんでした。');
+        return false;
       }
+    };
+    cardActionDelete.addEventListener('click',async()=>{const row=cardActionRow;closeCardActions();await deleteCardRow(row)});
+    cardEditorDelete.addEventListener('click',async()=>{
+      const row=cardEditorRow;
+      if(await deleteCardRow(row)){closeCardEditor();setPracticeViewMode('list')}
     });
     let practiceMoving=false;
     const animatePracticeCard=async(keyframes,options)=>{

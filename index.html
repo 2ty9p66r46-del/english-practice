@@ -125,12 +125,20 @@
       <header class="practice-screen-header">
         <div class="practice-header-left">
           <button class="practice-back-to-list" id="practiceBackToList" type="button" aria-label="問題一覧へ戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg></button>
+          <div class="practice-header-counts" id="practiceHeaderCounts" aria-live="polite">
+            <span><b>単語数</b><strong id="wordCount">0</strong></span>
+            <span><b>問題数</b><strong id="exampleCount">0</strong></span>
+          </div>
         </div>
-        <button class="practice-filter-button" id="practiceFilterButton" type="button" aria-label="絞り込み条件へ戻る"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4v12M3.5 12.5 7 16l3.5-3.5M14 6h7M14 11h5.5M14 16h4"/></svg><span>フィルター</span></button>
+        <div class="practice-header-actions">
+          <button class="practice-card-add" id="practiceCardAdd" type="button" aria-label="カードを追加"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+          <button class="practice-filter-button" id="practiceFilterButton" type="button" aria-label="絞り込み条件へ戻る"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4v12M3.5 12.5 7 16l3.5-3.5M14 6h7M14 11h5.5M14 16h4"/></svg><span>フィルター</span></button>
+        </div>
       </header>
       <main class="practice-screen-main">
         <article class="practice-exercise-card" id="practiceExerciseCard">
           <section class="practice-question-meta" aria-label="問題情報">
+            <button class="practice-card-menu" id="practiceCardMenu" type="button" aria-label="このカードを編集">•••</button>
             <strong class="practice-progress" id="practiceProgress">0 / 0</strong>
             <div class="practice-info-row practice-info-primary"><span class="practice-number" id="practiceNumber">No 00000-00</span><span class="practice-top-chips"><span class="practice-meta-chip" id="practicePart">—</span><span class="practice-level-chips" id="practiceLevels"></span></span></div>
             <div class="practice-detail-grid">
@@ -160,13 +168,6 @@
         <section class="practice-list-placeholder" id="practiceListPlaceholder" aria-label="問題一覧" hidden>
           <header class="practice-list-header">
             <strong>問題一覧</strong>
-            <div class="practice-list-head-actions">
-              <div class="practice-header-counts" id="practiceHeaderCounts" aria-live="polite">
-                <span><b>単語数</b><strong id="wordCount">0</strong></span>
-                <span><b>問題数</b><strong id="exampleCount">0</strong></span>
-              </div>
-              <button class="practice-card-add" id="practiceCardAdd" type="button" aria-label="カードを追加">＋</button>
-            </div>
           </header>
           <div class="practice-list-items" id="practiceList"></div>
         </section>
@@ -205,6 +206,7 @@
           <label class="card-editor-field"><span>日本語文</span><textarea id="cardJapaneseInput" rows="4" placeholder="日本語文を入力"></textarea></label>
           <label class="card-editor-field"><span>英文</span><textarea id="cardEnglishInput" rows="4" placeholder="英文を入力" lang="en"></textarea></label>
           <label class="card-editor-field"><span>補足 <small>任意</small></span><textarea id="cardNoteInput" rows="3" placeholder="補足を入力"></textarea></label>
+          <button class="card-editor-delete" id="cardEditorDelete" type="button" hidden>このカードを削除</button>
           <p class="card-editor-note">新しい単語は追加できません。登録済みの単語から選択してください。</p>
         </div>
       </section>
