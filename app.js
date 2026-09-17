@@ -268,20 +268,23 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     };
     const refreshQuestionCount=async()=>{
       const stored=await getImportedData();
-      const matchingRows=getMatchingRows(stored?.rows||[]);
-      const pairCount=new Set(matchingRows.map(row=>`${text(row[3]).toLowerCase()}\\t${text(row[6])}`)).size;
+      const sourceRows=stored?.rows||[];
+      const matchingRows=getMatchingRows(sourceRows);
+      const allExampleRows=sourceRows.filter(row=>text(row[8])&&text(row[9]));
+      const matchingPairCount=new Set(matchingRows.map(row=>`${text(row[3]).toLowerCase()}\\t${text(row[6])}`)).size;
+      const totalPairCount=new Set(allExampleRows.map(row=>`${text(row[3]).toLowerCase()}\\t${text(row[6])}`)).size;
       practiceButton.dataset.questionCount=String(matchingRows.length);
-      practiceButton.dataset.pairCount=String(pairCount);
+      practiceButton.dataset.pairCount=String(matchingPairCount);
       const renderFiveDigitCount=(element,value)=>{
         const number=Math.min(99999,Math.max(0,Math.trunc(Number(value)||0)));
         const digits=String(number);
         const padding='0'.repeat(5-digits.length);
         element.innerHTML=`<span class="count-padding">${padding}</span><span class="count-value">${digits}</span>`;
       };
-      renderFiveDigitCount(wordCount,pairCount);
+      renderFiveDigitCount(wordCount,matchingPairCount);
       renderFiveDigitCount(exampleCount,matchingRows.length);
-      renderFiveDigitCount(homeWordCount,pairCount);
-      renderFiveDigitCount(homeExampleCount,matchingRows.length);
+      renderFiveDigitCount(homeWordCount,totalPairCount);
+      renderFiveDigitCount(homeExampleCount,allExampleRows.length);
       const importedName=stored?.fileName||'未読込';
       homeImportFileName.textContent=importedName;
       homeImportFileName.title=importedName;
@@ -298,8 +301,8 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       const hasEmptyConditions=emptyConditions.length>0;
       overallFilterWarning.textContent=hasEmptyConditions?`条件${emptyConditions.join(',')}の項目がひとつも選択されていません`:'';
       overallFilterWarning.hidden=!hasEmptyConditions;
-      practiceButton.disabled=hasEmptyConditions;
-      practiceButton.setAttribute('aria-disabled',String(hasEmptyConditions));
+      practiceButton.disabled=false;
+      practiceButton.setAttribute('aria-disabled','false');
     };
     const syncSectionControls=(section,syncGlobal=true)=>{
       if(!section)return;
