@@ -530,10 +530,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
         });
         openButton.addEventListener('click',event=>{
           event.stopPropagation();
-          practiceIndex=index;
-          setPracticeViewMode('card');
-          renderPracticeQuestion();
-          practiceScreen.querySelector('.practice-screen-main')?.scrollTo({top:0,behavior:'smooth'});
+          openPracticeCard(index);
         });
         practiceList.append(item);
       });
@@ -761,6 +758,42 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       }
     };
     setPracticeViewMode('list');
+    let practiceViewTransitioning=false;
+    const openPracticeCard=async index=>{
+      if(practiceViewTransitioning)return;
+      practiceViewTransitioning=true;
+      if(autoPlaying)stopAutoPlayback();
+      practiceIndex=index;
+      renderPracticeQuestion();
+      setPracticeViewMode('card');
+      const main=practiceScreen.querySelector('.practice-screen-main');
+      main?.scrollTo({top:0});
+      if(practiceExerciseCard.animate){
+        try{
+          await practiceExerciseCard.animate([
+            {transform:'translateX(105%)',opacity:.65},
+            {transform:'translateX(0)',opacity:1}
+          ],{duration:380,easing:'cubic-bezier(.16,.82,.24,1)'}).finished;
+        }catch{}
+      }
+      practiceViewTransitioning=false;
+    };
+    const returnToPracticeList=async()=>{
+      if(practiceViewTransitioning||practiceViewMode==='list')return;
+      practiceViewTransitioning=true;
+      if(autoPlaying)stopAutoPlayback();
+      if(practiceExerciseCard.animate){
+        try{
+          await practiceExerciseCard.animate([
+            {transform:'translateX(0) rotate(0deg)',opacity:1,offset:0},
+            {transform:'translateX(7%) rotate(.15deg)',opacity:.98,offset:.22},
+            {transform:'translateX(112%) rotate(.8deg)',opacity:.5,offset:1}
+          ],{duration:340,easing:'cubic-bezier(.52,.02,.86,.34)'}).finished;
+        }catch{}
+      }
+      setPracticeViewMode('list');
+      practiceViewTransitioning=false;
+    };
     const openPractice=async()=>{
       if(screenTransitionBusy)return;
       const stored=await getImportedData();
@@ -798,7 +831,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     practiceButton.addEventListener('click',()=>openPractice().catch(()=>alert('練習画面を開けませんでした。')));
     practiceTab.addEventListener('click',()=>practiceButton.click());
     autoPlayTab.addEventListener('click',()=>autoPlaying?stopAutoPlayback():startAutoPlayback());
-    practiceBackToList.addEventListener('click',()=>setPracticeViewMode('list'));
+    practiceBackToList.addEventListener('click',()=>returnToPracticeList());
     languageModeTab.addEventListener('click',()=>{
       const index=languageModes.indexOf(playbackSettings.language);
       playbackSettings.language=languageModes[(index+1)%languageModes.length];
