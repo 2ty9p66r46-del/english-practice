@@ -762,10 +762,11 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     const openPracticeCard=async index=>{
       if(practiceViewTransitioning)return;
       practiceViewTransitioning=true;
-      if(autoPlaying)stopAutoPlayback();
+      const continuePlayback=autoPlaying;
       practiceIndex=index;
       renderPracticeQuestion();
       setPracticeViewMode('card');
+      if(continuePlayback)restartAutoPlayback();
       const main=practiceScreen.querySelector('.practice-screen-main');
       main?.scrollTo({top:0});
       if(practiceExerciseCard.animate){
