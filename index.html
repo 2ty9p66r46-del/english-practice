@@ -160,9 +160,12 @@
         <section class="practice-list-placeholder" id="practiceListPlaceholder" aria-label="問題一覧" hidden>
           <header class="practice-list-header">
             <strong>問題一覧</strong>
-            <div class="practice-header-counts" id="practiceHeaderCounts" aria-live="polite">
-              <span><b>単語数</b><strong id="wordCount">0</strong></span>
-              <span><b>問題数</b><strong id="exampleCount">0</strong></span>
+            <div class="practice-list-head-actions">
+              <div class="practice-header-counts" id="practiceHeaderCounts" aria-live="polite">
+                <span><b>単語数</b><strong id="wordCount">0</strong></span>
+                <span><b>問題数</b><strong id="exampleCount">0</strong></span>
+              </div>
+              <button class="practice-card-add" id="practiceCardAdd" type="button" aria-label="カードを追加">＋</button>
             </div>
           </header>
           <div class="practice-list-items" id="practiceList"></div>
@@ -182,6 +185,26 @@
         <div class="practice-setting-row"><span>英語後のポーズ</span><div class="practice-setting-picker"><button class="practice-setting-trigger" id="englishPauseSetting" type="button" aria-haspopup="listbox" aria-expanded="false"><span class="practice-setting-value"></span><span class="practice-setting-chevron">⌄</span></button><div class="practice-setting-menu" id="englishPauseMenu" role="listbox" aria-label="英語後のポーズ" hidden></div></div></div>
         <div class="practice-setting-row"><span>英語の読み上げ回数</span><div class="practice-setting-picker"><button class="practice-setting-trigger" id="englishRepeatSetting" type="button" aria-haspopup="listbox" aria-expanded="false"><span class="practice-setting-value"></span><span class="practice-setting-chevron">⌄</span></button><div class="practice-setting-menu" id="englishRepeatMenu" role="listbox" aria-label="英語の読み上げ回数" hidden></div></div></div>
         <div class="practice-setting-row"><span>再生速度</span><div class="practice-setting-picker"><button class="practice-setting-trigger" id="speechRateSetting" type="button" aria-haspopup="listbox" aria-expanded="false"><span class="practice-setting-value"></span><span class="practice-setting-chevron">⌄</span></button><div class="practice-setting-menu" id="speechRateMenu" role="listbox" aria-label="再生速度" hidden></div></div></div>
+      </section>
+    </div>
+    <div class="card-actions-overlay" id="cardActionsOverlay" hidden>
+      <section class="card-actions-sheet" role="dialog" aria-modal="true" aria-label="カード操作">
+        <div class="card-actions-summary"><strong id="cardActionsWord">—</strong><span id="cardActionsNumber">—</span></div>
+        <button id="cardActionEdit" type="button">編集</button>
+        <button class="danger" id="cardActionDelete" type="button">カードを削除</button>
+        <button class="cancel" id="cardActionCancel" type="button">キャンセル</button>
+      </section>
+    </div>
+    <div class="card-editor-overlay" id="cardEditorOverlay" hidden>
+      <section class="card-editor-sheet" role="dialog" aria-modal="true" aria-labelledby="cardEditorTitle">
+        <header class="card-editor-head"><button id="cardEditorCancel" type="button">キャンセル</button><h2 id="cardEditorTitle">カードを追加</h2><button id="cardEditorSave" type="button">保存</button></header>
+        <div class="card-editor-body">
+          <label class="card-editor-field card-word-field"><span>単語</span><input id="cardWordSearch" type="search" placeholder="単語を検索" autocomplete="off"><small id="cardSelectedWord" hidden></small></label>
+          <div class="card-word-results" id="cardWordResults" role="listbox" aria-label="登録済み単語の候補"></div>
+          <label class="card-editor-field"><span>日本語文</span><textarea id="cardJapaneseInput" rows="4" placeholder="日本語文を入力"></textarea></label>
+          <label class="card-editor-field"><span>英文</span><textarea id="cardEnglishInput" rows="4" placeholder="英文を入力" lang="en"></textarea></label>
+          <p class="card-editor-note">新しい単語は追加できません。登録済みの単語から選択してください。</p>
+        </div>
       </section>
     </div>
     <div class="help-overlay" id="helpOverlay" hidden>
