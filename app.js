@@ -807,6 +807,8 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       practiceListPlaceholder.hidden=!listMode;
       practiceBackToList.hidden=listMode;
       practiceHeaderCounts.hidden=!listMode;
+      practiceFilterButton.disabled=!listMode;
+      practiceFilterButton.setAttribute('aria-disabled',String(!listMode));
       if(listMode){
         renderPracticeList();
         requestAnimationFrame(()=>{
