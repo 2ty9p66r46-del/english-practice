@@ -595,3 +595,11 @@
 
 /* Card detail enters from the right and returns in the opposite direction. */
 .practice-exercise-card{will-change:transform,opacity}
+
+
+/* The fixed left navigation slot is Reload on Home and Home while practicing. */
+.nav-reload{position:relative;z-index:2;display:flex;flex:0 0 88px;width:88px;background:#fff;color:var(--blue);box-shadow:8px 0 18px #26354a0d}
+.nav:not(.practice-mode) .nav-home{display:none}
+.nav.practice-mode .nav-reload{display:none}
+.nav.practice-mode .nav-home{display:flex}
+.nav-reload.loading svg{animation:reloadSpin .8s linear infinite}
