@@ -511,3 +511,11 @@
 
 /* Definitive override: the legacy 42px ID rule must not clip 日・英. */
 #languageModeIcon.practice-language-mark{box-sizing:border-box;width:66px!important;max-width:66px!important;height:25px!important;overflow:visible!important;font-size:1.15rem!important;line-height:25px!important;letter-spacing:-.08em!important;white-space:nowrap!important}
+
+
+/* Bottom-tab icon geometry is identical on Home and Practice. */
+.nav .tab svg,
+.nav #practiceTab .practice-speaker-icon,
+.nav.practice-mode .practice-nav-controls .practice-control-icon{width:25px!important;height:25px!important}
+#languageModeIcon.practice-language-mark{box-sizing:border-box;display:grid;flex:0 0 25px!important;width:25px!important;max-width:25px!important;height:25px!important;place-items:center;overflow:visible!important;background:none!important;font-size:1.15rem!important;font-weight:950;line-height:25px!important;letter-spacing:0!important;white-space:nowrap!important;transform:none}
+#languageModeIcon.practice-language-mark[data-mode="both"]{font-size:.72rem!important;letter-spacing:-.12em!important;transform:scaleX(.78)}
