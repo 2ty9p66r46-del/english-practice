@@ -701,3 +701,12 @@
 .home-import-file{position:relative;z-index:1;display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:8px;margin:8px 3px 0;color:#7b879a;font-size:.52rem;font-weight:750}
 .home-import-file span{white-space:nowrap}
 .home-import-file strong{min-width:0;overflow:hidden;color:#526078;font-weight:800;text-align:right;text-overflow:ellipsis;white-space:nowrap}
+
+
+/* Compact Excel actions align with the bottom-tab icon scale. */
+.active-vocab-card .home-excel-actions{display:flex;justify-content:flex-end;gap:7px}
+.active-vocab-card .home-excel-actions .header-action{width:48px;height:50px;flex:0 0 48px;padding:4px 0;border-radius:13px}
+.active-vocab-card .home-excel-actions .header-action svg{width:25px;height:25px}
+.active-vocab-card .home-excel-actions .header-action span{font-size:.53rem}
+.active-vocab-card .home-practice-button{min-height:58px}
+.active-vocab-card .home-practice-button>span{gap:0}
