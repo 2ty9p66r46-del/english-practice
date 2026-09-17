@@ -29,7 +29,7 @@
     <main class="scroll" id="mainScroll">
       <div class="stack">
         <button id="practiceButton" type="button" hidden aria-hidden="true" tabindex="-1">練習する</button>
-        <section class="card">
+        <section class="card" id="filterCard">
           <div class="section-head"><h2>絞り込み条件</h2><div class="filter-bulk-actions"><button class="bulk-filter-button select" id="selectAllFilters" type="button">すべて選択</button></div></div><p class="overall-filter-warning" id="overallFilterWarning" hidden></p>
           <div class="filter-section" data-filter-section="word">
             <div class="filter-section-head"><h3><span class="condition-badge">条件1</span><span>単語レベル</span></h3><div class="filter-section-actions"><button class="section-filter-button select" type="button" data-section-action="select">すべて選択</button></div></div><p class="filter-warning" hidden>少なくともひとつ項目を選択してください。</p>
@@ -140,6 +140,12 @@
           <div class="practice-list-items" id="practiceList"></div>
         </section>
       </main>    </section>
+    <div class="practice-filter-overlay" id="practiceFilterOverlay" hidden>
+      <section class="practice-filter-sheet" role="dialog" aria-modal="true" aria-label="絞り込み条件">
+        <div class="practice-filter-sheet-head"><span class="practice-filter-handle" aria-hidden="true"></span><button id="practiceFilterClose" type="button">完了</button></div>
+        <div class="practice-filter-sheet-body" id="practiceFilterSheetBody"></div>
+      </section>
+    </div>
     <div class="practice-settings-overlay" id="practiceSettingsOverlay" hidden>
       <section class="practice-settings-sheet" role="dialog" aria-modal="true" aria-labelledby="practiceSettingsTitle">
         <div class="practice-settings-head"><h2 id="practiceSettingsTitle">練習設定</h2><button id="practiceSettingsClose" type="button" aria-label="閉じる">×</button></div>
