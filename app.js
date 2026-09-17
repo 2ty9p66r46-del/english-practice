@@ -182,6 +182,8 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     const screenFade=document.getElementById('screenFade');
     const practiceExerciseCard=document.getElementById('practiceExerciseCard');
     const practiceListPlaceholder=document.getElementById('practiceListPlaceholder');
+    const practiceList=document.getElementById('practiceList');
+    const practiceListCount=document.getElementById('practiceListCount');
     const mainNav=document.querySelector('.nav');
     const navHome=document.querySelector('.nav-home');
     const practiceTab=document.getElementById('practiceTab');
@@ -413,6 +415,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       practiceRows=rows.slice(0,limit);
       practiceIndex=0;
       renderPracticeQuestion();
+      renderPracticeList();
       if(autoPlaying)restartAutoPlayback();
     };
     const currentPracticeRow=()=>practiceRows[practiceIndex];
@@ -426,6 +429,10 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       const value=text(row?.[13])||'未登録';
       practiceRatingButtons.forEach(button=>button.classList.toggle('selected',button.dataset.value===value));
     };
+    const formatPracticeNumber=(value,digits)=>{
+      const raw=text(value);
+      return /^\d+$/.test(raw)?raw.padStart(digits,'0'):raw||'—';
+    };
     const renderPracticeQuestion=()=>{
       const row=currentPracticeRow();
       if(!row)return;
@@ -436,10 +443,6 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       practiceJapanese.textContent=text(row[8]);
       practiceEnglish.textContent=text(row[9]);
       practiceWord.textContent=text(row[3])||'—';
-      const formatPracticeNumber=(value,digits)=>{
-        const raw=text(value);
-        return /^\d+$/.test(raw)?raw.padStart(digits,'0'):raw||'—';
-      };
       practiceNumber.textContent=`No ${formatPracticeNumber(row[1],5)}-${formatPracticeNumber(row[2],2)}`;
       const part=text(row[6])||'—';
       const rank=text(row[0]).toUpperCase();
@@ -474,6 +477,57 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       practiceNext.disabled=practiceIndex===practiceRows.length-1;
       syncPracticeRating(row);
       setAnswerVisible(false);
+    };
+    const renderPracticeList=()=>{
+      practiceListCount.textContent=`${practiceRows.length}問`;
+      practiceList.replaceChildren();
+      practiceRows.forEach((row,index)=>{
+        const item=document.createElement('button');
+        item.type='button';
+        item.className='practice-list-row';
+        item.setAttribute('aria-label',`${index+1}問目 ${text(row[3])||'単語未登録'}をカードで開く`);
+        item.setAttribute('aria-current',String(index===practiceIndex));
+
+        const copy=document.createElement('span');
+        copy.className='practice-list-copy';
+        const heading=document.createElement('span');
+        heading.className='practice-list-title';
+        const number=document.createElement('b');
+        number.textContent=`${formatPracticeNumber(row[1],5)}-${formatPracticeNumber(row[2],2)}`;
+        const separator=document.createElement('span');
+        separator.textContent='—';
+        const word=document.createElement('strong');
+        word.textContent=text(row[3])||'単語未登録';
+        heading.append(number,separator,word);
+
+        const japanese=document.createElement('span');
+        japanese.className='practice-list-japanese';
+        japanese.textContent=text(row[8])||text(row[7])||'日本語未登録';
+        copy.append(heading,japanese);
+
+        const rating=text(row[13]);
+        const ratingTone={'0%':'red','50%':'orange','80%':'yellow','100%':'green'}[rating]||'purple';
+        const status=document.createElement('span');
+        status.className=`practice-list-rating ${ratingTone}`;
+        status.textContent=rating?rating.replace('%',''):'—';
+        status.setAttribute('aria-label',`理解度 ${rating||'未登録'}`);
+
+        const chevron=document.createElementNS('http://www.w3.org/2000/svg','svg');
+        chevron.setAttribute('class','practice-list-chevron');
+        chevron.setAttribute('viewBox','0 0 24 24');
+        chevron.setAttribute('aria-hidden','true');
+        const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+        path.setAttribute('d','m9 5 7 7-7 7');
+        chevron.append(path);
+
+        item.append(copy,status,chevron);
+        item.addEventListener('click',()=>{
+          practiceIndex=index;
+          setPracticeViewMode('card');
+          renderPracticeQuestion();
+        });
+        practiceList.append(item);
+      });
     };
     let practiceMoving=false;
     const animatePracticeCard=async(keyframes,options)=>{
@@ -686,6 +740,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       practiceViewModeTab.classList.toggle('list-mode',listMode);
       practiceViewModeTab.setAttribute('aria-pressed',String(listMode));
       practiceViewModeTab.setAttribute('aria-label',`表示形式：${listMode?'リスト形式':'カード形式'}`);
+      if(listMode)renderPracticeList();
     };
     setPracticeViewMode('card');
     const openPractice=async()=>{
@@ -707,6 +762,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
         navHome.classList.remove('active');
         practiceTab.classList.add('active');
         renderPracticeQuestion();
+        renderPracticeList();
       });
     };
     const closePractice=async()=>{
@@ -827,6 +883,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       row[13]=text(row[13])===button.dataset.value?'':button.dataset.value;
       practiceStored.modified=true;
       syncPracticeRating(row);
+      renderPracticeList();
       await saveImportedData(practiceStored);
     }));
     document.addEventListener('keydown',event=>{
