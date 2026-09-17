@@ -306,8 +306,10 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     const cardWordSearch=document.getElementById('cardWordSearch');
     const cardWordResults=document.getElementById('cardWordResults');
     const cardSelectedWord=document.getElementById('cardSelectedWord');
+    const cardMeaningInput=document.getElementById('cardMeaningInput');
     const cardJapaneseInput=document.getElementById('cardJapaneseInput');
     const cardEnglishInput=document.getElementById('cardEnglishInput');
+    const cardNoteInput=document.getElementById('cardNoteInput');
     const practiceRatingButtons=[...document.querySelectorAll('.practice-rating-button')];
     const setSentenceSpeaking=(button,active,showStop=true)=>{
       button.classList.toggle('speaking',active);
@@ -736,7 +738,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
         button.addEventListener('click',()=>{
           selectedVocabularyRow=row;
           cardWordSearch.value=text(row[3]);cardWordSearch.disabled=true;
-          cardSelectedWord.textContent=`${text(row[6])||'品詞未登録'}　${text(row[7])||'意味未登録'}`;
+          cardSelectedWord.textContent=text(row[6])||'品詞未登録';
           cardSelectedWord.hidden=false;cardWordResults.hidden=true;
         });
         cardWordResults.append(button);
@@ -750,10 +752,12 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       cardEditorMode=mode;cardEditorRow=row;selectedVocabularyRow=mode==='edit'?row:null;
       cardEditorTitle.textContent=mode==='edit'?'カードを編集':'カードを追加';
       cardWordSearch.value=mode==='edit'?text(row[3]):'';cardWordSearch.disabled=mode==='edit';
-      cardSelectedWord.textContent=mode==='edit'?`${text(row[6])||'品詞未登録'}　${text(row[7])||'意味未登録'}`:'';
+      cardSelectedWord.textContent=mode==='edit'?(text(row[6])||'品詞未登録'):'';
       cardSelectedWord.hidden=mode!=='edit';
+      cardMeaningInput.value=mode==='edit'?text(row[7]):'';
       cardJapaneseInput.value=mode==='edit'?text(row[8]):'';
       cardEnglishInput.value=mode==='edit'?text(row[9]):'';
+      cardNoteInput.value=mode==='edit'?text(row[10]):'';
       cardWordResults.replaceChildren();cardWordResults.hidden=mode==='edit';
       cardEditorOverlay.hidden=false;
       if(mode==='add')requestAnimationFrame(()=>{cardWordSearch.focus();renderWordResults()});
@@ -773,19 +777,27 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     cardEditorCancel.addEventListener('click',closeCardEditor);
     cardEditorOverlay.addEventListener('click',event=>{if(event.target===cardEditorOverlay)closeCardEditor()});
     cardEditorSave.addEventListener('click',async()=>{
-      const japanese=text(cardJapaneseInput.value),english=text(cardEnglishInput.value);
+      const meaning=text(cardMeaningInput.value),japanese=text(cardJapaneseInput.value),english=text(cardEnglishInput.value),note=text(cardNoteInput.value);
       if(!selectedVocabularyRow){alert('登録済みの単語を選択してください。');return}
-      if(!japanese||!english){alert('日本語文と英文を両方入力してください。');return}
+      if(!meaning||!japanese||!english){alert('意味・日本語文・英文を入力してください。');return}
       cardEditorSave.disabled=true;
       try{
         if(cardEditorMode==='edit'){
-          cardEditorRow[8]=japanese;cardEditorRow[9]=english;
+          cardEditorRow[7]=meaning;cardEditorRow[8]=japanese;cardEditorRow[9]=english;cardEditorRow[10]=note;
         }else{
-          const newRow=[...selectedVocabularyRow];
-          const samePair=(practiceStored.rows||[]).filter(row=>vocabularyKey(row)===vocabularyKey(newRow));
-          const nextSub=Math.max(0,...samePair.map(row=>Number.parseInt(text(row[2]),10)||0))+1;
-          newRow[2]=String(nextSub);newRow[8]=japanese;newRow[9]=english;newRow[13]='';newRow[14]='';
-          practiceStored.rows.push(newRow);
+          const pairKey=vocabularyKey(selectedVocabularyRow);
+          const samePair=(practiceStored.rows||[]).filter(row=>vocabularyKey(row)===pairKey);
+          const emptyRow=samePair.find(row=>!text(row[7])&&!text(row[8])&&!text(row[9]));
+          if(emptyRow){
+            emptyRow[7]=meaning;emptyRow[8]=japanese;emptyRow[9]=english;emptyRow[10]=note;emptyRow[13]='';emptyRow[14]='';
+          }else{
+            const newRow=[...selectedVocabularyRow];
+            newRow[7]=meaning;newRow[8]=japanese;newRow[9]=english;newRow[10]=note;newRow[13]='';newRow[14]='';
+            let insertIndex=-1;
+            practiceStored.rows.forEach((row,index)=>{if(vocabularyKey(row)===pairKey)insertIndex=index});
+            practiceStored.rows.splice(insertIndex>=0?insertIndex+1:practiceStored.rows.length,0,newRow);
+          }
+          practiceStored.rows.filter(row=>vocabularyKey(row)===pairKey).forEach((row,index)=>{row[2]=String(index+1)});
         }
         await persistPracticeData();refreshPracticeAfterMutation();closeCardEditor();
       }catch{alert('カードを保存できませんでした。')}
@@ -810,6 +822,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
         row[13]='';
         row[14]='';
       }
+      practiceStored.rows.filter(candidate=>vocabularyKey(candidate)===vocabularyKey(row)).forEach((candidate,pairIndex)=>{candidate[2]=String(pairIndex+1)});
       try{await persistPracticeData();refreshPracticeAfterMutation()}
       catch{
         if(hasAnotherCard)practiceStored.rows.splice(index,0,row);
