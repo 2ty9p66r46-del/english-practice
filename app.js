@@ -186,7 +186,6 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     const practiceExerciseCard=document.getElementById('practiceExerciseCard');
     const practiceListPlaceholder=document.getElementById('practiceListPlaceholder');
     const practiceList=document.getElementById('practiceList');
-    const practiceListCount=document.getElementById('practiceListCount');
     const mainNav=document.querySelector('.nav');
     const navHome=document.querySelector('.nav-home');
     const practiceProgress=document.getElementById('practiceProgress');
@@ -491,7 +490,6 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       setAnswerVisible(false);
     };
     const renderPracticeList=()=>{
-      practiceListCount.textContent=`${practiceRows.length}問`;
       practiceList.replaceChildren();
       practiceRows.forEach((row,index)=>{
         const item=document.createElement('div');
