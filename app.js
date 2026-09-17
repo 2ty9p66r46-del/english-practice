@@ -224,6 +224,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     const repeatModeTab=document.getElementById('repeatModeTab');
     const repeatModeLabel=document.getElementById('repeatModeLabel');
     const practiceBackToList=document.getElementById('practiceBackToList');
+    const practiceHeaderCounts=document.getElementById('practiceHeaderCounts');
     const practiceFilterButton=document.getElementById('practiceFilterButton');
     const practiceFilterOverlay=document.getElementById('practiceFilterOverlay');
     const practiceFilterSheetBody=document.getElementById('practiceFilterSheetBody');
@@ -757,6 +758,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       practiceExerciseCard.hidden=listMode;
       practiceListPlaceholder.hidden=!listMode;
       practiceBackToList.hidden=listMode;
+      practiceHeaderCounts.hidden=!listMode;
       if(listMode){
         renderPracticeList();
         requestAnimationFrame(()=>{
