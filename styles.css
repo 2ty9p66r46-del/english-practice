@@ -587,3 +587,11 @@
 .practice-list-row:focus-visible{outline:3px solid #8fc1f5;outline-offset:-3px}
 .practice-list-row[aria-current="true"]{background:linear-gradient(90deg,#e8f3ff 0%,#fff 78%)}
 .practice-list-row[aria-current="true"] .practice-list-title strong{color:var(--blue)}
+
+
+/* Reload now lives in the Home bottom navigation. */
+.match-summary{justify-content:flex-end}
+#reloadButton.loading svg{animation:reloadSpin .8s linear infinite}
+
+/* Card detail enters from the right and returns in the opposite direction. */
+.practice-exercise-card{will-change:transform,opacity}
