@@ -710,3 +710,7 @@
 .active-vocab-card .home-excel-actions .header-action span{font-size:.53rem}
 .active-vocab-card .home-practice-button{min-height:58px}
 .active-vocab-card .home-practice-button>span{gap:0}
+
+
+/* Count summary and practice action share one consistent control height. */
+.active-vocab-card .home-card-counts>span{min-height:58px;height:58px}
