@@ -814,3 +814,10 @@
 .nav.practice-mode .practice-play-fixed .practice-play-svg .pause-mark{fill:none!important;stroke:currentColor!important}
 .nav.practice-mode .practice-play-fixed.is-playing .practice-play-svg .play-mark{display:none}
 .nav.practice-mode .practice-play-fixed.is-playing .practice-play-svg .pause-mark{display:block}
+
+
+/* Keep the Problem List section fixed; only its rows scroll. */
+.practice-list-placeholder{flex:1 1 auto;min-height:0;overflow:hidden}
+.practice-list-header{position:relative;z-index:5;flex:0 0 62px;background:#fff;box-shadow:0 5px 12px #26354a0a}
+.practice-list-items{min-height:0;flex:1 1 auto;overflow-y:auto;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.practice-list-items::-webkit-scrollbar{display:none}
