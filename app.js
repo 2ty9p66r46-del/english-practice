@@ -783,16 +783,37 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       if(practiceViewTransitioning||practiceViewMode==='list')return;
       practiceViewTransitioning=true;
       if(autoPlaying)stopAutoPlayback();
-      if(practiceExerciseCard.animate){
-        try{
-          await practiceExerciseCard.animate([
-            {transform:'translateX(0) rotate(0deg)',opacity:1,offset:0},
-            {transform:'translateX(7%) rotate(.15deg)',opacity:.98,offset:.22},
-            {transform:'translateX(112%) rotate(.8deg)',opacity:.5,offset:1}
-          ],{duration:340,easing:'cubic-bezier(.52,.02,.86,.34)'}).finished;
-        }catch{}
+      const cardRect=practiceExerciseCard.getBoundingClientRect();
+      const supportsAnimation=typeof practiceExerciseCard.animate==='function';
+      if(supportsAnimation){
+        Object.assign(practiceExerciseCard.style,{
+          position:'fixed',
+          left:`${cardRect.left}px`,
+          top:`${cardRect.top}px`,
+          width:`${cardRect.width}px`,
+          height:`${cardRect.height}px`,
+          margin:'0',
+          zIndex:'95'
+        });
       }
       setPracticeViewMode('list');
+      if(supportsAnimation){
+        practiceExerciseCard.hidden=false;
+        try{
+          const cardExit=practiceExerciseCard.animate([
+            {transform:'translateX(0) rotate(0deg)',opacity:1,offset:0},
+            {transform:'translateX(7%) rotate(.15deg)',opacity:.98,offset:.22},
+            {transform:'translateX(112%) rotate(.8deg)',opacity:.45,offset:1}
+          ],{duration:360,easing:'cubic-bezier(.52,.02,.86,.34)'});
+          const listEnter=practiceListPlaceholder.animate([
+            {transform:'translateX(-28%)',opacity:.72},
+            {transform:'translateX(0)',opacity:1}
+          ],{duration:380,easing:'cubic-bezier(.16,.82,.24,1)'});
+          await Promise.allSettled([cardExit.finished,listEnter.finished]);
+        }catch{}
+        practiceExerciseCard.hidden=true;
+        ['position','left','top','width','height','margin','z-index'].forEach(property=>practiceExerciseCard.style.removeProperty(property));
+      }
       practiceViewTransitioning=false;
     };
     const openPractice=async()=>{
