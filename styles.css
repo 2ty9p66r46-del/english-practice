@@ -563,3 +563,20 @@
 .practice-header-view-button.active{background:linear-gradient(180deg,#78bfff 0%,#2e91ed 52%,#176fc2 100%);color:#fff;box-shadow:inset 0 1px 0 #ffffff99,inset 0 -1px 0 #0000001f,0 2px 5px #064faa40}
 .practice-header-view-button:active{transform:translateY(1px)}
 .practice-header-view-spacer{display:block;width:78px;height:1px}
+
+
+/* List-first practice flow: list scrolls with the page, arrow opens a card, card arrow returns. */
+.practice-screen-header{grid-template-columns:44px minmax(0,1fr) 44px}
+.practice-header-view-switch{display:none}
+.practice-back-to-list{display:grid;width:38px;height:38px;place-items:center;justify-self:start;padding:0;border:1px solid #d8dee8;border-radius:50%;background:#fff;color:#526078;box-shadow:0 3px 10px #26354a12}
+.practice-back-to-list[hidden]{display:none!important}
+.practice-back-to-list svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.practice-back-to-list:active{transform:translateX(-1px)}
+.practice-header-view-spacer{width:44px}
+.practice-list-placeholder{flex:0 0 auto;min-height:0;overflow:visible}
+.practice-list-row{grid-template-columns:minmax(0,1fr) 42px}
+.practice-list-row:active{background:#fff}
+.practice-list-open{display:grid;width:38px;height:38px;place-items:center;padding:0;border:0;border-radius:50%;background:transparent;color:#8c95a5}
+.practice-list-open:active{background:#edf3fb;color:var(--blue)}
+.practice-list-open .practice-list-chevron{display:block}
+.practice-list-rating{display:none}
