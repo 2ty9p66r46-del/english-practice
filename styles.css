@@ -651,3 +651,36 @@
 /* Practice header is intentionally unbranded: counts/back left, filter right. */
 .practice-header-left{grid-column:1}
 .practice-filter-button{grid-column:3}
+
+
+/* Home is a product launcher: one active module and two clearly inactive modules. */
+.home-brand-row{justify-content:center}
+.home-brand-row .brand-lockup{align-items:center}
+.home-modules{display:grid;gap:14px}
+.home-module-card{position:relative;overflow:hidden;border:1px solid #dfe5ef;border-radius:23px;background:#fff;box-shadow:0 1px 1px #1822350d,0 9px 25px #27344d0a}
+.active-vocab-card{padding:18px;background:linear-gradient(145deg,#fff 0%,#f7fbff 62%,#edf6ff 100%);border-color:#d2e4f8}
+.active-vocab-card::after{position:absolute;top:0;right:0;width:115px;height:115px;border-radius:0 0 0 100%;background:radial-gradient(circle at 100% 0,#55adff24 0%,#55adff00 68%);content:"";pointer-events:none}
+.home-module-head{position:relative;z-index:1;display:grid;grid-template-columns:48px minmax(0,1fr) auto;align-items:center;gap:11px}
+.home-module-icon{display:grid;width:44px;height:44px;place-items:center;border:1px solid #dce2eb;border-radius:14px;background:linear-gradient(180deg,#f7f8fa,#e8ebf0);color:#8b94a3;box-shadow:inset 0 1px 0 #fff}
+.home-module-icon.active{width:48px;height:48px;border:2px solid #075bb8;background:linear-gradient(180deg,#78bfff 0%,#2e91ed 52%,#176fc2 100%);color:#fff;box-shadow:inset 0 1px 0 #ffffff99,inset 0 -2px 0 #00000020,0 4px 10px #064faa35}
+.home-module-icon svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.home-module-title{display:grid;min-width:0;gap:2px}
+.home-module-title small{color:#7b879a;font-size:.48rem;font-weight:850;letter-spacing:.12em}
+.home-module-title strong{color:#111827;font-size:1rem;font-weight:900;line-height:1.15}
+.home-module-status{justify-self:end;padding:4px 8px;border:1px solid #d8dde5;border-radius:999px;background:#eef0f4;color:#8a92a0;font-size:.53rem;font-weight:850;white-space:nowrap}
+.home-module-status.available{border-color:#9bc9f7;background:#e7f3ff;color:#0876ee}
+.home-excel-actions{position:relative;z-index:1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:16px}
+.home-excel-actions .header-action{width:100%;height:60px;border-radius:15px;background:#fff;font-size:.65rem}
+.home-excel-actions .header-action svg{width:24px;height:24px}
+.home-practice-button{position:relative;z-index:1;display:grid;width:100%;min-height:64px;grid-template-columns:38px minmax(0,1fr) 24px;align-items:center;gap:10px;margin-top:10px;padding:8px 14px;border:3px solid #075bb8;border-radius:17px;background:linear-gradient(180deg,#66b7ff 0%,#1786ef 48%,#0766c8 100%);color:#fff;text-align:left;box-shadow:inset 0 1px 0 #ffffffa8,inset 0 -2px 0 #003e842e,0 6px 14px #075bb833}
+.home-practice-button:active{transform:translateY(1px);box-shadow:inset 0 1px 0 #ffffff80,inset 0 -2px 0 #003e842e,0 3px 8px #075bb82c}
+.home-practice-button:disabled{border-color:#c4cad3;background:linear-gradient(#e9ebef,#d8dce3);color:#8c95a3;box-shadow:inset 0 1px 0 #fff}
+.home-practice-button>span{display:grid;gap:1px}
+.home-practice-button strong{font-size:.9rem;font-weight:900}
+.home-practice-button small{font-size:.53rem;font-weight:750;opacity:.86}
+.home-practice-person{width:34px;height:34px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.home-practice-arrow{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.home-coming-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.home-module-card.coming{display:grid;min-height:138px;grid-template-columns:44px minmax(0,1fr);grid-template-rows:auto auto;align-content:center;align-items:center;gap:9px 10px;padding:16px;background:linear-gradient(145deg,#f9fafb,#eef0f4);filter:saturate(.35)}
+.home-module-card.coming>strong{color:#667085;font-size:.72rem;font-weight:850;line-height:1.35}
+.home-module-card.coming .home-module-status{grid-column:1/-1;justify-self:start;margin-left:54px}
