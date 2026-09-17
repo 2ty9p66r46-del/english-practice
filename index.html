@@ -132,8 +132,12 @@
             </div>
           </section>
         </article>
-        <section class="practice-list-placeholder" id="practiceListPlaceholder" aria-live="polite" hidden>
-          <strong>実装中</strong>
+        <section class="practice-list-placeholder" id="practiceListPlaceholder" aria-label="問題一覧" hidden>
+          <header class="practice-list-header">
+            <strong>問題一覧</strong>
+            <span id="practiceListCount">0問</span>
+          </header>
+          <div class="practice-list-items" id="practiceList"></div>
         </section>
       </main>    </section>
     <div class="practice-settings-overlay" id="practiceSettingsOverlay" hidden>
