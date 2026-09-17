@@ -716,7 +716,14 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       const hasAnotherCard=practiceStored.rows.some((candidate,candidateIndex)=>candidateIndex!==index&&vocabularyKey(candidate)===vocabularyKey(row)&&text(candidate[8])&&text(candidate[9]));
       const backup=[...row];
       if(hasAnotherCard)practiceStored.rows.splice(index,1);
-      else{row[8]='';row[9]='';row[13]=''}
+      else{
+        row[7]='';
+        row[8]='';
+        row[9]='';
+        row[10]='';
+        row[13]='';
+        row[14]='';
+      }
       try{await persistPracticeData();refreshPracticeAfterMutation()}
       catch{
         if(hasAnotherCard)practiceStored.rows.splice(index,0,row);
