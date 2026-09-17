@@ -379,6 +379,23 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     const questionValues=['all',...Array.from({length:20},(_,index)=>String((index+1)*5))];
     const questionLabels=value=>value==='all'?'すべて':value;
     let selectedQuestionLimit='all';
+    const centerQuestionOption=(option,behavior='auto')=>{
+      if(!option)return;
+      const top=option.offsetTop-(questionMenu.clientHeight-option.offsetHeight)/2;
+      questionMenu.scrollTo({top:Math.max(0,top),behavior});
+    };
+    const selectQuestionLimit=value=>{
+      if(selectedQuestionLimit===value)return;
+      selectedQuestionLimit=value;
+      questionLimitValue.textContent=questionLabels(value);
+      practiceButton.dataset.questionLimit=value;
+      questionMenu.querySelectorAll('.question-option').forEach(item=>{
+        const selected=item.dataset.value===value;
+        item.classList.toggle('selected',selected);
+        item.setAttribute('aria-selected',String(selected));
+      });
+      applyPracticeMethodChange();
+    };
     questionValues.forEach(value=>{
       const option=document.createElement('button');
       option.type='button';
@@ -387,25 +404,29 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       option.setAttribute('aria-selected',String(value==='all'));
       option.dataset.value=value;
       option.textContent=questionLabels(value);
-      option.addEventListener('click',()=>{
-        selectedQuestionLimit=value;
-        questionLimitValue.textContent=questionLabels(value);
-        practiceButton.dataset.questionLimit=value;
-        questionMenu.querySelectorAll('.question-option').forEach(item=>{
-          const selected=item.dataset.value===value;
-          item.classList.toggle('selected',selected);
-          item.setAttribute('aria-selected',String(selected));
-        });
-        questionMenu.hidden=true;
-        questionLimit.setAttribute('aria-expanded','false');
-        applyPracticeMethodChange();
+      option.addEventListener('click',event=>{
+        event.stopPropagation();
+        selectQuestionLimit(value);
+        centerQuestionOption(option,'smooth');
       });
       questionMenu.appendChild(option);
     });
+    let questionScrollTimer=0;
+    questionMenu.addEventListener('scroll',()=>{
+      clearTimeout(questionScrollTimer);
+      questionScrollTimer=setTimeout(()=>{
+        const center=questionMenu.scrollTop+questionMenu.clientHeight/2;
+        const options=[...questionMenu.querySelectorAll('.question-option')];
+        const nearest=options.reduce((best,item)=>Math.abs(item.offsetTop+item.offsetHeight/2-center)<Math.abs(best.offsetTop+best.offsetHeight/2-center)?item:best,options[0]);
+        selectQuestionLimit(nearest.dataset.value);
+        centerQuestionOption(nearest,'smooth');
+      },110);
+    },{passive:true});
     questionLimit.addEventListener('click',()=>{
       const opening=questionMenu.hidden;
       questionMenu.hidden=!opening;
       questionLimit.setAttribute('aria-expanded',String(opening));
+      if(opening)requestAnimationFrame(()=>centerQuestionOption(questionMenu.querySelector('.selected')));
     });
     document.addEventListener('pointerdown',event=>{
       if(!questionPicker.contains(event.target)){
@@ -640,6 +661,20 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
         item.setAttribute('aria-selected',String(selected));
       });
     });
+    const centerPracticeSettingOption=(spec,option,behavior='auto')=>{
+      if(!option)return;
+      const top=option.offsetTop-(spec.menu.clientHeight-option.offsetHeight)/2;
+      spec.menu.scrollTo({top:Math.max(0,top),behavior});
+    };
+    const selectPracticeSettingOption=(spec,option)=>{
+      if(!option)return;
+      const value=Number(option.dataset.value);
+      if(Number(playbackSettings[spec.key])!==value){
+        playbackSettings[spec.key]=value;
+        savePlaybackSettings();
+        syncPracticeSettingPickers();
+      }
+    };
     practiceSettingSpecs.forEach(spec=>{
       spec.options.forEach(item=>{
         const option=document.createElement('button');
@@ -650,14 +685,21 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
         option.textContent=item.label;
         option.addEventListener('click',event=>{
           event.stopPropagation();
-          playbackSettings[spec.key]=Number(item.value);
-          savePlaybackSettings();
-          syncPracticeSettingPickers();
-          spec.menu.hidden=true;
-          spec.trigger.setAttribute('aria-expanded','false');
+          selectPracticeSettingOption(spec,option);
+          centerPracticeSettingOption(spec,option,'smooth');
         });
         spec.menu.appendChild(option);
       });
+      spec.menu.addEventListener('scroll',()=>{
+        clearTimeout(spec.scrollTimer);
+        spec.scrollTimer=setTimeout(()=>{
+          const center=spec.menu.scrollTop+spec.menu.clientHeight/2;
+          const options=[...spec.menu.querySelectorAll('.practice-setting-option')];
+          const nearest=options.reduce((best,item)=>Math.abs(item.offsetTop+item.offsetHeight/2-center)<Math.abs(best.offsetTop+best.offsetHeight/2-center)?item:best,options[0]);
+          selectPracticeSettingOption(spec,nearest);
+          centerPracticeSettingOption(spec,nearest,'smooth');
+        },110);
+      },{passive:true});
       spec.trigger.addEventListener('click',event=>{
         event.stopPropagation();
         const opening=spec.menu.hidden;
@@ -667,9 +709,9 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
         if(opening){
           spec.menu.classList.remove('open-up');
           const triggerRect=spec.trigger.getBoundingClientRect();
-          const menuHeight=Math.min(spec.menu.scrollHeight,240);
+          const menuHeight=174;
           if(innerHeight-triggerRect.bottom<menuHeight+18&&triggerRect.top>menuHeight+18)spec.menu.classList.add('open-up');
-          requestAnimationFrame(()=>spec.menu.querySelector('.selected')?.scrollIntoView({block:'nearest'}));
+          requestAnimationFrame(()=>centerPracticeSettingOption(spec,spec.menu.querySelector('.selected')));
         }
       });
     });
