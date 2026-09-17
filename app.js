@@ -600,8 +600,8 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       languageModeIcon.textContent=languageLabels[playbackSettings.language];
       languageModeIcon.dataset.mode=playbackSettings.language;
       languageModeLabel.textContent='音声';
-      repeatModeLabel.textContent='再生方法';
-      repeatModeTab.setAttribute('aria-label','再生方法：'+repeatLabels[playbackSettings.repeat]);
+      repeatModeLabel.textContent='リピート';
+      repeatModeTab.setAttribute('aria-label','リピート：'+repeatLabels[playbackSettings.repeat]);
       repeatModeTab.classList.remove('repeat-current','repeat-all','repeat-once');
       repeatModeTab.classList.add('repeat-'+playbackSettings.repeat);
       syncPracticeSettingPickers();
