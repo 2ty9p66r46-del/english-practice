@@ -528,3 +528,13 @@
 
 /* Increase the 1-2-3 sequence numerals without changing icon geometry. */
 .practice-order-icon .order-number-mark text{font-size:7.8px;font-weight:950}
+
+
+/* Practice display-mode switch: preserve the current card view and reserve list mode for the upcoming implementation. */
+.practice-view-mode-icon>g{display:none}
+#practiceViewModeTab.card-mode .view-card-mark,
+#practiceViewModeTab.list-mode .view-list-mark{display:block}
+.practice-list-placeholder{display:grid;flex:1 1 520px;min-height:510px;place-items:center;border-radius:23px;background:#fff;color:#7a8495;box-shadow:0 1px 1px #1822350d,0 9px 25px #27344d0a}
+.practice-list-placeholder strong{font-size:1rem;font-weight:850;letter-spacing:.08em}
+.practice-exercise-card[hidden],
+.practice-list-placeholder[hidden]{display:none!important}
