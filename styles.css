@@ -714,3 +714,14 @@
 
 /* Count summary and practice action share one consistent control height. */
 .active-vocab-card .home-card-counts>span{min-height:58px;height:58px}
+
+
+/* Problem-list header owns the filtered word and question totals. */
+.practice-list-header{min-height:62px}
+.practice-list-header .practice-header-counts{display:grid;width:104px;height:auto;gap:3px;justify-items:end}
+.practice-list-header .practice-header-counts[hidden]{display:none!important}
+.practice-list-header .practice-header-counts>span{display:grid;width:100%;grid-template-columns:45px 5ch;align-items:baseline;justify-content:end;column-gap:4px;white-space:nowrap}
+.practice-list-header .practice-header-counts b{color:#65728a;font-size:.5rem;font-weight:800;text-align:right}
+.practice-list-header .practice-header-counts strong{display:flex;width:5ch;justify-content:flex-end;color:#344054;font-size:.6rem;font-weight:900;font-variant-numeric:tabular-nums}
+.practice-list-header .practice-header-counts .count-padding{color:#c7ccd5}
+.practice-list-header .practice-header-counts .count-value{color:#344054}
