@@ -851,9 +851,9 @@
 .card-editor-field input,.card-editor-field textarea{width:100%;box-sizing:border-box;border:1px solid #ced6e2;border-radius:14px;background:#fff;color:#182230;font:inherit;font-size:1rem;line-height:1.45;outline:none}.card-editor-field input{height:48px;padding:0 13px}.card-editor-field textarea{padding:12px 13px;resize:vertical}
 .card-editor-field input:focus,.card-editor-field textarea:focus{border-color:#5ba9ef;box-shadow:0 0 0 3px #3b9cf025}.card-editor-field input:disabled{background:#eef1f5;color:#344054}
 .card-editor-field small{padding:0 4px;color:#65728a;font-size:.68rem;line-height:1.4}
-.card-word-results{display:grid;max-height:220px;overflow-y:auto;border:1px solid #d8dee8;border-radius:14px;background:#fff}.card-word-results[hidden]{display:none!important}
+.card-word-results{display:block;height:190px;min-height:190px;overflow-y:auto;border:1px solid #d8dee8;border-radius:14px;background:#fff;-webkit-overflow-scrolling:touch}.card-word-results[hidden]{display:none!important}
 .card-word-option{display:grid;gap:3px;padding:11px 13px;border:0;border-bottom:1px solid #edf0f4;background:#fff;text-align:left}.card-word-option:last-child{border-bottom:0}.card-word-option strong{font-size:.9rem}.card-word-option span{overflow:hidden;color:#65728a;font-size:.67rem;text-overflow:ellipsis;white-space:nowrap}.card-word-option:active{background:#edf6ff}
-.card-word-empty{margin:0;padding:20px;color:#7b8798;font-size:.75rem;text-align:center}.card-editor-note{margin:0;color:#7b8798;font-size:.68rem;line-height:1.55}
+.card-word-empty{margin:0;padding:72px 20px 20px;color:#7b8798;font-size:.75rem;text-align:center}.card-word-help{margin:-8px 2px 0;color:#7b8798;font-size:.66rem;line-height:1.45}.card-editor-note{margin:0;color:#7b8798;font-size:.68rem;line-height:1.55}
 .card-editor-delete{min-height:48px;border:1px solid #efb6bd;border-radius:14px;background:#fff;color:#d92d45;font-size:.82rem;font-weight:850}
 .card-editor-delete[hidden]{display:none!important}
 .practice-list-empty{display:grid;min-height:210px;place-content:center;gap:8px;padding:28px;color:#7b8798;text-align:center}.practice-list-empty strong{color:#344054;font-size:.88rem}.practice-list-empty span{font-size:.7rem;line-height:1.5}

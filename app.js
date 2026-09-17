@@ -704,8 +704,32 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       }
     };
     const vocabularyKey=row=>`${text(row?.[3]).toLowerCase()}\t${text(row?.[6])}`;
+    const restoredVocabularyStores=new WeakSet();
+    const restoreVocabularyRows=stored=>{
+      if(!stored)return [];
+      if(restoredVocabularyStores.has(stored))return Array.isArray(stored.vocabularyRows)?stored.vocabularyRows:[];
+      const catalog=[];
+      const addRows=rows=>{
+        if(!Array.isArray(rows))return;
+        rows.forEach(row=>{if(text(row?.[3])&&text(row?.[6]))catalog.push([...row])});
+      };
+      addRows(stored.vocabularyRows);
+      addRows(stored.rows);
+      if(stored.fileBytes&&typeof XLSX!=='undefined'){
+        try{
+          const workbook=XLSX.read(stored.fileBytes,{type:'array',cellFormula:true});
+          const sheet=workbook.Sheets['単語リスト']||workbook.Sheets[workbook.SheetNames[0]];
+          addRows(sheet?XLSX.utils.sheet_to_json(sheet,{header:1,defval:'',raw:false}).slice(1):[]);
+        }catch(error){console.warn('候補用の単語一覧を元Excelから復元できませんでした。',error)}
+      }
+      const unique=new Map();
+      catalog.forEach(row=>{const key=vocabularyKey(row);if(key&&!unique.has(key))unique.set(key,row)});
+      stored.vocabularyRows=[...unique.values()];
+      restoredVocabularyStores.add(stored);
+      return stored.vocabularyRows;
+    };
     const getVocabularyRows=()=>{
-      const savedVocabulary=Array.isArray(practiceStored?.vocabularyRows)?practiceStored.vocabularyRows:[];
+      const savedVocabulary=restoreVocabularyRows(practiceStored);
       const currentRows=Array.isArray(practiceStored?.rows)?practiceStored.rows:[];
       const source=savedVocabulary.concat(currentRows);
       const unique=new Map();
@@ -736,14 +760,12 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       cardWordResults.replaceChildren();
       if(cardEditorMode==='edit'||selectedVocabularyRow){cardWordResults.hidden=true;cardWordSearch.setAttribute('aria-expanded','false');return}
       const candidates=getVocabularyRows();
-      const starts=[],contains=[],meaningMatches=[];
+      const starts=[];
       candidates.forEach(row=>{
-        const word=text(row[3]).toLowerCase(),meaning=text(row[7]).toLowerCase();
+        const word=text(row[3]).toLowerCase();
         if(!query||word.startsWith(query))starts.push(row);
-        else if(word.includes(query))contains.push(row);
-        else if(meaning.includes(query))meaningMatches.push(row);
       });
-      const matches=[...starts,...contains,...meaningMatches].slice(0,30);
+      const matches=starts.slice(0,50);
       matches.forEach(row=>{
         const button=document.createElement('button');
         button.type='button';button.className='card-word-option';button.setAttribute('role','option');
@@ -758,7 +780,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
         });
         cardWordResults.append(button);
       });
-      const empty=document.createElement('p');empty.className='card-word-empty';empty.textContent=query?'該当する登録済み単語がありません':'追加できる登録済み単語がありません';
+      const empty=document.createElement('p');empty.className='card-word-empty';empty.textContent=query?'この文字で始まる登録済み単語がありません':'追加する単語を候補から選択してください';
       if(!matches.length)cardWordResults.append(empty);
       cardWordResults.hidden=false;cardWordSearch.setAttribute('aria-expanded','true');
     };
@@ -1191,7 +1213,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       const limit=practiceButton.dataset.questionLimit==='all'?rows.length:Number(practiceButton.dataset.questionLimit);
       practiceRows=rows.slice(0,limit);
       practiceStored=stored||{headers:[...EXPECTED_HEADERS],rows:[],vocabularyRows:[],fileName:'未読込',modified:true};
-      if(!practiceStored.vocabularyRows?.length)practiceStored.vocabularyRows=(practiceStored.rows||[]).map(row=>[...row]);
+      restoreVocabularyRows(practiceStored);
       practiceIndex=0;
       await transitionScreen(()=>{
         practiceScreen.hidden=false;
