@@ -259,10 +259,10 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       const understandings=selectedValues(understandingChoices);
       return rows.filter(row=>{
         if(!text(row[8])||!text(row[9]))return false;
-        if(!levels.size||![text(row[11]),text(row[12])].some(value=>levels.has(value)))return false;
-        if(!parts.size||!parts.has(text(row[6])))return false;
+        if(levels.size&&![text(row[11]),text(row[12])].some(value=>levels.has(value)))return false;
+        if(parts.size&&!parts.has(text(row[6])))return false;
         const understanding=text(row[13])||'未登録';
-        return understandings.size>0&&understandings.has(understanding);
+        return !understandings.size||understandings.has(understanding);
       });
     };
     const refreshQuestionCount=async()=>{
