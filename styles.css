@@ -806,3 +806,11 @@
 
 /* Filtering belongs to list view; disable it while a card is open. */
 .practice-filter-button:disabled{border-color:#e2e5eb;background:#f0f2f5;color:#b1b8c4;box-shadow:none;opacity:.7;pointer-events:none}
+
+
+/* Fixed Play tab keeps the same visible play/pause artwork as scrollable controls. */
+.nav.practice-mode .practice-play-fixed .practice-control-icon{fill:none!important;stroke:currentColor!important;stroke-width:2.2!important;stroke-linecap:round!important;stroke-linejoin:round!important;overflow:visible}
+.nav.practice-mode .practice-play-fixed .practice-play-svg .play-mark,
+.nav.practice-mode .practice-play-fixed .practice-play-svg .pause-mark{fill:none!important;stroke:currentColor!important}
+.nav.practice-mode .practice-play-fixed.is-playing .practice-play-svg .play-mark{display:none}
+.nav.practice-mode .practice-play-fixed.is-playing .practice-play-svg .pause-mark{display:block}
