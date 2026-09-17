@@ -616,3 +616,16 @@
 .practice-filter-button{display:flex;width:53px;height:50px;flex-direction:column;align-items:center;justify-content:center;gap:2px;justify-self:end;padding:0;border:1px solid #dce2ec;border-radius:14px;background:#fff;color:#526078;box-shadow:0 3px 10px #26354a0b;font-size:.56rem;font-weight:800}
 .practice-filter-button svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
 .practice-filter-button:active{transform:scale(.96)}
+
+
+/* Practice filters open as a bottom sheet without leaving the practice screen. */
+.practice-filter-overlay{position:absolute;z-index:170;inset:0;display:flex;align-items:flex-end;background:#11182700;transition:background-color 320ms ease}
+.practice-filter-overlay[hidden]{display:none!important}
+.practice-filter-overlay.open{background:#11182773}
+.practice-filter-sheet{display:flex;width:100%;max-height:88%;flex-direction:column;padding:8px 0 calc(12px + env(safe-area-inset-bottom));border-radius:24px 24px 0 0;background:#f4f5f9;box-shadow:0 -18px 45px #1118272e;transform:translateY(104%);transition:transform 340ms cubic-bezier(.16,.82,.24,1)}
+.practice-filter-overlay.open .practice-filter-sheet{transform:translateY(0)}
+.practice-filter-sheet-head{position:relative;display:flex;min-height:42px;align-items:center;justify-content:flex-end;padding:0 16px}
+.practice-filter-handle{position:absolute;top:6px;left:50%;width:42px;height:5px;border-radius:999px;background:#c6ccd6;transform:translateX(-50%)}
+.practice-filter-sheet-head button{min-width:48px;height:30px;padding:0 10px;border:0;border-radius:999px;background:linear-gradient(180deg,#78bfff 0%,#2e91ed 52%,#176fc2 100%);color:#fff;font-size:.68rem;font-weight:850;box-shadow:inset 0 1px 0 #ffffff99,0 2px 6px #064faa35}
+.practice-filter-sheet-body{min-height:0;overflow-y:auto;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch;padding:0 14px 18px}
+.practice-filter-sheet-body>.card{padding:20px;border-radius:21px;box-shadow:0 8px 24px #26354a12}
