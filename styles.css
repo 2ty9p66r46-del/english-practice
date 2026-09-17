@@ -823,9 +823,3 @@
 .practice-list-items::-webkit-scrollbar{display:none}
 
 
-/* Trial: a dedicated left-edge grabber returns the card to the list. */
-.practice-exercise-card{position:relative}
-.practice-list-grabber{position:absolute;z-index:12;left:0;top:50%;display:grid;width:30px;height:96px;place-items:center;padding:0;border:0;background:transparent;transform:translateY(-50%);touch-action:none;cursor:grab}
-.practice-list-grabber:active{cursor:grabbing}
-.practice-list-grabber span{display:block;width:6px;height:52px;border-radius:999px;background:linear-gradient(90deg,#d5dae3,#aeb6c3);box-shadow:inset 1px 0 1px #ffffffb8,0 2px 6px #26354a1a;transition:background .16s ease,transform .16s ease}
-.practice-list-grabber:active span{background:linear-gradient(90deg,#8fc8ff,#248bf0);transform:scaleY(1.06)}
