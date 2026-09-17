@@ -195,8 +195,6 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     const practiceJapaneseAudio=document.getElementById('practiceJapaneseAudio');
     const practiceJapaneseStop=document.getElementById('practiceJapaneseStop');
     const practiceEnglishStop=document.getElementById('practiceEnglishStop');
-    const practicePrev=document.getElementById('practicePrev');
-    const practiceNext=document.getElementById('practiceNext');
     const practiceWord=document.getElementById('practiceWord');
     const practiceNumber=document.getElementById('practiceNumber');
     const practicePart=document.getElementById('practicePart');
@@ -225,7 +223,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     const languageModeLabel=document.getElementById('languageModeLabel');
     const repeatModeTab=document.getElementById('repeatModeTab');
     const repeatModeLabel=document.getElementById('repeatModeLabel');
-    const practiceViewModeTab=document.getElementById('practiceViewModeTab');
+    const practiceViewButtons=[...document.querySelectorAll('[data-practice-view]')];
     const practiceSettingsTab=document.getElementById('practiceSettingsTab');
     const practiceSettingsOverlay=document.getElementById('practiceSettingsOverlay');
     const practiceSettingsClose=document.getElementById('practiceSettingsClose');
@@ -473,8 +471,6 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       const note=text(row[10]);
       practiceNote.textContent=note;
       practiceNote.closest('.practice-note-row').classList.toggle('is-empty',!note);
-      practicePrev.disabled=practiceIndex===0;
-      practiceNext.disabled=practiceIndex===practiceRows.length-1;
       syncPracticeRating(row);
       setAnswerVisible(false);
     };
@@ -736,10 +732,11 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       if(listMode&&autoPlaying)stopAutoPlayback();
       practiceExerciseCard.hidden=listMode;
       practiceListPlaceholder.hidden=!listMode;
-      practiceViewModeTab.classList.toggle('card-mode',!listMode);
-      practiceViewModeTab.classList.toggle('list-mode',listMode);
-      practiceViewModeTab.setAttribute('aria-pressed',String(listMode));
-      practiceViewModeTab.setAttribute('aria-label',`表示形式：${listMode?'リスト形式':'カード形式'}`);
+      practiceViewButtons.forEach(button=>{
+        const selected=button.dataset.practiceView===practiceViewMode;
+        button.classList.toggle('active',selected);
+        button.setAttribute('aria-pressed',String(selected));
+      });
       if(listMode)renderPracticeList();
     };
     setPracticeViewMode('card');
@@ -783,9 +780,9 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       if(practiceViewMode==='list')return;
       autoPlaying?stopAutoPlayback():startAutoPlayback();
     });
-    practiceViewModeTab.addEventListener('click',()=>{
-      setPracticeViewMode(practiceViewMode==='card'?'list':'card');
-    });
+    practiceViewButtons.forEach(button=>button.addEventListener('click',()=>{
+      setPracticeViewMode(button.dataset.practiceView);
+    }));
     languageModeTab.addEventListener('click',()=>{
       const index=languageModes.indexOf(playbackSettings.language);
       playbackSettings.language=languageModes[(index+1)%languageModes.length];
@@ -805,8 +802,6 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     navHome.addEventListener('click',()=>{if(!practiceScreen.hidden)closePractice()});
     practiceReveal.addEventListener('click',()=>setAnswerVisible(true));
     practiceEnglish.addEventListener('click',()=>setAnswerVisible(false));
-    practicePrev.addEventListener('click',()=>movePractice(-1));
-    practiceNext.addEventListener('click',()=>movePractice(1));
     let practiceSwipeStart=null;
     practiceExerciseCard.addEventListener('pointerdown',event=>{
       if(practiceMoving||(event.pointerType==='mouse'&&event.button!==0)||event.target.closest('button'))return;
