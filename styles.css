@@ -629,3 +629,20 @@
 .practice-filter-sheet-head button{min-width:48px;height:30px;padding:0 10px;border:0;border-radius:999px;background:linear-gradient(180deg,#78bfff 0%,#2e91ed 52%,#176fc2 100%);color:#fff;font-size:.68rem;font-weight:850;box-shadow:inset 0 1px 0 #ffffff99,0 2px 6px #064faa35}
 .practice-filter-sheet-body{min-height:0;overflow-y:auto;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch;padding:0 14px 18px}
 .practice-filter-sheet-body>.card{padding:20px;border-radius:21px;box-shadow:0 8px 24px #26354a12}
+
+
+/* Home no longer shows filters; the same card exists only inside the practice filter sheet. */
+#filterCard{display:none}
+.practice-filter-sheet-body>#filterCard{display:block}
+
+/* Matching counts occupy the practice-list header's upper-left slot. */
+.practice-screen-header{grid-template-columns:88px minmax(0,1fr) 88px}
+.practice-header-left{position:relative;display:grid;width:88px;height:50px;align-items:center;justify-items:start}
+.practice-header-counts{display:grid;width:88px;gap:3px;color:#65728a;font-variant-numeric:tabular-nums}
+.practice-header-counts[hidden]{display:none!important}
+.practice-header-counts>span{display:grid;grid-template-columns:46px 5ch;align-items:baseline;column-gap:3px;white-space:nowrap}
+.practice-header-counts b{font-size:.48rem;font-weight:800}
+.practice-header-counts strong{display:flex;width:5ch;justify-content:flex-end;color:#344054;font-size:.58rem;font-weight:900}
+.practice-header-counts .count-padding{color:#c7ccd5}
+.practice-header-counts .count-value{color:#344054}
+.practice-header-left .practice-back-to-list{position:absolute;left:0;top:6px}
