@@ -519,3 +519,8 @@
 .nav.practice-mode .practice-nav-controls .practice-control-icon{width:25px!important;height:25px!important}
 #languageModeIcon.practice-language-mark{box-sizing:border-box;display:grid;flex:0 0 25px!important;width:25px!important;max-width:25px!important;height:25px!important;place-items:center;overflow:visible!important;background:none!important;font-size:1.15rem!important;font-weight:950;line-height:25px!important;letter-spacing:0!important;white-space:nowrap!important;transform:none}
 #languageModeIcon.practice-language-mark[data-mode="both"]{font-size:.72rem!important;letter-spacing:-.12em!important;transform:scaleX(.78)}
+
+
+/* Refine mode-specific tab glyphs: smaller single-language text and clearer sequence order. */
+#languageModeIcon.practice-language-mark:not([data-mode="both"]){font-size:.98rem!important}
+.practice-order-icon .order-number-mark text{font-size:6.4px;font-weight:950}
