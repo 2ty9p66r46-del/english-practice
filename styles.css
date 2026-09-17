@@ -553,3 +553,13 @@
 .practice-list-chevron{width:18px;height:18px;fill:none;stroke:#8c95a5;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
 .practice-exercise-card[hidden],
 .practice-list-placeholder[hidden]{display:none!important}
+
+
+/* Card/list selection belongs in the practice header; question movement remains swipe-based. */
+.practice-screen-header{grid-template-columns:78px minmax(0,1fr) 78px}
+.practice-header-view-switch{display:grid;width:74px;height:36px;grid-template-columns:1fr 1fr;align-items:center;justify-self:start;padding:3px;border:1px solid #d8dee8;border-radius:13px;background:#e9edf3;box-shadow:inset 0 1px 2px #26354a12}
+.practice-header-view-button{display:grid;width:34px;height:30px;place-items:center;padding:0;border:0;border-radius:10px;background:transparent;color:#7f8999}
+.practice-header-view-button svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.practice-header-view-button.active{background:linear-gradient(180deg,#78bfff 0%,#2e91ed 52%,#176fc2 100%);color:#fff;box-shadow:inset 0 1px 0 #ffffff99,inset 0 -1px 0 #0000001f,0 2px 5px #064faa40}
+.practice-header-view-button:active{transform:translateY(1px)}
+.practice-header-view-spacer{display:block;width:78px;height:1px}
