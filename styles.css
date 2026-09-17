@@ -530,11 +530,26 @@
 .practice-order-icon .order-number-mark text{font-size:7.8px;font-weight:950}
 
 
-/* Practice display-mode switch: preserve the current card view and reserve list mode for the upcoming implementation. */
+/* Practice display-mode switch and compact question list. */
 .practice-view-mode-icon>g{display:none}
 #practiceViewModeTab.card-mode .view-card-mark,
 #practiceViewModeTab.list-mode .view-list-mark{display:block}
-.practice-list-placeholder{display:grid;flex:1 1 520px;min-height:510px;place-items:center;border-radius:23px;background:#fff;color:#7a8495;box-shadow:0 1px 1px #1822350d,0 9px 25px #27344d0a}
-.practice-list-placeholder strong{font-size:1rem;font-weight:850;letter-spacing:.08em}
+.practice-list-placeholder{display:flex;flex:1 1 520px;min-height:510px;flex-direction:column;overflow:hidden;border-radius:23px;background:#fff;color:#344054;box-shadow:0 1px 1px #1822350d,0 9px 25px #27344d0a}
+.practice-list-header{display:flex;min-height:50px;align-items:center;justify-content:space-between;padding:0 18px;border-bottom:1.5px solid #cfd5df}
+.practice-list-header strong{color:#111827;font-size:.9rem;font-weight:900}
+.practice-list-header span{color:#788499;font-size:.68rem;font-weight:850;font-variant-numeric:tabular-nums}
+.practice-list-items{display:flex;flex-direction:column}
+.practice-list-row{display:grid;width:100%;min-height:82px;grid-template-columns:minmax(0,1fr) 38px 18px;align-items:center;gap:11px;padding:12px 15px;border:0;border-bottom:1.5px solid #d8dee8;background:#fff;color:#111827;text-align:left;-webkit-tap-highlight-color:transparent}
+.practice-list-row:last-child{border-bottom:0}
+.practice-list-row:active{background:#f2f6fc}
+.practice-list-row[aria-current="true"]{background:linear-gradient(90deg,#eef6ff 0%,#fff 72%)}
+.practice-list-copy{display:grid;min-width:0;gap:6px}
+.practice-list-title{display:flex;min-width:0;align-items:baseline;gap:7px;line-height:1.1}
+.practice-list-title b{flex:0 0 auto;color:#526078;font-size:.69rem;font-weight:900;font-variant-numeric:tabular-nums}
+.practice-list-title>span{color:#a3aaba;font-size:.67rem}
+.practice-list-title strong{min-width:0;overflow:hidden;color:#111827;font-size:.93rem;font-weight:850;text-overflow:ellipsis;white-space:nowrap}
+.practice-list-japanese{display:-webkit-box;min-width:0;overflow:hidden;color:#7b8495;font-size:.68rem;font-weight:700;line-height:1.35;-webkit-box-orient:vertical;-webkit-line-clamp:2}
+.practice-list-rating{display:grid;width:32px;height:32px;place-items:center;border:2px solid var(--solid-line);border-radius:50%;background:linear-gradient(180deg,var(--solid-hi) 0%,var(--solid) 52%,var(--solid-lo) 100%);color:#fff;font-size:.61rem;font-weight:900;font-variant-numeric:tabular-nums;text-shadow:0 1px 1px #00000045;box-shadow:inset 0 1px 0 #ffffffaa,inset 0 -1px 0 #0000001f,0 2px 5px var(--solid-shadow)}
+.practice-list-chevron{width:18px;height:18px;fill:none;stroke:#8c95a5;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
 .practice-exercise-card[hidden],
 .practice-list-placeholder[hidden]{display:none!important}
