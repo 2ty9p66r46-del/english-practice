@@ -299,7 +299,6 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     const practicePronUkAudio=document.getElementById('practicePronUkAudio');
     const practiceNote=document.getElementById('practiceNote');
     const practiceCardAdd=document.getElementById('practiceCardAdd');
-    const practiceCardMenu=document.getElementById('practiceCardMenu');
     const cardActionsOverlay=document.getElementById('cardActionsOverlay');
     const cardActionsWord=document.getElementById('cardActionsWord');
     const cardActionsNumber=document.getElementById('cardActionsNumber');
@@ -656,6 +655,11 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
         japanese.textContent=text(row[8])||text(row[7])||'日本語未登録';
         copy.append(heading,japanese);
 
+        const rowActions=document.createElement('span');
+        rowActions.className='practice-list-actions';
+        const menuButton=document.createElement('button');
+        menuButton.type='button';menuButton.className='practice-list-menu';menuButton.textContent='•••';
+        menuButton.setAttribute('aria-label',`${text(row[3])||'単語未登録'}のカードを編集`);
         const openButton=document.createElement('button');
         openButton.type='button';
         openButton.className='practice-list-open';
@@ -669,7 +673,8 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
         chevron.append(path);
         openButton.append(chevron);
 
-        item.append(copy,openButton);
+        rowActions.append(menuButton,openButton);
+        item.append(copy,rowActions);
         const playFromItem=()=>{
           practiceIndex=index;
           renderPracticeQuestion();
@@ -686,6 +691,10 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
           event.stopPropagation();
           openPracticeCard(index);
         });
+        menuButton.addEventListener('click',event=>{
+          event.stopPropagation();
+          openCardEditor('edit',row);
+        });
         practiceList.append(item);
       });
       if(practiceViewMode==='list'){
@@ -696,7 +705,9 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     };
     const vocabularyKey=row=>`${text(row?.[3]).toLowerCase()}\t${text(row?.[6])}`;
     const getVocabularyRows=()=>{
-      const source=[...(practiceStored?.vocabularyRows||[]),...(practiceStored?.rows||[])];
+      const savedVocabulary=Array.isArray(practiceStored?.vocabularyRows)?practiceStored.vocabularyRows:[];
+      const currentRows=Array.isArray(practiceStored?.rows)?practiceStored.rows:[];
+      const source=savedVocabulary.concat(currentRows);
       const unique=new Map();
       source.forEach(row=>{const key=vocabularyKey(row);if(text(row?.[3])&&text(row?.[6])&&key&&!unique.has(key))unique.set(key,row)});
       return [...unique.values()].sort((a,b)=>text(a[3]).localeCompare(text(b[3]),'en'));
@@ -724,11 +735,15 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       const query=text(cardWordSearch.value).toLowerCase();
       cardWordResults.replaceChildren();
       if(cardEditorMode==='edit'||selectedVocabularyRow){cardWordResults.hidden=true;cardWordSearch.setAttribute('aria-expanded','false');return}
-      const matches=getVocabularyRows().map(row=>{
+      const candidates=getVocabularyRows();
+      const starts=[],contains=[],meaningMatches=[];
+      candidates.forEach(row=>{
         const word=text(row[3]).toLowerCase(),meaning=text(row[7]).toLowerCase();
-        const score=!query?4:word===query?0:word.startsWith(query)?1:word.includes(query)?2:meaning.includes(query)?3:99;
-        return{row,score};
-      }).filter(item=>item.score<99).sort((a,b)=>a.score-b.score||text(a.row[3]).localeCompare(text(b.row[3]),'en')).slice(0,20).map(item=>item.row);
+        if(!query||word.startsWith(query))starts.push(row);
+        else if(word.includes(query))contains.push(row);
+        else if(meaning.includes(query))meaningMatches.push(row);
+      });
+      const matches=[...starts,...contains,...meaningMatches].slice(0,30);
       matches.forEach(row=>{
         const button=document.createElement('button');
         button.type='button';button.className='card-word-option';button.setAttribute('role','option');
@@ -743,7 +758,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
         });
         cardWordResults.append(button);
       });
-      const empty=document.createElement('p');empty.className='card-word-empty';empty.textContent=query?'該当する登録済み単語がありません':'登録済み単語がありません';
+      const empty=document.createElement('p');empty.className='card-word-empty';empty.textContent=query?'該当する登録済み単語がありません':'追加できる登録済み単語がありません';
       if(!matches.length)cardWordResults.append(empty);
       cardWordResults.hidden=false;cardWordSearch.setAttribute('aria-expanded','true');
     };
@@ -775,7 +790,6 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       if(practiceRows.length)renderPracticeQuestion();
     };
     practiceCardAdd.addEventListener('click',()=>openCardEditor('add'));
-    practiceCardMenu.addEventListener('click',()=>{const row=currentPracticeRow();if(row)openCardEditor('edit',row)});
     cardWordSearch.addEventListener('input',()=>{if(!cardWordSearch.disabled)renderWordResults()});
     cardWordSearch.addEventListener('focus',()=>{if(!cardWordSearch.disabled)renderWordResults()});
     cardEditorCancel.addEventListener('click',closeCardEditor);
@@ -1173,14 +1187,10 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       if(screenTransitionBusy)return;
       const stored=await getImportedData();
       let rows=getMatchingRows(stored?.rows||[]);
-      if(!rows.length){
-        alert('選択した条件に該当する例文がありません。');
-        return;
-      }
       if(practiceButton.dataset.order==='random')rows=shuffleRows(rows);
       const limit=practiceButton.dataset.questionLimit==='all'?rows.length:Number(practiceButton.dataset.questionLimit);
       practiceRows=rows.slice(0,limit);
-      practiceStored=stored;
+      practiceStored=stored||{headers:[...EXPECTED_HEADERS],rows:[],vocabularyRows:[],fileName:'未読込',modified:true};
       if(!practiceStored.vocabularyRows?.length)practiceStored.vocabularyRows=(practiceStored.rows||[]).map(row=>[...row]);
       practiceIndex=0;
       await transitionScreen(()=>{

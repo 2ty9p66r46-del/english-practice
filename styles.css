@@ -574,7 +574,7 @@
 .practice-back-to-list:active{transform:translateX(-1px)}
 .practice-header-view-spacer{width:44px}
 .practice-list-placeholder{flex:0 0 auto;min-height:0;overflow:visible}
-.practice-list-row{grid-template-columns:minmax(0,1fr) 42px}
+.practice-list-row{grid-template-columns:minmax(0,1fr) 82px}
 .practice-list-row:active{background:#fff}
 .practice-list-open{display:grid;width:38px;height:38px;place-items:center;padding:0;border:0;border-radius:50%;background:transparent;color:#8c95a5}
 .practice-list-open:active{background:#edf3fb;color:var(--blue)}
@@ -835,8 +835,6 @@
 .practice-header-left{width:106px}
 .practice-header-actions{grid-column:3;display:flex;align-items:center;justify-content:flex-end;gap:7px}
 .practice-header-actions .practice-filter-button{grid-column:auto}
-.practice-question-meta>.practice-card-menu{position:absolute;z-index:2;top:-5px;left:0;display:grid;width:34px;height:30px;place-items:center;padding:0 2px 7px 0;border:0;border-radius:10px;background:transparent;color:#7b8798;font-size:1rem;font-weight:900;letter-spacing:-.13em}
-.practice-question-meta>.practice-card-menu:active{background:#edf3fb;color:var(--blue)}
 .card-actions-overlay,.card-editor-overlay{position:absolute;z-index:210;inset:0;display:flex;align-items:flex-end;background:#11182773}
 .card-actions-overlay[hidden],.card-editor-overlay[hidden]{display:none!important}
 .card-actions-sheet{display:grid;width:100%;gap:1px;padding:10px 12px calc(12px + env(safe-area-inset-bottom));background:#e8ebf0}
