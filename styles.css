@@ -524,3 +524,7 @@
 /* Refine mode-specific tab glyphs: smaller single-language text and clearer sequence order. */
 #languageModeIcon.practice-language-mark:not([data-mode="both"]){font-size:.98rem!important}
 .practice-order-icon .order-number-mark text{font-size:6.4px;font-weight:950}
+
+
+/* Increase the 1-2-3 sequence numerals without changing icon geometry. */
+.practice-order-icon .order-number-mark text{font-size:7.8px;font-weight:950}
