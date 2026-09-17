@@ -109,7 +109,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       }
     });
     const writeRowsIntoOriginalWorkbook=stored=>{
-      const archive=XLSX.CFB.read(stored.fileBytes,{type:'array'});
+      const archive=XLSX.CFB.read(new Uint8Array(stored.fileBytes),{type:'array'});
       const decoder=new TextDecoder();
       const encoder=new TextEncoder();
       const findEntry=path=>XLSX.CFB.find(archive,path)||XLSX.CFB.find(archive,`Root Entry/${path}`);
@@ -727,25 +727,33 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     const renderWordResults=()=>{
       const query=text(cardWordSearch.value).toLowerCase();
       cardWordResults.replaceChildren();
-      if(cardEditorMode==='edit'||selectedVocabularyRow){cardWordResults.hidden=true;return}
-      const matches=getVocabularyRows().filter(row=>!query||text(row[3]).toLowerCase().includes(query)||text(row[7]).includes(query)).slice(0,80);
+      if(cardEditorMode==='edit'||selectedVocabularyRow){cardWordResults.hidden=true;cardWordSearch.setAttribute('aria-expanded','false');return}
+      if(!query){
+        const guide=document.createElement('p');guide.className='card-word-empty';guide.textContent='単語を入力すると候補が表示されます';
+        cardWordResults.append(guide);cardWordResults.hidden=false;cardWordSearch.setAttribute('aria-expanded','true');return;
+      }
+      const matches=getVocabularyRows().map(row=>{
+        const word=text(row[3]).toLowerCase(),meaning=text(row[7]).toLowerCase();
+        const score=word===query?0:word.startsWith(query)?1:word.includes(query)?2:meaning.includes(query)?3:99;
+        return{row,score};
+      }).filter(item=>item.score<99).sort((a,b)=>a.score-b.score||text(a.row[3]).localeCompare(text(b.row[3]),'en')).slice(0,20).map(item=>item.row);
       matches.forEach(row=>{
         const button=document.createElement('button');
         button.type='button';button.className='card-word-option';button.setAttribute('role','option');
         const name=document.createElement('strong');name.textContent=text(row[3])||'—';
-        const detail=document.createElement('span');detail.textContent=`${text(row[6])||'品詞未登録'}　${text(row[7])||'意味未登録'}`;
+        const detail=document.createElement('span');detail.textContent=`${text(row[6])||'品詞未登録'}　${text(row[7])||'意味未登録'}　No ${formatPracticeNumber(row[1],5)}`;
         button.append(name,detail);
         button.addEventListener('click',()=>{
           selectedVocabularyRow=row;
           cardWordSearch.value=text(row[3]);cardWordSearch.disabled=true;
           cardSelectedWord.textContent=text(row[6])||'品詞未登録';
-          cardSelectedWord.hidden=false;cardWordResults.hidden=true;
+          cardSelectedWord.hidden=false;cardWordResults.hidden=true;cardWordSearch.setAttribute('aria-expanded','false');
         });
         cardWordResults.append(button);
       });
       const empty=document.createElement('p');empty.className='card-word-empty';empty.textContent=query?'該当する登録済み単語がありません':'登録済み単語がありません';
       if(!matches.length)cardWordResults.append(empty);
-      cardWordResults.hidden=false;
+      cardWordResults.hidden=false;cardWordSearch.setAttribute('aria-expanded','true');
     };
     const openCardEditor=(mode,row=null)=>{
       if(autoPlaying)stopAutoPlayback();
@@ -759,6 +767,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       cardEnglishInput.value=mode==='edit'?text(row[9]):'';
       cardNoteInput.value=mode==='edit'?text(row[10]):'';
       cardWordResults.replaceChildren();cardWordResults.hidden=mode==='edit';
+      cardWordSearch.setAttribute('aria-expanded',String(mode!=='edit'));
       cardEditorOverlay.hidden=false;
       if(mode==='add')requestAnimationFrame(()=>{cardWordSearch.focus();renderWordResults()});
       else requestAnimationFrame(()=>cardJapaneseInput.focus());
