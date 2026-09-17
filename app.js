@@ -139,7 +139,14 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       const values=[stored.headers,...stored.rows];
       const existingLastRow=Math.max(1,...rowsByNumber.keys());
       const lastRow=Math.max(existingLastRow,values.length);
-      const formulaForRow=(formula,fromRow,toRow)=>formula.replace(/(\$?[A-Z]{1,3})(\$?)(\d+)/g,(match,column,absoluteRow,rowNumber)=>absoluteRow?match:`${column}${Math.max(1,Number(rowNumber)+toRow-fromRow)}`);
+      const formulaForCell=(column,row)=>{
+        if(row===1)return '';
+        if(column===0)return `IF(G${row}="","",IF(OR(G${row}="動詞",G${row}="名詞",G${row}="形容詞"),"S",IF(OR(G${row}="前置詞",G${row}="副詞",G${row}="接続詞",G${row}="法助動詞"),"A",IF(OR(G${row}="限定詞",G${row}="代名詞",G${row}="助動詞"),"B",IF(OR(G${row}="前限定詞",G${row}="間投詞",G${row}="数詞"),"C",IF(OR(G${row}="不定冠詞",G${row}="定冠詞"),"D",""))))))`;
+        if(column===1)return row===2?`IF(OR(D2="",G2=""),"",1)`:`IF(OR(D${row}="",G${row}=""),"",IF(AND(D${row}=D${row-1},G${row}=G${row-1}),B${row-1},B${row-1}+1))`;
+        if(column===2)return row===2?`IF(OR(D2="",G2=""),"",1)`:`IF(OR(D${row}="",G${row}=""),"",IF(AND(D${row}=D${row-1},G${row}=G${row-1}),C${row-1}+1,1))`;
+        if(column===14)return `IF(COUNTA(A${row}:N${row})=0,"",IF(OR(AND(D${row}=D${row-1},G${row}=G${row-1},B${row}<>B${row-1}),AND(D${row}=D${row+1},G${row}=G${row+1},B${row}<>B${row+1})),"エラー：単語・品詞が別Noで重複",IF(OR(A${row}="",B${row}="",C${row}="",D${row}="",E${row}="",F${row}="",G${row}=""),"エラー：必須項目が空欄",IF(AND(L${row}="",M${row}=""),"エラー：S・Wが両方空欄",""))))`;
+        return '';
+      };
       const copyRowAttributes=(source,target,rowNumber)=>{
         if(source)[...source.attributes].forEach(attribute=>{if(attribute.name!=='r')target.setAttribute(attribute.name,attribute.value)});
         target.setAttribute('r',String(rowNumber));
@@ -170,13 +177,10 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
             insertInOrder(rowElement,cell,column,item=>XLSX.utils.decode_cell(item.getAttribute('r')).c);
           }
           const value=String(rowValues[column]??'');
-          let formula=elements(cell,'f')[0];
-          const templateFormula=templateCell?elements(templateCell,'f')[0]:null;
-          if(!formula&&templateFormula){
-            formula=sheetXml.createElementNS(namespace,'f');
-            formula.textContent=formulaForRow(templateFormula.textContent,Number(templateRow.getAttribute('r')),excelRow);
-            cell.prepend(formula);
-          }
+          elements(cell,'f').forEach(item=>item.remove());
+          const formulaText=formulaForCell(column,excelRow);
+          let formula=null;
+          if(formulaText){formula=sheetXml.createElementNS(namespace,'f');formula.textContent=formulaText;cell.prepend(formula)}
           [...cell.children].filter(child=>child.localName==='v'||child.localName==='is').forEach(child=>child.remove());
           if(formula){
             cell.setAttribute('t','str');
@@ -193,6 +197,8 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       }
       const dimension=elements(sheetXml,'dimension')[0];
       if(dimension)dimension.setAttribute('ref',`A1:${XLSX.utils.encode_col(stored.headers.length-1)}${lastRow}`);
+      const calcPr=elements(workbookXml,'calcPr')[0];
+      if(calcPr){calcPr.setAttribute('calcMode','auto');calcPr.setAttribute('fullCalcOnLoad','1');calcPr.setAttribute('forceFullCalc','1');workbookEntry.content=encoder.encode(new XMLSerializer().serializeToString(workbookXml));workbookEntry.size=workbookEntry.content.length}
       sheetEntry.content=encoder.encode(new XMLSerializer().serializeToString(sheetXml));
       sheetEntry.size=sheetEntry.content.length;
       return XLSX.CFB.write(archive,{type:'array',fileType:'zip',compression:true});
