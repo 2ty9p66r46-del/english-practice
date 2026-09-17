@@ -482,10 +482,6 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     document.querySelectorAll('[data-coming]').forEach(button=>button.addEventListener('click',()=>alert('この機能は次の段階で追加します。')));
     const practiceOrderTab=document.getElementById('practiceOrderTab');
     const practiceOrderLabel=document.getElementById('practiceOrderLabel');
-    const questionLimit=document.getElementById('questionLimit');
-    const questionPicker=document.getElementById('questionPicker');
-    const questionMenu=document.getElementById('questionMenu');
-    const questionLimitValue=document.getElementById('questionLimitValue');
     const setOrder=random=>{
       practiceOrderTab.classList.toggle('random',random);
       practiceOrderTab.classList.toggle('active',random);
@@ -498,66 +494,8 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       setOrder(!practiceOrderTab.classList.contains('random'));
       applyPracticeMethodChange();
     });
-    const questionValues=['all',...Array.from({length:20},(_,index)=>String((index+1)*5))];
-    const questionLabels=value=>value==='all'?'すべて':value;
-    let selectedQuestionLimit='all';
-    const centerQuestionOption=(option,behavior='auto')=>{
-      if(!option)return;
-      const top=option.offsetTop-(questionMenu.clientHeight-option.offsetHeight)/2;
-      questionMenu.scrollTo({top:Math.max(0,top),behavior});
-    };
-    const selectQuestionLimit=value=>{
-      if(selectedQuestionLimit===value)return;
-      selectedQuestionLimit=value;
-      questionLimitValue.textContent=questionLabels(value);
-      practiceButton.dataset.questionLimit=value;
-      questionMenu.querySelectorAll('.question-option').forEach(item=>{
-        const selected=item.dataset.value===value;
-        item.classList.toggle('selected',selected);
-        item.setAttribute('aria-selected',String(selected));
-      });
-      applyPracticeMethodChange();
-    };
-    questionValues.forEach(value=>{
-      const option=document.createElement('button');
-      option.type='button';
-      option.className='question-option'+(value==='all'?' selected':'');
-      option.setAttribute('role','option');
-      option.setAttribute('aria-selected',String(value==='all'));
-      option.dataset.value=value;
-      option.textContent=questionLabels(value);
-      option.addEventListener('click',event=>{
-        event.stopPropagation();
-        selectQuestionLimit(value);
-        centerQuestionOption(option,'smooth');
-      });
-      questionMenu.appendChild(option);
-    });
-    let questionScrollTimer=0;
-    questionMenu.addEventListener('scroll',()=>{
-      clearTimeout(questionScrollTimer);
-      questionScrollTimer=setTimeout(()=>{
-        const center=questionMenu.scrollTop+questionMenu.clientHeight/2;
-        const options=[...questionMenu.querySelectorAll('.question-option')];
-        const nearest=options.reduce((best,item)=>Math.abs(item.offsetTop+item.offsetHeight/2-center)<Math.abs(best.offsetTop+best.offsetHeight/2-center)?item:best,options[0]);
-        selectQuestionLimit(nearest.dataset.value);
-        centerQuestionOption(nearest,'smooth');
-      },110);
-    },{passive:true});
-    questionLimit.addEventListener('click',()=>{
-      const opening=questionMenu.hidden;
-      questionMenu.hidden=!opening;
-      questionLimit.setAttribute('aria-expanded',String(opening));
-      if(opening)requestAnimationFrame(()=>centerQuestionOption(questionMenu.querySelector('.selected')));
-    });
-    document.addEventListener('pointerdown',event=>{
-      if(!questionPicker.contains(event.target)){
-        questionMenu.hidden=true;
-        questionLimit.setAttribute('aria-expanded','false');
-      }
-    });
     setOrder(false);
-    practiceButton.dataset.questionLimit=selectedQuestionLimit;
+    practiceButton.dataset.questionLimit='all';
 
     let practiceRows=[];
     let practiceIndex=0;
@@ -979,10 +917,10 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     const repeatOptions=[1,2,3,4,5].map(value=>({value:String(value),label:value+'回'}));
     const rateOptions=Array.from({length:8},(_,index)=>(.6+index*.1).toFixed(1)).map(value=>({value,label:value+'×'}));
     const practiceSettingSpecs=[
-      {trigger:japanesePauseSetting,menu:japanesePauseMenu,key:'japanesePause',options:pauseOptions},
-      {trigger:englishPauseSetting,menu:englishPauseMenu,key:'englishPause',options:pauseOptions},
-      {trigger:englishRepeatSetting,menu:englishRepeatMenu,key:'englishRepeats',options:repeatOptions},
-      {trigger:speechRateSetting,menu:speechRateMenu,key:'rate',options:rateOptions}
+      {trigger:speechRateSetting,menu:speechRateMenu,key:'rate',options:rateOptions,mode:'wheel'},
+      {trigger:japanesePauseSetting,menu:japanesePauseMenu,key:'japanesePause',options:pauseOptions,mode:'cycle'},
+      {trigger:englishPauseSetting,menu:englishPauseMenu,key:'englishPause',options:pauseOptions,mode:'cycle'},
+      {trigger:englishRepeatSetting,menu:englishRepeatMenu,key:'englishRepeats',options:repeatOptions,mode:'cycle'}
     ];
     const closePracticeSettingMenus=except=>practiceSettingSpecs.forEach(spec=>{
       if(spec===except)return;
@@ -1015,6 +953,14 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       }
     };
     practiceSettingSpecs.forEach(spec=>{
+      if(spec.mode==='cycle'){
+        spec.trigger.addEventListener('click',()=>{
+          const current=spec.options.findIndex(item=>Number(item.value)===Number(playbackSettings[spec.key]));
+          const next=spec.options[(current+1)%spec.options.length];
+          playbackSettings[spec.key]=Number(next.value);savePlaybackSettings();syncPracticeSettingPickers();
+        });
+        return;
+      }
       spec.options.forEach(item=>{
         const option=document.createElement('button');
         option.type='button';
