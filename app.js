@@ -186,7 +186,6 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     const practiceListCount=document.getElementById('practiceListCount');
     const mainNav=document.querySelector('.nav');
     const navHome=document.querySelector('.nav-home');
-    const practiceTab=document.getElementById('practiceTab');
     const practiceProgress=document.getElementById('practiceProgress');
     const practiceJapanese=document.getElementById('practiceJapanese');
     const practiceEnglish=document.getElementById('practiceEnglish');
@@ -292,8 +291,6 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       overallFilterWarning.textContent=hasEmptyConditions?`条件${emptyConditions.join(',')}の項目がひとつも選択されていません`:'';
       overallFilterWarning.hidden=!hasEmptyConditions;
       practiceButton.disabled=hasEmptyConditions;
-      practiceTab.disabled=hasEmptyConditions;
-      practiceTab.setAttribute('aria-disabled',String(hasEmptyConditions));
       practiceButton.setAttribute('aria-disabled',String(hasEmptyConditions));
     };
     const syncSectionControls=(section,syncGlobal=true)=>{
@@ -872,7 +869,6 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
         practiceScreen.hidden=false;
         mainNav.classList.add('practice-mode');
         navHome.classList.remove('active');
-        practiceTab.classList.add('active');
         renderPracticeQuestion();
         setPracticeViewMode('list');
       });
@@ -885,13 +881,11 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       await transitionScreen(()=>{
         practiceScreen.hidden=true;
         mainNav.classList.remove('practice-mode');
-        practiceTab.classList.remove('active');
         navHome.classList.add('active');
       });
       refreshQuestionCount();
     };
     practiceButton.addEventListener('click',()=>openPractice().catch(()=>alert('練習画面を開けませんでした。')));
-    practiceTab.addEventListener('click',()=>practiceButton.click());
     autoPlayTab.addEventListener('click',()=>autoPlaying?stopAutoPlayback():startAutoPlayback());
     practiceBackToList.addEventListener('click',()=>returnToPracticeList());
     practiceFilterButton.addEventListener('click',openPracticeFilter);
