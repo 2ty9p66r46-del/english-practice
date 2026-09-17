@@ -580,3 +580,10 @@
 .practice-list-open:active{background:#edf3fb;color:var(--blue)}
 .practice-list-open .practice-list-chevron{display:block}
 .practice-list-rating{display:none}
+
+
+/* List row starts playback; only the trailing arrow opens the card. */
+.practice-list-row{cursor:pointer}
+.practice-list-row:focus-visible{outline:3px solid #8fc1f5;outline-offset:-3px}
+.practice-list-row[aria-current="true"]{background:linear-gradient(90deg,#e8f3ff 0%,#fff 78%)}
+.practice-list-row[aria-current="true"] .practice-list-title strong{color:var(--blue)}
