@@ -119,18 +119,23 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       const parser=new DOMParser();
       const workbookXml=parser.parseFromString(decoder.decode(workbookEntry.content),'application/xml');
       const relationsXml=parser.parseFromString(decoder.decode(relationsEntry.content),'application/xml');
-      const sheets=[...workbookXml.getElementsByTagName('sheet')];
+      const elements=(root,name)=>{
+        const namespaced=[...root.getElementsByTagNameNS('*',name)];
+        return namespaced.length?namespaced:[...root.getElementsByTagName('*')].filter(element=>element.localName===name||element.tagName===name);
+      };
+      const sheets=elements(workbookXml,'sheet');
       const selected=sheets.find(sheet=>sheet.getAttribute('name')==='単語リスト')||sheets[0];
       const relationId=selected?.getAttribute('r:id')||selected?.getAttributeNS('http://schemas.openxmlformats.org/officeDocument/2006/relationships','id');
-      const relation=[...relationsXml.getElementsByTagName('Relationship')].find(item=>item.getAttribute('Id')===relationId);
+      const relation=elements(relationsXml,'Relationship').find(item=>item.getAttribute('Id')===relationId);
       const target=(relation?.getAttribute('Target')||'worksheets/sheet1.xml').replace(/^\/+|^\.\.\//g,'');
       const sheetEntry=findEntry(target.startsWith('xl/')?target:`xl/${target}`);
       if(!sheetEntry)throw new Error('単語リストのExcelシートを読み込めませんでした。');
       const sheetXml=parser.parseFromString(decoder.decode(sheetEntry.content),'application/xml');
       if(sheetXml.querySelector('parsererror'))throw new Error('Excelシートの解析に失敗しました。');
       const namespace=sheetXml.documentElement.namespaceURI;
-      const sheetData=sheetXml.getElementsByTagName('sheetData')[0];
-      const rowsByNumber=new Map([...sheetData.getElementsByTagName('row')].map(row=>[Number(row.getAttribute('r')),row]));
+      const sheetData=elements(sheetXml,'sheetData')[0];
+      if(!sheetData)throw new Error('Excelの行データを読み込めませんでした。');
+      const rowsByNumber=new Map(elements(sheetData,'row').map(row=>[Number(row.getAttribute('r')),row]));
       const values=[stored.headers,...stored.rows];
       const existingLastRow=Math.max(1,...rowsByNumber.keys());
       const lastRow=Math.max(existingLastRow,values.length);
@@ -153,11 +158,11 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
           rowsByNumber.set(excelRow,rowElement);
         }
         const rowValues=values[excelRow-1]||[];
-        const cellsByColumn=new Map([...rowElement.getElementsByTagName('c')].map(cell=>[XLSX.utils.decode_cell(cell.getAttribute('r')).c,cell]));
+        const cellsByColumn=new Map(elements(rowElement,'c').map(cell=>[XLSX.utils.decode_cell(cell.getAttribute('r')).c,cell]));
         for(let column=0;column<stored.headers.length;column+=1){
           const address=XLSX.utils.encode_cell({r:excelRow-1,c:column});
           let cell=cellsByColumn.get(column);
-          const templateCell=templateRow?[...templateRow.getElementsByTagName('c')].find(item=>XLSX.utils.decode_cell(item.getAttribute('r')).c===column):null;
+          const templateCell=templateRow?elements(templateRow,'c').find(item=>XLSX.utils.decode_cell(item.getAttribute('r')).c===column):null;
           if(!cell){
             cell=sheetXml.createElementNS(namespace,'c');
             cell.setAttribute('r',address);
@@ -165,13 +170,14 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
             insertInOrder(rowElement,cell,column,item=>XLSX.utils.decode_cell(item.getAttribute('r')).c);
           }
           const value=String(rowValues[column]??'');
-          let formula=cell.getElementsByTagName('f')[0];
-          if(!formula&&templateCell?.getElementsByTagName('f')[0]){
+          let formula=elements(cell,'f')[0];
+          const templateFormula=templateCell?elements(templateCell,'f')[0]:null;
+          if(!formula&&templateFormula){
             formula=sheetXml.createElementNS(namespace,'f');
-            formula.textContent=formulaForRow(templateCell.getElementsByTagName('f')[0].textContent,Number(templateRow.getAttribute('r')),excelRow);
+            formula.textContent=formulaForRow(templateFormula.textContent,Number(templateRow.getAttribute('r')),excelRow);
             cell.prepend(formula);
           }
-          [...cell.children].filter(child=>child.tagName==='v'||child.tagName==='is').forEach(child=>child.remove());
+          [...cell.children].filter(child=>child.localName==='v'||child.localName==='is').forEach(child=>child.remove());
           if(formula){
             cell.setAttribute('t','str');
             const cached=sheetXml.createElementNS(namespace,'v');cached.textContent=value;cell.append(cached);
@@ -185,7 +191,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
           }
         }
       }
-      const dimension=sheetXml.getElementsByTagName('dimension')[0];
+      const dimension=elements(sheetXml,'dimension')[0];
       if(dimension)dimension.setAttribute('ref',`A1:${XLSX.utils.encode_col(stored.headers.length-1)}${lastRow}`);
       sheetEntry.content=encoder.encode(new XMLSerializer().serializeToString(sheetXml));
       sheetEntry.size=sheetEntry.content.length;
@@ -690,9 +696,9 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     };
     const vocabularyKey=row=>`${text(row?.[3]).toLowerCase()}\t${text(row?.[6])}`;
     const getVocabularyRows=()=>{
-      const source=practiceStored?.vocabularyRows?.length?practiceStored.vocabularyRows:(practiceStored?.rows||[]);
+      const source=[...(practiceStored?.vocabularyRows||[]),...(practiceStored?.rows||[])];
       const unique=new Map();
-      source.forEach(row=>{const key=vocabularyKey(row);if(key&&!unique.has(key))unique.set(key,row)});
+      source.forEach(row=>{const key=vocabularyKey(row);if(text(row?.[3])&&text(row?.[6])&&key&&!unique.has(key))unique.set(key,row)});
       return [...unique.values()].sort((a,b)=>text(a[3]).localeCompare(text(b[3]),'en'));
     };
     const persistPracticeData=async()=>{
@@ -718,13 +724,9 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       const query=text(cardWordSearch.value).toLowerCase();
       cardWordResults.replaceChildren();
       if(cardEditorMode==='edit'||selectedVocabularyRow){cardWordResults.hidden=true;cardWordSearch.setAttribute('aria-expanded','false');return}
-      if(!query){
-        const guide=document.createElement('p');guide.className='card-word-empty';guide.textContent='単語を入力すると候補が表示されます';
-        cardWordResults.append(guide);cardWordResults.hidden=false;cardWordSearch.setAttribute('aria-expanded','true');return;
-      }
       const matches=getVocabularyRows().map(row=>{
         const word=text(row[3]).toLowerCase(),meaning=text(row[7]).toLowerCase();
-        const score=word===query?0:word.startsWith(query)?1:word.includes(query)?2:meaning.includes(query)?3:99;
+        const score=!query?4:word===query?0:word.startsWith(query)?1:word.includes(query)?2:meaning.includes(query)?3:99;
         return{row,score};
       }).filter(item=>item.score<99).sort((a,b)=>a.score-b.score||text(a.row[3]).localeCompare(text(b.row[3]),'en')).slice(0,20).map(item=>item.row);
       matches.forEach(row=>{
@@ -775,6 +777,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     practiceCardAdd.addEventListener('click',()=>openCardEditor('add'));
     practiceCardMenu.addEventListener('click',()=>{const row=currentPracticeRow();if(row)openCardEditor('edit',row)});
     cardWordSearch.addEventListener('input',()=>{if(!cardWordSearch.disabled)renderWordResults()});
+    cardWordSearch.addEventListener('focus',()=>{if(!cardWordSearch.disabled)renderWordResults()});
     cardEditorCancel.addEventListener('click',closeCardEditor);
     cardEditorOverlay.addEventListener('click',event=>{if(event.target===cardEditorOverlay)closeCardEditor()});
     cardEditorSave.addEventListener('click',async()=>{
