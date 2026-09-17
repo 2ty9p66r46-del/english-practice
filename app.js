@@ -184,7 +184,6 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     const practiceScreen=document.getElementById('practiceScreen');
     const screenFade=document.getElementById('screenFade');
     const practiceExerciseCard=document.getElementById('practiceExerciseCard');
-    const practiceListGrabber=document.getElementById('practiceListGrabber');
     const practiceListPlaceholder=document.getElementById('practiceListPlaceholder');
     const practiceList=document.getElementById('practiceList');
     const mainNav=document.querySelector('.nav');
@@ -839,12 +838,10 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       }
       practiceViewTransitioning=false;
     };
-    const returnToPracticeList=async(startX=0)=>{
+    const returnToPracticeList=async()=>{
       if(practiceViewTransitioning||practiceViewMode==='list')return;
       practiceViewTransitioning=true;
       if(autoPlaying)stopAutoPlayback();
-      practiceExerciseCard.style.removeProperty('transform');
-      practiceExerciseCard.style.removeProperty('opacity');
       const cardRect=practiceExerciseCard.getBoundingClientRect();
       const supportsAnimation=typeof practiceExerciseCard.animate==='function';
       if(supportsAnimation){
@@ -863,7 +860,7 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
         practiceExerciseCard.hidden=false;
         try{
           const cardExit=practiceExerciseCard.animate([
-            {transform:`translateX(${Math.max(0,Number(startX)||0)}px)`,opacity:Math.max(.7,1-Math.max(0,Number(startX)||0)/innerWidth*.35)},
+            {transform:'translateX(0)',opacity:1},
             {transform:'translateX(105%)',opacity:.65}
           ],{duration:380,easing:'cubic-bezier(.16,.82,.24,1)',fill:'forwards'});
           const listEnter=practiceListPlaceholder.animate([
@@ -968,52 +965,6 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
     navHome.addEventListener('click',()=>{if(!practiceScreen.hidden)closePractice()});
     practiceReveal.addEventListener('click',()=>setAnswerVisible(true));
     practiceEnglish.addEventListener('click',()=>setAnswerVisible(false));
-    let practiceGrabStart=null;
-    const resetPracticeGrab=()=>{
-      practiceExerciseCard.style.removeProperty('transform');
-      practiceExerciseCard.style.removeProperty('opacity');
-    };
-    practiceListGrabber.addEventListener('pointerdown',event=>{
-      if(practiceMoving||practiceViewTransitioning)return;
-      event.stopPropagation();
-      practiceGrabStart={id:event.pointerId,x:event.clientX,y:event.clientY,time:performance.now(),dx:0};
-      practiceListGrabber.setPointerCapture?.(event.pointerId);
-    });
-    practiceListGrabber.addEventListener('pointermove',event=>{
-      if(!practiceGrabStart||practiceGrabStart.id!==event.pointerId)return;
-      event.stopPropagation();
-      const dx=Math.max(0,event.clientX-practiceGrabStart.x);
-      practiceGrabStart.dx=dx;
-      const dragX=Math.min(innerWidth*.82,dx);
-      practiceExerciseCard.style.transform=`translateX(${dragX}px)`;
-      practiceExerciseCard.style.opacity=String(Math.max(.7,1-dragX/innerWidth*.35));
-    });
-    practiceListGrabber.addEventListener('pointerup',event=>{
-      if(!practiceGrabStart||practiceGrabStart.id!==event.pointerId)return;
-      event.stopPropagation();
-      const start=practiceGrabStart;practiceGrabStart=null;
-      const elapsed=Math.max(1,performance.now()-start.time);
-      const velocity=start.dx/elapsed;
-      if(start.dx<7){
-        resetPracticeGrab();
-        returnToPracticeList();
-      }else if(start.dx>=Math.min(92,innerWidth*.24)||velocity>.48){
-        returnToPracticeList(start.dx);
-      }else{
-        animatePracticeCard([
-          {transform:`translateX(${start.dx}px)`,opacity:practiceExerciseCard.style.opacity||1},
-          {transform:'translateX(0)',opacity:1}
-        ],{duration:240,easing:'cubic-bezier(.2,.85,.2,1)'}).finally(resetPracticeGrab);
-      }
-    });
-    practiceListGrabber.addEventListener('pointercancel',()=>{
-      if(!practiceGrabStart)return;
-      practiceGrabStart=null;
-      animatePracticeCard([
-        {transform:practiceExerciseCard.style.transform||'translateX(0)',opacity:practiceExerciseCard.style.opacity||1},
-        {transform:'translateX(0)',opacity:1}
-      ],{duration:210,easing:'ease-out'}).finally(resetPracticeGrab);
-    });
     let practiceSwipeStart=null;
     practiceExerciseCard.addEventListener('pointerdown',event=>{
       if(practiceMoving||(event.pointerType==='mouse'&&event.button!==0)||event.target.closest('button'))return;
