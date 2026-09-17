@@ -109,57 +109,87 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
       }
     });
     const writeRowsIntoOriginalWorkbook=stored=>{
-      const workbook=XLSX.read(stored.fileBytes,{type:'array',cellFormula:true,cellStyles:true,cellNF:true});
-      const sheetName=workbook.SheetNames.includes('単語リスト')?'単語リスト':workbook.SheetNames[0];
-      const sheet=workbook.Sheets[sheetName];
-      if(!sheet)throw new Error('元のExcelシートを読み込めませんでした。');
-      const originalRange=XLSX.utils.decode_range(sheet['!ref']||'A1:O1');
+      const archive=XLSX.CFB.read(stored.fileBytes,{type:'array'});
+      const decoder=new TextDecoder();
+      const encoder=new TextEncoder();
+      const findEntry=path=>XLSX.CFB.find(archive,path)||XLSX.CFB.find(archive,`Root Entry/${path}`);
+      const workbookEntry=findEntry('xl/workbook.xml');
+      const relationsEntry=findEntry('xl/_rels/workbook.xml.rels');
+      if(!workbookEntry||!relationsEntry)throw new Error('元のExcel構造を読み込めませんでした。');
+      const parser=new DOMParser();
+      const workbookXml=parser.parseFromString(decoder.decode(workbookEntry.content),'application/xml');
+      const relationsXml=parser.parseFromString(decoder.decode(relationsEntry.content),'application/xml');
+      const sheets=[...workbookXml.getElementsByTagName('sheet')];
+      const selected=sheets.find(sheet=>sheet.getAttribute('name')==='単語リスト')||sheets[0];
+      const relationId=selected?.getAttribute('r:id')||selected?.getAttributeNS('http://schemas.openxmlformats.org/officeDocument/2006/relationships','id');
+      const relation=[...relationsXml.getElementsByTagName('Relationship')].find(item=>item.getAttribute('Id')===relationId);
+      const target=(relation?.getAttribute('Target')||'worksheets/sheet1.xml').replace(/^\/+|^\.\.\//g,'');
+      const sheetEntry=findEntry(target.startsWith('xl/')?target:`xl/${target}`);
+      if(!sheetEntry)throw new Error('単語リストのExcelシートを読み込めませんでした。');
+      const sheetXml=parser.parseFromString(decoder.decode(sheetEntry.content),'application/xml');
+      if(sheetXml.querySelector('parsererror'))throw new Error('Excelシートの解析に失敗しました。');
+      const namespace=sheetXml.documentElement.namespaceURI;
+      const sheetData=sheetXml.getElementsByTagName('sheetData')[0];
+      const rowsByNumber=new Map([...sheetData.getElementsByTagName('row')].map(row=>[Number(row.getAttribute('r')),row]));
       const values=[stored.headers,...stored.rows];
-      const lastRow=Math.max(originalRange.e.r,values.length-1);
-      const lastColumn=Math.max(originalRange.e.c,stored.headers.length-1);
-      const cloneFormat=source=>{
-        if(!source)return{};
-        const target={};
-        if(source.s)target.s=JSON.parse(JSON.stringify(source.s));
-        if(source.z!==undefined)target.z=source.z;
-        return target;
+      const existingLastRow=Math.max(1,...rowsByNumber.keys());
+      const lastRow=Math.max(existingLastRow,values.length);
+      const formulaForRow=(formula,fromRow,toRow)=>formula.replace(/(\$?[A-Z]{1,3})(\$?)(\d+)/g,(match,column,absoluteRow,rowNumber)=>absoluteRow?match:`${column}${Math.max(1,Number(rowNumber)+toRow-fromRow)}`);
+      const copyRowAttributes=(source,target,rowNumber)=>{
+        if(source)[...source.attributes].forEach(attribute=>{if(attribute.name!=='r')target.setAttribute(attribute.name,attribute.value)});
+        target.setAttribute('r',String(rowNumber));
       };
-      const rebaseFormula=(formula,fromRow,toRow)=>{
-        const offset=toRow-fromRow;
-        if(!offset)return formula;
-        return formula.replace(/(\$?[A-Z]{1,3})(\$?)(\d+)/g,(match,column,absoluteRow,rowNumber)=>{
-          if(absoluteRow)return match;
-          return `${column}${Math.max(1,Number(rowNumber)+offset)}`;
-        });
+      const insertInOrder=(parent,node,key,getKey)=>{
+        const next=[...parent.children].find(child=>getKey(child)>key);
+        if(next)parent.insertBefore(node,next);else parent.append(node);
       };
-      for(let rowIndex=0;rowIndex<=lastRow;rowIndex+=1){
-        const row=values[rowIndex]||[];
-        const templateRow=Math.max(0,Math.min(rowIndex,originalRange.e.r));
-        for(let columnIndex=0;columnIndex<stored.headers.length;columnIndex+=1){
-          const address=XLSX.utils.encode_cell({r:rowIndex,c:columnIndex});
-          const templateAddress=XLSX.utils.encode_cell({r:templateRow,c:columnIndex});
-          const existing=sheet[address];
-          const template=sheet[templateAddress];
-          const cell=existing||cloneFormat(template);
-          const value=row[columnIndex]??'';
-          cell.v=value;
-          cell.t=typeof value==='number'?'n':typeof value==='boolean'?'b':'s';
-          const formulaSource=existing?.f?existing:template?.f?template:null;
-          if(formulaSource?.f){
-            cell.f=rebaseFormula(formulaSource.f,formulaSource===existing?rowIndex:templateRow,rowIndex);
-          }else{
-            delete cell.f;delete cell.F;
+      const templateRow=rowsByNumber.get(existingLastRow)||rowsByNumber.get(2)||rowsByNumber.get(1);
+      for(let excelRow=1;excelRow<=lastRow;excelRow+=1){
+        let rowElement=rowsByNumber.get(excelRow);
+        if(!rowElement){
+          rowElement=sheetXml.createElementNS(namespace,'row');
+          copyRowAttributes(templateRow,rowElement,excelRow);
+          insertInOrder(sheetData,rowElement,excelRow,item=>Number(item.getAttribute('r'))||0);
+          rowsByNumber.set(excelRow,rowElement);
+        }
+        const rowValues=values[excelRow-1]||[];
+        const cellsByColumn=new Map([...rowElement.getElementsByTagName('c')].map(cell=>[XLSX.utils.decode_cell(cell.getAttribute('r')).c,cell]));
+        for(let column=0;column<stored.headers.length;column+=1){
+          const address=XLSX.utils.encode_cell({r:excelRow-1,c:column});
+          let cell=cellsByColumn.get(column);
+          const templateCell=templateRow?[...templateRow.getElementsByTagName('c')].find(item=>XLSX.utils.decode_cell(item.getAttribute('r')).c===column):null;
+          if(!cell){
+            cell=sheetXml.createElementNS(namespace,'c');
+            cell.setAttribute('r',address);
+            if(templateCell?.hasAttribute('s'))cell.setAttribute('s',templateCell.getAttribute('s'));
+            insertInOrder(rowElement,cell,column,item=>XLSX.utils.decode_cell(item.getAttribute('r')).c);
           }
-          delete cell.w;delete cell.h;
-          sheet[address]=cell;
+          const value=String(rowValues[column]??'');
+          let formula=cell.getElementsByTagName('f')[0];
+          if(!formula&&templateCell?.getElementsByTagName('f')[0]){
+            formula=sheetXml.createElementNS(namespace,'f');
+            formula.textContent=formulaForRow(templateCell.getElementsByTagName('f')[0].textContent,Number(templateRow.getAttribute('r')),excelRow);
+            cell.prepend(formula);
+          }
+          [...cell.children].filter(child=>child.tagName==='v'||child.tagName==='is').forEach(child=>child.remove());
+          if(formula){
+            cell.setAttribute('t','str');
+            const cached=sheetXml.createElementNS(namespace,'v');cached.textContent=value;cell.append(cached);
+          }else if(value===''){
+            cell.removeAttribute('t');
+          }else{
+            cell.setAttribute('t','inlineStr');
+            const inline=sheetXml.createElementNS(namespace,'is');
+            const content=sheetXml.createElementNS(namespace,'t');content.setAttribute('xml:space','preserve');content.textContent=value;
+            inline.append(content);cell.append(inline);
+          }
         }
       }
-      if(sheet['!rows']?.length&&values.length>sheet['!rows'].length){
-        const templateRow=sheet['!rows'][Math.max(1,sheet['!rows'].length-1)];
-        while(sheet['!rows'].length<values.length)sheet['!rows'].push(templateRow?{...templateRow}:{});
-      }
-      sheet['!ref']=XLSX.utils.encode_range({s:{r:0,c:0},e:{r:lastRow,c:lastColumn}});
-      return XLSX.write(workbook,{bookType:'xlsx',type:'array',cellStyles:true});
+      const dimension=sheetXml.getElementsByTagName('dimension')[0];
+      if(dimension)dimension.setAttribute('ref',`A1:${XLSX.utils.encode_col(stored.headers.length-1)}${lastRow}`);
+      sheetEntry.content=encoder.encode(new XMLSerializer().serializeToString(sheetXml));
+      sheetEntry.size=sheetEntry.content.length;
+      return XLSX.CFB.write(archive,{type:'array',fileType:'zip',compression:true});
     };
     exportButton.addEventListener('click',async()=>{
       exportButton.disabled=true;
@@ -752,8 +782,8 @@ const EXPECTED_HEADERS=['品詞重要度','No','Sub No','単語','発音記号US
           cardEditorRow[8]=japanese;cardEditorRow[9]=english;
         }else{
           const newRow=[...selectedVocabularyRow];
-          const sameNumber=(practiceStored.rows||[]).filter(row=>text(row[1])===text(newRow[1]));
-          const nextSub=Math.max(0,...sameNumber.map(row=>Number.parseInt(text(row[2]),10)||0))+1;
+          const samePair=(practiceStored.rows||[]).filter(row=>vocabularyKey(row)===vocabularyKey(newRow));
+          const nextSub=Math.max(0,...samePair.map(row=>Number.parseInt(text(row[2]),10)||0))+1;
           newRow[2]=String(nextSub);newRow[8]=japanese;newRow[9]=english;newRow[13]='';newRow[14]='';
           practiceStored.rows.push(newRow);
         }
