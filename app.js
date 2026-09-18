@@ -888,26 +888,22 @@ const COL=Object.freeze({
         summary.className='practice-list-summary';
         const word=document.createElement('strong');
         word.className='practice-list-word';
-        word.textContent=text(row[COL.word])||'単語未登録';
+        word.textContent=`・${text(row[COL.word])||'単語未登録'}`;
         const meaning=document.createElement('span');
         meaning.className='practice-list-meaning';
-        meaning.textContent=text(row[COL.meaning])||'意味未登録';
-        const summaryDivider=document.createElement('span');
-        summaryDivider.className='practice-list-center-divider';
+        meaning.textContent=`・${text(row[COL.meaning])||'意味未登録'}`;
         identifiers.append(number,partBadge,subBadge,levelBadges);
-        summary.append(word,summaryDivider,meaning);
+        summary.append(word,meaning);
 
         const sentences=document.createElement('span');
         sentences.className='practice-list-sentences';
         const japanese=document.createElement('span');
         japanese.className='practice-list-japanese';
-        japanese.textContent=text(row[COL.japanese])||text(row[COL.meaning])||'日本語未登録';
+        japanese.textContent=`・${text(row[COL.japanese])||text(row[COL.meaning])||'日本語未登録'}`;
         const english=document.createElement('span');
         english.className='practice-list-english';
-        english.textContent=text(row[COL.english])||'英語未登録';
-        const sentenceDivider=document.createElement('span');
-        sentenceDivider.className='practice-list-center-divider';
-        sentences.append(japanese,sentenceDivider,english);
+        english.textContent=`・${text(row[COL.english])||'英語未登録'}`;
+        sentences.append(japanese,english);
         copy.append(identifiers,summary,sentences);
 
         const rowActions=document.createElement('span');
