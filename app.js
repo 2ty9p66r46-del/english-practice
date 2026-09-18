@@ -434,7 +434,8 @@ const COL=Object.freeze({
     const practiceJapaneseStop=document.getElementById('practiceJapaneseStop');
     const practiceEnglishStop=document.getElementById('practiceEnglishStop');
     const practiceWord=document.getElementById('practiceWord');
-    const practiceNumber=document.getElementById('practiceNumber');
+    const practiceWordNumber=document.getElementById('practiceWordNumber');
+    const practiceMeaningExampleNumber=document.getElementById('practiceMeaningExampleNumber');
     const practicePart=document.getElementById('practicePart');
     const practiceLevels=document.getElementById('practiceLevels');
     const practiceMeaning=document.getElementById('practiceMeaning');
@@ -743,11 +744,14 @@ const COL=Object.freeze({
       const raw=text(value);
       return /^\d+$/.test(raw)?raw.padStart(digits,'0'):raw||'—';
     };
+    const formatSingleDigitNumber=value=>{
+      const raw=text(value);
+      return /^\d+$/.test(raw)?String(Number(raw)):raw||'—';
+    };
     const formatCardNumber=row=>[
       formatPracticeNumber(row?.[COL.wordNo],5),
-      formatPracticeNumber(row?.[COL.posNo],2),
-      formatPracticeNumber(row?.[COL.meaningNo],2),
-      formatPracticeNumber(row?.[COL.exampleNo],2)
+      formatSingleDigitNumber(row?.[COL.meaningNo]),
+      formatSingleDigitNumber(row?.[COL.exampleNo])
     ].join('-');
     const renderPracticeQuestion=()=>{
       const row=currentPracticeRow();
@@ -759,7 +763,8 @@ const COL=Object.freeze({
       practiceJapanese.textContent=text(row[COL.japanese]);
       practiceEnglish.textContent=text(row[COL.english]);
       practiceWord.textContent=text(row[COL.word])||'—';
-      practiceNumber.textContent=`No ${formatCardNumber(row)}`;
+      practiceWordNumber.textContent=`No ${formatPracticeNumber(row?.[COL.wordNo],5)}`;
+      practiceMeaningExampleNumber.textContent=`${formatSingleDigitNumber(row?.[COL.meaningNo])}・${formatSingleDigitNumber(row?.[COL.exampleNo])}`;
       const part=text(row[COL.pos])||'—';
       const rank=text(row[COL.posRank]).toUpperCase();
       const rankTone={S:'red',A:'orange',B:'yellow',C:'green',D:'purple'}[rank]||'';
