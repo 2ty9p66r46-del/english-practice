@@ -1080,10 +1080,17 @@ const COL=Object.freeze({
       cardWordSearch.setAttribute('aria-expanded',String(mode!=='edit'));
       cardEditorDelete.hidden=mode!=='edit';
       cardEditorOverlay.hidden=false;
-      if(mode==='add')requestAnimationFrame(()=>{cardWordSearch.focus();renderWordResults()});
-      else requestAnimationFrame(()=>cardJapaneseInput.focus());
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{
+        cardEditorOverlay.classList.add('open');
+        if(mode==='add'){cardWordSearch.focus();renderWordResults()}
+        else cardJapaneseInput.focus();
+      }));
     };
-    const closeCardEditor=()=>{cardEditorOverlay.hidden=true;cardEditorRow=null;selectedVocabularyRow=null;selectedMeaningMode=null};
+    const closeCardEditor=async()=>{
+      cardEditorOverlay.classList.remove('open');
+      await wait(340);
+      cardEditorOverlay.hidden=true;cardEditorRow=null;selectedVocabularyRow=null;selectedMeaningMode=null;
+    };
     const refreshPracticeAfterMutation=()=>{
       practiceRows=getMatchingRows(practiceStored?.rows||[]);
       const limit=practiceButton.dataset.questionLimit==='all'?practiceRows.length:Number(practiceButton.dataset.questionLimit);
