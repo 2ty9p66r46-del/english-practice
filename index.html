@@ -36,6 +36,24 @@
                 </div>
               </div>
             </header>
+            <section class="home-learning-stats" aria-label="学習状況">
+              <div class="home-understanding-panel">
+                <div class="home-understanding-donut" id="homeUnderstandingDonut" role="img" aria-label="理解度データなし">
+                  <div class="home-understanding-center"><strong id="homeMasteryRate">0%</strong><span>習得率</span></div>
+                </div>
+                <div class="home-understanding-legend" aria-label="理解度の内訳">
+                  <div><i class="mastered"></i><span>習得</span><strong id="homeMasteredCount">0</strong><small>100%</small></div>
+                  <div><i class="steady"></i><span>定着</span><strong id="homeSteadyCount">0</strong><small>80%</small></div>
+                  <div><i class="learning"></i><span>練習中</span><strong id="homeLearningCount">0</strong><small>50%</small></div>
+                  <div><i class="new"></i><span>未定着</span><strong id="homeNewCount">0</strong><small>0%・未登録</small></div>
+                </div>
+              </div>
+              <div class="home-answer-panel">
+                <div class="home-answer-head"><span>回答結果</span><strong id="homeAnswerRate">—%</strong><small>正解率</small></div>
+                <div class="home-answer-bar" id="homeAnswerBar" role="img" aria-label="回答結果データなし"><i class="correct" id="homeCorrectBar"></i><i class="wrong" id="homeWrongBar"></i><i class="unsure" id="homeUnsureBar"></i></div>
+                <div class="home-answer-legend"><span><i class="correct"></i>○ <strong id="homeCorrectCount">0</strong></span><span><i class="wrong"></i>× <strong id="homeWrongCount">0</strong></span><span><i class="unsure"></i>？ <strong id="homeUnsureCount">0</strong></span></div>
+              </div>
+            </section>
             <button class="home-practice-button" id="practiceButton" type="button">
               <span><strong>練習する</strong></span>
             </button>
