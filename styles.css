@@ -348,8 +348,9 @@
 .practice-info-primary{display:grid;height:38px;grid-template-columns:minmax(0,1fr) auto;align-items:center;margin:0 -4px;padding:0 4px;border-bottom:0}
 .practice-info-primary .practice-number{justify-self:start;align-self:center;padding:4px 8px;border-radius:var(--radius-pill);background:#111827;color:#fff}
 .practice-info-primary .practice-top-chips{justify-self:end;align-self:center;margin-left:0}
-.practice-word-stack{grid-template-rows:auto auto;gap:4px}
-.practice-word-title{color:var(--blue);font-size:.69rem;font-weight:850;letter-spacing:.04em}
+.practice-word-stack{display:flex;min-width:0;flex-direction:column;align-items:stretch;gap:8px}
+.practice-word-title{display:block;width:100%;color:var(--blue);font-size:.69rem;font-weight:850;line-height:1;letter-spacing:.04em}
+.practice-word-stack .practice-keyword{display:block;width:100%}
 
 /* A compact stop control appears beside the active sentence language only. */
 .practice-inline-stop{display:grid;width:24px;height:24px;place-items:center;padding:0;border:1.5px solid #9fc9ff;border-radius:7px;background:#eef6ff;color:var(--blue);box-shadow:inset 0 1px 0 #fff,0 2px 5px #087cff18}
