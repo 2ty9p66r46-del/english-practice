@@ -1005,6 +1005,7 @@ const COL=Object.freeze({
     let cardEditorRow=null;
     let selectedVocabularyRow=null;
     let selectedMeaningMode=null;
+    let cardEditorAnimationRun=0;
     const closeCardActions=()=>{cardActionsOverlay.hidden=true;cardActionRow=null};
     const openCardActions=row=>{
       if(autoPlaying)stopAutoPlayback();
@@ -1079,16 +1080,25 @@ const COL=Object.freeze({
       cardWordResults.replaceChildren();cardWordResults.hidden=mode==='edit';
       cardWordSearch.setAttribute('aria-expanded',String(mode!=='edit'));
       cardEditorDelete.hidden=mode!=='edit';
+      const animationRun=++cardEditorAnimationRun;
+      cardEditorOverlay.classList.remove('open');
+      if(mode==='add')renderWordResults();
       cardEditorOverlay.hidden=false;
       requestAnimationFrame(()=>requestAnimationFrame(()=>{
+        if(animationRun!==cardEditorAnimationRun)return;
         cardEditorOverlay.classList.add('open');
-        if(mode==='add'){cardWordSearch.focus();renderWordResults()}
-        else cardJapaneseInput.focus();
+        setTimeout(()=>{
+          if(animationRun!==cardEditorAnimationRun||!cardEditorOverlay.classList.contains('open'))return;
+          if(mode==='add')cardWordSearch.focus({preventScroll:true});
+          else cardJapaneseInput.focus({preventScroll:true});
+        },360);
       }));
     };
     const closeCardEditor=async()=>{
+      const animationRun=++cardEditorAnimationRun;
       cardEditorOverlay.classList.remove('open');
       await wait(340);
+      if(animationRun!==cardEditorAnimationRun)return;
       cardEditorOverlay.hidden=true;cardEditorRow=null;selectedVocabularyRow=null;selectedMeaningMode=null;
     };
     const refreshPracticeAfterMutation=()=>{
