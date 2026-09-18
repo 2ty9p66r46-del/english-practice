@@ -348,8 +348,8 @@
 .practice-info-primary{display:grid;height:38px;grid-template-columns:minmax(0,1fr) auto;align-items:center;margin:0 -4px;padding:0 4px;border-bottom:0}
 .practice-info-primary .practice-number{justify-self:start;align-self:center;padding:4px 8px;border-radius:var(--radius-pill);background:#111827;color:#fff}
 .practice-info-primary .practice-top-chips{justify-self:end;align-self:center;margin-left:0}
-.practice-word-stack{display:flex;min-width:0;flex-direction:column;align-items:stretch;gap:8px}
-.practice-word-title{display:block;width:100%;color:var(--blue);font-size:.69rem;font-weight:850;line-height:1;letter-spacing:.04em}
+.practice-word-stack{display:flex;min-width:0;align-items:center;justify-content:center}
+.practice-word-title{display:block;width:100%;grid-column:1/-1;align-self:end;color:var(--blue);font-size:.69rem;font-weight:850;line-height:1;letter-spacing:.04em}
 .practice-word-stack .practice-keyword{display:block;width:100%}
 
 /* A compact stop control appears beside the active sentence language only. */
