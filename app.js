@@ -1077,13 +1077,14 @@ const COL=Object.freeze({
       const restrictLevels=selectedLevels.size!==cardFilterLevelChoices.length;
       const restrictParts=selectedParts.size!==cardFilterPartChoices.length;
       const exampleFilter=cardFilterExampleChoices.find(choice=>choice.classList.contains('selected'))?.dataset.exampleFilter||'all';
+      const exampleKeys=new Set((practiceStored.rows||[]).filter(example=>text(example[COL.japanese])&&text(example[COL.english])).map(vocabularyKey));
       const starts=[];
       candidates.forEach(row=>{
         const word=text(row[COL.word]).toLowerCase();
         if(query&&!word.startsWith(query))return;
         if(restrictLevels&&![text(row[COL.sLevel]),text(row[COL.wLevel])].some(value=>selectedLevels.has(value)))return;
         if(restrictParts&&!selectedParts.has(text(row[COL.pos])))return;
-        const hasExample=(practiceStored.rows||[]).some(example=>vocabularyKey(example)===vocabularyKey(row)&&text(example[COL.japanese])&&text(example[COL.english]));
+        const hasExample=exampleKeys.has(vocabularyKey(row));
         if((exampleFilter==='with'&&!hasExample)||(exampleFilter==='without'&&hasExample))return;
         starts.push(row);
       });
