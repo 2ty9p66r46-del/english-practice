@@ -902,8 +902,8 @@ const COL=Object.freeze({
         const english=document.createElement('span');
         english.className='practice-list-english';
         english.textContent=text(row[COL.english])||'英語未登録';
-        summary.append(word,english);
-        sentences.append(meaning,japanese);
+        summary.append(word,meaning);
+        sentences.append(japanese,english);
         copy.append(identifiers,summary,sentences);
 
         const rowActions=document.createElement('span');
