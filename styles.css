@@ -94,6 +94,7 @@
     .green{--tone:#0876ee;--line:#8fc1f5;--wash-top:#f4f9ff;--wash-bottom:#e2f0ff;--shadow:#0876ee1c;--solid-hi:#78bfff;--solid:#2e91ed;--solid-lo:#176fc2;--solid-line:#064faa;--solid-shadow:#064faa4d}
     .purple{--tone:#60399f;--line:#ad93d4;--wash-top:#faf7ff;--wash-bottom:#ebe3f8;--shadow:#60399f1f;--solid-hi:#bea3e6;--solid:#936fc9;--solid-lo:#6c48a4;--solid-line:#43246f;--solid-shadow:#43246f4d}
     .group{margin-top:13px}
+    .filter-section>.filter-warning + .group{margin-top:8px;padding-top:13px;border-top:1px solid #d8dee8}
     .filter-section .group + .group{margin-top:16px;padding-top:13px;border-top:1px solid #d8dee8}
     .group-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;color:#526078;font-size:.86rem;font-weight:800}
     .all{min-height:24px;padding:0 7px;border:1px solid #e0e3e9;border-radius:var(--radius-pill);background:linear-gradient(#f0f2f5,#eaedf1);color:#737c8d;font-size:.67rem;font-weight:800;line-height:1;box-shadow:inset 0 1px 0 #ffffffbf}
