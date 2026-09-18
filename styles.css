@@ -689,10 +689,10 @@
 .practice-filter-sheet-body>.card{padding:0;border-radius:0;background:transparent;box-shadow:none}
 .practice-filter-sheet-body>#filterCard>.section-head{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px}
 .practice-filter-sheet-body>#filterCard>.section-head>h2{display:none}
-.practice-filter-sheet-body .filter-result-counts{display:grid;min-width:0;justify-content:start;gap:4px;margin:0}
-.practice-filter-sheet-body .filter-result-counts>span{display:grid;grid-template-columns:40px minmax(0,1fr);gap:7px;align-items:baseline}
-.practice-filter-sheet-body .filter-result-counts b{font-size:.64rem;line-height:1.1}
-.practice-filter-sheet-body .filter-result-counts strong{min-width:0;justify-content:flex-start;font-size:.76rem;line-height:1.15}
+.practice-filter-sheet-body .filter-result-counts{display:grid;min-width:0;justify-self:center;justify-content:center;gap:5px;margin:0}
+.practice-filter-sheet-body .filter-result-counts>span{display:grid;grid-template-columns:48px minmax(0,1fr);justify-content:center;gap:9px;align-items:baseline}
+.practice-filter-sheet-body .filter-result-counts b{font-size:.72rem;line-height:1.1;text-align:right}
+.practice-filter-sheet-body .filter-result-counts strong{min-width:0;justify-content:flex-start;font-size:.86rem;line-height:1.15}
 
 
 /* Home no longer shows filters; the same card exists only inside the practice filter sheet. */
