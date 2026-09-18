@@ -17,7 +17,6 @@
     <header class="topbar">
       <div class="toprow home-brand-row">
         <div class="brand-lockup"><div class="brand-logo"><img src="./flovo-wordmark-v3.png" alt="FloVo"></div><div class="brand-subtitle"><span class="subtitle-accent subtitle-accent-a">S</span>PEAKING <span class="subtitle-accent subtitle-accent-v">T</span>RAINING</div></div>
-        <input class="file-input" id="excelInput" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
       </div>
     </header>
     <main class="scroll" id="mainScroll">
@@ -32,7 +31,7 @@
               <div class="home-data-menu">
                 <span class="home-data-label">学習データ</span>
                 <div class="home-excel-actions" aria-label="Excelメニュー">
-                  <label class="header-action" id="importButton" for="excelInput" role="button" tabindex="0" aria-label="Excelをインポート"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7.5 10.5 12 15l4.5-4.5"/><path d="M5 19h14"/></svg><span>IN</span></label>
+                  <div class="header-action import-action" id="importButton"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7.5 10.5 12 15l4.5-4.5"/><path d="M5 19h14"/></svg><span>IN</span><input class="file-input" id="excelInput" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" aria-label="Excelをインポート"></div>
                   <button class="header-action" id="exportButton" type="button" aria-label="Excelをエクスポート"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V3M7.5 7.5 12 3l4.5 4.5"/><path d="M5 19h14"/></svg><span>OUT</span></button>
                 </div>
               </div>

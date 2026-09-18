@@ -25,7 +25,7 @@
     .reload-button svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
     .reload-button.loading svg{animation:reloadSpin .8s linear infinite}
     @keyframes reloadSpin{to{transform:rotate(360deg)}}
-    .file-input{display:none}
+    .file-input{position:absolute;z-index:2;inset:0;display:block;width:100%;height:100%;margin:0;opacity:0;cursor:pointer;-webkit-appearance:none}
     .scroll{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior-y:auto;-webkit-overflow-scrolling:touch;padding:18px 20px 34px;scrollbar-width:none}
     .scroll::-webkit-scrollbar{display:none}
     .stack{display:grid;gap:16px}
@@ -727,9 +727,9 @@ body[data-page="home"] .bottom-space{display:none}
 .active-vocab-card .home-excel-actions .header-action{width:50px;height:50px;flex:0 0 50px;padding:0;border:1px solid #dce2ec;border-radius:14px;background:#fff;box-shadow:0 3px 10px #26354a0b;color:#526078;gap:2px}
 .active-vocab-card .home-excel-actions .header-action svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .active-vocab-card .home-excel-actions .header-action span{font-size:.52rem;font-weight:800;line-height:1;letter-spacing:.04em}
-.active-vocab-card .home-excel-actions label.header-action{cursor:pointer;user-select:none;-webkit-user-select:none}
-.active-vocab-card .home-excel-actions label.header-action:active{transform:scale(.96)}
-.active-vocab-card .home-excel-actions label.header-action.disabled{pointer-events:none;opacity:.55}
+.active-vocab-card .home-excel-actions .import-action{position:relative;overflow:hidden;cursor:pointer;user-select:none;-webkit-user-select:none}
+.active-vocab-card .home-excel-actions .import-action:active{transform:scale(.96)}
+.active-vocab-card .home-excel-actions .import-action.disabled{pointer-events:none;opacity:.55}
 .active-vocab-card .home-practice-button{min-height:58px}
 .active-vocab-card .home-practice-button>span{gap:0}
 

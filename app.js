@@ -349,12 +349,6 @@ const COL=Object.freeze({
         alert('Excel読込機能を準備できませんでした。通信状態を確認して、アプリを開き直してください。');
       }
     });
-    importButton.addEventListener('keydown',event=>{
-      if(event.key!=='Enter'&&event.key!==' ')return;
-      event.preventDefault();
-      if(typeof XLSX==='undefined'){alert('Excel読込機能を準備できませんでした。通信状態を確認して、アプリを開き直してください。');return}
-      excelInput.click();
-    });
     excelInput.addEventListener('change',async()=>{
       const file=excelInput.files?.[0];
       if(!file)return;
