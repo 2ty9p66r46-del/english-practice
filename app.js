@@ -440,11 +440,6 @@ const COL=Object.freeze({
     const practiceJapanese=document.getElementById('practiceJapanese');
     const practiceEnglish=document.getElementById('practiceEnglish');
     const practiceReveal=document.getElementById('practiceReveal');
-    const practiceResultActions=document.getElementById('practiceResultActions');
-    const practiceResultButtons=[...document.querySelectorAll('.practice-result-button')];
-    const practiceResultToast=document.getElementById('practiceResultToast');
-    const practiceResultToastText=document.getElementById('practiceResultToastText');
-    const practiceResultUndo=document.getElementById('practiceResultUndo');
     const practiceAudio=document.getElementById('practiceAudio');
     const practiceJapaneseAudio=document.getElementById('practiceJapaneseAudio');
     const practiceJapaneseStop=document.getElementById('practiceJapaneseStop');
@@ -750,7 +745,6 @@ const COL=Object.freeze({
       answerVisible=visible;
       practiceReveal.hidden=visible;
       practiceEnglish.hidden=!visible;
-      practiceResultActions.hidden=!visible;
       practiceAudio.disabled=!('speechSynthesis' in window);
     };
     const syncPracticeRating=row=>{
@@ -1535,53 +1529,6 @@ const COL=Object.freeze({
     navHome.addEventListener('click',()=>{if(!practiceScreen.hidden)closePractice()});
     practiceReveal.addEventListener('click',()=>setAnswerVisible(true));
     practiceEnglish.addEventListener('click',()=>setAnswerVisible(false));
-    let resultUndoState=null;
-    let resultUndoTimer=0;
-    let resultRecording=false;
-    const dismissResultToast=()=>{
-      clearTimeout(resultUndoTimer);
-      resultUndoTimer=0;
-      resultUndoState=null;
-      practiceResultToast.hidden=true;
-    };
-    const showResultToast=(symbol,row,column)=>{
-      clearTimeout(resultUndoTimer);
-      resultUndoState={row,column};
-      practiceResultToastText.textContent=`${symbol}を記録しました`;
-      practiceResultToast.hidden=false;
-      resultUndoTimer=setTimeout(dismissResultToast,4000);
-    };
-    practiceResultButtons.forEach(button=>button.addEventListener('click',async()=>{
-      if(resultRecording)return;
-      const row=currentPracticeRow();
-      if(!row||!practiceStored)return;
-      if(autoPlaying)stopAutoPlayback();
-      const columns={correct:COL.correctCount,partial:COL.questionCount,wrong:COL.wrongCount};
-      const column=columns[button.dataset.result];
-      if(column===undefined)return;
-      resultRecording=true;
-      practiceResultButtons.forEach(item=>item.disabled=true);
-      row[column]=Math.max(0,Math.trunc(Number(row[column])||0))+1;
-      try{
-        await persistPracticeData();
-        showResultToast(button.dataset.symbol,row,column);
-        if(practiceIndex<practiceRows.length-1)await movePractice(1);
-      }catch{
-        row[column]=Math.max(0,(Number(row[column])||1)-1);
-        alert('回答結果を保存できませんでした。');
-      }finally{
-        resultRecording=false;
-        practiceResultButtons.forEach(item=>item.disabled=false);
-      }
-    }));
-    practiceResultUndo.addEventListener('click',async()=>{
-      const state=resultUndoState;
-      if(!state||!practiceStored)return;
-      dismissResultToast();
-      state.row[state.column]=Math.max(0,(Number(state.row[state.column])||0)-1);
-      try{await persistPracticeData()}
-      catch{state.row[state.column]=Math.max(0,(Number(state.row[state.column])||0)+1);alert('取消を保存できませんでした。')}
-    });
     let practiceSwipeStart=null;
     practiceExerciseCard.addEventListener('pointerdown',event=>{
       if(practiceMoving||(event.pointerType==='mouse'&&event.button!==0)||event.target.closest('button'))return;

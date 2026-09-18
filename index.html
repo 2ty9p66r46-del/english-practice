@@ -178,7 +178,7 @@
             <strong class="practice-progress" id="practiceProgress">0 / 0</strong>
             <div class="practice-info-row practice-info-primary"><span class="practice-card-badges"><span class="practice-number" id="practiceWordNumber">No 00000</span><span class="practice-meta-chip" id="practicePart">—</span><span class="practice-sub-number practice-meta-chip" id="practiceMeaningExampleNumber">—</span></span><span class="practice-level-chips" id="practiceLevels"></span></div>
             <div class="practice-detail-grid">
-              <div class="practice-word-stack"><strong class="practice-keyword" id="practiceWord">—</strong></div>
+              <div class="practice-word-stack"><span class="practice-word-title">単語</span><strong class="practice-keyword" id="practiceWord">—</strong></div>
               <span class="practice-info-divider" aria-hidden="true"></span>
               <span class="practice-pronunciation-stack">
                 <span class="practice-pronunciation-line"><b>US</b><button class="practice-pronunciation-audio" id="practicePronUsAudio" type="button" aria-label="米国英語で単語を再生"><span id="practicePronUs">—</span></button></span>
@@ -198,14 +198,8 @@
               <button class="practice-reveal" id="practiceReveal" type="button">英文を表示</button>
               <p class="practice-english" id="practiceEnglish" hidden></p>
             </div>
-            <div class="practice-result-actions" id="practiceResultActions" aria-label="回答結果" hidden>
-              <button class="practice-result-button correct" type="button" data-result="correct" data-symbol="○" aria-label="できた"><strong>○</strong><span>できた</span></button>
-              <button class="practice-result-button partial" type="button" data-result="partial" data-symbol="△" aria-label="惜しい"><strong>△</strong><span>惜しい</span></button>
-              <button class="practice-result-button wrong" type="button" data-result="wrong" data-symbol="×" aria-label="できなかった"><strong>×</strong><span>できなかった</span></button>
-            </div>
           </section>
         </article>
-        <div class="practice-result-toast" id="practiceResultToast" role="status" aria-live="polite" hidden><span id="practiceResultToastText"></span><button id="practiceResultUndo" type="button">取消</button></div>
         <section class="practice-list-placeholder" id="practiceListPlaceholder" aria-label="問題一覧" hidden>
           <header class="practice-list-header">
             <strong>問題一覧</strong>
