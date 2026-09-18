@@ -1103,10 +1103,9 @@ const COL=Object.freeze({
         partBadge.className=`practice-meta-chip ${rankTone}`.trim();
         partBadge.textContent=text(row[COL.pos])||'品詞未登録';
         const subBadge=document.createElement('span');
-        subBadge.className=`practice-meta-chip ${rankTone}`.trim();
         const rawMeaningNo=text(row?.[COL.meaningNo]);
-        const rawExampleNo=text(row?.[COL.exampleNo]);
-        subBadge.textContent=rawMeaningNo&&rawExampleNo?`${formatSingleDigitNumber(rawMeaningNo)}${formatExampleLetter(rawExampleNo)}`:'—';
+        subBadge.className=`practice-meta-chip ${rawMeaningNo?rankTone:''}`.trim();
+        subBadge.textContent=rawMeaningNo?formatSingleDigitNumber(rawMeaningNo):'—';
         const levelBadges=document.createElement('span');
         levelBadges.className='practice-list-levels practice-level-chips';
         [text(row[COL.sLevel]),text(row[COL.wLevel])].filter(Boolean).forEach(level=>{
@@ -1122,7 +1121,8 @@ const COL=Object.freeze({
         const name=document.createElement('strong');
         name.className='practice-list-word';name.textContent=text(row[COL.word])||'単語未登録';
         const meaning=document.createElement('span');
-        meaning.className='practice-list-meaning';meaning.textContent=text(row[COL.meaning])||'意味未登録';
+        const meaningText=text(row[COL.meaning]);
+        meaning.className=`practice-list-meaning${meaningText?'':' is-unregistered'}`;meaning.textContent=meaningText||'意味未登録';
         summary.append(name,meaning);
         button.append(identifiers,summary);
         button.addEventListener('click',()=>{
