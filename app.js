@@ -1008,7 +1008,7 @@ const COL=Object.freeze({
     const getVocabularyRows=()=>{
       const savedVocabulary=restoreVocabularyRows(practiceStored);
       const currentRows=Array.isArray(practiceStored?.rows)?practiceStored.rows:[];
-      const source=savedVocabulary.concat(currentRows);
+      const source=currentRows.concat(savedVocabulary);
       const unique=new Map();
       source.forEach(row=>{const key=vocabularyKey(row);if(text(row?.[COL.word])&&text(row?.[COL.pos])&&key&&!unique.has(key))unique.set(key,row)});
       return [...unique.values()].sort((a,b)=>text(a[COL.word]).localeCompare(text(b[COL.word]),'en'));
@@ -1069,6 +1069,7 @@ const COL=Object.freeze({
     const renderWordResults=()=>{
       const query=text(cardWordSearch.value).toLowerCase();
       cardWordResults.replaceChildren();
+      cardWordResults.onscroll=null;
       if(cardEditorMode==='edit'||selectedVocabularyRow){cardWordResults.hidden=true;cardWordSearch.setAttribute('aria-expanded','false');return}
       const candidates=getVocabularyRows();
       const selectedLevels=new Set(cardFilterLevelChoices.filter(choice=>choice.classList.contains('selected')).map(choice=>choice.dataset.value));
@@ -1087,23 +1088,62 @@ const COL=Object.freeze({
         starts.push(row);
       });
       const matches=starts;
-      matches.forEach(row=>{
+      const appendMatch=row=>{
         const button=document.createElement('button');
         button.type='button';button.className='card-word-option';button.setAttribute('role','option');
-        const name=document.createElement('strong');name.textContent=text(row[COL.word])||'—';
-        const levels=[text(row[COL.sLevel]),text(row[COL.wLevel])].filter(Boolean).join(' / ')||'S/W未登録';
-        const detail=document.createElement('span');detail.textContent=`No ${formatPracticeNumber(row[COL.wordNo],5)}-${formatPracticeNumber(row[COL.posNo],2)}　${text(row[COL.pos])||'品詞未登録'}　${levels}`;
-        button.append(name,detail);
+        const identifiers=document.createElement('span');
+        identifiers.className='practice-list-card-badges practice-card-badges';
+        const number=document.createElement('b');
+        number.className='practice-list-word-no practice-number';
+        number.textContent=`No ${formatPracticeNumber(row?.[COL.wordNo],5)}`;
+        const rank=text(row[COL.posRank]).toUpperCase();
+        const rankTone={S:'red',A:'orange',B:'yellow',C:'green',D:'purple'}[rank]||'';
+        const partBadge=document.createElement('span');
+        partBadge.className=`practice-meta-chip ${rankTone}`.trim();
+        partBadge.textContent=text(row[COL.pos])||'品詞未登録';
+        const subBadge=document.createElement('span');
+        subBadge.className=`practice-meta-chip ${rankTone}`.trim();
+        const rawMeaningNo=text(row?.[COL.meaningNo]);
+        const rawExampleNo=text(row?.[COL.exampleNo]);
+        subBadge.textContent=rawMeaningNo&&rawExampleNo?`${formatSingleDigitNumber(rawMeaningNo)}${formatExampleLetter(rawExampleNo)}`:'—';
+        const levelBadges=document.createElement('span');
+        levelBadges.className='practice-list-levels practice-level-chips';
+        [text(row[COL.sLevel]),text(row[COL.wLevel])].filter(Boolean).forEach(level=>{
+          const chip=document.createElement('span');
+          const digit=level.match(/[123]$/)?.[0];
+          chip.className=`practice-meta-chip ${digit==='1'?'red':digit==='2'?'orange':'yellow'}`;
+          chip.textContent=level.toUpperCase();
+          levelBadges.append(chip);
+        });
+        identifiers.append(number,partBadge,subBadge,levelBadges);
+        const summary=document.createElement('span');
+        summary.className='practice-list-summary';
+        const name=document.createElement('strong');
+        name.className='practice-list-word';name.textContent=text(row[COL.word])||'単語未登録';
+        const meaning=document.createElement('span');
+        meaning.className='practice-list-meaning';meaning.textContent=text(row[COL.meaning])||'意味未登録';
+        summary.append(name,meaning);
+        button.append(identifiers,summary);
         button.addEventListener('click',()=>{
           selectedVocabularyRow=row;
           cardWordStep.hidden=true;
           cardWordSearch.value=text(row[COL.word]);cardWordSearch.hidden=true;
+          const levels=[text(row[COL.sLevel]),text(row[COL.wLevel])].filter(Boolean).join(' / ')||'S/W未登録';
           cardSelectedWordText.textContent=`${text(row[COL.word])}　No ${formatPracticeNumber(row[COL.wordNo],5)}-${formatPracticeNumber(row[COL.posNo],2)}　${text(row[COL.pos])||'品詞未登録'}　${levels}`;
           cardSelectedWord.hidden=false;cardWordResults.hidden=true;cardWordSearch.setAttribute('aria-expanded','false');
           renderMeaningResults();
         });
         cardWordResults.append(button);
-      });
+      };
+      let rendered=0;
+      const appendNextBatch=()=>{
+        const end=Math.min(matches.length,rendered+100);
+        for(;rendered<end;rendered+=1)appendMatch(matches[rendered]);
+      };
+      appendNextBatch();
+      cardWordResults.onscroll=()=>{
+        if(cardWordResults.scrollTop+cardWordResults.clientHeight>=cardWordResults.scrollHeight-120)appendNextBatch();
+      };
       const empty=document.createElement('p');empty.className='card-word-empty';empty.textContent=query?'この文字で始まる登録済み単語がありません':'追加する単語を候補から選択してください';
       if(!matches.length)cardWordResults.append(empty);
       cardWordResults.hidden=false;cardWordSearch.setAttribute('aria-expanded','true');
