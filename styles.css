@@ -906,6 +906,16 @@ body[data-page="home"] .bottom-space{display:none}
 .practice-card-add:active{transform:scale(.95)}
 .practice-list-row{grid-template-columns:minmax(0,1fr) 42px}
 .practice-list-actions{display:flex;align-items:center;justify-content:flex-end;gap:2px}
+.practice-list-row{min-height:104px;padding:10px 12px}
+.practice-list-copy{display:grid;min-width:0;gap:5px}
+.practice-list-overview{display:grid;min-width:0;grid-template-columns:106px minmax(0,1fr);align-items:center;gap:10px}
+.practice-list-identifiers{display:grid;min-width:0;gap:4px;line-height:1.05}
+.practice-list-word-no{color:#526078;font-size:.68rem;font-weight:900;font-variant-numeric:tabular-nums;white-space:nowrap}
+.practice-list-sub-id{min-width:0;overflow:hidden;color:#65728a;font-size:.65rem;font-weight:850;text-overflow:ellipsis;white-space:nowrap}
+.practice-list-word{min-width:0;overflow:hidden;color:#111827;font-size:.98rem;font-weight:900;text-overflow:ellipsis;white-space:nowrap}
+.practice-list-japanese,.practice-list-english{display:block;min-width:0;overflow:hidden;font-size:.66rem;font-weight:700;line-height:1.25;text-overflow:ellipsis;white-space:nowrap}
+.practice-list-japanese{color:#526078}.practice-list-english{color:#7b8495}
+.practice-list-row[aria-current="true"] .practice-list-word{color:var(--blue)}
 .practice-list-menu{display:grid;width:38px;height:38px;place-items:center;padding:0 0 7px;border:0;border-radius:50%;background:transparent;color:#7b8798;font-size:1rem;font-weight:900;letter-spacing:-.13em}
 .practice-list-menu:active{background:#edf3fb;color:var(--blue)}
 .practice-screen-header{grid-template-columns:106px minmax(0,1fr) 106px}

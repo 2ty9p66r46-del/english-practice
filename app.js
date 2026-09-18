@@ -843,20 +843,29 @@ const COL=Object.freeze({
 
         const copy=document.createElement('span');
         copy.className='practice-list-copy';
-        const heading=document.createElement('span');
-        heading.className='practice-list-title';
+        const overview=document.createElement('span');
+        overview.className='practice-list-overview';
+        const identifiers=document.createElement('span');
+        identifiers.className='practice-list-identifiers';
         const number=document.createElement('b');
-        number.textContent=formatCardNumber(row);
-        const separator=document.createElement('span');
-        separator.textContent='—';
+        number.className='practice-list-word-no';
+        number.textContent=`No ${formatPracticeNumber(row?.[COL.wordNo],5)}`;
+        const subIdentifier=document.createElement('span');
+        subIdentifier.className='practice-list-sub-id';
+        subIdentifier.textContent=`${text(row[COL.pos])||'品詞未登録'}　${formatSingleDigitNumber(row?.[COL.meaningNo])}${formatExampleLetter(row?.[COL.exampleNo])}`;
         const word=document.createElement('strong');
+        word.className='practice-list-word';
         word.textContent=text(row[COL.word])||'単語未登録';
-        heading.append(number,separator,word);
+        identifiers.append(number,subIdentifier);
+        overview.append(identifiers,word);
 
         const japanese=document.createElement('span');
         japanese.className='practice-list-japanese';
         japanese.textContent=text(row[COL.japanese])||text(row[COL.meaning])||'日本語未登録';
-        copy.append(heading,japanese);
+        const english=document.createElement('span');
+        english.className='practice-list-english';
+        english.textContent=text(row[COL.english])||'英語未登録';
+        copy.append(overview,japanese,english);
 
         const rowActions=document.createElement('span');
         rowActions.className='practice-list-actions';
