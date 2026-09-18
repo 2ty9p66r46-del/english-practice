@@ -552,17 +552,24 @@ const COL=Object.freeze({
       const totalWordKeys=new Set(sourceRows.map(wordKey).filter(Boolean));
       practiceButton.dataset.questionCount=String(matchingRows.length);
       practiceButton.dataset.pairCount=String(matchingPairCount);
-      const renderFiveDigitCount=(element,value)=>{
-        if(!element)return;
+      const fiveDigitCountMarkup=value=>{
         const number=Math.min(99999,Math.max(0,Math.trunc(Number(value)||0)));
         const digits=String(number);
         const padding='0'.repeat(5-digits.length);
-        element.innerHTML=`<span class="count-padding">${padding}</span><span class="count-value">${digits}</span>`;
+        return `<span class="count-padding">${padding}</span><span class="count-value">${digits}</span>`;
       };
-      renderFiveDigitCount(wordCount,matchingPairCount);
-      renderFiveDigitCount(exampleCount,matchingRows.length);
-      renderFiveDigitCount(filterWordCount,matchingPairCount);
-      renderFiveDigitCount(filterExampleCount,matchingRows.length);
+      const renderFiveDigitCount=(element,value)=>{
+        if(!element)return;
+        element.innerHTML=fiveDigitCountMarkup(value);
+      };
+      const renderCountFraction=(element,value,total)=>{
+        if(!element)return;
+        element.innerHTML=`${fiveDigitCountMarkup(value)}<span class="count-separator">/</span>${fiveDigitCountMarkup(total)}`;
+      };
+      renderCountFraction(wordCount,matchingPairCount,totalPairCount);
+      renderCountFraction(exampleCount,matchingRows.length,allExampleRows.length);
+      renderCountFraction(filterWordCount,matchingPairCount,totalPairCount);
+      renderCountFraction(filterExampleCount,matchingRows.length,allExampleRows.length);
       renderFiveDigitCount(homeWordCount,totalPairCount);
       renderFiveDigitCount(homeExampleCount,allExampleRows.length);
       const understandingCounts={mastered:0,steady:0,learning:0,new:0};
