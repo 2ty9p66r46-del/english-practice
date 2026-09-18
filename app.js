@@ -741,11 +741,29 @@ const COL=Object.freeze({
       if(autoPlaying)restartAutoPlayback();
     };
     const currentPracticeRow=()=>practiceRows[practiceIndex];
+    const fitTextToFixedArea=(element,minSize)=>{
+      if(!element||element.hidden)return;
+      element.style.fontSize='';
+      let size=Number.parseFloat(getComputedStyle(element).fontSize)||16;
+      const overflows=()=>element.scrollHeight>element.clientHeight+1||element.scrollWidth>element.clientWidth+1;
+      while(size>minSize&&overflows()){
+        size=Math.max(minSize,size-.5);
+        element.style.fontSize=`${size}px`;
+      }
+    };
+    const fitPracticeCardText=()=>{
+      fitTextToFixedArea(practiceWord,11);
+      fitTextToFixedArea(practiceMeaning,10);
+      fitTextToFixedArea(practiceNote,9);
+      fitTextToFixedArea(practiceJapanese,11);
+      if(answerVisible)fitTextToFixedArea(practiceEnglish,11);
+    };
     const setAnswerVisible=visible=>{
       answerVisible=visible;
       practiceReveal.hidden=visible;
       practiceEnglish.hidden=!visible;
       practiceAudio.disabled=!('speechSynthesis' in window);
+      requestAnimationFrame(fitPracticeCardText);
     };
     const syncPracticeRating=row=>{
       const value=text(row?.[COL.understanding])||'未登録';
@@ -823,6 +841,7 @@ const COL=Object.freeze({
       practiceNote.closest('.practice-note-row').classList.toggle('is-empty',!note);
       syncPracticeRating(row);
       setAnswerVisible(false);
+      requestAnimationFrame(fitPracticeCardText);
     };
     const renderPracticeList=()=>{
       practiceList.replaceChildren();
@@ -1617,6 +1636,9 @@ const COL=Object.freeze({
       renderPracticeList();
       await saveImportedData(practiceStored);
     }));
+    window.addEventListener('resize',()=>{
+      if(!practiceScreen.hidden&&practiceViewMode==='card')requestAnimationFrame(fitPracticeCardText);
+    },{passive:true});
     document.addEventListener('keydown',event=>{
       if(practiceScreen.hidden)return;
       if(event.key==='Escape'&&practiceFilterOpen){closePracticeFilter();return}
