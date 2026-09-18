@@ -186,6 +186,41 @@ const COL=Object.freeze({
         templateButton.disabled=false;
       }
     });
+    const repairLegacyFloVoExport=sourceBytes=>{
+      const archive=XLSX.CFB.read(new Uint8Array(sourceBytes),{type:'array'});
+      const decoder=new TextDecoder();
+      const encoder=new TextEncoder();
+      const parser=new DOMParser();
+      let changed=false;
+      (archive.FullPaths||[]).filter(path=>/\/xl\/worksheets\/sheet\d+\.xml$/i.test(path)).forEach(path=>{
+        const entry=XLSX.CFB.find(archive,path)||XLSX.CFB.find(archive,path.replace(/^Root Entry\//,''));
+        if(!entry?.content)return;
+        const sheetXml=parser.parseFromString(decoder.decode(entry.content),'application/xml');
+        if(sheetXml.querySelector('parsererror'))return;
+        const namespace=sheetXml.documentElement.namespaceURI;
+        const prefix=sheetXml.documentElement.prefix;
+        const createElement=name=>sheetXml.createElementNS(namespace,prefix?`${prefix}:${name}`:name);
+        const cells=[...sheetXml.getElementsByTagNameNS('*','c')];
+        let sheetChanged=false;
+        cells.forEach(cell=>{
+          if(cell.getAttribute('t')!=='inlineStr')return;
+          const inline=[...cell.children].find(child=>child.localName==='is');
+          if(!inline)return;
+          const value=[...inline.getElementsByTagNameNS('*','t')].map(item=>item.textContent||'').join('');
+          inline.remove();
+          cell.setAttribute('t','str');
+          const stringValue=createElement('v');
+          stringValue.textContent=value;
+          cell.append(stringValue);
+          sheetChanged=true;
+        });
+        if(!sheetChanged)return;
+        entry.content=encoder.encode(new XMLSerializer().serializeToString(sheetXml));
+        entry.size=entry.content.length;
+        changed=true;
+      });
+      return changed?XLSX.CFB.write(archive,{type:'array',fileType:'zip',compression:true}):sourceBytes;
+    };
     const writeRowsIntoOriginalWorkbook=stored=>{
       const archive=XLSX.CFB.read(new Uint8Array(stored.fileBytes),{type:'array'});
       const decoder=new TextDecoder();
@@ -211,6 +246,8 @@ const COL=Object.freeze({
       const sheetXml=parser.parseFromString(decoder.decode(sheetEntry.content),'application/xml');
       if(sheetXml.querySelector('parsererror'))throw new Error('Excelシートの解析に失敗しました。');
       const namespace=sheetXml.documentElement.namespaceURI;
+      const prefix=sheetXml.documentElement.prefix;
+      const createSheetElement=name=>sheetXml.createElementNS(namespace,prefix?`${prefix}:${name}`:name);
       const sheetData=elements(sheetXml,'sheetData')[0];
       if(!sheetData)throw new Error('Excelの行データを読み込めませんでした。');
       const rowsByNumber=new Map(elements(sheetData,'row').map(row=>[Number(row.getAttribute('r')),row]));
@@ -231,7 +268,7 @@ const COL=Object.freeze({
       for(let excelRow=1;excelRow<=lastRow;excelRow+=1){
         let rowElement=rowsByNumber.get(excelRow);
         if(!rowElement){
-          rowElement=sheetXml.createElementNS(namespace,'row');
+          rowElement=createSheetElement('row');
           copyRowAttributes(templateRow,rowElement,excelRow);
           insertInOrder(sheetData,rowElement,excelRow,item=>Number(item.getAttribute('r'))||0);
           rowsByNumber.set(excelRow,rowElement);
@@ -243,7 +280,7 @@ const COL=Object.freeze({
           let cell=cellsByColumn.get(column);
           const templateCell=templateRow?elements(templateRow,'c').find(item=>XLSX.utils.decode_cell(item.getAttribute('r')).c===column):null;
           if(!cell){
-            cell=sheetXml.createElementNS(namespace,'c');
+            cell=createSheetElement('c');
             cell.setAttribute('r',address);
             if(templateCell?.hasAttribute('s'))cell.setAttribute('s',templateCell.getAttribute('s'));
             insertInOrder(rowElement,cell,column,item=>XLSX.utils.decode_cell(item.getAttribute('r')).c);
@@ -252,21 +289,19 @@ const COL=Object.freeze({
           elements(cell,'f').forEach(item=>item.remove());
           const formulaText=formulaForCell(column,excelRow);
           let formula=null;
-          if(formulaText){formula=sheetXml.createElementNS(namespace,'f');formula.textContent=formulaText;cell.prepend(formula)}
+          if(formulaText){formula=createSheetElement('f');formula.textContent=formulaText;cell.prepend(formula)}
           [...cell.children].filter(child=>child.localName==='v'||child.localName==='is').forEach(child=>child.remove());
           if(formula){
             cell.setAttribute('t','str');
-            const cached=sheetXml.createElementNS(namespace,'v');cached.textContent=value;cell.append(cached);
+            const cached=createSheetElement('v');cached.textContent=value;cell.append(cached);
           }else if(value===''){
             cell.removeAttribute('t');
           }else if(numericColumns.has(column)&&/^\d+$/.test(value)){
             cell.setAttribute('t','n');
-            const numeric=sheetXml.createElementNS(namespace,'v');numeric.textContent=value;cell.append(numeric);
+            const numeric=createSheetElement('v');numeric.textContent=value;cell.append(numeric);
           }else{
-            cell.setAttribute('t','inlineStr');
-            const inline=sheetXml.createElementNS(namespace,'is');
-            const content=sheetXml.createElementNS(namespace,'t');content.setAttribute('xml:space','preserve');content.textContent=value;
-            inline.append(content);cell.append(inline);
+            cell.setAttribute('t','str');
+            const stringValue=createSheetElement('v');stringValue.textContent=value;cell.append(stringValue);
           }
         }
       }
@@ -317,7 +352,8 @@ const COL=Object.freeze({
       if(!file)return;
       importButton.disabled=true;
       try{
-        const fileBytes=await file.arrayBuffer();
+        const originalFileBytes=await file.arrayBuffer();
+        const fileBytes=repairLegacyFloVoExport(originalFileBytes);
         const workbook=XLSX.read(fileBytes,{type:'array',cellFormula:true});
         const sheet=workbook.Sheets['単語リスト']||workbook.Sheets[workbook.SheetNames[0]];
         if(!sheet)throw new Error('読み込めるシートがありません。');
