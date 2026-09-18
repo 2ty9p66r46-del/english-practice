@@ -343,12 +343,6 @@ const COL=Object.freeze({
         exportButton.disabled=false;
       }
     });
-    importButton.addEventListener('click',event=>{
-      if(typeof XLSX==='undefined'){
-        event.preventDefault();
-        alert('Excel読込機能を準備できませんでした。通信状態を確認して、アプリを開き直してください。');
-      }
-    });
     excelInput.addEventListener('change',async()=>{
       const file=excelInput.files?.[0];
       if(!file)return;
@@ -356,6 +350,7 @@ const COL=Object.freeze({
       importButton.setAttribute('aria-disabled','true');
       excelInput.disabled=true;
       try{
+        if(typeof XLSX==='undefined')throw new Error('Excel読込機能を準備できませんでした。通信状態を確認して、アプリを開き直してください。');
         const originalFileBytes=await file.arrayBuffer();
         const fileBytes=repairLegacyFloVoExport(originalFileBytes);
         const workbook=XLSX.read(fileBytes,{type:'array',cellFormula:true});
