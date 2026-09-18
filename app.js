@@ -343,14 +343,24 @@ const COL=Object.freeze({
         exportButton.disabled=false;
       }
     });
-    importButton.addEventListener('click',()=>{
+    importButton.addEventListener('click',event=>{
+      if(typeof XLSX==='undefined'){
+        event.preventDefault();
+        alert('Excel読込機能を準備できませんでした。通信状態を確認して、アプリを開き直してください。');
+      }
+    });
+    importButton.addEventListener('keydown',event=>{
+      if(event.key!=='Enter'&&event.key!==' ')return;
+      event.preventDefault();
       if(typeof XLSX==='undefined'){alert('Excel読込機能を準備できませんでした。通信状態を確認して、アプリを開き直してください。');return}
       excelInput.click();
     });
     excelInput.addEventListener('change',async()=>{
       const file=excelInput.files?.[0];
       if(!file)return;
-      importButton.disabled=true;
+      importButton.classList.add('disabled');
+      importButton.setAttribute('aria-disabled','true');
+      excelInput.disabled=true;
       try{
         const originalFileBytes=await file.arrayBuffer();
         const fileBytes=repairLegacyFloVoExport(originalFileBytes);
@@ -371,7 +381,9 @@ const COL=Object.freeze({
       }catch(error){
         alert(error?.message||'Excelの読み込みに失敗しました。');
       }finally{
-        importButton.disabled=false;
+        excelInput.disabled=false;
+        importButton.classList.remove('disabled');
+        importButton.removeAttribute('aria-disabled');
         excelInput.value='';
       }
     });

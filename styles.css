@@ -702,9 +702,11 @@ body[data-page="home"] .bottom-space{display:none}
 
 
 /* Active Vocabulary card summary: tab-scale icon, stable counts and source filename. */
-.active-vocab-card .home-module-head{grid-template-columns:50px minmax(0,1fr);gap:13px;padding-bottom:14px;border-bottom:1px solid #d5e2ef}
+.active-vocab-card .home-module-head{grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:14px;padding-bottom:14px;border-bottom:1px solid #d5e2ef}
+.active-vocab-card .home-module-identity{display:grid;min-width:0;justify-items:start;gap:6px}
 .active-vocab-card .home-module-icon.active{width:50px;height:50px;border:0;border-radius:0;background:transparent;color:var(--blue);box-shadow:none}
 .active-vocab-card .home-module-icon.active svg{width:46px;height:46px;stroke-width:1.8}
+.active-vocab-card .home-module-title{gap:1px}
 .home-card-counts{position:relative;z-index:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px}
 .home-card-counts>span{display:flex;min-height:42px;align-items:center;justify-content:center;gap:8px;border:1px solid #dce3ed;border-radius:14px;background:#fff;color:#526078;box-shadow:inset 0 1px 0 #fff,0 2px 7px #26354a0b}
 .home-card-counts small{font-size:.6rem;font-weight:800}
@@ -719,10 +721,15 @@ body[data-page="home"] .bottom-space{display:none}
 
 
 /* Compact Excel actions align with the bottom-tab icon scale. */
-.active-vocab-card .home-excel-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin:10px 0 0;padding:0;border:0;background:transparent}
+.active-vocab-card .home-data-menu{display:grid;justify-items:center;gap:5px}
+.active-vocab-card .home-data-label{color:#65728a;font-size:.6rem;font-weight:850;line-height:1;letter-spacing:.06em}
+.active-vocab-card .home-excel-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin:0;padding:0;border:0;background:transparent}
 .active-vocab-card .home-excel-actions .header-action{width:50px;height:50px;flex:0 0 50px;padding:0;border:1px solid #dce2ec;border-radius:14px;background:#fff;box-shadow:0 3px 10px #26354a0b;color:#526078;gap:2px}
 .active-vocab-card .home-excel-actions .header-action svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .active-vocab-card .home-excel-actions .header-action span{font-size:.52rem;font-weight:800;line-height:1;letter-spacing:.04em}
+.active-vocab-card .home-excel-actions label.header-action{cursor:pointer;user-select:none;-webkit-user-select:none}
+.active-vocab-card .home-excel-actions label.header-action:active{transform:scale(.96)}
+.active-vocab-card .home-excel-actions label.header-action.disabled{pointer-events:none;opacity:.55}
 .active-vocab-card .home-practice-button{min-height:58px}
 .active-vocab-card .home-practice-button>span{gap:0}
 
