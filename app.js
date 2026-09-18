@@ -466,6 +466,8 @@ const COL=Object.freeze({
     const cardActionDelete=document.getElementById('cardActionDelete');
     const cardActionCancel=document.getElementById('cardActionCancel');
     const cardEditorOverlay=document.getElementById('cardEditorOverlay');
+    const cardEditorSheet=cardEditorOverlay.querySelector('.card-editor-sheet');
+    const cardEditorHandle=cardEditorOverlay.querySelector('.practice-filter-handle');
     const cardEditorTitle=document.getElementById('cardEditorTitle');
     const cardEditorCancel=document.getElementById('cardEditorCancel');
     const cardEditorSave=document.getElementById('cardEditorSave');
@@ -504,6 +506,8 @@ const COL=Object.freeze({
     const practiceHeaderCounts=document.getElementById('practiceHeaderCounts');
     const practiceFilterButton=document.getElementById('practiceFilterButton');
     const practiceFilterOverlay=document.getElementById('practiceFilterOverlay');
+    const practiceFilterSheet=practiceFilterOverlay.querySelector('.practice-filter-sheet');
+    const practiceFilterHandle=practiceFilterOverlay.querySelector('.practice-filter-handle');
     const practiceFilterSheetBody=document.getElementById('practiceFilterSheetBody');
     const practiceFilterClose=document.getElementById('practiceFilterClose');
     const filterCard=document.getElementById('filterCard');
@@ -1552,6 +1556,57 @@ const COL=Object.freeze({
         setPracticeViewMode(previousViewMode==='card'&&practiceRows.length?'card':'list');
       }
     };
+    const enableBottomSheetGrab=(overlay,sheet,handle,onDismiss)=>{
+      let drag=null;
+      const clearDragStyles=()=>{
+        sheet.style.removeProperty('transition');
+        sheet.style.removeProperty('transform');
+        overlay.style.removeProperty('transition');
+        overlay.style.removeProperty('background-color');
+        handle.classList.remove('dragging');
+      };
+      handle.addEventListener('pointerdown',event=>{
+        if((event.pointerType==='mouse'&&event.button!==0)||drag)return;
+        drag={id:event.pointerId,startY:event.clientY,lastY:event.clientY,startTime:performance.now(),distance:0};
+        sheet.style.transition='none';
+        overlay.style.transition='none';
+        handle.classList.add('dragging');
+        handle.setPointerCapture?.(event.pointerId);
+        event.preventDefault();
+      });
+      handle.addEventListener('pointermove',event=>{
+        if(!drag||drag.id!==event.pointerId)return;
+        const distance=Math.max(0,event.clientY-drag.startY);
+        drag.distance=distance;drag.lastY=event.clientY;
+        sheet.style.transform=`translateY(${distance}px)`;
+        const fade=Math.max(0,.45*(1-distance/Math.max(1,sheet.offsetHeight*.75)));
+        overlay.style.backgroundColor=`rgba(17,24,39,${fade})`;
+        event.preventDefault();
+      });
+      const finishDrag=(event,cancelled=false)=>{
+        if(!drag||drag.id!==event.pointerId)return;
+        const current=drag;drag=null;
+        const elapsed=Math.max(1,performance.now()-current.startTime);
+        const velocity=current.distance/elapsed;
+        const dismiss=!cancelled&&(current.distance>Math.min(120,sheet.offsetHeight*.18)||velocity>.5);
+        sheet.style.transition='transform 240ms cubic-bezier(.2,.8,.2,1)';
+        overlay.style.transition='background-color 240ms ease';
+        if(dismiss){
+          sheet.style.transform='translateY(104%)';
+          overlay.style.backgroundColor='rgba(17,24,39,0)';
+          onDismiss();
+          setTimeout(clearDragStyles,360);
+        }else{
+          sheet.style.transform='translateY(0)';
+          overlay.style.backgroundColor='rgba(17,24,39,.45)';
+          setTimeout(clearDragStyles,250);
+        }
+      };
+      handle.addEventListener('pointerup',event=>finishDrag(event));
+      handle.addEventListener('pointercancel',event=>finishDrag(event,true));
+    };
+    enableBottomSheetGrab(practiceFilterOverlay,practiceFilterSheet,practiceFilterHandle,()=>closePracticeFilter());
+    enableBottomSheetGrab(cardEditorOverlay,cardEditorSheet,cardEditorHandle,()=>closeCardEditor());
     const openPractice=async()=>{
       if(screenTransitionBusy)return;
       const stored=await getImportedData();
