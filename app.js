@@ -564,7 +564,7 @@ const COL=Object.freeze({
       };
       const renderCountFraction=(element,value,total)=>{
         if(!element)return;
-        element.innerHTML=`${fiveDigitCountMarkup(value)}<span class="count-separator">/</span>${fiveDigitCountMarkup(total)}`;
+        element.innerHTML=`<span class="count-current">${fiveDigitCountMarkup(value)}</span><span class="count-separator">/</span><span class="count-total">${fiveDigitCountMarkup(total)}</span>`;
       };
       renderCountFraction(wordCount,matchingPairCount,totalPairCount);
       renderCountFraction(exampleCount,matchingRows.length,allExampleRows.length);
