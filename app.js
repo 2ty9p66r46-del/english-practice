@@ -391,6 +391,8 @@ const COL=Object.freeze({
     const practiceButton=document.getElementById('practiceButton');
     const wordCount=document.getElementById('wordCount');
     const exampleCount=document.getElementById('exampleCount');
+    const filterWordCount=document.getElementById('filterWordCount');
+    const filterExampleCount=document.getElementById('filterExampleCount');
     const homeWordCount=document.getElementById('homeWordCount');
     const homeExampleCount=document.getElementById('homeExampleCount');
     const homeImportFileName=document.getElementById('homeImportFileName');
@@ -559,6 +561,8 @@ const COL=Object.freeze({
       };
       renderFiveDigitCount(wordCount,matchingPairCount);
       renderFiveDigitCount(exampleCount,matchingRows.length);
+      renderFiveDigitCount(filterWordCount,matchingPairCount);
+      renderFiveDigitCount(filterExampleCount,matchingRows.length);
       renderFiveDigitCount(homeWordCount,totalPairCount);
       renderFiveDigitCount(homeExampleCount,allExampleRows.length);
       const understandingCounts={mastered:0,steady:0,learning:0,new:0};

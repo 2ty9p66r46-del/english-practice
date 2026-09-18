@@ -94,7 +94,8 @@
           <button type="button" aria-label="マイフレーズバンク"></button>
         </div>
         <section class="card" id="filterCard">
-          <div class="section-head"><h2>絞り込み条件</h2><div class="filter-bulk-actions"><button class="bulk-filter-button select" id="selectAllFilters" type="button">すべて選択</button></div></div><p class="overall-filter-warning" id="overallFilterWarning" hidden></p>
+          <div class="section-head"><h2>絞り込み条件</h2><div class="filter-bulk-actions"><button class="bulk-filter-button select" id="selectAllFilters" type="button">すべて選択</button></div></div>
+          <div class="filter-result-counts" id="filterResultCounts" aria-live="polite"><span><b>単語数</b><strong id="filterWordCount">0</strong></span><span><b>例文数</b><strong id="filterExampleCount">0</strong></span></div><p class="overall-filter-warning" id="overallFilterWarning" hidden></p>
           <div class="filter-section" data-filter-section="word">
             <div class="filter-section-head"><h3><span class="condition-badge">条件1</span><span>単語レベル</span></h3><div class="filter-section-actions"><button class="section-filter-button select" type="button" data-section-action="select">すべて選択</button></div></div><p class="filter-warning" hidden>少なくともひとつ項目を選択してください。</p>
           <div class="group level-group">
@@ -162,10 +163,6 @@
       <header class="practice-screen-header">
         <div class="practice-header-left">
           <button class="practice-back-to-list" id="practiceBackToList" type="button" aria-label="例文一覧へ戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg></button>
-          <div class="practice-header-counts" id="practiceHeaderCounts" aria-live="polite">
-            <span><b>単語数</b><strong id="wordCount">0</strong></span>
-            <span><b>問題数</b><strong id="exampleCount">0</strong></span>
-          </div>
         </div>
         <div class="practice-header-actions">
           <button class="practice-card-add" id="practiceCardAdd" type="button" aria-label="カードを追加"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
@@ -205,6 +202,10 @@
         <section class="practice-list-placeholder" id="practiceListPlaceholder" aria-label="例文一覧" hidden>
           <header class="practice-list-header">
             <strong>例文一覧</strong>
+            <div class="practice-header-counts" id="practiceHeaderCounts" aria-live="polite">
+              <span><b>単語数</b><strong id="wordCount">0</strong></span>
+              <span><b>例文数</b><strong id="exampleCount">0</strong></span>
+            </div>
           </header>
           <div class="practice-list-items" id="practiceList"></div>
         </section>
