@@ -176,7 +176,7 @@
         <article class="practice-exercise-card" id="practiceExerciseCard">
           <section class="practice-question-meta" aria-label="問題情報">
             <strong class="practice-progress" id="practiceProgress">0 / 0</strong>
-            <div class="practice-info-row practice-info-primary"><span class="practice-number" id="practiceWordNumber">No 00000</span><span class="practice-level-chips" id="practiceLevels"></span></div>
+            <div class="practice-info-row practice-info-primary"><span class="practice-card-badges"><span class="practice-number" id="practiceWordNumber">No 00000</span><span class="practice-meta-chip" id="practicePart">—</span><span class="practice-meaning-number" id="practiceMeaningNumber">—</span></span><span class="practice-level-chips" id="practiceLevels"></span></div>
             <div class="practice-detail-grid">
               <div class="practice-word-stack"><strong class="practice-keyword" id="practiceWord">—</strong></div>
               <span class="practice-info-divider" aria-hidden="true"></span>
@@ -184,17 +184,18 @@
                 <span class="practice-pronunciation-line"><b>US</b><button class="practice-pronunciation-audio" id="practicePronUsAudio" type="button" aria-label="米国英語で単語を再生"><span id="practicePronUs">—</span></button></span>
                 <span class="practice-pronunciation-line"><b>UK</b><button class="practice-pronunciation-audio" id="practicePronUkAudio" type="button" aria-label="英国英語で単語を再生"><span id="practicePronUk">—</span></button></span>
               </span>
-              <div class="practice-meaning-column"><span class="practice-meta-chip practice-meaning-meta" id="practiceMeaningMeta">—・—</span><p class="practice-meaning" id="practiceMeaning">—</p></div>
+              <div class="practice-meaning-column"><p class="practice-meaning" id="practiceMeaning">—</p></div>
             </div>
             <div class="practice-note-row"><span class="practice-hint-icon" aria-label="備考"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4"/><path d="M8.2 14.5A6 6 0 1 1 15.8 14.5c-.9.7-1.3 1.5-1.3 2.5h-5c0-1-.4-1.8-1.3-2.5z"/></svg></span><p class="practice-note" id="practiceNote">備考なし</p></div>
           </section>
+          <div class="practice-example-heading"><strong>例文</strong><span class="practice-example-number" id="practiceExampleNumber">—</span></div>
           <section class="practice-language practice-japanese-block">
-            <div class="practice-language-heading"><button class="practice-language-label practice-language-audio" id="practiceJapaneseAudio" type="button" aria-label="日本語を再生"><span id="practiceJapaneseLabel">—・日本語</span></button><button class="practice-inline-stop" id="practiceJapaneseStop" type="button" aria-label="日本語音声を停止" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="1.5"/></svg></button></div>
+            <div class="practice-language-heading"><button class="practice-language-label practice-language-audio" id="practiceJapaneseAudio" type="button" aria-label="日本語を再生">日本語</button><button class="practice-inline-stop" id="practiceJapaneseStop" type="button" aria-label="日本語音声を停止" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="1.5"/></svg></button></div>
             <p class="practice-japanese" id="practiceJapanese">日本語の例文</p>
           </section>
           <div class="practice-language-divider"></div>
           <section class="practice-language practice-english-block">
-            <div class="practice-language-heading"><button class="practice-language-label practice-language-audio" id="practiceAudio" type="button" aria-label="英文を再生" disabled><span id="practiceEnglishLabel">—・英語</span></button><button class="practice-inline-stop" id="practiceEnglishStop" type="button" aria-label="英語音声を停止" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="1.5"/></svg></button><div class="practice-rating-options practice-rating-inline" id="practiceRatingOptions" aria-label="理解度選択"><button class="practice-rating-button rating-zero red" type="button" data-value="0%" aria-label="理解度0パーセント">0</button><button class="practice-rating-button rating-fifty orange" type="button" data-value="50%" aria-label="理解度50パーセント">50</button><button class="practice-rating-button rating-eighty yellow" type="button" data-value="80%" aria-label="理解度80パーセント">80</button><button class="practice-rating-button rating-full green" type="button" data-value="100%" aria-label="理解度100パーセント">100</button></div></div>
+            <div class="practice-language-heading"><button class="practice-language-label practice-language-audio" id="practiceAudio" type="button" aria-label="英文を再生" disabled>英語</button><button class="practice-inline-stop" id="practiceEnglishStop" type="button" aria-label="英語音声を停止" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="1.5"/></svg></button><div class="practice-rating-options practice-rating-inline" id="practiceRatingOptions" aria-label="理解度選択"><button class="practice-rating-button rating-zero red" type="button" data-value="0%" aria-label="理解度0パーセント">0</button><button class="practice-rating-button rating-fifty orange" type="button" data-value="50%" aria-label="理解度50パーセント">50</button><button class="practice-rating-button rating-eighty yellow" type="button" data-value="80%" aria-label="理解度80パーセント">80</button><button class="practice-rating-button rating-full green" type="button" data-value="100%" aria-label="理解度100パーセント">100</button></div></div>
             <div class="practice-answer" aria-live="polite">
               <button class="practice-reveal" id="practiceReveal" type="button">英文を表示</button>
               <p class="practice-english" id="practiceEnglish" hidden></p>

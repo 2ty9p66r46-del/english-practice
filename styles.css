@@ -140,7 +140,7 @@
 .practice-brand small{margin-top:-5px;color:#65728a;font-size:.38rem;font-weight:850;letter-spacing:.13em;white-space:nowrap}
 .practice-progress{display:block;width:100%;align-self:center;justify-self:stretch;margin-bottom:9px;padding-bottom:10px;border-bottom:1.5px solid #cfd5df;color:#65728a;font-size:.72rem;font-variant-numeric:tabular-nums;text-align:center}
 .practice-screen-main{position:relative;display:flex;flex:1 1 auto;min-height:0;flex-direction:column;gap:10px;padding:12px 14px calc(14px + env(safe-area-inset-bottom));overflow-y:auto}
-.practice-exercise-card{display:grid;flex:1 1 520px;min-height:510px;grid-template-rows:max-content minmax(0,1fr) 1px minmax(0,1fr);padding:14px 18px 18px;border-radius:23px;background:#fff;box-shadow:0 1px 1px #1822350d,0 9px 25px #27344d0a;touch-action:pan-y;will-change:transform,opacity}
+.practice-exercise-card{display:grid;flex:1 1 520px;min-height:510px;grid-template-rows:max-content 34px minmax(0,1fr) 1px minmax(0,1fr);padding:14px 18px 18px;border-radius:23px;background:#fff;box-shadow:0 1px 1px #1822350d,0 9px 25px #27344d0a;touch-action:pan-y;will-change:transform,opacity}
 .practice-question-meta{position:relative;padding:0 4px 12px;border-bottom:1px solid #e0e5ed}
 .practice-info-row{display:flex;align-items:center;gap:7px;min-width:0}
 .practice-info-primary{height:44px;margin:0 -4px;padding:0 4px;border-bottom:1.5px solid #cfd5df}
@@ -391,7 +391,7 @@
 .practice-rating-inline::before{left:-44px;right:auto;top:50%;width:40px;transform:translateY(-50%);font-size:.5rem;white-space:nowrap}
 
 /* No and part-of-speech badges share the S1 badge's 24px height and 2px frame. */
-.practice-top-chips>.practice-meta-chip,.practice-number-part>.practice-meta-chip{box-sizing:border-box;height:24px;min-height:24px;padding:0 8px;border:2px solid var(--solid-line,var(--line,#cfd5df));background:linear-gradient(180deg,var(--solid-hi,#f7f9fc) 0%,var(--solid,#e9edf3) 52%,var(--solid-lo,#d4dae4) 100%);color:#fff;font-size:.56rem;text-shadow:0 1px 1px #00000045;box-shadow:inset 0 1px 0 #ffffffb8,inset 0 -1px 0 #00000020,0 2px 4px var(--solid-shadow,#26354a22)}
+.practice-top-chips>.practice-meta-chip,.practice-number-part>.practice-meta-chip,.practice-card-badges>.practice-meta-chip{box-sizing:border-box;height:24px;min-height:24px;padding:0 8px;border:2px solid var(--solid-line,var(--line,#cfd5df));background:linear-gradient(180deg,var(--solid-hi,#f7f9fc) 0%,var(--solid,#e9edf3) 52%,var(--solid-lo,#d4dae4) 100%);color:#fff;font-size:.56rem;text-shadow:0 1px 1px #00000045;box-shadow:inset 0 1px 0 #ffffffb8,inset 0 -1px 0 #00000020,0 2px 4px var(--solid-shadow,#26354a22)}
 .practice-info-primary .practice-number{box-sizing:border-box;height:24px;min-height:24px;padding:0 8px;border:2px solid #111827;display:inline-flex;align-items:center;font-size:.58rem}
 
 /* Card identifier order: word number, part of speech, meaning-example. */
@@ -402,10 +402,12 @@
 .practice-info-primary .practice-number-part>.practice-meta-chip{flex:0 0 auto}
 .practice-info-primary>.practice-level-chips{justify-self:end}
 
-/* Meaning and sentence labels mirror the workbook hierarchy. */
-.practice-meaning-column{display:flex;min-width:0;align-items:center;gap:8px}
-.practice-meaning-column .practice-meaning-meta{flex:0 0 auto;box-sizing:border-box;height:24px;min-height:24px;padding:0 8px;border:2px solid var(--solid-line,var(--line,#cfd5df));background:linear-gradient(180deg,var(--solid-hi,#f7f9fc) 0%,var(--solid,#e9edf3) 52%,var(--solid-lo,#d4dae4) 100%);color:#fff;font-size:.56rem;text-shadow:0 1px 1px #00000045;box-shadow:inset 0 1px 0 #ffffffb8,inset 0 -1px 0 #00000020,0 2px 4px var(--solid-shadow,#26354a22)}
-.practice-meaning-column .practice-meaning{min-width:0;flex:1 1 auto}
+/* Word, part, and meaning each have an independent badge. */
+.practice-info-primary .practice-card-badges{display:flex;min-width:0;align-items:center;gap:6px;justify-self:start}
+.practice-meaning-number,.practice-example-number{display:inline-flex;box-sizing:border-box;width:24px;height:24px;min-width:24px;min-height:24px;align-items:center;justify-content:center;border:2px solid #075bb8;border-radius:50%;background:linear-gradient(180deg,#78bfff 0%,#2e91ed 52%,#176fc2 100%);color:#fff;font-size:.55rem;font-weight:900;line-height:1;box-shadow:inset 0 1px 0 #ffffff9c,inset 0 -1px 0 #00000020,0 2px 5px #075bb83b}
+.practice-meaning-column{display:block;min-width:0}
+.practice-example-heading{display:flex;height:34px;align-items:center;gap:7px;padding:4px;border-bottom:1px solid #e0e5ed;color:#65728a}
+.practice-example-heading strong{font-size:.62rem;font-weight:900;letter-spacing:.04em}
 
 /* Inline rating buttons exactly match the 24px S1 badge. */
 .practice-rating-inline .practice-rating-button{box-sizing:border-box;width:24px;height:24px;min-width:24px;min-height:24px;border-width:2px;font-size:.4rem}
