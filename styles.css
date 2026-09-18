@@ -924,7 +924,7 @@ body[data-page="home"] .bottom-space{display:none}
 .practice-card-add svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round}
 .practice-card-add:active{transform:scale(.95)}
 .practice-list-row{grid-template-columns:minmax(0,1fr) 42px}
-.practice-list-actions{display:flex;align-items:center;justify-content:flex-end;gap:2px}
+.practice-list-actions{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
 .practice-list-row{min-height:104px;padding:10px 12px}
 .practice-list-copy{display:grid;min-width:0;gap:7px}
 .practice-list-card-badges{display:flex;min-width:0;align-items:center;gap:6px}
@@ -937,6 +937,9 @@ body[data-page="home"] .bottom-space{display:none}
 .practice-list-japanese,.practice-list-english{display:block;min-width:0;overflow:hidden;font-size:.66rem;font-weight:700;line-height:1.25;text-overflow:ellipsis;white-space:nowrap}
 .practice-list-japanese{color:#526078}.practice-list-english{color:#7b8495}
 .practice-list-row[aria-current="true"] .practice-list-word{color:var(--blue)}
+.practice-list-card-badges .practice-list-word-no{border-color:#1118274d;background:#11182714;color:#475569;box-shadow:none}
+.practice-list-card-badges>.practice-meta-chip,.practice-list-card-badges .practice-list-levels>.practice-meta-chip{border-color:color-mix(in srgb,var(--solid-line,var(--line,#8290a5)) 42%,transparent);background:color-mix(in srgb,var(--solid,var(--tone,#8290a5)) 16%,transparent);color:var(--tone,#59667b);text-shadow:none;box-shadow:none}
+.practice-list-word,.practice-list-meaning,.practice-list-japanese,.practice-list-english{font-size:.7rem;line-height:1.25}
 .practice-list-menu{display:grid;width:38px;height:38px;place-items:center;padding:0 0 7px;border:0;border-radius:50%;background:transparent;color:#7b8798;font-size:1rem;font-weight:900;letter-spacing:-.13em}
 .practice-list-menu:active{background:#edf3fb;color:var(--blue)}
 .practice-screen-header{grid-template-columns:106px minmax(0,1fr) 106px}
