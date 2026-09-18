@@ -25,19 +25,13 @@
         <section class="home-modules" aria-label="学習メニュー">
           <article class="home-module-card active-vocab-card">
             <header class="home-module-head">
-              <span class="home-module-title"><small>ACTIVE VOCABULARY</small><strong>アクティブボキャビル</strong></span>
-              <span class="home-module-status available">利用可能</span>
               <span class="home-module-icon active" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 5.5c3.2-1 6-.3 9 1.7v12c-3-2-5.8-2.7-9-1.7z"/><path d="M21 5.5c-3.2-1-6-.3-9 1.7v12c3-2 5.8-2.7 9-1.7z"/><path d="m6.8 14 2-5 2 5M7.5 12.2h2.6M15 9.5h3M15 12h2.4"/></svg></span>
+              <span class="home-module-title"><small>ACTIVE VOCABULARY</small><strong>アクティブボキャビル</strong></span>
+              <div class="home-excel-actions" aria-label="Excelメニュー">
+                <button class="header-action" id="importButton" type="button" aria-label="Excelを読み込む"><svg viewBox="0 0 24 24"><path d="M12 3v12M7.5 10.5 12 15l4.5-4.5"/><path d="M5 19h14"/></svg><span>読込</span></button>
+                <button class="header-action" id="exportButton" type="button" aria-label="Excelを書き出す"><svg viewBox="0 0 24 24"><path d="M12 15V3M7.5 7.5 12 3l4.5 4.5"/><path d="M5 19h14"/></svg><span>書出</span></button>
+              </div>
             </header>
-            <div class="home-excel-actions" aria-label="Excelメニュー">
-              <button class="header-action" id="importButton" type="button" aria-label="Excelを読み込む"><svg viewBox="0 0 24 24"><path d="M12 3v12M7.5 10.5 12 15l4.5-4.5"/><path d="M5 19h14"/></svg><span>読込</span></button>
-              <button class="header-action" id="exportButton" type="button" aria-label="Excelを書き出す"><svg viewBox="0 0 24 24"><path d="M12 15V3M7.5 7.5 12 3l4.5 4.5"/><path d="M5 19h14"/></svg><span>書出</span></button>
-              <button class="header-action" id="templateButton" type="button" aria-label="Excel雛形をダウンロード"><svg viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h5M12 11v6M9.5 14.5 12 17l2.5-2.5"/></svg><span>雛形</span></button>
-            </div>
-            <div class="home-card-counts" aria-label="練習対象件数">
-              <span><small>単語数</small><strong id="homeWordCount"><span class="count-padding">0000</span><span class="count-value">0</span></strong></span>
-              <span><small>問題数</small><strong id="homeExampleCount"><span class="count-padding">0000</span><span class="count-value">0</span></strong></span>
-            </div>
             <button class="home-practice-button" id="practiceButton" type="button">
               <span><strong>練習する</strong></span>
             </button>
@@ -233,6 +227,7 @@
           </ul>
           <p class="help-note">この状態へ戻す場合は、上記のコミット番号を指定してください。</p>
         </div>
+        <button class="help-template-button" id="templateButton" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h5M12 11v6M9.5 14.5 12 17l2.5-2.5"/></svg><span>Excel雛形をダウンロード</span></button>
       </section>
     </div>
   </div>

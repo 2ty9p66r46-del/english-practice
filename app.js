@@ -472,6 +472,7 @@ const COL=Object.freeze({
       practiceButton.dataset.questionCount=String(matchingRows.length);
       practiceButton.dataset.pairCount=String(matchingPairCount);
       const renderFiveDigitCount=(element,value)=>{
+        if(!element)return;
         const number=Math.min(99999,Math.max(0,Math.trunc(Number(value)||0)));
         const digits=String(number);
         const padding='0'.repeat(5-digits.length);
