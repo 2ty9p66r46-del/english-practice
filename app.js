@@ -1,7 +1,8 @@
 'use strict';
 
 // FloVo home behavior. Shared screen styles live in styles.css.
-const EXPECTED_HEADERS=['単語番号','単語','発音記号US','発音記号UK','品詞番号','品詞','品詞ランク','Sレベル','Wレベル','意味番号','意味','例文番号','日本語文','英文','補足','理解度','◯回数','×回数','？回数'];
+const EXPECTED_HEADERS=['単語番号','単語','発音記号US','発音記号UK','品詞番号','品詞','品詞ランク','Sレベル','Wレベル','意味番号','意味','例文番号','日本語文','英文','補足','理解度','◯回数','×回数','△回数'];
+const LEGACY_HEADERS=[...EXPECTED_HEADERS.slice(0,-1),'？回数'];
 const COL=Object.freeze({
   wordNo:0,word:1,pronUs:2,pronUk:3,posNo:4,pos:5,posRank:6,sLevel:7,wLevel:8,
   meaningNo:9,meaning:10,exampleNo:11,japanese:12,english:13,note:14,understanding:15,
@@ -73,8 +74,16 @@ const COL=Object.freeze({
       database.close();
       return result;
     };
-    const headersMatch=headers=>Array.isArray(headers)&&headers.length===EXPECTED_HEADERS.length&&EXPECTED_HEADERS.every((header,index)=>text(headers[index])===header);
-    const getImportedData=()=>importedDataPromise||(importedDataPromise=loadImportedData().then(stored=>headersMatch(stored?.headers)?stored:null).catch(error=>{
+    const headersMatch=headers=>Array.isArray(headers)&&headers.length===EXPECTED_HEADERS.length&&(
+      EXPECTED_HEADERS.every((header,index)=>text(headers[index])===header)||
+      LEGACY_HEADERS.every((header,index)=>text(headers[index])===header)
+    );
+    const getImportedData=()=>importedDataPromise||(importedDataPromise=loadImportedData().then(stored=>{
+      if(!headersMatch(stored?.headers))return null;
+      if(LEGACY_HEADERS.every((header,index)=>text(stored.headers[index])===header))stored.modified=true;
+      stored.headers=[...EXPECTED_HEADERS];
+      return stored;
+    }).catch(error=>{
       importedDataPromise=null;
       throw error;
     }));
@@ -357,14 +366,16 @@ const COL=Object.freeze({
         const sheet=workbook.Sheets['単語リスト']||workbook.Sheets[workbook.SheetNames[0]];
         if(!sheet)throw new Error('読み込めるシートがありません。');
         const allRows=XLSX.utils.sheet_to_json(sheet,{header:1,defval:'',raw:false});
-        const headers=(allRows[0]||[]).map(text);
-        const formatMatches=headersMatch(headers);
+        const importedHeaders=(allRows[0]||[]).map(text);
+        const formatMatches=headersMatch(importedHeaders);
         if(!formatMatches)throw new Error('雛形と列名または列順が違います。雛形ファイルにデータを入力して読み込んでください。');
+        const legacyHeaders=LEGACY_HEADERS.every((header,index)=>text(importedHeaders[index])===header);
+        const headers=[...EXPECTED_HEADERS];
         const rows=allRows.slice(1).filter(row=>row.some(value=>text(value)));
         if(!rows.length)throw new Error('読み込めるデータがありません。');
         const errors=validateRows(rows);
         if(errors.length)throw new Error(`データにエラーがあります。\\n\\n${errors.slice(0,5).join('\\n')}${errors.length>5?`\\nほか${errors.length-5}件`:''}`);
-        await saveImportedData({headers,rows,vocabularyRows:rows.map(row=>[...row]),fileName:file.name,fileBytes,modified:false,importedAt:new Date().toISOString()});
+        await saveImportedData({headers,rows,vocabularyRows:rows.map(row=>[...row]),fileName:file.name,fileBytes,modified:legacyHeaders,importedAt:new Date().toISOString()});
         await refreshQuestionCount();
         alert(`${rows.length}行のデータを読み込みました。`);
       }catch(error){
@@ -429,6 +440,11 @@ const COL=Object.freeze({
     const practiceJapanese=document.getElementById('practiceJapanese');
     const practiceEnglish=document.getElementById('practiceEnglish');
     const practiceReveal=document.getElementById('practiceReveal');
+    const practiceResultActions=document.getElementById('practiceResultActions');
+    const practiceResultButtons=[...document.querySelectorAll('.practice-result-button')];
+    const practiceResultToast=document.getElementById('practiceResultToast');
+    const practiceResultToastText=document.getElementById('practiceResultToastText');
+    const practiceResultUndo=document.getElementById('practiceResultUndo');
     const practiceAudio=document.getElementById('practiceAudio');
     const practiceJapaneseAudio=document.getElementById('practiceJapaneseAudio');
     const practiceJapaneseStop=document.getElementById('practiceJapaneseStop');
@@ -586,11 +602,11 @@ const COL=Object.freeze({
       homeUnsureBar.style.width=`${answerTotal?(unsureCount/answerTotal)*100:0}%`;
       if(answerTotal){
         const correctEnd=(correctCount/answerTotal)*100;
-        const wrongEnd=correctEnd+(wrongCount/answerTotal)*100;
-        homeAnswerDonut.style.background=`conic-gradient(#35b972 0% ${correctEnd}%,#df5b69 ${correctEnd}% ${wrongEnd}%,#9a75d3 ${wrongEnd}% 100%)`;
+        const partialEnd=correctEnd+(unsureCount/answerTotal)*100;
+        homeAnswerDonut.style.background=`conic-gradient(#35b972 0% ${correctEnd}%,#9a75d3 ${correctEnd}% ${partialEnd}%,#df5b69 ${partialEnd}% 100%)`;
       }else homeAnswerDonut.style.background='#e9edf3';
       homeAnswerDonut.setAttribute('aria-label',answerTotal?`正解率${answerRate}パーセント`:'回答結果データなし');
-      homeAnswerBar.setAttribute('aria-label',answerTotal?`回答結果：正解${correctCount}回、不正解${wrongCount}回、保留${unsureCount}回`:'回答結果データなし');
+      homeAnswerBar.setAttribute('aria-label',answerTotal?`回答結果：正解${correctCount}回、惜しい${unsureCount}回、不正解${wrongCount}回`:'回答結果データなし');
       homeTotalWordCount.textContent=String(totalWordKeys.size);
       homeActiveWordCount.textContent=String(matchingPairCount);
       homeActiveWordBar.style.width=`${totalWordKeys.size?Math.min(100,(matchingPairCount/totalWordKeys.size)*100):0}%`;
@@ -734,6 +750,7 @@ const COL=Object.freeze({
       answerVisible=visible;
       practiceReveal.hidden=visible;
       practiceEnglish.hidden=!visible;
+      practiceResultActions.hidden=!visible;
       practiceAudio.disabled=!('speechSynthesis' in window);
     };
     const syncPracticeRating=row=>{
@@ -1518,6 +1535,53 @@ const COL=Object.freeze({
     navHome.addEventListener('click',()=>{if(!practiceScreen.hidden)closePractice()});
     practiceReveal.addEventListener('click',()=>setAnswerVisible(true));
     practiceEnglish.addEventListener('click',()=>setAnswerVisible(false));
+    let resultUndoState=null;
+    let resultUndoTimer=0;
+    let resultRecording=false;
+    const dismissResultToast=()=>{
+      clearTimeout(resultUndoTimer);
+      resultUndoTimer=0;
+      resultUndoState=null;
+      practiceResultToast.hidden=true;
+    };
+    const showResultToast=(symbol,row,column)=>{
+      clearTimeout(resultUndoTimer);
+      resultUndoState={row,column};
+      practiceResultToastText.textContent=`${symbol}を記録しました`;
+      practiceResultToast.hidden=false;
+      resultUndoTimer=setTimeout(dismissResultToast,4000);
+    };
+    practiceResultButtons.forEach(button=>button.addEventListener('click',async()=>{
+      if(resultRecording)return;
+      const row=currentPracticeRow();
+      if(!row||!practiceStored)return;
+      if(autoPlaying)stopAutoPlayback();
+      const columns={correct:COL.correctCount,partial:COL.questionCount,wrong:COL.wrongCount};
+      const column=columns[button.dataset.result];
+      if(column===undefined)return;
+      resultRecording=true;
+      practiceResultButtons.forEach(item=>item.disabled=true);
+      row[column]=Math.max(0,Math.trunc(Number(row[column])||0))+1;
+      try{
+        await persistPracticeData();
+        showResultToast(button.dataset.symbol,row,column);
+        if(practiceIndex<practiceRows.length-1)await movePractice(1);
+      }catch{
+        row[column]=Math.max(0,(Number(row[column])||1)-1);
+        alert('回答結果を保存できませんでした。');
+      }finally{
+        resultRecording=false;
+        practiceResultButtons.forEach(item=>item.disabled=false);
+      }
+    }));
+    practiceResultUndo.addEventListener('click',async()=>{
+      const state=resultUndoState;
+      if(!state||!practiceStored)return;
+      dismissResultToast();
+      state.row[state.column]=Math.max(0,(Number(state.row[state.column])||0)-1);
+      try{await persistPracticeData()}
+      catch{state.row[state.column]=Math.max(0,(Number(state.row[state.column])||0)+1);alert('取消を保存できませんでした。')}
+    });
     let practiceSwipeStart=null;
     practiceExerciseCard.addEventListener('pointerdown',event=>{
       if(practiceMoving||(event.pointerType==='mouse'&&event.button!==0)||event.target.closest('button'))return;
