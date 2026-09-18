@@ -667,6 +667,8 @@ const COL=Object.freeze({
       const hasEmptyConditions=emptyConditions.length>0;
       overallFilterWarning.textContent=hasEmptyConditions?`条件${emptyConditions.join(',')}の項目がひとつも選択されていません`:'';
       overallFilterWarning.hidden=!hasEmptyConditions;
+      practiceFilterClose.disabled=hasEmptyConditions;
+      practiceFilterClose.setAttribute('aria-disabled',String(hasEmptyConditions));
       practiceButton.disabled=false;
       practiceButton.setAttribute('aria-disabled','false');
     };
@@ -1545,7 +1547,7 @@ const COL=Object.freeze({
         practiceFilterClose.focus({preventScroll:true});
       }));
     };
-    const closePracticeFilter=async(applyFilters=true)=>{
+    const closePracticeFilter=async(applyFilters=false)=>{
       if(!practiceFilterOpen)return;
       const previousViewMode=practiceViewMode;
       const previousRow=previousViewMode==='card'?currentPracticeRow():null;
@@ -1568,7 +1570,7 @@ const COL=Object.freeze({
         syncGlobalControls();
         refreshQuestionCount();
       }
-      closePracticeFilter(false);
+      return closePracticeFilter(false);
     };
     const enableBottomSheetGrab=(overlay,sheet,handle,onDismiss)=>{
       let drag=null;
@@ -1619,7 +1621,7 @@ const COL=Object.freeze({
       handle.addEventListener('pointerup',event=>finishDrag(event));
       handle.addEventListener('pointercancel',event=>finishDrag(event,true));
     };
-    enableBottomSheetGrab(practiceFilterOverlay,practiceFilterSheet,practiceFilterHandle,()=>closePracticeFilter());
+    enableBottomSheetGrab(practiceFilterOverlay,practiceFilterSheet,practiceFilterHandle,()=>cancelPracticeFilter());
     enableBottomSheetGrab(cardEditorOverlay,cardEditorSheet,cardEditorHandle,()=>closeCardEditor());
     const openPractice=async()=>{
       if(screenTransitionBusy)return;
@@ -1641,7 +1643,7 @@ const COL=Object.freeze({
     };
     const closePractice=async()=>{
       if(screenTransitionBusy)return;
-      if(practiceFilterOpen)await closePracticeFilter(false);
+      if(practiceFilterOpen)await cancelPracticeFilter();
       stopAutoPlayback();
       practiceSettingsOverlay.hidden=true;
       await transitionScreen(()=>{
@@ -1657,9 +1659,9 @@ const COL=Object.freeze({
     practiceBackToList.addEventListener('click',()=>returnToPracticeList());
     practiceFilterButton.addEventListener('click',openPracticeFilter);
     practiceFilterCancel.addEventListener('click',cancelPracticeFilter);
-    practiceFilterClose.addEventListener('click',()=>closePracticeFilter());
+    practiceFilterClose.addEventListener('click',()=>{if(!practiceFilterClose.disabled)closePracticeFilter(true)});
     practiceFilterOverlay.addEventListener('click',event=>{
-      if(event.target===practiceFilterOverlay)closePracticeFilter();
+      if(event.target===practiceFilterOverlay)cancelPracticeFilter();
     });
     languageModeTab.addEventListener('click',()=>{
       const index=languageModes.indexOf(playbackSettings.language);
@@ -1764,7 +1766,7 @@ const COL=Object.freeze({
     },{passive:true});
     document.addEventListener('keydown',event=>{
       if(practiceScreen.hidden)return;
-      if(event.key==='Escape'&&practiceFilterOpen){closePracticeFilter();return}
+      if(event.key==='Escape'&&practiceFilterOpen){cancelPracticeFilter();return}
       if(practiceViewMode==='list')return;
       if(event.key==='ArrowLeft')movePractice(-1);
       if(event.key==='ArrowRight')movePractice(1);
