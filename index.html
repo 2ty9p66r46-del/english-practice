@@ -94,7 +94,7 @@
           <button type="button" aria-label="マイフレーズバンク"></button>
         </div>
         <section class="card" id="filterCard">
-          <div class="section-head"><h2>絞り込み条件</h2><div class="filter-result-counts" id="filterResultCounts" aria-live="polite"><span><b>単語数</b><strong id="filterWordCount">0</strong></span><span><b>例文数</b><strong id="filterExampleCount">0</strong></span></div><div class="filter-bulk-actions"><button class="bulk-filter-button select" id="selectAllFilters" type="button">すべて選択</button></div></div>
+          <div class="section-head"><h2>例文フィルタ条件</h2><div class="filter-result-counts" id="filterResultCounts" aria-live="polite"><span><b>単語数</b><strong id="filterWordCount">0</strong></span><span><b>例文数</b><strong id="filterExampleCount">0</strong></span></div><div class="filter-bulk-actions"><button class="bulk-filter-button select" id="selectAllFilters" type="button">すべて選択</button></div></div>
           <p class="overall-filter-warning" id="overallFilterWarning" hidden></p>
           <div class="filter-section" data-filter-section="word">
             <div class="filter-section-head"><h3><span class="condition-badge">条件1</span><span>単語レベル</span></h3><div class="filter-section-actions"><button class="section-filter-button select" type="button" data-section-action="select">すべて選択</button></div></div><p class="filter-warning" hidden>少なくともひとつ項目を選択してください。</p>
@@ -166,7 +166,7 @@
         </div>
         <div class="practice-header-actions">
           <button class="practice-card-add" id="practiceCardAdd" type="button" aria-label="例文追加"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>例文追加</span></button>
-          <button class="practice-filter-button" id="practiceFilterButton" type="button" aria-label="絞り込み条件へ戻る"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4v12M3.5 12.5 7 16l3.5-3.5M14 6h7M14 11h5.5M14 16h4"/></svg><span>フィルター</span></button>
+          <button class="practice-filter-button" id="practiceFilterButton" type="button" aria-label="例文フィルタ条件を開く"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4v12M3.5 12.5 7 16l3.5-3.5M14 6h7M14 11h5.5M14 16h4"/></svg><span>フィルタ</span></button>
         </div>
       </header>
       <main class="practice-screen-main">
@@ -212,7 +212,7 @@
       </main>    </section>
     <div class="practice-filter-overlay" id="practiceFilterOverlay" hidden>
       <section class="practice-filter-sheet" role="dialog" aria-modal="true" aria-labelledby="practiceFilterTitle">
-        <header class="practice-filter-sheet-head"><span class="practice-filter-handle" aria-hidden="true"></span><button id="practiceFilterCancel" type="button">キャンセル</button><h2 id="practiceFilterTitle">絞り込み条件</h2><button id="practiceFilterClose" type="button">適用</button></header>
+        <header class="practice-filter-sheet-head"><span class="practice-filter-handle" aria-hidden="true"></span><button id="practiceFilterCancel" type="button">キャンセル</button><h2 id="practiceFilterTitle">例文フィルタ条件</h2><button id="practiceFilterClose" type="button">適用</button></header>
         <div class="practice-filter-sheet-body" id="practiceFilterSheetBody"></div>
       </section>
     </div>
@@ -236,7 +236,7 @@
     <div class="card-editor-overlay" id="cardEditorOverlay" hidden>
       <section class="card-editor-sheet" role="dialog" aria-modal="true" aria-labelledby="cardEditorTitle">
         <span class="practice-filter-handle" aria-hidden="true"></span>
-        <header class="card-editor-head"><button id="cardEditorCancel" type="button">キャンセル</button><h2 id="cardEditorTitle">カードを追加</h2><button id="cardEditorSave" type="button">保存</button></header>
+        <header class="card-editor-head"><button id="cardEditorCancel" type="button">キャンセル</button><h2 id="cardEditorTitle">例文を追加</h2><button id="cardEditorSave" type="button">保存</button></header>
         <div class="card-editor-body">
           <label class="card-editor-field card-word-field"><span>1. 単語を選択</span><input id="cardWordSearch" type="search" placeholder="単語を検索" autocomplete="off" autocapitalize="none" spellcheck="false" role="combobox" aria-autocomplete="list" aria-controls="cardWordResults" aria-expanded="false"></label>
           <div class="card-selected-choice" id="cardSelectedWord" hidden><span id="cardSelectedWordText"></span><button id="cardWordReselect" type="button">選び直す</button></div>

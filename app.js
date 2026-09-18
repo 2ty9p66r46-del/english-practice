@@ -1081,7 +1081,7 @@ const COL=Object.freeze({
     const openCardEditor=(mode,row=null)=>{
       if(autoPlaying)stopAutoPlayback();
       cardEditorMode=mode;cardEditorRow=row;selectedVocabularyRow=mode==='edit'?row:null;
-      cardEditorTitle.textContent=mode==='edit'?'カードを編集':'カードを追加';
+      cardEditorTitle.textContent=mode==='edit'?'例文を編集':'例文を追加';
       selectedMeaningMode=mode==='edit'?'existing':null;
       cardWordSearch.value=mode==='edit'?text(row[COL.word]):'';cardWordSearch.disabled=mode==='edit';cardWordSearch.hidden=mode==='edit';
       cardSelectedWordText.textContent=mode==='edit'?`${text(row[COL.word])}　No ${formatCardNumber(row)}　${text(row[COL.pos])||'品詞未登録'}`:'';
