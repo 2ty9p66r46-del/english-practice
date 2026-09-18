@@ -140,7 +140,7 @@
 .practice-brand small{margin-top:-5px;color:#65728a;font-size:.38rem;font-weight:850;letter-spacing:.13em;white-space:nowrap}
 .practice-progress{display:block;width:100%;align-self:center;justify-self:stretch;margin-bottom:9px;padding-bottom:10px;border-bottom:1.5px solid #cfd5df;color:#65728a;font-size:.72rem;font-variant-numeric:tabular-nums;text-align:center}
 .practice-screen-main{position:relative;display:flex;flex:1 1 auto;min-height:0;flex-direction:column;gap:10px;padding:12px 14px calc(14px + env(safe-area-inset-bottom));overflow-y:auto}
-.practice-exercise-card{display:grid;flex:1 1 520px;min-height:510px;grid-template-rows:max-content 34px minmax(0,1fr) minmax(0,1fr);padding:14px 18px 18px;border-radius:23px;background:#fff;box-shadow:0 1px 1px #1822350d,0 9px 25px #27344d0a;touch-action:pan-y;will-change:transform,opacity}
+.practice-exercise-card{display:grid;flex:1 1 520px;min-height:510px;grid-template-rows:max-content minmax(0,1fr) minmax(0,1fr);padding:14px 18px 18px;border-radius:23px;background:#fff;box-shadow:0 1px 1px #1822350d,0 9px 25px #27344d0a;touch-action:pan-y;will-change:transform,opacity}
 .practice-question-meta{position:relative;padding:0 4px 12px;border-bottom:1px solid #e0e5ed}
 .practice-info-row{display:flex;align-items:center;gap:7px;min-width:0}
 .practice-info-primary{height:44px;margin:0 -4px;padding:0 4px;border-bottom:1.5px solid #cfd5df}
@@ -402,11 +402,9 @@
 .practice-info-primary .practice-number-part>.practice-meta-chip{flex:0 0 auto}
 .practice-info-primary>.practice-level-chips{justify-self:end}
 
-/* Meaning and example sequence badges match the word-number badge. */
-.practice-meaning-column{display:grid;min-width:0;gap:7px}
-.practice-meaning-heading{display:flex;align-items:center;gap:7px}
-.practice-sequence-badge{display:inline-flex;box-sizing:border-box;height:24px;min-height:24px;align-items:center;padding:0 8px;border:2px solid #111827;border-radius:var(--radius-pill);background:#111827;color:#fff;box-shadow:inset 0 1px 0 #ffffff29,0 2px 5px #11182724;font-size:.56rem;font-weight:900;font-variant-numeric:tabular-nums;line-height:1;letter-spacing:.03em;white-space:nowrap}
-.practice-example-heading{display:flex;height:34px;align-items:center;justify-content:center;padding:4px;border:0;color:#65728a}
+/* Keep all identifiers together in the card's top row. */
+.practice-info-primary .practice-card-badges{display:flex;min-width:0;align-items:center;gap:6px;justify-self:start}
+.practice-meaning-column{display:block;min-width:0}
 
 /* Inline rating buttons exactly match the 24px S1 badge. */
 .practice-rating-inline .practice-rating-button{box-sizing:border-box;width:24px;height:24px;min-width:24px;min-height:24px;border-width:2px;font-size:.4rem}

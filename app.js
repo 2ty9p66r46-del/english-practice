@@ -436,8 +436,7 @@ const COL=Object.freeze({
     const practiceWord=document.getElementById('practiceWord');
     const practiceWordNumber=document.getElementById('practiceWordNumber');
     const practicePart=document.getElementById('practicePart');
-    const practiceMeaningNumber=document.getElementById('practiceMeaningNumber');
-    const practiceExampleNumber=document.getElementById('practiceExampleNumber');
+    const practiceMeaningExampleNumber=document.getElementById('practiceMeaningExampleNumber');
     const practiceLevels=document.getElementById('practiceLevels');
     const practiceMeaning=document.getElementById('practiceMeaning');
     const practicePronUs=document.getElementById('practicePronUs');
@@ -772,8 +771,7 @@ const COL=Object.freeze({
       const rankTone={S:'red',A:'orange',B:'yellow',C:'green',D:'purple'}[rank]||'';
       practicePart.textContent=part;
       practicePart.className=`practice-meta-chip ${rankTone}`.trim();
-      practiceMeaningNumber.textContent=`意味${meaningNumber}`;
-      practiceExampleNumber.textContent=`例文${exampleNumber}`;
+      practiceMeaningExampleNumber.textContent=`${meaningNumber}-${exampleNumber}`;
       practiceLevels.replaceChildren();
       const levels=[text(row[COL.sLevel]),text(row[COL.wLevel])].filter(Boolean);
       if(!levels.length){
