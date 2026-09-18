@@ -748,6 +748,19 @@ const COL=Object.freeze({
       const raw=text(value);
       return /^\d+$/.test(raw)?String(Number(raw)):raw||'—';
     };
+    const formatExampleLetter=value=>{
+      const raw=text(value);
+      if(!/^\d+$/.test(raw))return raw||'—';
+      let number=Number(raw);
+      if(number<1)return raw;
+      let letters='';
+      while(number>0){
+        number-=1;
+        letters=String.fromCharCode(97+(number%26))+letters;
+        number=Math.floor(number/26);
+      }
+      return letters;
+    };
     const formatCardNumber=row=>[
       formatPracticeNumber(row?.[COL.wordNo],5),
       formatSingleDigitNumber(row?.[COL.meaningNo]),
@@ -766,12 +779,12 @@ const COL=Object.freeze({
       practiceWordNumber.textContent=`No ${formatPracticeNumber(row?.[COL.wordNo],5)}`;
       const part=text(row[COL.pos])||'—';
       const meaningNumber=formatSingleDigitNumber(row?.[COL.meaningNo]);
-      const exampleNumber=formatSingleDigitNumber(row?.[COL.exampleNo]);
+      const exampleLetter=formatExampleLetter(row?.[COL.exampleNo]);
       const rank=text(row[COL.posRank]).toUpperCase();
       const rankTone={S:'red',A:'orange',B:'yellow',C:'green',D:'purple'}[rank]||'';
       practicePart.textContent=part;
       practicePart.className=`practice-meta-chip ${rankTone}`.trim();
-      practiceMeaningExampleNumber.textContent=`${meaningNumber}-${exampleNumber}`;
+      practiceMeaningExampleNumber.textContent=`${meaningNumber}${exampleLetter}`;
       practiceMeaningExampleNumber.className=`practice-sub-number practice-meta-chip ${rankTone}`.trim();
       practiceLevels.replaceChildren();
       const levels=[text(row[COL.sLevel]),text(row[COL.wLevel])].filter(Boolean);
