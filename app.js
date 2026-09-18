@@ -862,24 +862,19 @@ const COL=Object.freeze({
 
         const copy=document.createElement('span');
         copy.className='practice-list-copy';
-        const overview=document.createElement('span');
-        overview.className='practice-list-overview';
         const identifiers=document.createElement('span');
-        identifiers.className='practice-list-identifiers';
+        identifiers.className='practice-list-card-badges practice-card-badges';
         const number=document.createElement('b');
         number.className='practice-list-word-no practice-number';
-        number.textContent=formatPracticeNumber(row?.[COL.wordNo],5);
+        number.textContent=`No ${formatPracticeNumber(row?.[COL.wordNo],5)}`;
         const rank=text(row[COL.posRank]).toUpperCase();
         const rankTone={S:'red',A:'orange',B:'yellow',C:'green',D:'purple'}[rank]||'';
-        const badges=document.createElement('span');
-        badges.className='practice-list-badges practice-card-badges';
         const partBadge=document.createElement('span');
         partBadge.className=`practice-meta-chip ${rankTone}`.trim();
         partBadge.textContent=text(row[COL.pos])||'品詞未登録';
         const subBadge=document.createElement('span');
         subBadge.className=`practice-meta-chip ${rankTone}`.trim();
         subBadge.textContent=`${formatSingleDigitNumber(row?.[COL.meaningNo])}${formatExampleLetter(row?.[COL.exampleNo])}`;
-        badges.append(partBadge,subBadge);
         const summary=document.createElement('span');
         summary.className='practice-list-summary';
         const word=document.createElement('strong');
@@ -888,17 +883,23 @@ const COL=Object.freeze({
         const meaning=document.createElement('span');
         meaning.className='practice-list-meaning';
         meaning.textContent=text(row[COL.meaning])||'意味未登録';
-        identifiers.append(number,badges);
-        summary.append(word,meaning);
-        overview.append(identifiers,summary);
+        const summaryDivider=document.createElement('span');
+        summaryDivider.className='practice-list-center-divider';
+        identifiers.append(number,partBadge,subBadge);
+        summary.append(word,summaryDivider,meaning);
 
+        const sentences=document.createElement('span');
+        sentences.className='practice-list-sentences';
         const japanese=document.createElement('span');
         japanese.className='practice-list-japanese';
         japanese.textContent=text(row[COL.japanese])||text(row[COL.meaning])||'日本語未登録';
         const english=document.createElement('span');
         english.className='practice-list-english';
         english.textContent=text(row[COL.english])||'英語未登録';
-        copy.append(overview,japanese,english);
+        const sentenceDivider=document.createElement('span');
+        sentenceDivider.className='practice-list-center-divider';
+        sentences.append(japanese,sentenceDivider,english);
+        copy.append(identifiers,summary,sentences);
 
         const rowActions=document.createElement('span');
         rowActions.className='practice-list-actions';
