@@ -657,8 +657,9 @@
 /* Home is a product launcher: one active module and two clearly inactive modules. */
 .home-brand-row{justify-content:center}
 .home-brand-row .brand-lockup{align-items:center}
-.home-modules{display:grid;gap:14px}
-.home-module-card{position:relative;overflow:hidden;border:1px solid #dfe5ef;border-radius:23px;background:#fff;box-shadow:0 1px 1px #1822350d,0 9px 25px #27344d0a}
+.home-modules{display:flex;flex:1 1 auto;min-height:0;gap:14px;overflow-x:auto;overflow-y:hidden;padding:0 14px 4px;scroll-snap-type:x mandatory;scroll-padding-inline:14px;scrollbar-width:none;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
+.home-modules::-webkit-scrollbar{display:none}
+.home-module-card{position:relative;flex:0 0 100%;height:100%;min-height:0;overflow:hidden;border:1px solid #dfe5ef;border-radius:23px;background:#fff;box-shadow:0 1px 1px #1822350d,0 9px 25px #27344d0a;scroll-snap-align:start;scroll-snap-stop:always}
 .active-vocab-card{padding:18px;background:linear-gradient(145deg,#fff 0%,#f7fbff 62%,#edf6ff 100%);border-color:#d2e4f8}
 .active-vocab-card::after{position:absolute;top:0;right:0;width:115px;height:115px;border-radius:0 0 0 100%;background:radial-gradient(circle at 100% 0,#55adff24 0%,#55adff00 68%);content:"";pointer-events:none}
 .home-module-head{position:relative;z-index:1;display:grid;grid-template-columns:48px minmax(0,1fr) auto;align-items:center;gap:11px}
@@ -681,10 +682,19 @@
 .home-practice-button small{font-size:.53rem;font-weight:750;opacity:.86}
 .home-practice-person{width:34px;height:34px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 .home-practice-arrow{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
-.home-coming-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.home-module-card.coming{display:grid;min-height:138px;grid-template-columns:44px minmax(0,1fr);grid-template-rows:auto auto;align-content:center;align-items:center;gap:9px 10px;padding:16px;background:linear-gradient(145deg,#f9fafb,#eef0f4);filter:saturate(.35)}
-.home-module-card.coming>strong{color:#667085;font-size:.72rem;font-weight:850;line-height:1.35}
-.home-module-card.coming .home-module-status{grid-column:1/-1;justify-self:start;margin-left:54px}
+.home-module-card.coming{display:flex;min-height:0;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:28px;background:linear-gradient(145deg,#f9fafb,#eef0f4);filter:saturate(.35);text-align:center}
+.home-module-card.coming .home-module-icon{width:78px;height:78px;border-radius:24px}
+.home-module-card.coming .home-module-icon svg{width:39px;height:39px}
+.home-module-card.coming>strong{color:#667085;font-size:1.25rem;font-weight:900;line-height:1.4}
+.home-module-card.coming .home-module-status{justify-self:auto;margin:0;padding:6px 12px;font-size:.62rem}
+.home-carousel-dots{display:flex;flex:0 0 26px;align-items:center;justify-content:center;gap:7px}
+.home-carousel-dots button{width:7px;height:7px;padding:0;border:0;border-radius:999px;background:#c5ccd7;transition:width .2s ease,background-color .2s ease}
+.home-carousel-dots button.active{width:22px;background:var(--blue)}
+body[data-page="home"] .scroll{overflow-y:hidden;padding:14px 0 8px}
+body[data-page="home"] .stack{display:flex;height:100%;min-height:0;flex-direction:column;gap:0}
+body[data-page="home"] .bottom-space{display:none}
+.active-vocab-card{display:flex;flex-direction:column;padding:24px}
+.active-vocab-card .home-excel-actions{margin-top:auto}
 
 
 /* Active Vocabulary card summary: tab-scale icon, stable counts and source filename. */

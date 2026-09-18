@@ -43,19 +43,22 @@
             </button>
             <p class="home-import-file"><span>読込ファイル</span><strong id="homeImportFileName">未読込</strong></p>
           </article>
-          <div class="home-coming-grid">
-            <article class="home-module-card coming" aria-disabled="true">
-              <span class="home-module-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="6" height="5" rx="1"/><rect x="15" y="15" width="6" height="5" rx="1"/><path d="M9 6.5h4a3 3 0 0 1 3 3V15M8 17.5h7"/></svg></span>
-              <strong>ロジカル<br>フレームワーク</strong>
-              <span class="home-module-status">準備中</span>
-            </article>
-            <article class="home-module-card coming" aria-disabled="true">
-              <span class="home-module-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 5h14v11H9l-4 3z"/><path d="M9 9h6M9 12h4"/></svg></span>
-              <strong>マイフレーズ<br>バンク</strong>
-              <span class="home-module-status">準備中</span>
-            </article>
-          </div>
+          <article class="home-module-card coming" aria-disabled="true">
+            <span class="home-module-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="6" height="5" rx="1"/><rect x="15" y="15" width="6" height="5" rx="1"/><path d="M9 6.5h4a3 3 0 0 1 3 3V15M8 17.5h7"/></svg></span>
+            <strong>ロジカル<br>フレームワーク</strong>
+            <span class="home-module-status">準備中</span>
+          </article>
+          <article class="home-module-card coming" aria-disabled="true">
+            <span class="home-module-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 5h14v11H9l-4 3z"/><path d="M9 9h6M9 12h4"/></svg></span>
+            <strong>マイフレーズ<br>バンク</strong>
+            <span class="home-module-status">準備中</span>
+          </article>
         </section>
+        <div class="home-carousel-dots" aria-label="ホームカードを選択">
+          <button class="active" type="button" aria-label="アクティブボキャビル" aria-current="true"></button>
+          <button type="button" aria-label="ロジカルフレームワーク"></button>
+          <button type="button" aria-label="マイフレーズバンク"></button>
+        </div>
         <section class="card" id="filterCard">
           <div class="section-head"><h2>絞り込み条件</h2><div class="filter-bulk-actions"><button class="bulk-filter-button select" id="selectAllFilters" type="button">すべて選択</button></div></div><p class="overall-filter-warning" id="overallFilterWarning" hidden></p>
           <div class="filter-section" data-filter-section="word">

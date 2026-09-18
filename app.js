@@ -15,7 +15,36 @@ const COL=Object.freeze({
     const helpButton=document.getElementById('helpButton');
     const helpOverlay=document.getElementById('helpOverlay');
     const helpClose=document.getElementById('helpClose');
+    const homeModules=document.querySelector('.home-modules');
+    const homeModuleCards=[...document.querySelectorAll('.home-modules>.home-module-card')];
+    const homeCarouselDots=[...document.querySelectorAll('.home-carousel-dots button')];
     const text=value=>String(value??'').trim();
+    let homeCarouselFrame=0;
+    const syncHomeCarousel=()=>{
+      homeCarouselFrame=0;
+      if(!homeModules||!homeModuleCards.length)return;
+      const center=homeModules.scrollLeft+(homeModules.clientWidth/2);
+      const activeIndex=homeModuleCards.reduce((closest,card,index)=>{
+        const distance=Math.abs((card.offsetLeft+(card.offsetWidth/2))-center);
+        return distance<closest.distance?{index,distance}:closest;
+      },{index:0,distance:Infinity}).index;
+      homeCarouselDots.forEach((dot,index)=>{
+        const active=index===activeIndex;
+        dot.classList.toggle('active',active);
+        if(active)dot.setAttribute('aria-current','true');
+        else dot.removeAttribute('aria-current');
+      });
+    };
+    homeModules?.addEventListener('scroll',()=>{
+      if(!homeCarouselFrame)homeCarouselFrame=requestAnimationFrame(syncHomeCarousel);
+    },{passive:true});
+    homeCarouselDots.forEach((dot,index)=>dot.addEventListener('click',()=>{
+      const card=homeModuleCards[index];
+      if(!card||!homeModules)return;
+      const paddingLeft=parseFloat(getComputedStyle(homeModules).paddingLeft)||0;
+      homeModules.scrollTo({left:card.offsetLeft-homeModules.offsetLeft-paddingLeft,behavior:'smooth'});
+    }));
+    window.addEventListener('resize',syncHomeCarousel,{passive:true});
     const openDatabase=()=>new Promise((resolve,reject)=>{
       const request=indexedDB.open('flovo-data',1);
       request.onupgradeneeded=()=>request.result.createObjectStore('app');
