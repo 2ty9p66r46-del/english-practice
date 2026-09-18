@@ -524,7 +524,7 @@ const COL=Object.freeze({
       if(tone)group.querySelectorAll('.choice').forEach(button=>button.classList.add(tone));
     });
     const understandingTones={'未登録':'purple','0%':'red','50%':'orange','80%':'yellow','100%':'green'};
-    understandingChoices.forEach(button=>button.classList.add(understandingTones[button.textContent.trim()]));
+    understandingChoices.forEach(button=>button.classList.add(understandingTones[button.dataset.value||button.textContent.trim()]));
     const selectedValues=buttons=>new Set(buttons.filter(button=>button.classList.contains('selected')).map(button=>button.dataset.value||button.textContent.trim()));
     const getMatchingRows=rows=>{
       const levels=selectedValues(levelChoices);

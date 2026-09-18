@@ -79,9 +79,10 @@
     .level-grid,.choice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
     .choice{min-height:41px;padding:0 8px;border:1px solid #e0e3e9;border-radius:11px;background:linear-gradient(#f0f2f5,#eaedf1);color:#737c8d;font-weight:750;box-shadow:inset 0 1px 0 #ffffffbf,0 1px 2px #1822370a;transition:transform .14s ease,box-shadow .14s ease,border-color .14s ease,background .14s ease}
     .part-label{margin-bottom:7px}
-    .part-group .choice{display:flex;min-height:49px;flex-direction:column;align-items:center;justify-content:center;gap:2px;line-height:1.05}
-    .part-group .choice-main{font-size:.91rem;font-weight:800}
-    .part-group .choice small{color:currentColor;font-size:.54rem;font-weight:650;letter-spacing:.01em;opacity:.72}
+    .level-group .choice-grid{display:flex;justify-content:space-evenly;gap:12px}
+    .level-group .choice{width:46px;height:46px;min-height:46px;padding:0;border-radius:50%;font-size:.78rem}
+    .part-group .choice-grid{display:flex;flex-wrap:wrap;gap:8px}
+    .part-group .choice{display:inline-flex;width:auto;min-height:38px;align-items:center;justify-content:center;padding:0 15px;line-height:1;font-size:.82rem}
     .choice.selected{color:#fff;border:3px solid var(--solid-line);background:linear-gradient(180deg,var(--solid-hi) 0%,var(--solid) 44%,var(--solid-lo) 100%);box-shadow:inset 0 1px 0 #ffffff99,inset 0 -2px 0 #00000024,0 4px 10px var(--solid-shadow);text-shadow:0 1px 1px #00000052;font-weight:850}
     .all.selected{color:#fff;border:3px solid var(--solid-line);background:linear-gradient(180deg,var(--solid-hi) 0%,var(--solid) 44%,var(--solid-lo) 100%);box-shadow:inset 0 1px 0 #ffffff99,inset 0 -2px 0 #00000024,0 3px 8px var(--solid-shadow);text-shadow:0 1px 1px #00000052}
     .level{border-width:1px}
@@ -96,8 +97,8 @@
     .filter-section .group + .group{margin-top:16px;padding-top:13px;border-top:1px solid #d8dee8}
     .group-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;color:#526078;font-size:.86rem;font-weight:800}
     .all{min-height:24px;padding:0 7px;border:1px solid #e0e3e9;border-radius:var(--radius-pill);background:linear-gradient(#f0f2f5,#eaedf1);color:#737c8d;font-size:.67rem;font-weight:800;line-height:1;box-shadow:inset 0 1px 0 #ffffffbf}
-    .understanding{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
-    .understanding .choice{width:100%;height:47px;min-width:0;min-height:47px;padding:0 2px;border-width:3px;font-size:.76rem;line-height:1;white-space:nowrap}
+    .understanding{display:flex;justify-content:space-between;gap:8px}
+    .understanding .choice{width:46px;height:46px;min-width:46px;min-height:46px;padding:0;border-width:3px;border-radius:50%;font-size:.7rem;line-height:1;white-space:nowrap}
     .understanding .choice:active{transform:none}
     .segmented{display:grid;grid-template-columns:1fr 1fr;padding:4px;border:1px solid #e3e6ec;border-radius:16px;background:#f0f1f4}
     .segment{min-height:49px;border:0;border-radius:12px;background:transparent;color:#748095;font-weight:800}
@@ -941,6 +942,10 @@ body[data-page="home"] .bottom-space{display:none}
 .practice-list-japanese,.practice-list-english{color:#6b7280}
 .practice-list-row[aria-current="true"] .practice-list-word{color:var(--blue)}
 .practice-list-word,.practice-list-meaning,.practice-list-japanese,.practice-list-english{font-size:.7rem;line-height:1.25}
+.practice-list-row[aria-current="true"]{background:linear-gradient(90deg,#c7e2ff 0%,#e4f1ff 100%)}
+.practice-info-primary .practice-number{height:21px;min-height:21px;padding:0 7px;font-size:.52rem}
+.practice-info-primary .practice-card-badges>.practice-meta-chip{height:21px;min-height:21px;padding:0 7px;font-size:.52rem}
+.practice-info-primary>.practice-level-chips .practice-meta-chip{width:21px;min-width:21px;height:21px;min-height:21px;padding:0;font-size:.44rem}
 .practice-list-menu{display:grid;width:38px;height:38px;place-items:center;padding:0 0 7px;border:0;border-radius:50%;background:transparent;color:#7b8798;font-size:1rem;font-weight:900;letter-spacing:-.13em}
 .practice-list-menu:active{background:#edf3fb;color:var(--blue)}
 .practice-screen-header{grid-template-columns:106px minmax(0,1fr) 106px}
