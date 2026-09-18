@@ -509,6 +509,7 @@ const COL=Object.freeze({
     const practiceFilterSheet=practiceFilterOverlay.querySelector('.practice-filter-sheet');
     const practiceFilterHandle=practiceFilterOverlay.querySelector('.practice-filter-handle');
     const practiceFilterSheetBody=document.getElementById('practiceFilterSheetBody');
+    const practiceFilterCancel=document.getElementById('practiceFilterCancel');
     const practiceFilterClose=document.getElementById('practiceFilterClose');
     const filterCard=document.getElementById('filterCard');
     const filterCardHomeParent=filterCard.parentNode;
@@ -1527,6 +1528,7 @@ const COL=Object.freeze({
       practiceViewTransitioning=false;
     };
     let practiceFilterOpen=false;
+    let practiceFilterSnapshot=null;
     const restoreFilterCard=()=>{
       if(filterCardHomeNext?.parentNode===filterCardHomeParent)filterCardHomeParent.insertBefore(filterCard,filterCardHomeNext);
       else filterCardHomeParent.append(filterCard);
@@ -1534,6 +1536,7 @@ const COL=Object.freeze({
     const openPracticeFilter=()=>{
       if(practiceFilterOpen)return;
       practiceFilterOpen=true;
+      practiceFilterSnapshot=allFilterChoices.map(choice=>choice.classList.contains('selected'));
       if(autoPlaying)stopAutoPlayback();
       practiceFilterSheetBody.append(filterCard);
       practiceFilterOverlay.hidden=false;
@@ -1555,6 +1558,17 @@ const COL=Object.freeze({
         applyPracticeMethodChange(previousRow);
         setPracticeViewMode(previousViewMode==='card'&&practiceRows.length?'card':'list');
       }
+      practiceFilterSnapshot=null;
+    };
+    const cancelPracticeFilter=()=>{
+      if(practiceFilterSnapshot){
+        allFilterChoices.forEach((choice,index)=>choice.classList.toggle('selected',practiceFilterSnapshot[index]));
+        subgroupAllButtons.forEach(button=>syncSubgroupAll(button.closest('.group')));
+        filterSections.forEach(section=>syncSectionControls(section,false));
+        syncGlobalControls();
+        refreshQuestionCount();
+      }
+      closePracticeFilter(false);
     };
     const enableBottomSheetGrab=(overlay,sheet,handle,onDismiss)=>{
       let drag=null;
@@ -1642,6 +1656,7 @@ const COL=Object.freeze({
     autoPlayTab.addEventListener('click',()=>autoPlaying?stopAutoPlayback():startAutoPlayback());
     practiceBackToList.addEventListener('click',()=>returnToPracticeList());
     practiceFilterButton.addEventListener('click',openPracticeFilter);
+    practiceFilterCancel.addEventListener('click',cancelPracticeFilter);
     practiceFilterClose.addEventListener('click',()=>closePracticeFilter());
     practiceFilterOverlay.addEventListener('click',event=>{
       if(event.target===practiceFilterOverlay)closePracticeFilter();

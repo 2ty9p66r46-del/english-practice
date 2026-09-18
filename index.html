@@ -94,8 +94,7 @@
           <button type="button" aria-label="マイフレーズバンク"></button>
         </div>
         <section class="card" id="filterCard">
-          <div class="filter-result-counts" id="filterResultCounts" aria-live="polite"><span><b>単語数</b><strong id="filterWordCount">0</strong></span><span><b>例文数</b><strong id="filterExampleCount">0</strong></span></div>
-          <div class="section-head"><h2>絞り込み条件</h2><div class="filter-bulk-actions"><button class="bulk-filter-button select" id="selectAllFilters" type="button">すべて選択</button></div></div>
+          <div class="section-head"><h2>絞り込み条件</h2><div class="filter-result-counts" id="filterResultCounts" aria-live="polite"><span><b>単語数</b><strong id="filterWordCount">0</strong></span><span><b>例文数</b><strong id="filterExampleCount">0</strong></span></div><div class="filter-bulk-actions"><button class="bulk-filter-button select" id="selectAllFilters" type="button">すべて選択</button></div></div>
           <p class="overall-filter-warning" id="overallFilterWarning" hidden></p>
           <div class="filter-section" data-filter-section="word">
             <div class="filter-section-head"><h3><span class="condition-badge">条件1</span><span>単語レベル</span></h3><div class="filter-section-actions"><button class="section-filter-button select" type="button" data-section-action="select">すべて選択</button></div></div><p class="filter-warning" hidden>少なくともひとつ項目を選択してください。</p>
@@ -213,7 +212,7 @@
       </main>    </section>
     <div class="practice-filter-overlay" id="practiceFilterOverlay" hidden>
       <section class="practice-filter-sheet" role="dialog" aria-modal="true" aria-labelledby="practiceFilterTitle">
-        <header class="practice-filter-sheet-head"><span class="practice-filter-handle" aria-hidden="true"></span><span class="practice-filter-head-spacer" aria-hidden="true"></span><h2 id="practiceFilterTitle">絞り込み条件</h2><button id="practiceFilterClose" type="button">完了</button></header>
+        <header class="practice-filter-sheet-head"><span class="practice-filter-handle" aria-hidden="true"></span><button id="practiceFilterCancel" type="button">キャンセル</button><h2 id="practiceFilterTitle">絞り込み条件</h2><button id="practiceFilterClose" type="button">完了</button></header>
         <div class="practice-filter-sheet-body" id="practiceFilterSheetBody"></div>
       </section>
     </div>
