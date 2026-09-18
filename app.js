@@ -875,6 +875,15 @@ const COL=Object.freeze({
         const subBadge=document.createElement('span');
         subBadge.className=`practice-meta-chip ${rankTone}`.trim();
         subBadge.textContent=`${formatSingleDigitNumber(row?.[COL.meaningNo])}${formatExampleLetter(row?.[COL.exampleNo])}`;
+        const levelBadges=document.createElement('span');
+        levelBadges.className='practice-list-levels practice-level-chips';
+        [text(row[COL.sLevel]),text(row[COL.wLevel])].filter(Boolean).forEach(level=>{
+          const chip=document.createElement('span');
+          const digit=level.match(/[123]$/)?.[0];
+          chip.className=`practice-meta-chip ${digit==='1'?'red':digit==='2'?'orange':'yellow'}`;
+          chip.textContent=level.toUpperCase();
+          levelBadges.append(chip);
+        });
         const summary=document.createElement('span');
         summary.className='practice-list-summary';
         const word=document.createElement('strong');
@@ -885,7 +894,7 @@ const COL=Object.freeze({
         meaning.textContent=text(row[COL.meaning])||'意味未登録';
         const summaryDivider=document.createElement('span');
         summaryDivider.className='practice-list-center-divider';
-        identifiers.append(number,partBadge,subBadge);
+        identifiers.append(number,partBadge,subBadge,levelBadges);
         summary.append(word,summaryDivider,meaning);
 
         const sentences=document.createElement('span');
