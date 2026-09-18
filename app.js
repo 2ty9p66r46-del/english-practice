@@ -423,11 +423,11 @@ const COL=Object.freeze({
       homeStatTabs.forEach(tab=>{const active=tab===button;tab.classList.toggle('active',active);tab.setAttribute('aria-selected',String(active))});
       homeStatPanels.forEach(panel=>{panel.hidden=panel.id!==homeStatPanelIds[button.dataset.homeStat]});
     }));
-    const filterSections=[...document.querySelectorAll('.filter-section')];
-    const subgroupAllButtons=[...document.querySelectorAll('.group .all')];
-    const levelChoices=[...document.querySelectorAll('.level-group .choice')];
-    const partChoices=[...document.querySelectorAll('.part-group .choice')];
-    const understandingChoices=[...document.querySelectorAll('.understanding .choice')];
+    const filterSections=[...document.querySelectorAll('#filterCard .filter-section')];
+    const subgroupAllButtons=[...document.querySelectorAll('#filterCard .group .all')];
+    const levelChoices=[...document.querySelectorAll('#filterCard .level-group .choice')];
+    const partChoices=[...document.querySelectorAll('#filterCard .part-group .choice')];
+    const understandingChoices=[...document.querySelectorAll('#filterCard .understanding .choice')];
     const allFilterChoices=[...levelChoices,...partChoices,...understandingChoices];
     const selectAllFilters=document.getElementById('selectAllFilters');
     const overallFilterWarning=document.getElementById('overallFilterWarning');
@@ -472,6 +472,9 @@ const COL=Object.freeze({
     const cardEditorCancel=document.getElementById('cardEditorCancel');
     const cardEditorSave=document.getElementById('cardEditorSave');
     const cardEditorDelete=document.getElementById('cardEditorDelete');
+    const cardWordStep=document.getElementById('cardWordStep');
+    const cardWordFilterToggle=document.getElementById('cardWordFilterToggle');
+    const cardWordFilterPanel=document.getElementById('cardWordFilterPanel');
     const cardWordSearch=document.getElementById('cardWordSearch');
     const cardWordResults=document.getElementById('cardWordResults');
     const cardSelectedWord=document.getElementById('cardSelectedWord');
@@ -484,6 +487,9 @@ const COL=Object.freeze({
     const cardJapaneseInput=document.getElementById('cardJapaneseInput');
     const cardEnglishInput=document.getElementById('cardEnglishInput');
     const cardNoteInput=document.getElementById('cardNoteInput');
+    const cardFilterLevelChoices=[...cardWordFilterPanel.querySelectorAll('.level-group .choice')];
+    const cardFilterPartChoices=[...cardWordFilterPanel.querySelectorAll('.part-group .choice:not([data-example-filter])')];
+    const cardFilterExampleChoices=[...cardWordFilterPanel.querySelectorAll('[data-example-filter]')];
     const practiceRatingButtons=[...document.querySelectorAll('.practice-rating-button')];
     const setSentenceSpeaking=(button,active,showStop=true)=>{
       button.classList.toggle('speaking',active);
@@ -1028,17 +1034,59 @@ const COL=Object.freeze({
       cardActionsNumber.textContent=`No ${formatCardNumber(row)}`;
       cardActionsOverlay.hidden=false;
     };
+    const syncCardWordFilterGroup=group=>{
+      const choices=[...group.querySelectorAll('.choice:not([data-example-filter])')];
+      group.querySelector('.all')?.classList.toggle('selected',choices.length>0&&choices.every(choice=>choice.classList.contains('selected')));
+    };
+    const resetCardWordFilters=()=>{
+      [...cardFilterLevelChoices,...cardFilterPartChoices].forEach(choice=>choice.classList.add('selected'));
+      cardWordFilterPanel.querySelectorAll('.group .all').forEach(button=>button.classList.add('selected'));
+      cardFilterExampleChoices.forEach(button=>button.classList.toggle('selected',button.dataset.exampleFilter==='all'));
+      cardWordFilterPanel.hidden=true;
+      cardWordFilterToggle.setAttribute('aria-expanded','false');
+    };
+    cardWordFilterToggle.addEventListener('click',()=>{
+      const expand=cardWordFilterPanel.hidden;
+      cardWordFilterPanel.hidden=!expand;
+      cardWordFilterToggle.setAttribute('aria-expanded',String(expand));
+    });
+    [...cardFilterLevelChoices,...cardFilterPartChoices].forEach(button=>button.addEventListener('click',()=>{
+      button.classList.toggle('selected');
+      syncCardWordFilterGroup(button.closest('.group'));
+      renderWordResults();
+    }));
+    cardWordFilterPanel.querySelectorAll('.group .all').forEach(button=>button.addEventListener('click',()=>{
+      const group=button.closest('.group');
+      const select=!button.classList.contains('selected');
+      group.querySelectorAll('.choice:not([data-example-filter])').forEach(choice=>choice.classList.toggle('selected',select));
+      button.classList.toggle('selected',select);
+      renderWordResults();
+    }));
+    cardFilterExampleChoices.forEach(button=>button.addEventListener('click',()=>{
+      cardFilterExampleChoices.forEach(choice=>choice.classList.toggle('selected',choice===button));
+      renderWordResults();
+    }));
     const renderWordResults=()=>{
       const query=text(cardWordSearch.value).toLowerCase();
       cardWordResults.replaceChildren();
       if(cardEditorMode==='edit'||selectedVocabularyRow){cardWordResults.hidden=true;cardWordSearch.setAttribute('aria-expanded','false');return}
       const candidates=getVocabularyRows();
+      const selectedLevels=new Set(cardFilterLevelChoices.filter(choice=>choice.classList.contains('selected')).map(choice=>choice.dataset.value));
+      const selectedParts=new Set(cardFilterPartChoices.filter(choice=>choice.classList.contains('selected')).map(choice=>choice.dataset.value));
+      const restrictLevels=selectedLevels.size!==cardFilterLevelChoices.length;
+      const restrictParts=selectedParts.size!==cardFilterPartChoices.length;
+      const exampleFilter=cardFilterExampleChoices.find(choice=>choice.classList.contains('selected'))?.dataset.exampleFilter||'all';
       const starts=[];
       candidates.forEach(row=>{
         const word=text(row[COL.word]).toLowerCase();
-        if(!query||word.startsWith(query))starts.push(row);
+        if(query&&!word.startsWith(query))return;
+        if(restrictLevels&&![text(row[COL.sLevel]),text(row[COL.wLevel])].some(value=>selectedLevels.has(value)))return;
+        if(restrictParts&&!selectedParts.has(text(row[COL.pos])))return;
+        const hasExample=(practiceStored.rows||[]).some(example=>vocabularyKey(example)===vocabularyKey(row)&&text(example[COL.japanese])&&text(example[COL.english]));
+        if((exampleFilter==='with'&&!hasExample)||(exampleFilter==='without'&&hasExample))return;
+        starts.push(row);
       });
-      const matches=starts.slice(0,50);
+      const matches=starts;
       matches.forEach(row=>{
         const button=document.createElement('button');
         button.type='button';button.className='card-word-option';button.setAttribute('role','option');
@@ -1048,6 +1096,7 @@ const COL=Object.freeze({
         button.append(name,detail);
         button.addEventListener('click',()=>{
           selectedVocabularyRow=row;
+          cardWordStep.hidden=true;
           cardWordSearch.value=text(row[COL.word]);cardWordSearch.hidden=true;
           cardSelectedWordText.textContent=`${text(row[COL.word])}　No ${formatPracticeNumber(row[COL.wordNo],5)}-${formatPracticeNumber(row[COL.posNo],2)}　${text(row[COL.pos])||'品詞未登録'}　${levels}`;
           cardSelectedWord.hidden=false;cardWordResults.hidden=true;cardWordSearch.setAttribute('aria-expanded','false');
@@ -1081,8 +1130,11 @@ const COL=Object.freeze({
     const openCardEditor=(mode,row=null)=>{
       if(autoPlaying)stopAutoPlayback();
       cardEditorMode=mode;cardEditorRow=row;selectedVocabularyRow=mode==='edit'?row:null;
+      cardEditorOverlay.dataset.mode=mode;
       cardEditorTitle.textContent=mode==='edit'?'例文を編集':'例文を追加';
       selectedMeaningMode=mode==='edit'?'existing':null;
+      cardWordStep.hidden=mode==='edit';
+      if(mode==='add')resetCardWordFilters();
       cardWordSearch.value=mode==='edit'?text(row[COL.word]):'';cardWordSearch.disabled=mode==='edit';cardWordSearch.hidden=mode==='edit';
       cardSelectedWordText.textContent=mode==='edit'?`${text(row[COL.word])}　No ${formatCardNumber(row)}　${text(row[COL.pos])||'品詞未登録'}`:'';
       cardSelectedWord.hidden=mode!=='edit';
@@ -1127,7 +1179,7 @@ const COL=Object.freeze({
     cardWordSearch.addEventListener('input',()=>{if(!cardWordSearch.disabled)renderWordResults()});
     cardWordSearch.addEventListener('focus',()=>{if(!cardWordSearch.disabled)renderWordResults()});
     cardWordReselect.addEventListener('click',()=>{
-      selectedVocabularyRow=null;selectedMeaningMode=null;cardSelectedWord.hidden=true;cardWordSearch.hidden=false;cardWordSearch.disabled=false;cardWordSearch.value='';cardMeaningStep.hidden=true;cardMeaningField.hidden=true;cardMeaningInput.value='';renderWordResults();cardWordSearch.focus();
+      selectedVocabularyRow=null;selectedMeaningMode=null;cardSelectedWord.hidden=true;cardWordStep.hidden=false;cardWordSearch.hidden=false;cardWordSearch.disabled=false;cardWordSearch.value='';cardMeaningStep.hidden=true;cardMeaningField.hidden=true;cardMeaningInput.value='';renderWordResults();cardWordSearch.focus();
     });
     cardEditorCancel.addEventListener('click',closeCardEditor);
     cardEditorOverlay.addEventListener('click',event=>{if(event.target===cardEditorOverlay)closeCardEditor()});
