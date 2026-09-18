@@ -979,7 +979,7 @@ body[data-page="home"] .bottom-space{display:none}
 .card-actions-sheet>button.danger{color:#d92d45}.card-actions-sheet>button.cancel{margin-top:8px;border-radius:14px;color:#344054}
 .card-editor-overlay{background:#11182700;transition:background-color 320ms ease}
 .card-editor-overlay.open{background:#11182773}
-.card-editor-sheet{display:flex;width:100%;height:min(90%,760px);flex-direction:column;border-radius:24px 24px 0 0;background:#f4f5f9;box-shadow:0 -18px 45px #1118272e;transform:translateY(104%);transition:transform 340ms cubic-bezier(.16,.82,.24,1)}
+.card-editor-sheet{position:relative;display:flex;width:100%;height:min(90%,760px);flex-direction:column;border-radius:24px 24px 0 0;background:#f4f5f9;box-shadow:0 -18px 45px #1118272e;transform:translateY(104%);transition:transform 340ms cubic-bezier(.16,.82,.24,1)}
 .card-editor-overlay.open .card-editor-sheet{transform:translateY(0)}
 .card-editor-head{display:grid;min-height:58px;grid-template-columns:88px 1fr 88px;align-items:center;padding:4px 10px;border-bottom:1px solid #dfe3ea;background:#fff;border-radius:24px 24px 0 0}
 .card-editor-head h2{margin:0;color:#182230;font-size:1rem;text-align:center}.card-editor-head button{height:38px;padding:0 8px;border:0;background:transparent;color:var(--blue);font-size:.8rem;font-weight:800}.card-editor-head button:last-child{text-align:right}
