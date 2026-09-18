@@ -720,13 +720,10 @@ body[data-page="home"] .bottom-space{display:none}
 
 /* Compact Excel actions align with the bottom-tab icon scale. */
 .active-vocab-card .home-excel-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;padding:0;border:0;background:transparent}
-.active-vocab-card .home-excel-actions .header-action{width:36px;height:36px;flex:0 0 36px;padding:0;border:0;border-radius:9px;background:transparent;box-shadow:none;color:#26364d}
+.active-vocab-card .home-excel-actions .header-action{width:40px;height:48px;flex:0 0 40px;padding:0;border:0;border-radius:9px;background:transparent;box-shadow:none;color:#7d8797;gap:2px}
 .active-vocab-card .home-excel-actions .header-action + .header-action{border-left:0}
-.active-vocab-card .home-excel-actions .header-action svg{width:25px;height:25px;overflow:visible}
-.excel-transfer-icon .excel-file,.excel-transfer-icon .excel-fold{fill:none;stroke:currentColor;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
-.excel-transfer-icon .excel-label{fill:currentColor;stroke:none}
-.excel-transfer-icon .excel-label-text{fill:#fff;stroke:none;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;font-size:9px;font-weight:900;text-anchor:middle}
-.excel-transfer-icon .excel-arrow{fill:none;stroke:currentColor;stroke-width:5.5;stroke-linecap:round;stroke-linejoin:round}
+.active-vocab-card .home-excel-actions .header-action svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.active-vocab-card .home-excel-actions .header-action span{font-size:.52rem;font-weight:800;line-height:1;letter-spacing:.04em}
 .active-vocab-card .home-practice-button{min-height:58px}
 .active-vocab-card .home-practice-button>span{gap:0}
 
