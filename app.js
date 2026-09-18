@@ -456,6 +456,7 @@ const COL=Object.freeze({
     const practicePronUkAudio=document.getElementById('practicePronUkAudio');
     const practiceNote=document.getElementById('practiceNote');
     const practiceCardAdd=document.getElementById('practiceCardAdd');
+    const practiceCardMenu=document.getElementById('practiceCardMenu');
     const cardActionsOverlay=document.getElementById('cardActionsOverlay');
     const cardActionsWord=document.getElementById('cardActionsWord');
     const cardActionsNumber=document.getElementById('cardActionsNumber');
@@ -729,13 +730,14 @@ const COL=Object.freeze({
     let practiceIndex=0;
     let practiceStored=null;
     let answerVisible=false;
-    const applyPracticeMethodChange=()=>{
+    const applyPracticeMethodChange=(preserveRow=null)=>{
       if(practiceScreen.hidden||!practiceStored)return;
       let rows=getMatchingRows(practiceStored.rows||[]);
       if(practiceButton.dataset.order==='random')rows=shuffleRows(rows);
       const limit=practiceButton.dataset.questionLimit==='all'?rows.length:Number(practiceButton.dataset.questionLimit);
       practiceRows=rows.slice(0,limit);
-      practiceIndex=0;
+      const preservedIndex=preserveRow?practiceRows.indexOf(preserveRow):-1;
+      practiceIndex=preservedIndex>=0?preservedIndex:0;
       renderPracticeQuestion();
       renderPracticeList();
       if(autoPlaying)restartAutoPlayback();
@@ -1422,8 +1424,8 @@ const COL=Object.freeze({
       practiceListPlaceholder.hidden=!listMode;
       practiceBackToList.hidden=listMode;
       practiceHeaderCounts.hidden=!listMode;
-      practiceFilterButton.disabled=!listMode;
-      practiceFilterButton.setAttribute('aria-disabled',String(!listMode));
+      practiceFilterButton.disabled=false;
+      practiceFilterButton.setAttribute('aria-disabled','false');
       if(listMode){
         renderPracticeList();
         requestAnimationFrame(()=>{
@@ -1510,14 +1512,16 @@ const COL=Object.freeze({
     };
     const closePracticeFilter=async(applyFilters=true)=>{
       if(!practiceFilterOpen)return;
+      const previousViewMode=practiceViewMode;
+      const previousRow=previousViewMode==='card'?currentPracticeRow():null;
       practiceFilterOpen=false;
       practiceFilterOverlay.classList.remove('open');
       await wait(340);
       restoreFilterCard();
       practiceFilterOverlay.hidden=true;
       if(applyFilters){
-        applyPracticeMethodChange();
-        setPracticeViewMode('list');
+        applyPracticeMethodChange(previousRow);
+        setPracticeViewMode(previousViewMode==='card'&&practiceRows.length?'card':'list');
       }
     };
     const openPractice=async()=>{
@@ -1551,6 +1555,7 @@ const COL=Object.freeze({
       refreshQuestionCount();
     };
     practiceButton.addEventListener('click',()=>openPractice().catch(()=>alert('練習画面を開けませんでした。')));
+    practiceCardMenu.addEventListener('click',()=>{const row=currentPracticeRow();if(row)openCardEditor('edit',row)});
     autoPlayTab.addEventListener('click',()=>autoPlaying?stopAutoPlayback():startAutoPlayback());
     practiceBackToList.addEventListener('click',()=>returnToPracticeList());
     practiceFilterButton.addEventListener('click',openPracticeFilter);
