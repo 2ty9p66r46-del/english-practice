@@ -772,8 +772,8 @@ const COL=Object.freeze({
       const rankTone={S:'red',A:'orange',B:'yellow',C:'green',D:'purple'}[rank]||'';
       practicePart.textContent=part;
       practicePart.className=`practice-meta-chip ${rankTone}`.trim();
-      practiceMeaningNumber.textContent=meaningNumber;
-      practiceExampleNumber.textContent=exampleNumber;
+      practiceMeaningNumber.textContent=`意味${meaningNumber}`;
+      practiceExampleNumber.textContent=`例文${exampleNumber}`;
       practiceLevels.replaceChildren();
       const levels=[text(row[COL.sLevel]),text(row[COL.wLevel])].filter(Boolean);
       if(!levels.length){
