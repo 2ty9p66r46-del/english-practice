@@ -1053,6 +1053,7 @@ const COL=Object.freeze({
     let pendingMeaningChoice=null;
     let selectedMeaningNumber='';
     let cardExampleDrafts=[];
+    let cardDeletedExampleRows=[];
     let cardEditorAnimationRun=0;
     const closeCardActions=()=>{cardActionsOverlay.hidden=true;cardActionRow=null};
     const openCardActions=row=>{
@@ -1280,8 +1281,10 @@ const COL=Object.freeze({
       cardExampleDrafts=matching.sort((a,b)=>(Number(a[COL.exampleNo])||Number.MAX_SAFE_INTEGER)-(Number(b[COL.exampleNo])||Number.MAX_SAFE_INTEGER)).map(row=>({
         row,exampleNo:text(row[COL.exampleNo])||'1',japanese:text(row[COL.japanese]),english:text(row[COL.english]),note:text(row[COL.note])
       }));
+      cardDeletedExampleRows=[];
+      if(!cardExampleDrafts.length)cardExampleDrafts.push({row:null,exampleNo:'1',japanese:'',english:'',note:''});
     };
-    const renderCardExampleCarousel=(focusLast=false)=>{
+    const renderCardExampleCarousel=(focusIndex=null)=>{
       cardExampleCarousel.replaceChildren();
       cardExampleDrafts.forEach((draft,index)=>{
         const form=document.createElement('article');form.className='card-example-page card-example-form';form.dataset.draftIndex=String(index);
@@ -1289,6 +1292,14 @@ const COL=Object.freeze({
         const headingLabel=document.createElement('span');headingLabel.textContent='例文番号';
         const badge=document.createElement('span');badge.className='practice-meta-chip';badge.textContent=formatExampleLetter(draft.exampleNo);
         heading.append(headingLabel,badge);
+        if(cardExampleDrafts.length>1){
+          const remove=document.createElement('button');remove.type='button';remove.className='card-example-remove';remove.textContent='削除';
+          remove.addEventListener('click',()=>{
+            if(draft.row)cardDeletedExampleRows.push(draft.row);
+            cardExampleDrafts.splice(index,1);cardExampleDrafts.forEach((item,itemIndex)=>{item.exampleNo=String(itemIndex+1)});renderCardExampleCarousel();
+          });
+          heading.append(remove);
+        }
         const makeField=(labelText,key,rows,optional=false)=>{
           const label=document.createElement('label');label.className='card-editor-field';
           const title=document.createElement('span');title.textContent=labelText;
@@ -1307,9 +1318,9 @@ const COL=Object.freeze({
       const addPage=document.createElement('button');addPage.type='button';addPage.className='card-example-page card-example-add';
       const addBadge=document.createElement('span');addBadge.className='practice-meta-chip';addBadge.textContent=formatExampleLetter(nextExampleNo);
       const addText=document.createElement('strong');addText.textContent='＋例文追加';addPage.append(addBadge,addText);
-      addPage.addEventListener('click',()=>{cardExampleDrafts.push({row:null,exampleNo:nextExampleNo,japanese:'',english:'',note:''});renderCardExampleCarousel(true)});
+      addPage.addEventListener('click',()=>{const newIndex=cardExampleDrafts.length;cardExampleDrafts.push({row:null,exampleNo:nextExampleNo,japanese:'',english:'',note:''});renderCardExampleCarousel(newIndex)});
       cardExampleCarousel.append(addPage);syncCardEditorMessages();
-      if(focusLast)requestAnimationFrame(()=>{cardExampleCarousel.scrollLeft=cardExampleCarousel.scrollWidth-cardExampleCarousel.clientWidth});
+      if(Number.isInteger(focusIndex))requestAnimationFrame(()=>{cardExampleCarousel.scrollLeft=cardExampleCarousel.clientWidth*focusIndex});
     };
     const showCardExampleEditor=()=>{loadCardExampleDrafts();renderCardExampleCarousel();cardExampleStep.hidden=false};
     const renderMeaningResults=(preserveSelection=false)=>{
@@ -1360,7 +1371,7 @@ const COL=Object.freeze({
       cardWordStep.classList.toggle('has-selection',mode==='edit');
       cardEditorOverlay.dataset.mode=mode;
       cardEditorTitle.textContent='例文編集';
-      cardEditorBody.scrollTop=0;pendingMeaningChoice=null;selectedMeaningNumber='';cardExampleDrafts=[];cardExampleCarousel.replaceChildren();
+      cardEditorBody.scrollTop=0;pendingMeaningChoice=null;selectedMeaningNumber='';cardExampleDrafts=[];cardDeletedExampleRows=[];cardExampleCarousel.replaceChildren();
       selectedMeaningMode=mode==='edit'?'existing':null;
       cardWordStep.hidden=false;
       if(mode==='add')resetCardWordFilters();
@@ -1403,7 +1414,7 @@ const COL=Object.freeze({
       cardEditorOverlay.classList.remove('open');
       await wait(340);
       if(animationRun!==cardEditorAnimationRun)return;
-      cardEditorOverlay.hidden=true;cardEditorRow=null;selectedVocabularyRow=null;selectedMeaningMode=null;pendingMeaningChoice=null;selectedMeaningNumber='';cardExampleDrafts=[];
+      cardEditorOverlay.hidden=true;cardEditorRow=null;selectedVocabularyRow=null;selectedMeaningMode=null;pendingMeaningChoice=null;selectedMeaningNumber='';cardExampleDrafts=[];cardDeletedExampleRows=[];
     };
     const refreshPracticeAfterMutation=()=>{
       practiceRows=getMatchingRows(practiceStored?.rows||[]);
@@ -1417,7 +1428,7 @@ const COL=Object.freeze({
     cardWordSearch.addEventListener('input',()=>{if(!cardWordSearch.disabled)renderWordResults()});
     cardWordSearch.addEventListener('focus',()=>{if(!cardWordSearch.disabled)renderWordResults()});
     cardWordReselect.addEventListener('click',()=>{
-      selectedVocabularyRow=null;selectedMeaningMode=null;pendingMeaningChoice=null;selectedMeaningNumber='';cardExampleDrafts=[];cardExampleCarousel.replaceChildren();cardWordStep.classList.remove('has-selection');cardSelectedWord.hidden=true;cardWordSearchRow.hidden=false;cardWordSearch.disabled=false;cardWordSearch.value='';cardMeaningStep.classList.remove('is-choosing');cardMeaningStep.hidden=true;cardMeaningField.hidden=true;cardMeaningNumberBadge.hidden=true;cardMeaningConfirm.hidden=true;cardSelectedMeaning.hidden=true;cardMeaningChanged.hidden=true;cardMeaningEditActions.hidden=true;cardMeaningReselect.hidden=true;cardMeaningInput.value='';cardExampleStep.hidden=true;syncCardEditorMessages();renderWordResults();
+      selectedVocabularyRow=null;selectedMeaningMode=null;pendingMeaningChoice=null;selectedMeaningNumber='';cardExampleDrafts=[];cardDeletedExampleRows=[];cardExampleCarousel.replaceChildren();cardWordStep.classList.remove('has-selection');cardSelectedWord.hidden=true;cardWordSearchRow.hidden=false;cardWordSearch.disabled=false;cardWordSearch.value='';cardMeaningStep.classList.remove('is-choosing');cardMeaningStep.hidden=true;cardMeaningField.hidden=true;cardMeaningNumberBadge.hidden=true;cardMeaningConfirm.hidden=true;cardSelectedMeaning.hidden=true;cardMeaningChanged.hidden=true;cardMeaningEditActions.hidden=true;cardMeaningReselect.hidden=true;cardMeaningInput.value='';cardExampleStep.hidden=true;syncCardEditorMessages();renderWordResults();
     });
     cardMeaningReselect.addEventListener('click',async()=>{
       await fadeMeaningTransition([cardSelectedMeaning,cardMeaningChanged,cardMeaningReselect,cardExampleStep],()=>{
@@ -1480,10 +1491,12 @@ const COL=Object.freeze({
       cardEditorSave.disabled=true;
       try{
         const pairKey=vocabularyKey(selectedVocabularyRow);
-        const samePair=(practiceStored.rows||[]).filter(row=>vocabularyKey(row)===pairKey);
+        const deletedRows=new Set(cardDeletedExampleRows);
+        const samePair=(practiceStored.rows||[]).filter(row=>vocabularyKey(row)===pairKey&&!deletedRows.has(row));
         const draftRows=new Set(cardExampleDrafts.map(draft=>draft.row).filter(Boolean));
         const duplicateMeaning=samePair.find(row=>!draftRows.has(row)&&text(row[COL.meaningNo])!==selectedMeaningNumber&&normalizedMeaning(row[COL.meaning])===normalizedMeaning(meaning));
         if(duplicateMeaning){alert('同じ意味がすでに登録されています。');return}
+        cardDeletedExampleRows.forEach(row=>{const index=practiceStored.rows.indexOf(row);if(index>=0)practiceStored.rows.splice(index,1)});
         const existingMeaning=samePair.find(row=>!draftRows.has(row)&&text(row[COL.meaning])===meaning)||samePair.find(row=>text(row[COL.meaning])===meaning);
         const meaningNo=text(existingMeaning?.[COL.meaningNo])||selectedMeaningNumber||String(nextNumber(samePair,COL.meaningNo));
         const occupied=new Set(samePair.filter(row=>!draftRows.has(row)&&text(row[COL.meaningNo])===meaningNo).map(row=>text(row[COL.exampleNo])).filter(Boolean));
