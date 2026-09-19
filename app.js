@@ -498,6 +498,8 @@ const COL=Object.freeze({
     const cardFilterLevelChoices=[...cardWordFilterPanel.querySelectorAll('.level-group .choice')];
     const cardFilterPartChoices=[...cardWordFilterPanel.querySelectorAll('.part-group .choice')];
     const cardFilterUnderstandingChoices=[...cardWordFilterPanel.querySelectorAll('[data-understanding-filter]')];
+    const cardFilterSections=[...cardWordFilterPanel.querySelectorAll('[data-card-filter-section]')];
+    const cardSelectAllFilters=document.getElementById('cardSelectAllFilters');
     const practiceRatingButtons=[...document.querySelectorAll('.practice-rating-button')];
     const setSentenceSpeaking=(button,active,showStop=true)=>{
       button.classList.toggle('speaking',active);
@@ -1055,9 +1057,18 @@ const COL=Object.freeze({
       const choices=[...group.querySelectorAll('.choice')];
       group.querySelector('.all')?.classList.toggle('selected',choices.length>0&&choices.every(choice=>choice.classList.contains('selected')));
     };
+    const syncCardFilterControls=()=>{
+      cardFilterSections.forEach(section=>{
+        const choices=[...section.querySelectorAll('.choice')];
+        section.querySelector('[data-card-section-action]')?.classList.toggle('selected',choices.length>0&&choices.every(choice=>choice.classList.contains('selected')));
+      });
+      const choices=[...cardWordFilterPanel.querySelectorAll('.choice')];
+      cardSelectAllFilters.classList.toggle('selected',choices.length>0&&choices.every(choice=>choice.classList.contains('selected')));
+    };
     const resetCardWordFilters=()=>{
       [...cardFilterLevelChoices,...cardFilterPartChoices,...cardFilterUnderstandingChoices].forEach(choice=>choice.classList.add('selected'));
       cardWordFilterPanel.querySelectorAll('.group .all').forEach(button=>button.classList.add('selected'));
+      syncCardFilterControls();
       cardWordFilterPanel.hidden=true;
       cardWordFilterToggle.setAttribute('aria-expanded','false');
     };
@@ -1069,6 +1080,7 @@ const COL=Object.freeze({
     [...cardFilterLevelChoices,...cardFilterPartChoices,...cardFilterUnderstandingChoices].forEach(button=>button.addEventListener('click',()=>{
       button.classList.toggle('selected');
       syncCardWordFilterGroup(button.closest('.group'));
+      syncCardFilterControls();
       renderWordResults();
     }));
     cardWordFilterPanel.querySelectorAll('.group .all').forEach(button=>button.addEventListener('click',()=>{
@@ -1076,8 +1088,21 @@ const COL=Object.freeze({
       const select=!button.classList.contains('selected');
       group.querySelectorAll('.choice').forEach(choice=>choice.classList.toggle('selected',select));
       button.classList.toggle('selected',select);
+      syncCardFilterControls();
       renderWordResults();
     }));
+    cardFilterSections.forEach(section=>section.querySelector('[data-card-section-action]')?.addEventListener('click',event=>{
+      const select=!event.currentTarget.classList.contains('selected');
+      section.querySelectorAll('.choice').forEach(choice=>choice.classList.toggle('selected',select));
+      section.querySelectorAll('.group').forEach(syncCardWordFilterGroup);
+      syncCardFilterControls();renderWordResults();
+    }));
+    cardSelectAllFilters.addEventListener('click',()=>{
+      const select=!cardSelectAllFilters.classList.contains('selected');
+      cardWordFilterPanel.querySelectorAll('.choice').forEach(choice=>choice.classList.toggle('selected',select));
+      cardWordFilterPanel.querySelectorAll('.group').forEach(syncCardWordFilterGroup);
+      syncCardFilterControls();renderWordResults();
+    });
     const renderWordResults=()=>{
       const query=text(cardWordSearch.value).toLowerCase();
       cardWordResults.replaceChildren();
@@ -1163,7 +1188,11 @@ const COL=Object.freeze({
         }else meaning.textContent='-';
         summary.append(name,meaning);
         button.append(identifiers,summary);
-        button.addEventListener('click',()=>{
+        button.addEventListener('click',async()=>{
+          if(cardWordResults.dataset.switching==='true')return;
+          cardWordResults.dataset.switching='true';
+          const fadeTargets=[cardWordSearchRow,cardCandidateLabel,cardWordResults].filter(target=>!target.hidden&&typeof target.animate==='function');
+          if(fadeTargets.length)await Promise.allSettled(fadeTargets.map(target=>target.animate([{opacity:1},{opacity:0}],{duration:420,easing:'ease-in-out',fill:'forwards'}).finished));
           selectedVocabularyRow=row;
           cardWordSearch.value=text(row[COL.word]);cardWordSearchRow.hidden=true;cardCandidateLabel.hidden=true;cardWordFilterPanel.hidden=true;cardWordFilterToggle.setAttribute('aria-expanded','false');
           const rank=text(row[COL.posRank]).toUpperCase();
@@ -1174,6 +1203,10 @@ const COL=Object.freeze({
           cardSelectedWordText.replaceChildren(numberBadge,partBadge,wordName);cardSelectedWordText.classList.add('is-badged');
           cardSelectedWord.hidden=false;cardWordMessage.hidden=true;cardWordReselect.hidden=false;cardWordResults.hidden=true;cardWordSearch.setAttribute('aria-expanded','false');
           renderMeaningResults();
+          cardWordResults.dataset.switching='false';
+          [cardWordStep,cardMeaningStep].forEach(target=>{
+            if(typeof target.animate==='function')target.animate([{opacity:0},{opacity:1}],{duration:520,easing:'ease-out'});
+          });
         });
         cardWordResults.append(button);
       };
