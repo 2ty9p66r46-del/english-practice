@@ -1125,9 +1125,9 @@ const COL=Object.freeze({
         partBadge.textContent=text(row[COL.pos])||'品詞未登録';
         const subBadge=document.createElement('span');
         const meanings=meaningsByKey.get(vocabularyKey(row))||[];
-        const lastMeaningNo=[...meanings].reverse().find(item=>item.number)?.number||'';
-        subBadge.className=`practice-meta-chip ${lastMeaningNo?rankTone:''}`.trim();
-        subBadge.textContent=lastMeaningNo?formatSingleDigitNumber(lastMeaningNo):'0';
+        const meaningCount=meanings.length;
+        subBadge.className=`practice-meta-chip ${meaningCount?rankTone:''}`.trim();
+        subBadge.textContent=`意味 ${meaningCount}個`;
         const levelBadges=document.createElement('span');
         levelBadges.className='practice-list-levels practice-level-chips';
         [text(row[COL.sLevel]),text(row[COL.wLevel])].filter(Boolean).forEach(level=>{
