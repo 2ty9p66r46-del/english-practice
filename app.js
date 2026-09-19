@@ -498,6 +498,7 @@ const COL=Object.freeze({
     const cardFilterLevelChoices=[...cardWordFilterPanel.querySelectorAll('.level-group .choice')];
     const cardFilterPartChoices=[...cardWordFilterPanel.querySelectorAll('.part-group .choice')];
     const cardFilterUnderstandingChoices=[...cardWordFilterPanel.querySelectorAll('[data-understanding-filter]')];
+    const cardFilterMeaningCountChoices=[...cardWordFilterPanel.querySelectorAll('[data-meaning-count-filter]')];
     const cardFilterSections=[...cardWordFilterPanel.querySelectorAll('[data-card-filter-section]')];
     const cardSelectAllFilters=document.getElementById('cardSelectAllFilters');
     const practiceRatingButtons=[...document.querySelectorAll('.practice-rating-button')];
@@ -1066,7 +1067,7 @@ const COL=Object.freeze({
       cardSelectAllFilters.classList.toggle('selected',choices.length>0&&choices.every(choice=>choice.classList.contains('selected')));
     };
     const resetCardWordFilters=()=>{
-      [...cardFilterLevelChoices,...cardFilterPartChoices,...cardFilterUnderstandingChoices].forEach(choice=>choice.classList.add('selected'));
+      [...cardFilterLevelChoices,...cardFilterPartChoices,...cardFilterUnderstandingChoices,...cardFilterMeaningCountChoices].forEach(choice=>choice.classList.add('selected'));
       cardWordFilterPanel.querySelectorAll('.group .all').forEach(button=>button.classList.add('selected'));
       syncCardFilterControls();
       cardWordFilterPanel.hidden=true;
@@ -1077,7 +1078,7 @@ const COL=Object.freeze({
       cardWordFilterPanel.hidden=!expand;
       cardWordFilterToggle.setAttribute('aria-expanded',String(expand));
     });
-    [...cardFilterLevelChoices,...cardFilterPartChoices,...cardFilterUnderstandingChoices].forEach(button=>button.addEventListener('click',()=>{
+    [...cardFilterLevelChoices,...cardFilterPartChoices,...cardFilterUnderstandingChoices,...cardFilterMeaningCountChoices].forEach(button=>button.addEventListener('click',()=>{
       button.classList.toggle('selected');
       syncCardWordFilterGroup(button.closest('.group'));
       syncCardFilterControls();
@@ -1123,9 +1124,11 @@ const COL=Object.freeze({
       const selectedLevels=new Set(cardFilterLevelChoices.filter(choice=>choice.classList.contains('selected')).map(choice=>choice.dataset.value));
       const selectedParts=new Set(cardFilterPartChoices.filter(choice=>choice.classList.contains('selected')).map(choice=>choice.dataset.value));
       const selectedUnderstanding=new Set(cardFilterUnderstandingChoices.filter(choice=>choice.classList.contains('selected')).map(choice=>choice.dataset.understandingFilter));
+      const selectedMeaningCounts=new Set(cardFilterMeaningCountChoices.filter(choice=>choice.classList.contains('selected')).map(choice=>choice.dataset.meaningCountFilter));
       const restrictLevels=selectedLevels.size!==cardFilterLevelChoices.length;
       const restrictParts=selectedParts.size!==cardFilterPartChoices.length;
       const restrictUnderstanding=selectedUnderstanding.size!==cardFilterUnderstandingChoices.length;
+      const restrictMeaningCounts=selectedMeaningCounts.size!==cardFilterMeaningCountChoices.length;
       const understandingByKey=new Map();
       (practiceStored.rows||[]).forEach(example=>{
         const key=vocabularyKey(example);if(!key)return;
@@ -1140,6 +1143,9 @@ const COL=Object.freeze({
         if(restrictParts&&!selectedParts.has(text(row[COL.pos])))return;
         const understandingValues=understandingByKey.get(vocabularyKey(row))||new Set(['未登録']);
         if(restrictUnderstanding&&![...understandingValues].some(value=>selectedUnderstanding.has(value)))return;
+        const meaningCount=(meaningsByKey.get(vocabularyKey(row))||[]).length;
+        const meaningCountFilter=meaningCount===0?'0':meaningCount===1?'1':'multiple';
+        if(restrictMeaningCounts&&!selectedMeaningCounts.has(meaningCountFilter))return;
         starts.push(row);
       });
       const matches=starts;
