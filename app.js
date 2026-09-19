@@ -850,7 +850,7 @@ const COL=Object.freeze({
       practicePart.textContent=part;
       practicePart.className=`practice-meta-chip ${rankTone}`.trim();
       practiceMeaningExampleNumber.textContent=`${meaningNumber}-${exampleLetter}`;
-      practiceMeaningExampleNumber.className=`practice-sub-number practice-meta-chip ${rankTone}`.trim();
+      practiceMeaningExampleNumber.className='practice-sub-number practice-meta-chip is-black-transparent';
       practiceLevels.replaceChildren();
       const levels=[text(row[COL.sLevel]),text(row[COL.wLevel])].filter(Boolean);
       if(!levels.length){
