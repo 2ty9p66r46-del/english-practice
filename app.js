@@ -1192,7 +1192,7 @@ const COL=Object.freeze({
       if(autoPlaying)stopAutoPlayback();
       cardEditorMode=mode;cardEditorRow=row;selectedVocabularyRow=mode==='edit'?row:null;
       cardEditorOverlay.dataset.mode=mode;
-      cardEditorTitle.textContent=mode==='edit'?'例文を編集':'例文を追加';
+      cardEditorTitle.textContent=mode==='edit'?'例文編集':'例文を追加';
       selectedMeaningMode=mode==='edit'?'existing':null;
       cardWordStep.hidden=mode==='edit';
       if(mode==='add')resetCardWordFilters();
