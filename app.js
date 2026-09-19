@@ -480,14 +480,19 @@ const COL=Object.freeze({
     const cardSelectedWord=document.getElementById('cardSelectedWord');
     const cardSelectedWordText=document.getElementById('cardSelectedWordText');
     const cardWordReselect=document.getElementById('cardWordReselect');
+    const cardWordMessage=document.getElementById('cardWordMessage');
     const cardMeaningStep=document.getElementById('cardMeaningStep');
     const cardMeaningResults=document.getElementById('cardMeaningResults');
     const cardMeaningField=document.getElementById('cardMeaningField');
     const cardMeaningNumberBadge=document.getElementById('cardMeaningNumberBadge');
     const cardMeaningInput=document.getElementById('cardMeaningInput');
+    const cardMeaningMessage=document.getElementById('cardMeaningMessage');
+    const cardExampleStep=document.getElementById('cardExampleStep');
     const cardJapaneseInput=document.getElementById('cardJapaneseInput');
     const cardEnglishInput=document.getElementById('cardEnglishInput');
     const cardNoteInput=document.getElementById('cardNoteInput');
+    const cardJapaneseMessage=document.getElementById('cardJapaneseMessage');
+    const cardEnglishMessage=document.getElementById('cardEnglishMessage');
     const cardFilterLevelChoices=[...cardWordFilterPanel.querySelectorAll('.level-group .choice')];
     const cardFilterPartChoices=[...cardWordFilterPanel.querySelectorAll('.part-group .choice:not([data-example-filter])')];
     const cardFilterExampleChoices=[...cardWordFilterPanel.querySelectorAll('[data-example-filter]')];
@@ -1157,7 +1162,6 @@ const COL=Object.freeze({
         button.append(identifiers,summary);
         button.addEventListener('click',()=>{
           selectedVocabularyRow=row;
-          cardWordStep.hidden=true;
           cardWordSearch.value=text(row[COL.word]);cardWordSearch.hidden=true;
           const rank=text(row[COL.posRank]).toUpperCase();
           const rankTone={S:'red',A:'orange',B:'yellow',C:'green',D:'purple'}[rank]||'';
@@ -1165,7 +1169,7 @@ const COL=Object.freeze({
           const partBadge=document.createElement('span');partBadge.className=`practice-meta-chip ${rankTone}`.trim();partBadge.textContent=text(row[COL.pos])||'品詞未登録';
           const wordName=document.createElement('strong');wordName.className='card-selected-word-name';wordName.textContent=text(row[COL.word])||'単語未登録';
           cardSelectedWordText.replaceChildren(numberBadge,partBadge,wordName);cardSelectedWordText.classList.add('is-badged');
-          cardSelectedWord.hidden=false;cardWordResults.hidden=true;cardWordSearch.setAttribute('aria-expanded','false');
+          cardSelectedWord.hidden=false;cardWordMessage.hidden=true;cardWordResults.hidden=true;cardWordSearch.setAttribute('aria-expanded','false');
           renderMeaningResults();
         });
         cardWordResults.append(button);
@@ -1183,9 +1187,16 @@ const COL=Object.freeze({
       if(!matches.length)cardWordResults.append(empty);
       cardWordResults.hidden=false;cardWordSearch.setAttribute('aria-expanded','true');
     };
-    const renderMeaningResults=()=>{
-      cardMeaningResults.replaceChildren();selectedMeaningMode=null;cardMeaningInput.value='';cardMeaningField.hidden=true;
-      cardMeaningNumberBadge.hidden=true;
+    const syncCardEditorMessages=()=>{
+      cardWordMessage.hidden=Boolean(selectedVocabularyRow);
+      cardMeaningMessage.hidden=Boolean(selectedMeaningMode);
+      cardJapaneseMessage.hidden=Boolean(text(cardJapaneseInput.value));
+      cardEnglishMessage.hidden=Boolean(text(cardEnglishInput.value));
+    };
+    const renderMeaningResults=(preserveSelection=false)=>{
+      const preservedMeaning=preserveSelection?text(cardMeaningInput.value):'';
+      cardMeaningResults.replaceChildren();
+      if(!preserveSelection){selectedMeaningMode=null;cardMeaningInput.value='';cardMeaningField.hidden=true;cardMeaningNumberBadge.hidden=true}
       if(!selectedVocabularyRow){cardMeaningStep.hidden=true;return}
       const pairKey=vocabularyKey(selectedVocabularyRow);
       const samePair=(practiceStored.rows||[]).filter(row=>vocabularyKey(row)===pairKey);
@@ -1196,16 +1207,18 @@ const COL=Object.freeze({
       choices.forEach(choice=>{
         const button=document.createElement('button');button.type='button';button.className='card-meaning-option';
         button.textContent=choice.label;
+        if(preserveSelection&&choice.kind==='existing'&&choice.value===preservedMeaning)button.classList.add('selected');
         if(choice.kind==='existing'){const note=document.createElement('small');note.textContent='登録済みの意味';button.append(note)}
         button.addEventListener('click',()=>{
           cardMeaningResults.querySelectorAll('.card-meaning-option').forEach(item=>item.classList.remove('selected'));
           button.classList.add('selected');selectedMeaningMode=choice.kind;cardMeaningInput.value=choice.value;cardMeaningField.hidden=false;
           cardMeaningNumberBadge.className='practice-meta-chip';cardMeaningNumberBadge.textContent=formatSingleDigitNumber(choice.number);cardMeaningNumberBadge.hidden=false;
+          cardExampleStep.hidden=false;syncCardEditorMessages();
           requestAnimationFrame(()=>cardMeaningInput.focus());
         });
         cardMeaningResults.append(button);
       });
-      cardMeaningStep.hidden=false;
+      cardMeaningStep.hidden=false;syncCardEditorMessages();
     };
     const openCardEditor=(mode,row=null)=>{
       if(autoPlaying)stopAutoPlayback();
@@ -1213,7 +1226,7 @@ const COL=Object.freeze({
       cardEditorOverlay.dataset.mode=mode;
       cardEditorTitle.textContent='例文編集';
       selectedMeaningMode=mode==='edit'?'existing':null;
-      cardWordStep.hidden=mode==='edit';
+      cardWordStep.hidden=false;
       if(mode==='add')resetCardWordFilters();
       cardWordSearch.value=mode==='edit'?text(row[COL.word]):'';cardWordSearch.disabled=mode==='edit';cardWordSearch.hidden=mode==='edit';
       cardSelectedWordText.replaceChildren();cardSelectedWordText.classList.toggle('is-badged',mode==='edit');
@@ -1229,7 +1242,7 @@ const COL=Object.freeze({
       }
       cardMeaningNumberBadge.hidden=mode!=='edit';
       cardSelectedWord.hidden=mode!=='edit';
-      cardWordReselect.hidden=mode==='edit';cardMeaningStep.hidden=true;cardMeaningField.hidden=mode==='add';
+      cardWordReselect.hidden=mode==='edit';cardMeaningStep.hidden=mode==='add';cardMeaningField.hidden=mode==='add';cardExampleStep.hidden=mode==='add';
       cardMeaningInput.value=mode==='edit'?text(row[COL.meaning]):'';
       cardJapaneseInput.value=mode==='edit'?text(row[COL.japanese]):'';
       cardEnglishInput.value=mode==='edit'?text(row[COL.english]):'';
@@ -1237,6 +1250,8 @@ const COL=Object.freeze({
       cardWordResults.replaceChildren();cardWordResults.hidden=mode==='edit';
       cardWordSearch.setAttribute('aria-expanded',String(mode!=='edit'));
       cardEditorDelete.hidden=mode!=='edit';
+      syncCardEditorMessages();
+      if(mode==='edit')renderMeaningResults(true);
       const animationRun=++cardEditorAnimationRun;
       cardEditorOverlay.classList.remove('open');
       if(mode==='add')renderWordResults();
@@ -1270,8 +1285,11 @@ const COL=Object.freeze({
     cardWordSearch.addEventListener('input',()=>{if(!cardWordSearch.disabled)renderWordResults()});
     cardWordSearch.addEventListener('focus',()=>{if(!cardWordSearch.disabled)renderWordResults()});
     cardWordReselect.addEventListener('click',()=>{
-      selectedVocabularyRow=null;selectedMeaningMode=null;cardSelectedWord.hidden=true;cardWordStep.hidden=false;cardWordSearch.hidden=false;cardWordSearch.disabled=false;cardWordSearch.value='';cardMeaningStep.hidden=true;cardMeaningField.hidden=true;cardMeaningNumberBadge.hidden=true;cardMeaningInput.value='';renderWordResults();cardWordSearch.focus();
+      selectedVocabularyRow=null;selectedMeaningMode=null;cardSelectedWord.hidden=true;cardWordSearch.hidden=false;cardWordSearch.disabled=false;cardWordSearch.value='';cardMeaningStep.hidden=true;cardMeaningField.hidden=true;cardMeaningNumberBadge.hidden=true;cardMeaningInput.value='';cardExampleStep.hidden=true;syncCardEditorMessages();renderWordResults();cardWordSearch.focus();
     });
+    cardMeaningInput.addEventListener('input',syncCardEditorMessages);
+    cardJapaneseInput.addEventListener('input',syncCardEditorMessages);
+    cardEnglishInput.addEventListener('input',syncCardEditorMessages);
     cardEditorCancel.addEventListener('click',closeCardEditor);
     cardEditorOverlay.addEventListener('click',event=>{if(event.target===cardEditorOverlay)closeCardEditor()});
     const nextNumber=(rows,column)=>Math.max(0,...rows.map(row=>Number.parseInt(text(row[column]),10)||0))+1;
