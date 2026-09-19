@@ -472,7 +472,6 @@ const COL=Object.freeze({
     const cardEditorTitle=document.getElementById('cardEditorTitle');
     const cardEditorCancel=document.getElementById('cardEditorCancel');
     const cardEditorSave=document.getElementById('cardEditorSave');
-    const cardEditorDelete=document.getElementById('cardEditorDelete');
     const cardWordStep=document.getElementById('cardWordStep');
     const cardWordFilterToggle=document.getElementById('cardWordFilterToggle');
     const cardWordFilterPanel=document.getElementById('cardWordFilterPanel');
@@ -1388,7 +1387,6 @@ const COL=Object.freeze({
       cardMeaningInput.value=mode==='edit'?text(row[COL.meaning]):'';
       cardWordResults.replaceChildren();cardWordResults.hidden=mode==='edit';
       cardWordSearch.setAttribute('aria-expanded',String(mode!=='edit'));
-      cardEditorDelete.hidden=mode!=='edit';
       syncCardEditorMessages();
       if(mode==='edit')renderMeaningResults(true);
       const animationRun=++cardEditorAnimationRun;
@@ -1543,10 +1541,6 @@ const COL=Object.freeze({
       }
     };
     cardActionDelete.addEventListener('click',async()=>{const row=cardActionRow;closeCardActions();await deleteCardRow(row)});
-    cardEditorDelete.addEventListener('click',async()=>{
-      const row=cardEditorRow;
-      if(await deleteCardRow(row)){closeCardEditor();setPracticeViewMode('list')}
-    });
     let practiceMoving=false;
     const animatePracticeCard=async(keyframes,options)=>{
       if(!practiceExerciseCard.animate)return;
