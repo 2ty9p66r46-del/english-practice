@@ -479,7 +479,6 @@ const COL=Object.freeze({
     const cardWordSearchRow=document.getElementById('cardWordSearchRow');
     const cardWordSearch=document.getElementById('cardWordSearch');
     const cardWordResults=document.getElementById('cardWordResults');
-    const cardCandidateLabel=document.getElementById('cardCandidateLabel');
     const cardSelectedWord=document.getElementById('cardSelectedWord');
     const cardSelectedWordText=document.getElementById('cardSelectedWordText');
     const cardWordReselect=document.getElementById('cardWordReselect');
@@ -1108,7 +1107,7 @@ const COL=Object.freeze({
       const query=text(cardWordSearch.value).toLowerCase();
       cardWordResults.replaceChildren();
       cardWordResults.onscroll=null;
-      if(cardEditorMode==='edit'||selectedVocabularyRow){cardWordResults.hidden=true;cardCandidateLabel.hidden=true;cardWordSearch.setAttribute('aria-expanded','false');return}
+      if(cardEditorMode==='edit'||selectedVocabularyRow){cardWordResults.hidden=true;cardWordSearch.setAttribute('aria-expanded','false');return}
       const candidates=getVocabularyRows();
       const meaningsByKey=new Map();
       [...(practiceStored.rows||[]),...(practiceStored.vocabularyRows||[])].forEach(row=>{
@@ -1192,13 +1191,13 @@ const COL=Object.freeze({
         button.addEventListener('click',async()=>{
           if(cardWordResults.dataset.switching==='true')return;
           cardWordResults.dataset.switching='true';
-          const fadeTargets=[cardWordMessage,cardWordSearchRow,cardWordFilterPanel,cardCandidateLabel,cardWordResults].filter(target=>!target.hidden&&typeof target.animate==='function');
+          const fadeTargets=[cardWordMessage,cardWordSearchRow,cardWordFilterPanel,cardWordResults].filter(target=>!target.hidden&&typeof target.animate==='function');
           const fadeAnimations=fadeTargets.map(target=>target.animate([{opacity:1},{opacity:0}],{duration:420,easing:'ease-in-out',fill:'forwards'}));
           if(fadeAnimations.length)await Promise.allSettled(fadeAnimations.map(animation=>animation.finished));
           fadeAnimations.forEach(animation=>animation.cancel());
           selectedVocabularyRow=row;
           cardWordStep.classList.add('has-selection');
-          cardWordSearch.value=text(row[COL.word]);cardWordSearchRow.hidden=true;cardCandidateLabel.hidden=true;cardWordFilterPanel.hidden=true;cardWordFilterToggle.setAttribute('aria-expanded','false');
+          cardWordSearch.value=text(row[COL.word]);cardWordSearchRow.hidden=true;cardWordFilterPanel.hidden=true;cardWordFilterToggle.setAttribute('aria-expanded','false');
           const rank=text(row[COL.posRank]).toUpperCase();
           const rankTone={S:'red',A:'orange',B:'yellow',C:'green',D:'purple'}[rank]||'';
           const numberBadge=document.createElement('span');numberBadge.className='practice-list-word-no practice-number';numberBadge.textContent=`No ${formatPracticeNumber(row?.[COL.wordNo],5)}`;
@@ -1225,7 +1224,7 @@ const COL=Object.freeze({
       };
       const empty=document.createElement('p');empty.className='card-word-empty';empty.textContent=query?'この文字で始まる登録済み単語がありません':'追加する単語を候補から選択してください';
       if(!matches.length)cardWordResults.append(empty);
-      cardCandidateLabel.hidden=false;cardWordResults.hidden=false;cardWordSearch.setAttribute('aria-expanded','true');
+      cardWordResults.hidden=false;cardWordSearch.setAttribute('aria-expanded','true');
     };
     const syncCardEditorMessages=()=>{
       cardWordMessage.hidden=Boolean(selectedVocabularyRow);
@@ -1271,7 +1270,7 @@ const COL=Object.freeze({
       selectedMeaningMode=mode==='edit'?'existing':null;
       cardWordStep.hidden=false;
       if(mode==='add')resetCardWordFilters();
-      cardWordSearch.value=mode==='edit'?text(row[COL.word]):'';cardWordSearch.disabled=mode==='edit';cardWordSearchRow.hidden=mode==='edit';cardCandidateLabel.hidden=mode==='edit';
+      cardWordSearch.value=mode==='edit'?text(row[COL.word]):'';cardWordSearch.disabled=mode==='edit';cardWordSearchRow.hidden=mode==='edit';
       cardSelectedWordText.replaceChildren();cardSelectedWordText.classList.toggle('is-badged',mode==='edit');
       if(mode==='edit'){
         const rank=text(row[COL.posRank]).toUpperCase();
@@ -1302,11 +1301,6 @@ const COL=Object.freeze({
       requestAnimationFrame(()=>requestAnimationFrame(()=>{
         if(animationRun!==cardEditorAnimationRun)return;
         cardEditorOverlay.classList.add('open');
-        setTimeout(()=>{
-          if(animationRun!==cardEditorAnimationRun||!cardEditorOverlay.classList.contains('open'))return;
-          if(mode==='add')cardWordSearch.focus({preventScroll:true});
-          else cardJapaneseInput.focus({preventScroll:true});
-        },360);
       }));
     };
     const closeCardEditor=async()=>{
@@ -1328,7 +1322,7 @@ const COL=Object.freeze({
     cardWordSearch.addEventListener('input',()=>{if(!cardWordSearch.disabled)renderWordResults()});
     cardWordSearch.addEventListener('focus',()=>{if(!cardWordSearch.disabled)renderWordResults()});
     cardWordReselect.addEventListener('click',()=>{
-      selectedVocabularyRow=null;selectedMeaningMode=null;cardWordStep.classList.remove('has-selection');cardSelectedWord.hidden=true;cardWordSearchRow.hidden=false;cardCandidateLabel.hidden=false;cardWordSearch.disabled=false;cardWordSearch.value='';cardMeaningStep.hidden=true;cardMeaningField.hidden=true;cardMeaningNumberBadge.hidden=true;cardMeaningInput.value='';cardExampleStep.hidden=true;syncCardEditorMessages();renderWordResults();
+      selectedVocabularyRow=null;selectedMeaningMode=null;cardWordStep.classList.remove('has-selection');cardSelectedWord.hidden=true;cardWordSearchRow.hidden=false;cardWordSearch.disabled=false;cardWordSearch.value='';cardMeaningStep.hidden=true;cardMeaningField.hidden=true;cardMeaningNumberBadge.hidden=true;cardMeaningInput.value='';cardExampleStep.hidden=true;syncCardEditorMessages();renderWordResults();
     });
     cardMeaningInput.addEventListener('input',syncCardEditorMessages);
     cardJapaneseInput.addEventListener('input',syncCardEditorMessages);
