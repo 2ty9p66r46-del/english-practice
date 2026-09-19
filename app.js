@@ -1286,7 +1286,7 @@ const COL=Object.freeze({
         if(choice.kind==='new'){button.classList.add('is-new');button.textContent=choice.label}
         else{
           const number=document.createElement('span');number.className='practice-meta-chip';number.textContent=formatSingleDigitNumber(choice.number);
-          const label=document.createElement('span');label.textContent=choice.label;button.append(number,label);
+          const label=document.createElement('span');label.className='card-meaning-option-text';label.textContent=choice.label;button.append(number,label);
         }
         button.addEventListener('click',async()=>{
           if(choice.kind==='new'){
