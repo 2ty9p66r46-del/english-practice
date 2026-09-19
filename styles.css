@@ -1002,7 +1002,7 @@ body[data-page="home"] .bottom-space{display:none}
 .card-editor-head h2{margin:0;color:#182230;font-size:1rem;text-align:center}.card-editor-head button{height:38px;padding:0 8px;border:0;background:transparent;color:var(--blue);font-size:.8rem;font-weight:800}.card-editor-head button:last-child{text-align:right}
 .card-editor-body{display:grid;gap:15px;min-height:0;overflow-y:auto;padding:18px 16px calc(28px + env(safe-area-inset-bottom))}
 .card-word-step{position:relative;display:grid;gap:9px}.card-word-step[hidden]{display:none!important}
-.card-word-sticky{position:sticky;z-index:6;top:18px;display:grid;gap:9px;padding:12px 0 9px;background:#f4f5f9}
+.card-word-sticky{position:sticky;z-index:6;top:18px;display:grid;gap:9px;margin-bottom:18px;padding:12px 0 9px;background:#f4f5f9}
 .card-word-step-head{display:flex;min-height:32px;align-items:center;gap:9px;color:#526078;font-size:.72rem;font-weight:850}
 .card-word-heading{flex:0 0 auto}
 .card-inline-message{margin-left:7px;color:#d92d45;font-style:normal;font-weight:400}
