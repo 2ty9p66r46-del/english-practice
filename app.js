@@ -474,7 +474,6 @@ const COL=Object.freeze({
     const cardEditorSave=document.getElementById('cardEditorSave');
     const cardEditorDelete=document.getElementById('cardEditorDelete');
     const cardWordStep=document.getElementById('cardWordStep');
-    const cardWordSticky=cardWordStep.querySelector('.card-word-sticky');
     const cardWordFilterToggle=document.getElementById('cardWordFilterToggle');
     const cardWordFilterPanel=document.getElementById('cardWordFilterPanel');
     const cardWordSearchRow=document.getElementById('cardWordSearchRow');
@@ -1059,15 +1058,6 @@ const COL=Object.freeze({
       const choices=[...group.querySelectorAll('.choice')];
       group.querySelector('.all')?.classList.toggle('selected',choices.length>0&&choices.every(choice=>choice.classList.contains('selected')));
     };
-    const preserveCardWordHeaderPosition=change=>{
-      const beforeTop=cardWordSticky.getBoundingClientRect().top;
-      change();
-      const correct=()=>{
-        const difference=cardWordSticky.getBoundingClientRect().top-beforeTop;
-        if(Math.abs(difference)>.5)cardEditorBody.scrollTop+=difference;
-      };
-      correct();requestAnimationFrame(correct);
-    };
     const syncCardFilterControls=()=>{
       cardFilterSections.forEach(section=>{
         const choices=[...section.querySelectorAll('.choice')];
@@ -1206,19 +1196,17 @@ const COL=Object.freeze({
           const fadeAnimations=fadeTargets.map(target=>target.animate([{opacity:1},{opacity:0}],{duration:420,easing:'ease-in-out',fill:'forwards'}));
           if(fadeAnimations.length)await Promise.allSettled(fadeAnimations.map(animation=>animation.finished));
           fadeAnimations.forEach(animation=>animation.cancel());
-          preserveCardWordHeaderPosition(()=>{
-            selectedVocabularyRow=row;
-            cardWordStep.classList.add('has-selection');
-            cardWordSearch.value=text(row[COL.word]);cardWordSearchRow.hidden=true;cardCandidateLabel.hidden=true;cardWordFilterPanel.hidden=true;cardWordFilterToggle.setAttribute('aria-expanded','false');
-            const rank=text(row[COL.posRank]).toUpperCase();
-            const rankTone={S:'red',A:'orange',B:'yellow',C:'green',D:'purple'}[rank]||'';
-            const numberBadge=document.createElement('span');numberBadge.className='practice-list-word-no practice-number';numberBadge.textContent=`No ${formatPracticeNumber(row?.[COL.wordNo],5)}`;
-            const partBadge=document.createElement('span');partBadge.className=`practice-meta-chip ${rankTone}`.trim();partBadge.textContent=text(row[COL.pos])||'品詞未登録';
-            const wordName=document.createElement('strong');wordName.className='card-selected-word-name';wordName.textContent=text(row[COL.word])||'単語未登録';
-            cardSelectedWordText.replaceChildren(numberBadge,partBadge,wordName);cardSelectedWordText.classList.add('is-badged');
-            cardSelectedWord.hidden=false;cardWordMessage.hidden=true;cardWordReselect.hidden=false;cardWordResults.hidden=true;cardWordSearch.setAttribute('aria-expanded','false');
-            renderMeaningResults();
-          });
+          selectedVocabularyRow=row;
+          cardWordStep.classList.add('has-selection');
+          cardWordSearch.value=text(row[COL.word]);cardWordSearchRow.hidden=true;cardCandidateLabel.hidden=true;cardWordFilterPanel.hidden=true;cardWordFilterToggle.setAttribute('aria-expanded','false');
+          const rank=text(row[COL.posRank]).toUpperCase();
+          const rankTone={S:'red',A:'orange',B:'yellow',C:'green',D:'purple'}[rank]||'';
+          const numberBadge=document.createElement('span');numberBadge.className='practice-list-word-no practice-number';numberBadge.textContent=`No ${formatPracticeNumber(row?.[COL.wordNo],5)}`;
+          const partBadge=document.createElement('span');partBadge.className=`practice-meta-chip ${rankTone}`.trim();partBadge.textContent=text(row[COL.pos])||'品詞未登録';
+          const wordName=document.createElement('strong');wordName.className='card-selected-word-name';wordName.textContent=text(row[COL.word])||'単語未登録';
+          cardSelectedWordText.replaceChildren(numberBadge,partBadge,wordName);cardSelectedWordText.classList.add('is-badged');
+          cardSelectedWord.hidden=false;cardWordMessage.hidden=true;cardWordReselect.hidden=false;cardWordResults.hidden=true;cardWordSearch.setAttribute('aria-expanded','false');
+          renderMeaningResults();
           cardWordResults.dataset.switching='false';
           [cardSelectedWord,cardMeaningStep].forEach(target=>{
             if(typeof target.animate==='function')target.animate([{opacity:0},{opacity:1}],{duration:420,easing:'ease-in-out'});
@@ -1340,9 +1328,7 @@ const COL=Object.freeze({
     cardWordSearch.addEventListener('input',()=>{if(!cardWordSearch.disabled)renderWordResults()});
     cardWordSearch.addEventListener('focus',()=>{if(!cardWordSearch.disabled)renderWordResults()});
     cardWordReselect.addEventListener('click',()=>{
-      preserveCardWordHeaderPosition(()=>{
-        selectedVocabularyRow=null;selectedMeaningMode=null;cardWordStep.classList.remove('has-selection');cardSelectedWord.hidden=true;cardWordSearchRow.hidden=false;cardCandidateLabel.hidden=false;cardWordSearch.disabled=false;cardWordSearch.value='';cardMeaningStep.hidden=true;cardMeaningField.hidden=true;cardMeaningNumberBadge.hidden=true;cardMeaningInput.value='';cardExampleStep.hidden=true;syncCardEditorMessages();renderWordResults();
-      });
+      selectedVocabularyRow=null;selectedMeaningMode=null;cardWordStep.classList.remove('has-selection');cardSelectedWord.hidden=true;cardWordSearchRow.hidden=false;cardCandidateLabel.hidden=false;cardWordSearch.disabled=false;cardWordSearch.value='';cardMeaningStep.hidden=true;cardMeaningField.hidden=true;cardMeaningNumberBadge.hidden=true;cardMeaningInput.value='';cardExampleStep.hidden=true;syncCardEditorMessages();renderWordResults();
     });
     cardMeaningInput.addEventListener('input',syncCardEditorMessages);
     cardJapaneseInput.addEventListener('input',syncCardEditorMessages);
