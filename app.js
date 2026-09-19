@@ -1481,7 +1481,7 @@ const COL=Object.freeze({
     cardMeaningReselect.addEventListener('click',async()=>{
       await fadeMeaningTransition([cardSelectedMeaning,cardMeaningChanged,cardMeaningReselect,cardExampleStep],()=>{
         cardMeaningReselect.hidden=true;cardExampleStep.hidden=true;
-        renderMeaningResults(cardEditorMode==='edit');
+        renderMeaningResults(false);
       },[cardMeaningResults,cardMeaningEditActions,cardMeaningMessage]);
     });
     cardMeaningKeep.addEventListener('click',async()=>{
@@ -1510,6 +1510,11 @@ const COL=Object.freeze({
       if(selectedMeaningMode==='new-draft'){
         const duplicate=samePair.find(row=>normalizedMeaning(row[COL.meaning])===normalizedMeaning(value));
         if(duplicate){alert('同じ意味がすでに登録されています。');return}
+        let stagedRow=samePair.find(row=>text(row[COL.meaningNo])===number&&!text(row[COL.meaning]));
+        if(!stagedRow){
+          stagedRow=[...selectedVocabularyRow];let insertIndex=-1;practiceStored.rows.forEach((row,index)=>{if(vocabularyKey(row)===pairKey)insertIndex=index});practiceStored.rows.splice(insertIndex>=0?insertIndex+1:practiceStored.rows.length,0,stagedRow);
+        }
+        stagedRow[COL.meaningNo]=number;stagedRow[COL.meaning]=value;stagedRow[COL.exampleNo]='';stagedRow[COL.japanese]='';stagedRow[COL.english]='';stagedRow[COL.note]='';stagedRow[COL.understanding]='';stagedRow[COL.correctCount]=0;stagedRow[COL.wrongCount]=0;stagedRow[COL.questionCount]=0;cardEditorHasStagedChanges=true;
       }else{
         const original=pendingMeaningChoice||{number:text(cardEditorRow?.[COL.meaningNo]),value:text(cardEditorRow?.[COL.meaning])};
         const oldValue=original.value;
@@ -1517,8 +1522,8 @@ const COL=Object.freeze({
         const others=cardEditorMode==='edit'?samePair.filter(row=>row!==cardEditorRow):samePair;
         const duplicate=others.find(row=>text(row[COL.meaningNo])!==currentNumber&&normalizedMeaning(row[COL.meaning])===normalizedMeaning(value));
         if(duplicate){alert('同じ意味がすでに登録されています。');return}
-        if(value!==oldValue&&(cardEditorMode==='add'||others.some(row=>text(row[COL.meaningNo])===currentNumber)))number=String(nextNumber(samePair,COL.meaningNo));
-        else number=currentNumber;
+        number=currentNumber;
+        if(value!==oldValue){samePair.filter(row=>text(row[COL.meaningNo])===currentNumber).forEach(row=>{row[COL.meaning]=value});cardEditorHasStagedChanges=true}
         changed=value!==oldValue;mode=changed?'changed':'unchanged';
       }
       await fadeMeaningTransition([cardMeaningField,cardMeaningConfirm,cardMeaningMessage],()=>{
