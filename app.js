@@ -497,6 +497,7 @@ const COL=Object.freeze({
     const cardMeaningEditActions=document.getElementById('cardMeaningEditActions');
     const cardMeaningKeep=document.getElementById('cardMeaningKeep');
     const cardMeaningChange=document.getElementById('cardMeaningChange');
+    const cardMeaningReselect=document.getElementById('cardMeaningReselect');
     const cardExampleStep=document.getElementById('cardExampleStep');
     const cardJapaneseInput=document.getElementById('cardJapaneseInput');
     const cardEnglishInput=document.getElementById('cardEnglishInput');
@@ -1266,10 +1267,11 @@ const COL=Object.freeze({
       cardSelectedMeaningText.textContent=value;
       cardSelectedMeaning.hidden=false;
       cardMeaningChanged.hidden=!changed;
+      cardMeaningReselect.hidden=false;
     };
     const renderMeaningResults=(preserveSelection=false)=>{
       cardMeaningResults.replaceChildren();
-      cardMeaningResults.hidden=false;cardSelectedMeaning.hidden=true;cardMeaningChanged.hidden=true;cardMeaningEditActions.hidden=true;cardMeaningConfirm.hidden=true;
+      cardMeaningResults.hidden=false;cardSelectedMeaning.hidden=true;cardMeaningChanged.hidden=true;cardMeaningEditActions.hidden=true;cardMeaningConfirm.hidden=true;cardMeaningReselect.hidden=true;
       if(!preserveSelection){selectedMeaningMode=null;cardMeaningInput.value='';cardMeaningField.hidden=true;cardMeaningNumberBadge.hidden=true}
       if(!selectedVocabularyRow){cardMeaningStep.hidden=true;return}
       const pairKey=vocabularyKey(selectedVocabularyRow);
@@ -1373,7 +1375,13 @@ const COL=Object.freeze({
     cardWordSearch.addEventListener('input',()=>{if(!cardWordSearch.disabled)renderWordResults()});
     cardWordSearch.addEventListener('focus',()=>{if(!cardWordSearch.disabled)renderWordResults()});
     cardWordReselect.addEventListener('click',()=>{
-      selectedVocabularyRow=null;selectedMeaningMode=null;cardWordStep.classList.remove('has-selection');cardSelectedWord.hidden=true;cardWordSearchRow.hidden=false;cardWordSearch.disabled=false;cardWordSearch.value='';cardMeaningStep.hidden=true;cardMeaningField.hidden=true;cardMeaningNumberBadge.hidden=true;cardMeaningConfirm.hidden=true;cardSelectedMeaning.hidden=true;cardMeaningChanged.hidden=true;cardMeaningEditActions.hidden=true;cardMeaningInput.value='';cardExampleStep.hidden=true;syncCardEditorMessages();renderWordResults();
+      selectedVocabularyRow=null;selectedMeaningMode=null;cardWordStep.classList.remove('has-selection');cardSelectedWord.hidden=true;cardWordSearchRow.hidden=false;cardWordSearch.disabled=false;cardWordSearch.value='';cardMeaningStep.hidden=true;cardMeaningField.hidden=true;cardMeaningNumberBadge.hidden=true;cardMeaningConfirm.hidden=true;cardSelectedMeaning.hidden=true;cardMeaningChanged.hidden=true;cardMeaningEditActions.hidden=true;cardMeaningReselect.hidden=true;cardMeaningInput.value='';cardExampleStep.hidden=true;syncCardEditorMessages();renderWordResults();
+    });
+    cardMeaningReselect.addEventListener('click',async()=>{
+      await fadeMeaningTransition([cardSelectedMeaning,cardMeaningChanged,cardMeaningReselect,cardExampleStep],()=>{
+        cardMeaningReselect.hidden=true;cardExampleStep.hidden=true;
+        renderMeaningResults(cardEditorMode==='edit');
+      },[cardMeaningResults,cardMeaningEditActions,cardMeaningMessage]);
     });
     cardMeaningKeep.addEventListener('click',async()=>{
       await fadeMeaningTransition([cardMeaningEditActions,cardMeaningMessage],()=>{
