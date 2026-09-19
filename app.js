@@ -1150,6 +1150,7 @@ const COL=Object.freeze({
           cardWordStep.hidden=true;
           cardWordSearch.value=text(row[COL.word]);cardWordSearch.hidden=true;
           const levels=[text(row[COL.sLevel]),text(row[COL.wLevel])].filter(Boolean).join(' / ')||'S/W未登録';
+          cardSelectedWordText.classList.remove('is-badged');
           cardSelectedWordText.textContent=`${text(row[COL.word])}　No ${formatPracticeNumber(row[COL.wordNo],5)}-${formatPracticeNumber(row[COL.posNo],2)}　${text(row[COL.pos])||'品詞未登録'}　${levels}`;
           cardSelectedWord.hidden=false;cardWordResults.hidden=true;cardWordSearch.setAttribute('aria-expanded','false');
           renderMeaningResults();
@@ -1197,7 +1198,15 @@ const COL=Object.freeze({
       cardWordStep.hidden=mode==='edit';
       if(mode==='add')resetCardWordFilters();
       cardWordSearch.value=mode==='edit'?text(row[COL.word]):'';cardWordSearch.disabled=mode==='edit';cardWordSearch.hidden=mode==='edit';
-      cardSelectedWordText.textContent=mode==='edit'?`${text(row[COL.word])}　No ${formatCardNumber(row)}　${text(row[COL.pos])||'品詞未登録'}`:'';
+      cardSelectedWordText.replaceChildren();cardSelectedWordText.classList.toggle('is-badged',mode==='edit');
+      if(mode==='edit'){
+        const rank=text(row[COL.posRank]).toUpperCase();
+        const rankTone={S:'red',A:'orange',B:'yellow',C:'green',D:'purple'}[rank]||'';
+        const numberBadge=document.createElement('span');numberBadge.className='practice-list-word-no practice-number';numberBadge.textContent=formatPracticeNumber(row?.[COL.wordNo],5);
+        const partBadge=document.createElement('span');partBadge.className=`practice-meta-chip ${rankTone}`.trim();partBadge.textContent=text(row[COL.pos])||'品詞未登録';
+        const wordName=document.createElement('strong');wordName.className='card-selected-word-name';wordName.textContent=text(row[COL.word])||'単語未登録';
+        cardSelectedWordText.append(numberBadge,partBadge,wordName);
+      }
       cardSelectedWord.hidden=mode!=='edit';
       cardWordReselect.hidden=mode==='edit';cardMeaningStep.hidden=true;cardMeaningField.hidden=mode==='add';
       cardMeaningInput.value=mode==='edit'?text(row[COL.meaning]):'';
