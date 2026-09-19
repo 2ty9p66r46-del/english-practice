@@ -1159,9 +1159,12 @@ const COL=Object.freeze({
           selectedVocabularyRow=row;
           cardWordStep.hidden=true;
           cardWordSearch.value=text(row[COL.word]);cardWordSearch.hidden=true;
-          const levels=[text(row[COL.sLevel]),text(row[COL.wLevel])].filter(Boolean).join(' / ')||'S/W未登録';
-          cardSelectedWordText.classList.remove('is-badged');
-          cardSelectedWordText.textContent=`${text(row[COL.word])}　No ${formatPracticeNumber(row[COL.wordNo],5)}-${formatPracticeNumber(row[COL.posNo],2)}　${text(row[COL.pos])||'品詞未登録'}　${levels}`;
+          const rank=text(row[COL.posRank]).toUpperCase();
+          const rankTone={S:'red',A:'orange',B:'yellow',C:'green',D:'purple'}[rank]||'';
+          const numberBadge=document.createElement('span');numberBadge.className='practice-list-word-no practice-number';numberBadge.textContent=`No ${formatPracticeNumber(row?.[COL.wordNo],5)}`;
+          const partBadge=document.createElement('span');partBadge.className=`practice-meta-chip ${rankTone}`.trim();partBadge.textContent=text(row[COL.pos])||'品詞未登録';
+          const wordName=document.createElement('strong');wordName.className='card-selected-word-name';wordName.textContent=text(row[COL.word])||'単語未登録';
+          cardSelectedWordText.replaceChildren(numberBadge,partBadge,wordName);cardSelectedWordText.classList.add('is-badged');
           cardSelectedWord.hidden=false;cardWordResults.hidden=true;cardWordSearch.setAttribute('aria-expanded','false');
           renderMeaningResults();
         });
@@ -1182,10 +1185,14 @@ const COL=Object.freeze({
     };
     const renderMeaningResults=()=>{
       cardMeaningResults.replaceChildren();selectedMeaningMode=null;cardMeaningInput.value='';cardMeaningField.hidden=true;
+      cardMeaningNumberBadge.hidden=true;
       if(!selectedVocabularyRow){cardMeaningStep.hidden=true;return}
       const pairKey=vocabularyKey(selectedVocabularyRow);
-      const meanings=[...new Set((practiceStored.rows||[]).filter(row=>vocabularyKey(row)===pairKey).map(row=>text(row[COL.meaning])).filter(Boolean))];
-      const choices=[{value:'',label:'新しい意味を登録',kind:'new'},...meanings.map(value=>({value,label:value,kind:'existing'}))];
+      const samePair=(practiceStored.rows||[]).filter(row=>vocabularyKey(row)===pairKey);
+      const meaningMap=new Map();
+      samePair.forEach(row=>{const value=text(row[COL.meaning]);if(value&&!meaningMap.has(value))meaningMap.set(value,text(row[COL.meaningNo]))});
+      const meanings=[...meaningMap].map(([value,number])=>({value,label:value,number,kind:'existing'})).sort((a,b)=>(Number(a.number)||Number.MAX_SAFE_INTEGER)-(Number(b.number)||Number.MAX_SAFE_INTEGER));
+      const choices=[{value:'',label:'新しい意味を登録',number:String(nextNumber(samePair,COL.meaningNo)),kind:'new'},...meanings];
       choices.forEach(choice=>{
         const button=document.createElement('button');button.type='button';button.className='card-meaning-option';
         button.textContent=choice.label;
@@ -1193,6 +1200,9 @@ const COL=Object.freeze({
         button.addEventListener('click',()=>{
           cardMeaningResults.querySelectorAll('.card-meaning-option').forEach(item=>item.classList.remove('selected'));
           button.classList.add('selected');selectedMeaningMode=choice.kind;cardMeaningInput.value=choice.value;cardMeaningField.hidden=false;
+          const rank=text(selectedVocabularyRow[COL.posRank]).toUpperCase();
+          const rankTone={S:'red',A:'orange',B:'yellow',C:'green',D:'purple'}[rank]||'';
+          cardMeaningNumberBadge.className=`practice-meta-chip ${rankTone}`.trim();cardMeaningNumberBadge.textContent=`${formatSingleDigitNumber(choice.number)}-`;cardMeaningNumberBadge.hidden=false;
           requestAnimationFrame(()=>cardMeaningInput.focus());
         });
         cardMeaningResults.append(button);
@@ -1203,7 +1213,7 @@ const COL=Object.freeze({
       if(autoPlaying)stopAutoPlayback();
       cardEditorMode=mode;cardEditorRow=row;selectedVocabularyRow=mode==='edit'?row:null;
       cardEditorOverlay.dataset.mode=mode;
-      cardEditorTitle.textContent=mode==='edit'?'例文編集':'例文を追加';
+      cardEditorTitle.textContent='例文編集';
       selectedMeaningMode=mode==='edit'?'existing':null;
       cardWordStep.hidden=mode==='edit';
       if(mode==='add')resetCardWordFilters();
@@ -1262,7 +1272,7 @@ const COL=Object.freeze({
     cardWordSearch.addEventListener('input',()=>{if(!cardWordSearch.disabled)renderWordResults()});
     cardWordSearch.addEventListener('focus',()=>{if(!cardWordSearch.disabled)renderWordResults()});
     cardWordReselect.addEventListener('click',()=>{
-      selectedVocabularyRow=null;selectedMeaningMode=null;cardSelectedWord.hidden=true;cardWordStep.hidden=false;cardWordSearch.hidden=false;cardWordSearch.disabled=false;cardWordSearch.value='';cardMeaningStep.hidden=true;cardMeaningField.hidden=true;cardMeaningInput.value='';renderWordResults();cardWordSearch.focus();
+      selectedVocabularyRow=null;selectedMeaningMode=null;cardSelectedWord.hidden=true;cardWordStep.hidden=false;cardWordSearch.hidden=false;cardWordSearch.disabled=false;cardWordSearch.value='';cardMeaningStep.hidden=true;cardMeaningField.hidden=true;cardMeaningNumberBadge.hidden=true;cardMeaningInput.value='';renderWordResults();cardWordSearch.focus();
     });
     cardEditorCancel.addEventListener('click',closeCardEditor);
     cardEditorOverlay.addEventListener('click',event=>{if(event.target===cardEditorOverlay)closeCardEditor()});
