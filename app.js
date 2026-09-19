@@ -488,7 +488,15 @@ const COL=Object.freeze({
     const cardMeaningField=document.getElementById('cardMeaningField');
     const cardMeaningNumberBadge=document.getElementById('cardMeaningNumberBadge');
     const cardMeaningInput=document.getElementById('cardMeaningInput');
+    const cardMeaningConfirm=document.getElementById('cardMeaningConfirm');
     const cardMeaningMessage=document.getElementById('cardMeaningMessage');
+    const cardSelectedMeaning=document.getElementById('cardSelectedMeaning');
+    const cardSelectedMeaningNumber=document.getElementById('cardSelectedMeaningNumber');
+    const cardSelectedMeaningText=document.getElementById('cardSelectedMeaningText');
+    const cardMeaningChanged=document.getElementById('cardMeaningChanged');
+    const cardMeaningEditActions=document.getElementById('cardMeaningEditActions');
+    const cardMeaningKeep=document.getElementById('cardMeaningKeep');
+    const cardMeaningChange=document.getElementById('cardMeaningChange');
     const cardExampleStep=document.getElementById('cardExampleStep');
     const cardJapaneseInput=document.getElementById('cardJapaneseInput');
     const cardEnglishInput=document.getElementById('cardEnglishInput');
@@ -1240,13 +1248,28 @@ const COL=Object.freeze({
     const syncCardEditorMessages=()=>{
       cardWordMessage.hidden=Boolean(selectedVocabularyRow);
       cardWordReselect.hidden=!selectedVocabularyRow||cardEditorMode==='edit';
-      cardMeaningMessage.hidden=Boolean(selectedMeaningMode);
+      const meaningConfirmed=['new','existing','unchanged','changed'].includes(selectedMeaningMode);
+      cardMeaningMessage.hidden=meaningConfirmed||Boolean(text(cardMeaningInput.value));
       cardJapaneseMessage.hidden=Boolean(text(cardJapaneseInput.value));
       cardEnglishMessage.hidden=Boolean(text(cardEnglishInput.value));
     };
+    const fadeMeaningTransition=async(outTargets,change,inTargets)=>{
+      const outgoing=outTargets.filter(target=>target&&!target.hidden&&typeof target.animate==='function');
+      const fades=outgoing.map(target=>target.animate([{opacity:1},{opacity:0}],{duration:420,easing:'ease-in-out',fill:'forwards'}));
+      if(fades.length)await Promise.allSettled(fades.map(animation=>animation.finished));
+      fades.forEach(animation=>animation.cancel());
+      change();
+      inTargets.filter(target=>target&&!target.hidden&&typeof target.animate==='function').forEach(target=>target.animate([{opacity:0},{opacity:1}],{duration:420,easing:'ease-in-out'}));
+    };
+    const showSelectedMeaning=(number,value,changed=false)=>{
+      cardSelectedMeaningNumber.textContent=formatSingleDigitNumber(number);
+      cardSelectedMeaningText.textContent=value;
+      cardSelectedMeaning.hidden=false;
+      cardMeaningChanged.hidden=!changed;
+    };
     const renderMeaningResults=(preserveSelection=false)=>{
-      const preservedMeaning=preserveSelection?text(cardMeaningInput.value):'';
       cardMeaningResults.replaceChildren();
+      cardMeaningResults.hidden=false;cardSelectedMeaning.hidden=true;cardMeaningChanged.hidden=true;cardMeaningEditActions.hidden=true;cardMeaningConfirm.hidden=true;
       if(!preserveSelection){selectedMeaningMode=null;cardMeaningInput.value='';cardMeaningField.hidden=true;cardMeaningNumberBadge.hidden=true}
       if(!selectedVocabularyRow){cardMeaningStep.hidden=true;return}
       const pairKey=vocabularyKey(selectedVocabularyRow);
@@ -1254,18 +1277,30 @@ const COL=Object.freeze({
       const meaningMap=new Map();
       samePair.forEach(row=>{const value=text(row[COL.meaning]);if(value&&!meaningMap.has(value))meaningMap.set(value,text(row[COL.meaningNo]))});
       const meanings=[...meaningMap].map(([value,number])=>({value,label:value,number,kind:'existing'})).sort((a,b)=>(Number(a.number)||Number.MAX_SAFE_INTEGER)-(Number(b.number)||Number.MAX_SAFE_INTEGER));
-      const choices=[{value:'',label:'新しい意味を登録',number:String(nextNumber(samePair,COL.meaningNo)),kind:'new'},...meanings];
+      if(preserveSelection){
+        cardMeaningResults.hidden=true;cardMeaningField.hidden=true;cardMeaningNumberBadge.hidden=true;cardMeaningEditActions.hidden=false;cardExampleStep.hidden=true;selectedMeaningMode=null;syncCardEditorMessages();cardMeaningStep.hidden=false;return;
+      }
+      const choices=[{value:'',label:'新規登録',number:String(nextNumber(samePair,COL.meaningNo)),kind:'new'},...meanings];
       choices.forEach(choice=>{
         const button=document.createElement('button');button.type='button';button.className='card-meaning-option';
-        button.textContent=choice.label;
-        if(preserveSelection&&choice.kind==='existing'&&choice.value===preservedMeaning)button.classList.add('selected');
-        if(choice.kind==='existing'){const note=document.createElement('small');note.textContent='登録済みの意味';button.append(note)}
-        button.addEventListener('click',()=>{
-          cardMeaningResults.querySelectorAll('.card-meaning-option').forEach(item=>item.classList.remove('selected'));
-          button.classList.add('selected');selectedMeaningMode=choice.kind;cardMeaningInput.value=choice.value;cardMeaningField.hidden=false;
-          cardMeaningNumberBadge.className='practice-meta-chip';cardMeaningNumberBadge.textContent=formatSingleDigitNumber(choice.number);cardMeaningNumberBadge.hidden=false;
-          cardExampleStep.hidden=false;syncCardEditorMessages();
-          requestAnimationFrame(()=>cardMeaningInput.focus());
+        if(choice.kind==='new'){button.classList.add('is-new');button.textContent=choice.label}
+        else{
+          const number=document.createElement('span');number.className='practice-meta-chip';number.textContent=formatSingleDigitNumber(choice.number);
+          const label=document.createElement('span');label.textContent=choice.label;button.append(number,label);
+        }
+        button.addEventListener('click',async()=>{
+          if(choice.kind==='new'){
+            await fadeMeaningTransition([cardMeaningResults],()=>{
+              selectedMeaningMode='new-draft';cardMeaningInput.value='';cardMeaningResults.hidden=true;cardMeaningField.hidden=false;
+              cardMeaningNumberBadge.className='practice-meta-chip';cardMeaningNumberBadge.textContent=formatSingleDigitNumber(choice.number);cardMeaningNumberBadge.hidden=false;
+              cardMeaningConfirm.textContent='この意味で登録';cardMeaningConfirm.hidden=false;cardExampleStep.hidden=true;syncCardEditorMessages();
+            },[cardMeaningField,cardMeaningConfirm,cardMeaningMessage]);
+          }else{
+            await fadeMeaningTransition([cardMeaningResults,cardMeaningMessage],()=>{
+              selectedMeaningMode='existing';cardMeaningInput.value=choice.value;cardMeaningResults.hidden=true;cardMeaningField.hidden=true;cardMeaningConfirm.hidden=true;
+              showSelectedMeaning(choice.number,choice.value);cardExampleStep.hidden=false;syncCardEditorMessages();
+            },[cardSelectedMeaning,cardExampleStep]);
+          }
         });
         cardMeaningResults.append(button);
       });
@@ -1338,7 +1373,46 @@ const COL=Object.freeze({
     cardWordSearch.addEventListener('input',()=>{if(!cardWordSearch.disabled)renderWordResults()});
     cardWordSearch.addEventListener('focus',()=>{if(!cardWordSearch.disabled)renderWordResults()});
     cardWordReselect.addEventListener('click',()=>{
-      selectedVocabularyRow=null;selectedMeaningMode=null;cardWordStep.classList.remove('has-selection');cardSelectedWord.hidden=true;cardWordSearchRow.hidden=false;cardWordSearch.disabled=false;cardWordSearch.value='';cardMeaningStep.hidden=true;cardMeaningField.hidden=true;cardMeaningNumberBadge.hidden=true;cardMeaningInput.value='';cardExampleStep.hidden=true;syncCardEditorMessages();renderWordResults();
+      selectedVocabularyRow=null;selectedMeaningMode=null;cardWordStep.classList.remove('has-selection');cardSelectedWord.hidden=true;cardWordSearchRow.hidden=false;cardWordSearch.disabled=false;cardWordSearch.value='';cardMeaningStep.hidden=true;cardMeaningField.hidden=true;cardMeaningNumberBadge.hidden=true;cardMeaningConfirm.hidden=true;cardSelectedMeaning.hidden=true;cardMeaningChanged.hidden=true;cardMeaningEditActions.hidden=true;cardMeaningInput.value='';cardExampleStep.hidden=true;syncCardEditorMessages();renderWordResults();
+    });
+    cardMeaningKeep.addEventListener('click',async()=>{
+      await fadeMeaningTransition([cardMeaningEditActions,cardMeaningMessage],()=>{
+        selectedMeaningMode='unchanged';cardMeaningInput.value=text(cardEditorRow?.[COL.meaning]);cardMeaningEditActions.hidden=true;
+        showSelectedMeaning(cardEditorRow?.[COL.meaningNo],cardMeaningInput.value);cardExampleStep.hidden=false;syncCardEditorMessages();
+      },[cardSelectedMeaning,cardExampleStep]);
+    });
+    cardMeaningChange.addEventListener('click',async()=>{
+      await fadeMeaningTransition([cardMeaningEditActions],()=>{
+        selectedMeaningMode='change-draft';cardMeaningEditActions.hidden=true;cardMeaningInput.value=text(cardEditorRow?.[COL.meaning]);
+        cardMeaningNumberBadge.className='practice-meta-chip';cardMeaningNumberBadge.textContent=formatSingleDigitNumber(cardEditorRow?.[COL.meaningNo]);cardMeaningNumberBadge.hidden=false;
+        cardMeaningField.hidden=false;cardMeaningConfirm.textContent='この意味に変更';cardMeaningConfirm.hidden=false;cardExampleStep.hidden=true;syncCardEditorMessages();
+      },[cardMeaningField,cardMeaningConfirm]);
+    });
+    cardMeaningConfirm.addEventListener('click',async()=>{
+      const value=text(cardMeaningInput.value);
+      if(!value){syncCardEditorMessages();return}
+      const pairKey=vocabularyKey(selectedVocabularyRow);
+      const samePair=(practiceStored.rows||[]).filter(row=>vocabularyKey(row)===pairKey);
+      let number=text(cardMeaningNumberBadge.textContent);
+      let mode='new';
+      let changed=false;
+      if(selectedMeaningMode==='new-draft'){
+        const existing=samePair.find(row=>text(row[COL.meaning])===value);
+        if(existing){number=text(existing[COL.meaningNo]);mode='existing'}
+      }else{
+        const oldValue=text(cardEditorRow?.[COL.meaning]);
+        const currentNumber=text(cardEditorRow?.[COL.meaningNo]);
+        const others=samePair.filter(row=>row!==cardEditorRow);
+        const existing=others.find(row=>text(row[COL.meaning])===value);
+        if(existing)number=text(existing[COL.meaningNo]);
+        else if(value!==oldValue&&others.some(row=>text(row[COL.meaningNo])===currentNumber))number=String(nextNumber(samePair,COL.meaningNo));
+        else number=currentNumber;
+        changed=value!==oldValue;mode=changed?'changed':'unchanged';
+      }
+      await fadeMeaningTransition([cardMeaningField,cardMeaningConfirm,cardMeaningMessage],()=>{
+        selectedMeaningMode=mode;cardMeaningField.hidden=true;cardMeaningConfirm.hidden=true;
+        showSelectedMeaning(number,value,changed);cardExampleStep.hidden=false;syncCardEditorMessages();
+      },[cardSelectedMeaning,cardMeaningChanged,cardExampleStep]);
     });
     cardMeaningInput.addEventListener('input',syncCardEditorMessages);
     cardJapaneseInput.addEventListener('input',syncCardEditorMessages);
@@ -1349,7 +1423,7 @@ const COL=Object.freeze({
     cardEditorSave.addEventListener('click',async()=>{
       const meaning=text(cardMeaningInput.value),japanese=text(cardJapaneseInput.value),english=text(cardEnglishInput.value),note=text(cardNoteInput.value);
       if(!selectedVocabularyRow){alert('登録済みの単語を選択してください。');return}
-      if(cardEditorMode==='add'&&!selectedMeaningMode){alert('意味を選択してください。');return}
+      if(!['new','existing','unchanged','changed'].includes(selectedMeaningMode)){alert('意味を入力してください。');return}
       if(!meaning||!japanese||!english){alert('意味・日本語文・英文を入力してください。');return}
       cardEditorSave.disabled=true;
       try{
