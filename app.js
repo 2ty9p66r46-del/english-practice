@@ -1054,6 +1054,7 @@ const COL=Object.freeze({
     let cardEditorRow=null;
     let selectedVocabularyRow=null;
     let selectedMeaningMode=null;
+    let pendingMeaningChoice=null;
     let cardEditorAnimationRun=0;
     const closeCardActions=()=>{cardActionsOverlay.hidden=true;cardActionRow=null};
     const openCardActions=row=>{
@@ -1262,16 +1263,16 @@ const COL=Object.freeze({
       change();
       inTargets.filter(target=>target&&!target.hidden&&typeof target.animate==='function').forEach(target=>target.animate([{opacity:0},{opacity:1}],{duration:420,easing:'ease-in-out'}));
     };
-    const showSelectedMeaning=(number,value,changed=false)=>{
+    const showSelectedMeaning=(number,value,changed=false,showReselect=true)=>{
       cardSelectedMeaningNumber.textContent=formatSingleDigitNumber(number);
       cardSelectedMeaningText.textContent=value;
       cardSelectedMeaning.hidden=false;
       cardMeaningChanged.hidden=!changed;
-      cardMeaningReselect.hidden=false;
+      cardMeaningReselect.hidden=!showReselect;
     };
     const renderMeaningResults=(preserveSelection=false)=>{
       cardMeaningResults.replaceChildren();
-      cardMeaningResults.hidden=false;cardSelectedMeaning.hidden=true;cardMeaningChanged.hidden=true;cardMeaningEditActions.hidden=true;cardMeaningConfirm.hidden=true;cardMeaningReselect.hidden=true;
+      pendingMeaningChoice=null;cardMeaningResults.hidden=false;cardSelectedMeaning.hidden=true;cardMeaningChanged.hidden=true;cardMeaningEditActions.hidden=true;cardMeaningConfirm.hidden=true;cardMeaningReselect.hidden=true;
       cardMeaningStep.classList.toggle('is-choosing',!preserveSelection);
       if(!preserveSelection){selectedMeaningMode=null;cardMeaningInput.value='';cardMeaningField.hidden=true;cardMeaningNumberBadge.hidden=true}
       if(!selectedVocabularyRow){cardMeaningStep.hidden=true;return}
@@ -1281,7 +1282,9 @@ const COL=Object.freeze({
       samePair.forEach(row=>{const value=text(row[COL.meaning]);if(value&&!meaningMap.has(value))meaningMap.set(value,text(row[COL.meaningNo]))});
       const meanings=[...meaningMap].map(([value,number])=>({value,label:value,number,kind:'existing'})).sort((a,b)=>(Number(a.number)||Number.MAX_SAFE_INTEGER)-(Number(b.number)||Number.MAX_SAFE_INTEGER));
       if(preserveSelection){
-        cardMeaningStep.classList.remove('is-choosing');cardMeaningResults.hidden=true;cardMeaningField.hidden=true;cardMeaningNumberBadge.hidden=true;cardMeaningEditActions.hidden=false;cardExampleStep.hidden=true;selectedMeaningMode=null;syncCardEditorMessages();cardMeaningStep.hidden=false;return;
+        pendingMeaningChoice={number:text(cardEditorRow?.[COL.meaningNo]),value:text(cardEditorRow?.[COL.meaning])};
+        cardMeaningStep.classList.remove('is-choosing');cardMeaningResults.hidden=true;cardMeaningField.hidden=true;cardMeaningNumberBadge.hidden=true;cardMeaningEditActions.hidden=false;cardExampleStep.hidden=true;selectedMeaningMode='existing-choice';
+        showSelectedMeaning(pendingMeaningChoice.number,pendingMeaningChoice.value,false,false);syncCardEditorMessages();cardMeaningStep.hidden=false;return;
       }
       const choices=[{value:'',label:'新規登録',number:String(nextNumber(samePair,COL.meaningNo)),kind:'new'},...meanings];
       choices.forEach(choice=>{
@@ -1300,9 +1303,9 @@ const COL=Object.freeze({
             },[cardMeaningField,cardMeaningConfirm,cardMeaningMessage]);
           }else{
             await fadeMeaningTransition([cardMeaningResults,cardMeaningMessage],()=>{
-              cardMeaningStep.classList.remove('is-choosing');selectedMeaningMode='existing';cardMeaningInput.value=choice.value;cardMeaningResults.hidden=true;cardMeaningField.hidden=true;cardMeaningConfirm.hidden=true;
-              showSelectedMeaning(choice.number,choice.value);cardExampleStep.hidden=false;syncCardEditorMessages();
-            },[cardSelectedMeaning,cardExampleStep]);
+              cardMeaningStep.classList.remove('is-choosing');selectedMeaningMode='existing-choice';pendingMeaningChoice={number:choice.number,value:choice.value};cardMeaningInput.value=choice.value;cardMeaningResults.hidden=true;cardMeaningField.hidden=true;cardMeaningConfirm.hidden=true;
+              showSelectedMeaning(choice.number,choice.value,false,false);cardMeaningEditActions.hidden=false;cardExampleStep.hidden=true;syncCardEditorMessages();
+            },[cardSelectedMeaning,cardMeaningEditActions]);
           }
         });
         cardMeaningResults.append(button);
@@ -1315,7 +1318,7 @@ const COL=Object.freeze({
       cardWordStep.classList.toggle('has-selection',mode==='edit');
       cardEditorOverlay.dataset.mode=mode;
       cardEditorTitle.textContent='例文編集';
-      cardEditorBody.scrollTop=0;
+      cardEditorBody.scrollTop=0;pendingMeaningChoice=null;
       selectedMeaningMode=mode==='edit'?'existing':null;
       cardWordStep.hidden=false;
       if(mode==='add')resetCardWordFilters();
@@ -1362,7 +1365,7 @@ const COL=Object.freeze({
       cardEditorOverlay.classList.remove('open');
       await wait(340);
       if(animationRun!==cardEditorAnimationRun)return;
-      cardEditorOverlay.hidden=true;cardEditorRow=null;selectedVocabularyRow=null;selectedMeaningMode=null;
+      cardEditorOverlay.hidden=true;cardEditorRow=null;selectedVocabularyRow=null;selectedMeaningMode=null;pendingMeaningChoice=null;
     };
     const refreshPracticeAfterMutation=()=>{
       practiceRows=getMatchingRows(practiceStored?.rows||[]);
@@ -1376,7 +1379,7 @@ const COL=Object.freeze({
     cardWordSearch.addEventListener('input',()=>{if(!cardWordSearch.disabled)renderWordResults()});
     cardWordSearch.addEventListener('focus',()=>{if(!cardWordSearch.disabled)renderWordResults()});
     cardWordReselect.addEventListener('click',()=>{
-      selectedVocabularyRow=null;selectedMeaningMode=null;cardWordStep.classList.remove('has-selection');cardSelectedWord.hidden=true;cardWordSearchRow.hidden=false;cardWordSearch.disabled=false;cardWordSearch.value='';cardMeaningStep.classList.remove('is-choosing');cardMeaningStep.hidden=true;cardMeaningField.hidden=true;cardMeaningNumberBadge.hidden=true;cardMeaningConfirm.hidden=true;cardSelectedMeaning.hidden=true;cardMeaningChanged.hidden=true;cardMeaningEditActions.hidden=true;cardMeaningReselect.hidden=true;cardMeaningInput.value='';cardExampleStep.hidden=true;syncCardEditorMessages();renderWordResults();
+      selectedVocabularyRow=null;selectedMeaningMode=null;pendingMeaningChoice=null;cardWordStep.classList.remove('has-selection');cardSelectedWord.hidden=true;cardWordSearchRow.hidden=false;cardWordSearch.disabled=false;cardWordSearch.value='';cardMeaningStep.classList.remove('is-choosing');cardMeaningStep.hidden=true;cardMeaningField.hidden=true;cardMeaningNumberBadge.hidden=true;cardMeaningConfirm.hidden=true;cardSelectedMeaning.hidden=true;cardMeaningChanged.hidden=true;cardMeaningEditActions.hidden=true;cardMeaningReselect.hidden=true;cardMeaningInput.value='';cardExampleStep.hidden=true;syncCardEditorMessages();renderWordResults();
     });
     cardMeaningReselect.addEventListener('click',async()=>{
       await fadeMeaningTransition([cardSelectedMeaning,cardMeaningChanged,cardMeaningReselect,cardExampleStep],()=>{
@@ -1385,15 +1388,17 @@ const COL=Object.freeze({
       },[cardMeaningResults,cardMeaningEditActions,cardMeaningMessage]);
     });
     cardMeaningKeep.addEventListener('click',async()=>{
-      await fadeMeaningTransition([cardMeaningEditActions,cardMeaningMessage],()=>{
-        selectedMeaningMode='unchanged';cardMeaningInput.value=text(cardEditorRow?.[COL.meaning]);cardMeaningEditActions.hidden=true;
-        showSelectedMeaning(cardEditorRow?.[COL.meaningNo],cardMeaningInput.value);cardExampleStep.hidden=false;syncCardEditorMessages();
+      const choice=pendingMeaningChoice||{number:text(cardEditorRow?.[COL.meaningNo]),value:text(cardEditorRow?.[COL.meaning])};
+      await fadeMeaningTransition([cardMeaningEditActions,cardSelectedMeaning,cardMeaningMessage],()=>{
+        selectedMeaningMode=cardEditorMode==='edit'?'unchanged':'existing';cardMeaningInput.value=choice.value;cardMeaningEditActions.hidden=true;
+        showSelectedMeaning(choice.number,choice.value);cardExampleStep.hidden=false;syncCardEditorMessages();
       },[cardSelectedMeaning,cardExampleStep]);
     });
     cardMeaningChange.addEventListener('click',async()=>{
-      await fadeMeaningTransition([cardMeaningEditActions],()=>{
-        selectedMeaningMode='change-draft';cardMeaningEditActions.hidden=true;cardMeaningInput.value=text(cardEditorRow?.[COL.meaning]);
-        cardMeaningNumberBadge.className='practice-meta-chip';cardMeaningNumberBadge.textContent=formatSingleDigitNumber(cardEditorRow?.[COL.meaningNo]);cardMeaningNumberBadge.hidden=false;
+      const choice=pendingMeaningChoice||{number:text(cardEditorRow?.[COL.meaningNo]),value:text(cardEditorRow?.[COL.meaning])};
+      await fadeMeaningTransition([cardMeaningEditActions,cardSelectedMeaning],()=>{
+        selectedMeaningMode='change-draft';cardMeaningEditActions.hidden=true;cardSelectedMeaning.hidden=true;cardMeaningReselect.hidden=true;cardMeaningInput.value=choice.value;
+        cardMeaningNumberBadge.className='practice-meta-chip';cardMeaningNumberBadge.textContent=formatSingleDigitNumber(choice.number);cardMeaningNumberBadge.hidden=false;
         cardMeaningField.hidden=false;cardMeaningConfirm.textContent='この意味に変更';cardMeaningConfirm.hidden=false;cardExampleStep.hidden=true;syncCardEditorMessages();
       },[cardMeaningField,cardMeaningConfirm]);
     });
@@ -1409,12 +1414,13 @@ const COL=Object.freeze({
         const existing=samePair.find(row=>text(row[COL.meaning])===value);
         if(existing){number=text(existing[COL.meaningNo]);mode='existing'}
       }else{
-        const oldValue=text(cardEditorRow?.[COL.meaning]);
-        const currentNumber=text(cardEditorRow?.[COL.meaningNo]);
-        const others=samePair.filter(row=>row!==cardEditorRow);
+        const original=pendingMeaningChoice||{number:text(cardEditorRow?.[COL.meaningNo]),value:text(cardEditorRow?.[COL.meaning])};
+        const oldValue=original.value;
+        const currentNumber=original.number;
+        const others=cardEditorMode==='edit'?samePair.filter(row=>row!==cardEditorRow):samePair;
         const existing=others.find(row=>text(row[COL.meaning])===value);
         if(existing)number=text(existing[COL.meaningNo]);
-        else if(value!==oldValue&&others.some(row=>text(row[COL.meaningNo])===currentNumber))number=String(nextNumber(samePair,COL.meaningNo));
+        else if(value!==oldValue&&(cardEditorMode==='add'||others.some(row=>text(row[COL.meaningNo])===currentNumber)))number=String(nextNumber(samePair,COL.meaningNo));
         else number=currentNumber;
         changed=value!==oldValue;mode=changed?'changed':'unchanged';
       }
