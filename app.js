@@ -1006,6 +1006,7 @@ const COL=Object.freeze({
       }
     };
     const vocabularyKey=row=>`${text(row?.[COL.word]).toLowerCase()}\t${text(row?.[COL.pos])}`;
+    const normalizedMeaning=value=>text(value).replace(/\s+/g,' ').toLowerCase();
     const restoredVocabularyStores=new WeakSet();
     const restoreVocabularyRows=stored=>{
       if(!stored)return [];
@@ -1450,16 +1451,16 @@ const COL=Object.freeze({
       let mode='new';
       let changed=false;
       if(selectedMeaningMode==='new-draft'){
-        const existing=samePair.find(row=>text(row[COL.meaning])===value);
-        if(existing){number=text(existing[COL.meaningNo]);mode='existing'}
+        const duplicate=samePair.find(row=>normalizedMeaning(row[COL.meaning])===normalizedMeaning(value));
+        if(duplicate){alert('同じ意味がすでに登録されています。');return}
       }else{
         const original=pendingMeaningChoice||{number:text(cardEditorRow?.[COL.meaningNo]),value:text(cardEditorRow?.[COL.meaning])};
         const oldValue=original.value;
         const currentNumber=original.number;
         const others=cardEditorMode==='edit'?samePair.filter(row=>row!==cardEditorRow):samePair;
-        const existing=others.find(row=>text(row[COL.meaning])===value);
-        if(existing)number=text(existing[COL.meaningNo]);
-        else if(value!==oldValue&&(cardEditorMode==='add'||others.some(row=>text(row[COL.meaningNo])===currentNumber)))number=String(nextNumber(samePair,COL.meaningNo));
+        const duplicate=others.find(row=>text(row[COL.meaningNo])!==currentNumber&&normalizedMeaning(row[COL.meaning])===normalizedMeaning(value));
+        if(duplicate){alert('同じ意味がすでに登録されています。');return}
+        if(value!==oldValue&&(cardEditorMode==='add'||others.some(row=>text(row[COL.meaningNo])===currentNumber)))number=String(nextNumber(samePair,COL.meaningNo));
         else number=currentNumber;
         changed=value!==oldValue;mode=changed?'changed':'unchanged';
       }
@@ -1483,6 +1484,8 @@ const COL=Object.freeze({
         const pairKey=vocabularyKey(selectedVocabularyRow);
         const samePair=(practiceStored.rows||[]).filter(row=>vocabularyKey(row)===pairKey);
         const draftRows=new Set(cardExampleDrafts.map(draft=>draft.row).filter(Boolean));
+        const duplicateMeaning=samePair.find(row=>!draftRows.has(row)&&text(row[COL.meaningNo])!==selectedMeaningNumber&&normalizedMeaning(row[COL.meaning])===normalizedMeaning(meaning));
+        if(duplicateMeaning){alert('同じ意味がすでに登録されています。');return}
         const existingMeaning=samePair.find(row=>!draftRows.has(row)&&text(row[COL.meaning])===meaning)||samePair.find(row=>text(row[COL.meaning])===meaning);
         const meaningNo=text(existingMeaning?.[COL.meaningNo])||selectedMeaningNumber||String(nextNumber(samePair,COL.meaningNo));
         const occupied=new Set(samePair.filter(row=>!draftRows.has(row)&&text(row[COL.meaningNo])===meaningNo).map(row=>text(row[COL.exampleNo])).filter(Boolean));
