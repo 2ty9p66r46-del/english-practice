@@ -1002,7 +1002,7 @@ body[data-page="home"] .bottom-space{display:none}
 .card-editor-head h2{margin:0;color:#182230;font-size:1rem;text-align:center}.card-editor-head button{height:38px;padding:0 8px;border:0;background:transparent;color:var(--blue);font-size:.8rem;font-weight:800}.card-editor-head button:last-child{text-align:right}
 .card-editor-body{display:flex;min-height:0;flex-direction:column;gap:15px;overflow-y:auto;overflow-anchor:none;padding:6px 16px calc(28px + env(safe-area-inset-bottom))}
 .card-word-step{display:contents}.card-word-step[hidden]{display:none!important}
-.card-word-sticky{position:sticky;z-index:6;top:6px;display:grid;gap:9px;margin-bottom:18px;padding:6px 0 9px;background:#f4f5f9}
+.card-word-sticky{position:sticky;z-index:6;top:6px;display:grid;gap:9px;margin-bottom:0;padding:6px 0 9px;background:#f4f5f9}
 .card-word-sticky::before{content:"";position:absolute;right:-16px;bottom:100%;left:-16px;height:100vh;background:#f4f5f9;pointer-events:none}
 .card-word-step-head{display:flex;min-height:32px;align-items:center;gap:9px;color:#526078;font-size:.72rem;font-weight:850}
 .card-word-heading{flex:0 0 auto}
