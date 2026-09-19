@@ -249,8 +249,11 @@
             <div class="card-word-results" id="cardWordResults" role="listbox" aria-label="登録済み単語の候補"></div>
           </section>
           <section class="card-meaning-step" id="cardMeaningStep" hidden>
-            <div class="card-step-title"><span>意味 <em class="card-required-mark" aria-hidden="true">※</em></span></div>
+            <div class="card-step-title card-meaning-title-row"><span>意味 <em class="card-required-mark" aria-hidden="true">※</em></span><div class="card-selected-meaning" id="cardSelectedMeaning" hidden><span class="practice-meta-chip" id="cardSelectedMeaningNumber"></span><strong id="cardSelectedMeaningText"></strong></div></div>
+            <p class="card-meaning-changed" id="cardMeaningChanged" hidden>※意味が変更されています</p>
+            <div class="card-meaning-edit-actions" id="cardMeaningEditActions" hidden><button type="button" id="cardMeaningKeep">意味は変更しない</button><button type="button" id="cardMeaningChange">意味を変更する</button></div>
             <label class="card-editor-field" id="cardMeaningField" hidden><span class="card-meaning-input-row"><span class="practice-meta-chip" id="cardMeaningNumberBadge" hidden>1</span><textarea id="cardMeaningInput" rows="2" placeholder="意味を入力"></textarea></span></label>
+            <button class="card-meaning-confirm" id="cardMeaningConfirm" type="button" hidden>この意味で登録</button>
             <p class="card-field-message" id="cardMeaningMessage">※意味を入力してください</p>
             <div class="card-meaning-results" id="cardMeaningResults"></div>
           </section>
