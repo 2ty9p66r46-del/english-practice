@@ -1324,7 +1324,7 @@ const COL=Object.freeze({
     cardWordSearch.addEventListener('input',()=>{if(!cardWordSearch.disabled)renderWordResults()});
     cardWordSearch.addEventListener('focus',()=>{if(!cardWordSearch.disabled)renderWordResults()});
     cardWordReselect.addEventListener('click',()=>{
-      selectedVocabularyRow=null;selectedMeaningMode=null;cardSelectedWord.hidden=true;cardWordSearchRow.hidden=false;cardCandidateLabel.hidden=false;cardWordSearch.disabled=false;cardWordSearch.value='';cardMeaningStep.hidden=true;cardMeaningField.hidden=true;cardMeaningNumberBadge.hidden=true;cardMeaningInput.value='';cardExampleStep.hidden=true;syncCardEditorMessages();renderWordResults();cardWordSearch.focus();
+      selectedVocabularyRow=null;selectedMeaningMode=null;cardSelectedWord.hidden=true;cardWordSearchRow.hidden=false;cardCandidateLabel.hidden=false;cardWordSearch.disabled=false;cardWordSearch.value='';cardMeaningStep.hidden=true;cardMeaningField.hidden=true;cardMeaningNumberBadge.hidden=true;cardMeaningInput.value='';cardExampleStep.hidden=true;syncCardEditorMessages();renderWordResults();
     });
     cardMeaningInput.addEventListener('input',syncCardEditorMessages);
     cardJapaneseInput.addEventListener('input',syncCardEditorMessages);
