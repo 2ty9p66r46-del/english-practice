@@ -1003,6 +1003,7 @@ body[data-page="home"] .bottom-space{display:none}
 .card-editor-body{display:grid;gap:15px;min-height:0;overflow-y:auto;padding:18px 16px calc(28px + env(safe-area-inset-bottom))}
 .card-word-step{position:relative;display:grid;gap:9px}.card-word-step[hidden]{display:none!important}
 .card-word-step-head{position:sticky;z-index:6;top:-18px;display:flex;min-height:32px;align-items:center;gap:9px;padding:12px 0 5px;background:#f4f5f9;color:#526078;font-size:.72rem;font-weight:850}
+.card-word-step-head::after{content:"";position:absolute;right:0;bottom:-12px;left:0;height:12px;background:#f4f5f9;pointer-events:none}
 .card-word-heading{flex:none}
 .card-inline-message{margin-left:7px;color:#d92d45;font-style:normal;font-weight:400}
 .card-inline-message[hidden]{display:none!important}
@@ -1014,6 +1015,8 @@ body[data-page="home"] .bottom-space{display:none}
 .card-word-filter-toggle svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}.card-word-filter-toggle[aria-expanded="true"]{border-color:#8fc1f5;color:var(--blue);background:#f3f8ff}
 .card-word-search-row{position:sticky;z-index:5;top:31px;display:flex;order:3;align-items:center;gap:8px;padding-bottom:8px;background:#f4f5f9}.card-word-search-row[hidden]{display:none!important}.card-word-field{min-width:0;flex:1}.card-search-input{position:relative;display:block!important}.card-search-input svg{position:absolute;z-index:1;left:13px;top:50%;width:18px;height:18px;fill:none;stroke:#7b8798;stroke-width:2;stroke-linecap:round;transform:translateY(-50%);pointer-events:none}.card-search-input input{height:44px!important;padding-left:40px!important;font-size:.8rem!important;font-weight:400!important}
 .card-word-filter-panel{order:4;padding:4px 13px 14px;border:1px solid #d8dee8;border-radius:16px;background:#fff}.card-word-filter-panel[hidden]{display:none!important}
+.card-filter-bulk{display:flex;justify-content:flex-end;padding:10px 0 8px}
+.card-word-filter-panel .filter-section{padding:15px 0 17px}
 .card-word-filter-panel .group+.group{margin-top:13px;padding-top:12px;border-top:1px solid #d8dee8}
 .card-word-filter-panel .group-title{font-size:.75rem}.card-word-filter-panel .part-group .choice{min-height:28px;font-size:.68rem}
 .card-word-filter-panel .card-example-filter-group .choice-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
