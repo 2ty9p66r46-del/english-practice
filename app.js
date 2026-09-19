@@ -1117,7 +1117,7 @@ const COL=Object.freeze({
         const meanings=meaningsByKey.get(vocabularyKey(row))||[];
         const lastMeaningNo=[...meanings].reverse().find(item=>item.number)?.number||'';
         subBadge.className=`practice-meta-chip ${lastMeaningNo?rankTone:''}`.trim();
-        subBadge.textContent=lastMeaningNo?formatSingleDigitNumber(lastMeaningNo):'—';
+        subBadge.textContent=lastMeaningNo?formatSingleDigitNumber(lastMeaningNo):'0';
         const levelBadges=document.createElement('span');
         levelBadges.className='practice-list-levels practice-level-chips';
         [text(row[COL.sLevel]),text(row[COL.wLevel])].filter(Boolean).forEach(level=>{
@@ -1142,7 +1142,7 @@ const COL=Object.freeze({
             badge.textContent=item.number?formatSingleDigitNumber(item.number):'—';
             meaning.append(badge,document.createTextNode(` ${item.text}`));
           });
-        }else meaning.textContent='意味未登録';
+        }else meaning.textContent='-';
         summary.append(name,meaning);
         button.append(identifiers,summary);
         button.addEventListener('click',()=>{
