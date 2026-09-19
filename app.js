@@ -483,6 +483,7 @@ const COL=Object.freeze({
     const cardMeaningStep=document.getElementById('cardMeaningStep');
     const cardMeaningResults=document.getElementById('cardMeaningResults');
     const cardMeaningField=document.getElementById('cardMeaningField');
+    const cardMeaningNumberBadge=document.getElementById('cardMeaningNumberBadge');
     const cardMeaningInput=document.getElementById('cardMeaningInput');
     const cardJapaneseInput=document.getElementById('cardJapaneseInput');
     const cardEnglishInput=document.getElementById('cardEnglishInput');
@@ -1206,7 +1207,10 @@ const COL=Object.freeze({
         const partBadge=document.createElement('span');partBadge.className=`practice-meta-chip ${rankTone}`.trim();partBadge.textContent=text(row[COL.pos])||'品詞未登録';
         const wordName=document.createElement('strong');wordName.className='card-selected-word-name';wordName.textContent=text(row[COL.word])||'単語未登録';
         cardSelectedWordText.append(numberBadge,partBadge,wordName);
+        cardMeaningNumberBadge.className=`practice-meta-chip ${rankTone}`.trim();
+        cardMeaningNumberBadge.textContent=`${formatSingleDigitNumber(row?.[COL.meaningNo])}-${formatExampleLetter(row?.[COL.exampleNo])}`;
       }
+      cardMeaningNumberBadge.hidden=mode!=='edit';
       cardSelectedWord.hidden=mode!=='edit';
       cardWordReselect.hidden=mode==='edit';cardMeaningStep.hidden=true;cardMeaningField.hidden=mode==='add';
       cardMeaningInput.value=mode==='edit'?text(row[COL.meaning]):'';
