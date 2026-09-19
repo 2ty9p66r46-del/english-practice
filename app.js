@@ -541,6 +541,15 @@ const COL=Object.freeze({
     const understandingTones={'未登録':'purple','0%':'red','50%':'orange','80%':'yellow','100%':'green'};
     understandingChoices.forEach(button=>button.classList.add(understandingTones[button.dataset.value||button.textContent.trim()]));
     const selectedValues=buttons=>new Set(buttons.filter(button=>button.classList.contains('selected')).map(button=>button.dataset.value||button.textContent.trim()));
+    const comparePracticeNumber=(a,b)=>{
+      for(const column of [COL.wordNo,COL.meaningNo,COL.exampleNo]){
+        const aNumber=Number.parseInt(text(a?.[column]),10);
+        const bNumber=Number.parseInt(text(b?.[column]),10);
+        const difference=(Number.isFinite(aNumber)?aNumber:Number.MAX_SAFE_INTEGER)-(Number.isFinite(bNumber)?bNumber:Number.MAX_SAFE_INTEGER);
+        if(difference)return difference;
+      }
+      return 0;
+    };
     const getMatchingRows=rows=>{
       const levels=selectedValues(levelChoices);
       const parts=selectedValues(partChoices);
@@ -551,7 +560,7 @@ const COL=Object.freeze({
         if(parts.size&&!parts.has(text(row[COL.pos])))return false;
         const understanding=text(row[COL.understanding])||'未登録';
         return !understandings.size||understandings.has(understanding);
-      });
+      }).sort(comparePracticeNumber);
     };
     const refreshQuestionCount=async()=>{
       const stored=await getImportedData();
