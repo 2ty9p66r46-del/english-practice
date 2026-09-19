@@ -1292,6 +1292,16 @@ const COL=Object.freeze({
         const headingLabel=document.createElement('span');headingLabel.textContent='例文番号';
         const badge=document.createElement('span');badge.className='practice-meta-chip';badge.textContent=formatExampleLetter(draft.exampleNo);
         heading.append(headingLabel,badge);
+        const orderActions=document.createElement('span');orderActions.className='card-example-order-actions';
+        const moveExample=(delta)=>{
+          const target=index+delta;if(target<0||target>=cardExampleDrafts.length)return;
+          [cardExampleDrafts[index],cardExampleDrafts[target]]=[cardExampleDrafts[target],cardExampleDrafts[index]];
+          cardExampleDrafts.forEach((item,itemIndex)=>{item.exampleNo=String(itemIndex+1)});
+          renderCardExampleCarousel(target);
+        };
+        const moveUp=document.createElement('button');moveUp.type='button';moveUp.className='card-order-button';moveUp.textContent='↑';moveUp.setAttribute('aria-label',`${formatExampleLetter(draft.exampleNo)}の例文を前へ移動`);moveUp.disabled=index===0;moveUp.addEventListener('click',()=>moveExample(-1));
+        const moveDown=document.createElement('button');moveDown.type='button';moveDown.className='card-order-button';moveDown.textContent='↓';moveDown.setAttribute('aria-label',`${formatExampleLetter(draft.exampleNo)}の例文を後ろへ移動`);moveDown.disabled=index===cardExampleDrafts.length-1;moveDown.addEventListener('click',()=>moveExample(1));
+        orderActions.append(moveUp,moveDown);heading.append(orderActions);
         if(cardExampleDrafts.length>1){
           const remove=document.createElement('button');remove.type='button';remove.className='card-example-remove';remove.textContent='削除';
           remove.addEventListener('click',()=>{
@@ -1364,6 +1374,20 @@ const COL=Object.freeze({
         if(choice.kind==='new')cardMeaningResults.append(button);
         else{
           const row=document.createElement('div');row.className='card-meaning-option-row';
+          const orderActions=document.createElement('span');orderActions.className='card-meaning-order-actions';
+          const meaningIndex=meanings.findIndex(item=>text(item.number)===text(choice.number));
+          const moveMeaning=async delta=>{
+            const target=meaningIndex+delta;if(target<0||target>=meanings.length)return;
+            const targetChoice=meanings[target];
+            const changedRows=(practiceStored.rows||[]).filter(item=>vocabularyKey(item)===pairKey&&[text(choice.number),text(targetChoice.number)].includes(text(item[COL.meaningNo])));
+            const previousNumbers=new Map(changedRows.map(item=>[item,text(item[COL.meaningNo])]));
+            changedRows.forEach(item=>{item[COL.meaningNo]=text(item[COL.meaningNo])===text(choice.number)?text(targetChoice.number):text(choice.number)});
+            try{await persistPracticeData();refreshPracticeAfterMutation();renderMeaningResults()}
+            catch{previousNumbers.forEach((number,item)=>{item[COL.meaningNo]=number});alert('意味の順序を変更できませんでした。')}
+          };
+          const moveUp=document.createElement('button');moveUp.type='button';moveUp.className='card-order-button';moveUp.textContent='↑';moveUp.setAttribute('aria-label',`意味${choice.number}を前へ移動`);moveUp.disabled=meaningIndex===0;moveUp.addEventListener('click',()=>moveMeaning(-1));
+          const moveDown=document.createElement('button');moveDown.type='button';moveDown.className='card-order-button';moveDown.textContent='↓';moveDown.setAttribute('aria-label',`意味${choice.number}を後ろへ移動`);moveDown.disabled=meaningIndex===meanings.length-1;moveDown.addEventListener('click',()=>moveMeaning(1));
+          orderActions.append(moveUp,moveDown);
           const remove=document.createElement('button');remove.type='button';remove.className='card-meaning-option-remove';remove.textContent='削除';
           remove.addEventListener('click',async()=>{
             if(!confirm(`意味「${choice.value}」を削除しますか？\n\nこの意味に登録されている例文も削除されます。`))return;
@@ -1382,7 +1406,7 @@ const COL=Object.freeze({
             try{await persistPracticeData();refreshPracticeAfterMutation();renderMeaningResults()}
             catch{practiceStored.rows=backup;alert('意味を削除できませんでした。')}
           });
-          row.append(button,remove);cardMeaningResults.append(row);
+          row.append(button,orderActions,remove);cardMeaningResults.append(row);
         }
       });
       cardMeaningStep.hidden=false;syncCardEditorMessages();
