@@ -1361,7 +1361,29 @@ const COL=Object.freeze({
             },[cardSelectedMeaning,cardMeaningEditActions]);
           }
         });
-        cardMeaningResults.append(button);
+        if(choice.kind==='new')cardMeaningResults.append(button);
+        else{
+          const row=document.createElement('div');row.className='card-meaning-option-row';
+          const remove=document.createElement('button');remove.type='button';remove.className='card-meaning-option-remove';remove.textContent='削除';
+          remove.addEventListener('click',async()=>{
+            if(!confirm(`意味「${choice.value}」を削除しますか？\n\nこの意味に登録されている例文も削除されます。`))return;
+            const backup=(practiceStored.rows||[]).map(item=>[...item]);
+            const targetRows=(practiceStored.rows||[]).filter(item=>vocabularyKey(item)===pairKey&&text(item[COL.meaningNo])===text(choice.number));
+            const remainingPair=(practiceStored.rows||[]).filter(item=>vocabularyKey(item)===pairKey&&!targetRows.includes(item));
+            if(remainingPair.length){practiceStored.rows=practiceStored.rows.filter(item=>!targetRows.includes(item))}
+            else{
+              const base=targetRows[0];practiceStored.rows=practiceStored.rows.filter(item=>!targetRows.includes(item)||item===base);
+              base[COL.meaningNo]='';base[COL.meaning]='';base[COL.exampleNo]='';base[COL.japanese]='';base[COL.english]='';base[COL.note]='';base[COL.understanding]='';base[COL.correctCount]=0;base[COL.wrongCount]=0;base[COL.questionCount]=0;
+            }
+            const remaining=(practiceStored.rows||[]).filter(item=>vocabularyKey(item)===pairKey&&text(item[COL.meaning]));
+            const numbers=[...new Set(remaining.map(item=>text(item[COL.meaningNo])).filter(Boolean))].sort((a,b)=>(Number(a)||Number.MAX_SAFE_INTEGER)-(Number(b)||Number.MAX_SAFE_INTEGER));
+            const renumber=new Map(numbers.map((number,index)=>[number,String(index+1)]));
+            remaining.forEach(item=>{item[COL.meaningNo]=renumber.get(text(item[COL.meaningNo]))||item[COL.meaningNo]});
+            try{await persistPracticeData();refreshPracticeAfterMutation();renderMeaningResults()}
+            catch{practiceStored.rows=backup;alert('意味を削除できませんでした。')}
+          });
+          row.append(button,remove);cardMeaningResults.append(row);
+        }
       });
       cardMeaningStep.hidden=false;syncCardEditorMessages();
     };
