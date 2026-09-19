@@ -1126,7 +1126,7 @@ const COL=Object.freeze({
         const subBadge=document.createElement('span');
         const meanings=meaningsByKey.get(vocabularyKey(row))||[];
         const meaningCount=meanings.length;
-        subBadge.className=`practice-meta-chip ${meaningCount?rankTone:''}`.trim();
+        subBadge.className='practice-meta-chip';
         subBadge.textContent=`意味 ${meaningCount}個`;
         const levelBadges=document.createElement('span');
         levelBadges.className='practice-list-levels practice-level-chips';
@@ -1148,7 +1148,7 @@ const COL=Object.freeze({
           meanings.forEach((item,index)=>{
             if(index)meaning.append(document.createTextNode('　'));
             const badge=document.createElement('span');
-            badge.className=`practice-meta-chip card-candidate-meaning-no ${rankTone}`.trim();
+            badge.className='practice-meta-chip card-candidate-meaning-no';
             badge.textContent=item.number?formatSingleDigitNumber(item.number):'—';
             meaning.append(badge,document.createTextNode(` ${item.text}`));
           });
