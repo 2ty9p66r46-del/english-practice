@@ -1079,8 +1079,10 @@ const COL=Object.freeze({
         if(!key||!meaning)return;
         if(!meaningsByKey.has(key))meaningsByKey.set(key,[]);
         const meanings=meaningsByKey.get(key);
-        if(!meanings.includes(meaning))meanings.push(meaning);
+        const meaningNo=text(row?.[COL.meaningNo]);
+        if(!meanings.some(item=>item.number===meaningNo&&item.text===meaning))meanings.push({number:meaningNo,text:meaning});
       });
+      meaningsByKey.forEach(meanings=>meanings.sort((a,b)=>(Number(a.number)||Number.MAX_SAFE_INTEGER)-(Number(b.number)||Number.MAX_SAFE_INTEGER)));
       const selectedLevels=new Set(cardFilterLevelChoices.filter(choice=>choice.classList.contains('selected')).map(choice=>choice.dataset.value));
       const selectedParts=new Set(cardFilterPartChoices.filter(choice=>choice.classList.contains('selected')).map(choice=>choice.dataset.value));
       const restrictLevels=selectedLevels.size!==cardFilterLevelChoices.length;
@@ -1112,9 +1114,10 @@ const COL=Object.freeze({
         partBadge.className=`practice-meta-chip ${rankTone}`.trim();
         partBadge.textContent=text(row[COL.pos])||'品詞未登録';
         const subBadge=document.createElement('span');
-        const rawMeaningNo=text(row?.[COL.meaningNo]);
-        subBadge.className=`practice-meta-chip ${rawMeaningNo?rankTone:''}`.trim();
-        subBadge.textContent=rawMeaningNo?formatSingleDigitNumber(rawMeaningNo):'—';
+        const meanings=meaningsByKey.get(vocabularyKey(row))||[];
+        const lastMeaningNo=[...meanings].reverse().find(item=>item.number)?.number||'';
+        subBadge.className=`practice-meta-chip ${lastMeaningNo?rankTone:''}`.trim();
+        subBadge.textContent=lastMeaningNo?formatSingleDigitNumber(lastMeaningNo):'—';
         const levelBadges=document.createElement('span');
         levelBadges.className='practice-list-levels practice-level-chips';
         [text(row[COL.sLevel]),text(row[COL.wLevel])].filter(Boolean).forEach(level=>{
@@ -1130,8 +1133,16 @@ const COL=Object.freeze({
         const name=document.createElement('strong');
         name.className='practice-list-word';name.textContent=text(row[COL.word])||'単語未登録';
         const meaning=document.createElement('span');
-        const meaningText=(meaningsByKey.get(vocabularyKey(row))||[]).join(' / ');
-        meaning.className=`practice-list-meaning${meaningText?'':' is-unregistered'}`;meaning.textContent=meaningText||'意味未登録';
+        meaning.className=`practice-list-meaning${meanings.length?'':' is-unregistered'}`;
+        if(meanings.length){
+          meanings.forEach((item,index)=>{
+            if(index)meaning.append(document.createTextNode('　'));
+            const badge=document.createElement('span');
+            badge.className=`practice-meta-chip card-candidate-meaning-no ${rankTone}`.trim();
+            badge.textContent=item.number?formatSingleDigitNumber(item.number):'—';
+            meaning.append(badge,document.createTextNode(` ${item.text}`));
+          });
+        }else meaning.textContent='意味未登録';
         summary.append(name,meaning);
         button.append(identifiers,summary);
         button.addEventListener('click',()=>{
