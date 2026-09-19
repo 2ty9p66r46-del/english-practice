@@ -1212,7 +1212,7 @@ const COL=Object.freeze({
       if(mode==='edit'){
         const rank=text(row[COL.posRank]).toUpperCase();
         const rankTone={S:'red',A:'orange',B:'yellow',C:'green',D:'purple'}[rank]||'';
-        const numberBadge=document.createElement('span');numberBadge.className='practice-list-word-no practice-number';numberBadge.textContent=formatPracticeNumber(row?.[COL.wordNo],5);
+        const numberBadge=document.createElement('span');numberBadge.className='practice-list-word-no practice-number';numberBadge.textContent=`No ${formatPracticeNumber(row?.[COL.wordNo],5)}`;
         const partBadge=document.createElement('span');partBadge.className=`practice-meta-chip ${rankTone}`.trim();partBadge.textContent=text(row[COL.pos])||'品詞未登録';
         const wordName=document.createElement('strong');wordName.className='card-selected-word-name';wordName.textContent=text(row[COL.word])||'単語未登録';
         cardSelectedWordText.append(numberBadge,partBadge,wordName);
