@@ -909,7 +909,7 @@ const COL=Object.freeze({
         partBadge.className=`practice-meta-chip ${rankTone}`.trim();
         partBadge.textContent=text(row[COL.pos])||'品詞未登録';
         const subBadge=document.createElement('span');
-        subBadge.className=`practice-meta-chip ${rankTone}`.trim();
+        subBadge.className='practice-meta-chip is-transparent';
         subBadge.textContent=`${formatSingleDigitNumber(row?.[COL.meaningNo])}-${formatExampleLetter(row?.[COL.exampleNo])}`;
         const levelBadges=document.createElement('span');
         levelBadges.className='practice-list-levels practice-level-chips';
@@ -1126,7 +1126,7 @@ const COL=Object.freeze({
         const subBadge=document.createElement('span');
         const meanings=meaningsByKey.get(vocabularyKey(row))||[];
         const meaningCount=meanings.length;
-        subBadge.className='practice-meta-chip';
+        subBadge.className=`practice-meta-chip meaning-count-badge ${meaningCount?'has-meanings':'has-no-meanings'}`;
         subBadge.textContent=`意味 ${meaningCount}個`;
         const levelBadges=document.createElement('span');
         levelBadges.className='practice-list-levels practice-level-chips';
@@ -1200,9 +1200,7 @@ const COL=Object.freeze({
         button.addEventListener('click',()=>{
           cardMeaningResults.querySelectorAll('.card-meaning-option').forEach(item=>item.classList.remove('selected'));
           button.classList.add('selected');selectedMeaningMode=choice.kind;cardMeaningInput.value=choice.value;cardMeaningField.hidden=false;
-          const rank=text(selectedVocabularyRow[COL.posRank]).toUpperCase();
-          const rankTone={S:'red',A:'orange',B:'yellow',C:'green',D:'purple'}[rank]||'';
-          cardMeaningNumberBadge.className=`practice-meta-chip ${rankTone}`.trim();cardMeaningNumberBadge.textContent=`${formatSingleDigitNumber(choice.number)}-`;cardMeaningNumberBadge.hidden=false;
+          cardMeaningNumberBadge.className='practice-meta-chip';cardMeaningNumberBadge.textContent=formatSingleDigitNumber(choice.number);cardMeaningNumberBadge.hidden=false;
           requestAnimationFrame(()=>cardMeaningInput.focus());
         });
         cardMeaningResults.append(button);
@@ -1226,8 +1224,8 @@ const COL=Object.freeze({
         const partBadge=document.createElement('span');partBadge.className=`practice-meta-chip ${rankTone}`.trim();partBadge.textContent=text(row[COL.pos])||'品詞未登録';
         const wordName=document.createElement('strong');wordName.className='card-selected-word-name';wordName.textContent=text(row[COL.word])||'単語未登録';
         cardSelectedWordText.append(numberBadge,partBadge,wordName);
-        cardMeaningNumberBadge.className=`practice-meta-chip ${rankTone}`.trim();
-        cardMeaningNumberBadge.textContent=`${formatSingleDigitNumber(row?.[COL.meaningNo])}-`;
+        cardMeaningNumberBadge.className='practice-meta-chip';
+        cardMeaningNumberBadge.textContent=formatSingleDigitNumber(row?.[COL.meaningNo]);
       }
       cardMeaningNumberBadge.hidden=mode!=='edit';
       cardSelectedWord.hidden=mode!=='edit';
