@@ -474,7 +474,6 @@ const COL=Object.freeze({
     const cardEditorSave=document.getElementById('cardEditorSave');
     const cardEditorDelete=document.getElementById('cardEditorDelete');
     const cardWordStep=document.getElementById('cardWordStep');
-    const cardWordSticky=cardWordStep.querySelector('.card-word-sticky');
     const cardWordFilterToggle=document.getElementById('cardWordFilterToggle');
     const cardWordFilterPanel=document.getElementById('cardWordFilterPanel');
     const cardWordSearchRow=document.getElementById('cardWordSearchRow');
@@ -1079,23 +1078,6 @@ const COL=Object.freeze({
       cardWordFilterPanel.hidden=!expand;
       cardWordFilterToggle.setAttribute('aria-expanded',String(expand));
     });
-    let cardStickyLastScroll=0;
-    let cardStickyBounceReady=true;
-    cardEditorBody.addEventListener('scroll',()=>{
-      const current=cardEditorBody.scrollTop;
-      if(current<8)cardStickyBounceReady=true;
-      if(cardStickyBounceReady&&current>cardStickyLastScroll&&cardStickyLastScroll<18&&current>=18&&!cardWordFilterPanel.hidden&&typeof cardWordSticky.animate==='function'){
-        cardStickyBounceReady=false;
-        cardWordSticky.getAnimations().forEach(animation=>animation.cancel());
-        cardWordSticky.animate([
-          {transform:'translateY(0)'},
-          {transform:'translateY(-9px)',offset:.32},
-          {transform:'translateY(2px)',offset:.68},
-          {transform:'translateY(0)'}
-        ],{duration:720,easing:'cubic-bezier(.22,.75,.24,1)'});
-      }
-      cardStickyLastScroll=current;
-    },{passive:true});
     [...cardFilterLevelChoices,...cardFilterPartChoices,...cardFilterUnderstandingChoices].forEach(button=>button.addEventListener('click',()=>{
       button.classList.toggle('selected');
       syncCardWordFilterGroup(button.closest('.group'));
@@ -1210,7 +1192,7 @@ const COL=Object.freeze({
         button.addEventListener('click',async()=>{
           if(cardWordResults.dataset.switching==='true')return;
           cardWordResults.dataset.switching='true';
-          const fadeTargets=[cardWordMessage,cardWordSearchRow,cardCandidateLabel,cardWordResults].filter(target=>!target.hidden&&typeof target.animate==='function');
+          const fadeTargets=[cardWordMessage,cardWordSearchRow,cardWordFilterPanel,cardCandidateLabel,cardWordResults].filter(target=>!target.hidden&&typeof target.animate==='function');
           const fadeAnimations=fadeTargets.map(target=>target.animate([{opacity:1},{opacity:0}],{duration:420,easing:'ease-in-out',fill:'forwards'}));
           if(fadeAnimations.length)await Promise.allSettled(fadeAnimations.map(animation=>animation.finished));
           fadeAnimations.forEach(animation=>animation.cancel());
@@ -1283,7 +1265,7 @@ const COL=Object.freeze({
       cardEditorMode=mode;cardEditorRow=row;selectedVocabularyRow=mode==='edit'?row:null;
       cardEditorOverlay.dataset.mode=mode;
       cardEditorTitle.textContent='例文編集';
-      cardEditorBody.scrollTop=0;cardStickyLastScroll=0;cardStickyBounceReady=true;
+      cardEditorBody.scrollTop=0;
       selectedMeaningMode=mode==='edit'?'existing':null;
       cardWordStep.hidden=false;
       if(mode==='add')resetCardWordFilters();
