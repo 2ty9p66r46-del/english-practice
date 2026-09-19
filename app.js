@@ -1122,7 +1122,7 @@ const COL=Object.freeze({
       if(cardEditorMode==='edit'||selectedVocabularyRow){cardWordResults.hidden=true;cardWordSearch.setAttribute('aria-expanded','false');return}
       const candidates=getVocabularyRows();
       const meaningsByKey=new Map();
-      [...(practiceStored.rows||[]),...(practiceStored.vocabularyRows||[])].forEach(row=>{
+      (practiceStored.rows||[]).forEach(row=>{
         const key=vocabularyKey(row);
         const meaning=text(row?.[COL.meaning]);
         if(!key||!meaning)return;
