@@ -1208,7 +1208,7 @@ const COL=Object.freeze({
         const wordName=document.createElement('strong');wordName.className='card-selected-word-name';wordName.textContent=text(row[COL.word])||'単語未登録';
         cardSelectedWordText.append(numberBadge,partBadge,wordName);
         cardMeaningNumberBadge.className=`practice-meta-chip ${rankTone}`.trim();
-        cardMeaningNumberBadge.textContent=`${formatSingleDigitNumber(row?.[COL.meaningNo])}-${formatExampleLetter(row?.[COL.exampleNo])}`;
+        cardMeaningNumberBadge.textContent=`${formatSingleDigitNumber(row?.[COL.meaningNo])}-`;
       }
       cardMeaningNumberBadge.hidden=mode!=='edit';
       cardSelectedWord.hidden=mode!=='edit';

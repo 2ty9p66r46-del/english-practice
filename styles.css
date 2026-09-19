@@ -966,6 +966,7 @@ body[data-page="home"] .bottom-space{display:none}
 .practice-list-japanese,.practice-list-english{color:#6b7280}
 .practice-list-row[aria-current="true"] .practice-list-word{color:var(--blue)}
 .practice-list-word,.practice-list-meaning,.practice-list-japanese,.practice-list-english{font-size:.7rem;line-height:1.25}
+.practice-list-row .practice-list-word,.practice-list-row .practice-list-meaning{font-size:.8rem}
 .practice-list-row[aria-current="true"]{background:linear-gradient(90deg,#c7e2ff 0%,#e4f1ff 100%)}
 .practice-list-row[aria-current="true"] .practice-list-open{border-color:transparent;background:transparent;box-shadow:none}
 .practice-info-primary .practice-number{height:21px;min-height:21px;padding:0 7px;font-size:.52rem}
