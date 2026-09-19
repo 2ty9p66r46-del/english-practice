@@ -1192,7 +1192,9 @@ const COL=Object.freeze({
           if(cardWordResults.dataset.switching==='true')return;
           cardWordResults.dataset.switching='true';
           const fadeTargets=[cardWordSearchRow,cardCandidateLabel,cardWordResults].filter(target=>!target.hidden&&typeof target.animate==='function');
-          if(fadeTargets.length)await Promise.allSettled(fadeTargets.map(target=>target.animate([{opacity:1},{opacity:0}],{duration:420,easing:'ease-in-out',fill:'forwards'}).finished));
+          const fadeAnimations=fadeTargets.map(target=>target.animate([{opacity:1},{opacity:0}],{duration:1250,easing:'ease-in-out',fill:'forwards'}));
+          if(fadeAnimations.length)await Promise.allSettled(fadeAnimations.map(animation=>animation.finished));
+          fadeAnimations.forEach(animation=>animation.cancel());
           selectedVocabularyRow=row;
           cardWordSearch.value=text(row[COL.word]);cardWordSearchRow.hidden=true;cardCandidateLabel.hidden=true;cardWordFilterPanel.hidden=true;cardWordFilterToggle.setAttribute('aria-expanded','false');
           const rank=text(row[COL.posRank]).toUpperCase();
@@ -1205,7 +1207,7 @@ const COL=Object.freeze({
           renderMeaningResults();
           cardWordResults.dataset.switching='false';
           [cardWordStep,cardMeaningStep].forEach(target=>{
-            if(typeof target.animate==='function')target.animate([{opacity:0},{opacity:1}],{duration:520,easing:'ease-out'});
+            if(typeof target.animate==='function')target.animate([{opacity:0},{opacity:1}],{duration:1250,easing:'ease-in-out'});
           });
         });
         cardWordResults.append(button);
