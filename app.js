@@ -467,12 +467,14 @@ const COL=Object.freeze({
     const cardActionCancel=document.getElementById('cardActionCancel');
     const cardEditorOverlay=document.getElementById('cardEditorOverlay');
     const cardEditorSheet=cardEditorOverlay.querySelector('.card-editor-sheet');
+    const cardEditorBody=cardEditorOverlay.querySelector('.card-editor-body');
     const cardEditorHandle=cardEditorOverlay.querySelector('.practice-filter-handle');
     const cardEditorTitle=document.getElementById('cardEditorTitle');
     const cardEditorCancel=document.getElementById('cardEditorCancel');
     const cardEditorSave=document.getElementById('cardEditorSave');
     const cardEditorDelete=document.getElementById('cardEditorDelete');
     const cardWordStep=document.getElementById('cardWordStep');
+    const cardWordSticky=cardWordStep.querySelector('.card-word-sticky');
     const cardWordFilterToggle=document.getElementById('cardWordFilterToggle');
     const cardWordFilterPanel=document.getElementById('cardWordFilterPanel');
     const cardWordSearchRow=document.getElementById('cardWordSearchRow');
@@ -1077,6 +1079,23 @@ const COL=Object.freeze({
       cardWordFilterPanel.hidden=!expand;
       cardWordFilterToggle.setAttribute('aria-expanded',String(expand));
     });
+    let cardStickyLastScroll=0;
+    let cardStickyBounceReady=true;
+    cardEditorBody.addEventListener('scroll',()=>{
+      const current=cardEditorBody.scrollTop;
+      if(current<8)cardStickyBounceReady=true;
+      if(cardStickyBounceReady&&current>cardStickyLastScroll&&cardStickyLastScroll<18&&current>=18&&!cardWordFilterPanel.hidden&&typeof cardWordSticky.animate==='function'){
+        cardStickyBounceReady=false;
+        cardWordSticky.getAnimations().forEach(animation=>animation.cancel());
+        cardWordSticky.animate([
+          {transform:'translateY(0)'},
+          {transform:'translateY(-9px)',offset:.32},
+          {transform:'translateY(2px)',offset:.68},
+          {transform:'translateY(0)'}
+        ],{duration:720,easing:'cubic-bezier(.22,.75,.24,1)'});
+      }
+      cardStickyLastScroll=current;
+    },{passive:true});
     [...cardFilterLevelChoices,...cardFilterPartChoices,...cardFilterUnderstandingChoices].forEach(button=>button.addEventListener('click',()=>{
       button.classList.toggle('selected');
       syncCardWordFilterGroup(button.closest('.group'));
@@ -1264,6 +1283,7 @@ const COL=Object.freeze({
       cardEditorMode=mode;cardEditorRow=row;selectedVocabularyRow=mode==='edit'?row:null;
       cardEditorOverlay.dataset.mode=mode;
       cardEditorTitle.textContent='例文編集';
+      cardEditorBody.scrollTop=0;cardStickyLastScroll=0;cardStickyBounceReady=true;
       selectedMeaningMode=mode==='edit'?'existing':null;
       cardWordStep.hidden=false;
       if(mode==='add')resetCardWordFilters();
