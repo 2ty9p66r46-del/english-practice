@@ -1206,7 +1206,7 @@ const COL=Object.freeze({
           cardSelectedWord.hidden=false;cardWordMessage.hidden=true;cardWordReselect.hidden=false;cardWordResults.hidden=true;cardWordSearch.setAttribute('aria-expanded','false');
           renderMeaningResults();
           cardWordResults.dataset.switching='false';
-          [cardWordStep,cardMeaningStep].forEach(target=>{
+          [cardSelectedWord,cardMeaningStep].forEach(target=>{
             if(typeof target.animate==='function')target.animate([{opacity:0},{opacity:1}],{duration:520,easing:'ease-out'});
           });
         });
