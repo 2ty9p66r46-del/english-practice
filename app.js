@@ -1208,6 +1208,7 @@ const COL=Object.freeze({
           fadeAnimations.forEach(animation=>animation.cancel());
           preserveCardWordHeaderPosition(()=>{
             selectedVocabularyRow=row;
+            cardWordStep.classList.add('has-selection');
             cardWordSearch.value=text(row[COL.word]);cardWordSearchRow.hidden=true;cardCandidateLabel.hidden=true;cardWordFilterPanel.hidden=true;cardWordFilterToggle.setAttribute('aria-expanded','false');
             const rank=text(row[COL.posRank]).toUpperCase();
             const rankTone={S:'red',A:'orange',B:'yellow',C:'green',D:'purple'}[rank]||'';
@@ -1275,6 +1276,7 @@ const COL=Object.freeze({
     const openCardEditor=(mode,row=null)=>{
       if(autoPlaying)stopAutoPlayback();
       cardEditorMode=mode;cardEditorRow=row;selectedVocabularyRow=mode==='edit'?row:null;
+      cardWordStep.classList.toggle('has-selection',mode==='edit');
       cardEditorOverlay.dataset.mode=mode;
       cardEditorTitle.textContent='例文編集';
       cardEditorBody.scrollTop=0;
@@ -1339,7 +1341,7 @@ const COL=Object.freeze({
     cardWordSearch.addEventListener('focus',()=>{if(!cardWordSearch.disabled)renderWordResults()});
     cardWordReselect.addEventListener('click',()=>{
       preserveCardWordHeaderPosition(()=>{
-        selectedVocabularyRow=null;selectedMeaningMode=null;cardSelectedWord.hidden=true;cardWordSearchRow.hidden=false;cardCandidateLabel.hidden=false;cardWordSearch.disabled=false;cardWordSearch.value='';cardMeaningStep.hidden=true;cardMeaningField.hidden=true;cardMeaningNumberBadge.hidden=true;cardMeaningInput.value='';cardExampleStep.hidden=true;syncCardEditorMessages();renderWordResults();
+        selectedVocabularyRow=null;selectedMeaningMode=null;cardWordStep.classList.remove('has-selection');cardSelectedWord.hidden=true;cardWordSearchRow.hidden=false;cardCandidateLabel.hidden=false;cardWordSearch.disabled=false;cardWordSearch.value='';cardMeaningStep.hidden=true;cardMeaningField.hidden=true;cardMeaningNumberBadge.hidden=true;cardMeaningInput.value='';cardExampleStep.hidden=true;syncCardEditorMessages();renderWordResults();
       });
     });
     cardMeaningInput.addEventListener('input',syncCardEditorMessages);
