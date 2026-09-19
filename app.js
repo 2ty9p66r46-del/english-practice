@@ -1072,6 +1072,15 @@ const COL=Object.freeze({
       cardWordResults.onscroll=null;
       if(cardEditorMode==='edit'||selectedVocabularyRow){cardWordResults.hidden=true;cardWordSearch.setAttribute('aria-expanded','false');return}
       const candidates=getVocabularyRows();
+      const meaningsByKey=new Map();
+      [...(practiceStored.rows||[]),...(practiceStored.vocabularyRows||[])].forEach(row=>{
+        const key=vocabularyKey(row);
+        const meaning=text(row?.[COL.meaning]);
+        if(!key||!meaning)return;
+        if(!meaningsByKey.has(key))meaningsByKey.set(key,[]);
+        const meanings=meaningsByKey.get(key);
+        if(!meanings.includes(meaning))meanings.push(meaning);
+      });
       const selectedLevels=new Set(cardFilterLevelChoices.filter(choice=>choice.classList.contains('selected')).map(choice=>choice.dataset.value));
       const selectedParts=new Set(cardFilterPartChoices.filter(choice=>choice.classList.contains('selected')).map(choice=>choice.dataset.value));
       const restrictLevels=selectedLevels.size!==cardFilterLevelChoices.length;
@@ -1121,7 +1130,7 @@ const COL=Object.freeze({
         const name=document.createElement('strong');
         name.className='practice-list-word';name.textContent=text(row[COL.word])||'単語未登録';
         const meaning=document.createElement('span');
-        const meaningText=text(row[COL.meaning]);
+        const meaningText=(meaningsByKey.get(vocabularyKey(row))||[]).join(' / ');
         meaning.className=`practice-list-meaning${meaningText?'':' is-unregistered'}`;meaning.textContent=meaningText||'意味未登録';
         summary.append(name,meaning);
         button.append(identifiers,summary);
