@@ -1203,7 +1203,12 @@ const COL=Object.freeze({
           const numberBadge=document.createElement('span');numberBadge.className='practice-list-word-no practice-number';numberBadge.textContent=`No ${formatPracticeNumber(row?.[COL.wordNo],5)}`;
           const partBadge=document.createElement('span');partBadge.className=`practice-meta-chip ${rankTone}`.trim();partBadge.textContent=text(row[COL.pos])||'品詞未登録';
           const wordName=document.createElement('strong');wordName.className='card-selected-word-name';wordName.textContent=text(row[COL.word])||'単語未登録';
-          cardSelectedWordText.replaceChildren(numberBadge,partBadge,wordName);cardSelectedWordText.classList.add('is-badged');
+          const levelBadges=document.createElement('span');levelBadges.className='practice-list-levels practice-level-chips';
+          [text(row[COL.sLevel]),text(row[COL.wLevel])].filter(Boolean).forEach(level=>{
+            const chip=document.createElement('span');const digit=level.match(/[123]$/)?.[0];
+            chip.className=`practice-meta-chip ${digit==='1'?'red':digit==='2'?'orange':'yellow'}`;chip.textContent=level.toUpperCase();levelBadges.append(chip);
+          });
+          cardSelectedWordText.replaceChildren(numberBadge,partBadge,wordName,levelBadges);cardSelectedWordText.classList.add('is-badged');
           cardSelectedWord.hidden=false;cardWordMessage.hidden=true;cardWordReselect.hidden=false;cardWordResults.hidden=true;cardWordSearch.setAttribute('aria-expanded','false');
           renderMeaningResults();
           cardWordResults.dataset.switching='false';
@@ -1278,7 +1283,12 @@ const COL=Object.freeze({
         const numberBadge=document.createElement('span');numberBadge.className='practice-list-word-no practice-number';numberBadge.textContent=`No ${formatPracticeNumber(row?.[COL.wordNo],5)}`;
         const partBadge=document.createElement('span');partBadge.className=`practice-meta-chip ${rankTone}`.trim();partBadge.textContent=text(row[COL.pos])||'品詞未登録';
         const wordName=document.createElement('strong');wordName.className='card-selected-word-name';wordName.textContent=text(row[COL.word])||'単語未登録';
-        cardSelectedWordText.append(numberBadge,partBadge,wordName);
+        const levelBadges=document.createElement('span');levelBadges.className='practice-list-levels practice-level-chips';
+        [text(row[COL.sLevel]),text(row[COL.wLevel])].filter(Boolean).forEach(level=>{
+          const chip=document.createElement('span');const digit=level.match(/[123]$/)?.[0];
+          chip.className=`practice-meta-chip ${digit==='1'?'red':digit==='2'?'orange':'yellow'}`;chip.textContent=level.toUpperCase();levelBadges.append(chip);
+        });
+        cardSelectedWordText.append(numberBadge,partBadge,wordName,levelBadges);
         cardMeaningNumberBadge.className='practice-meta-chip';
         cardMeaningNumberBadge.textContent=formatSingleDigitNumber(row?.[COL.meaningNo]);
       }
