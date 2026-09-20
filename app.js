@@ -478,6 +478,10 @@ const COL=Object.freeze({
     const cardWordSearchRow=document.getElementById('cardWordSearchRow');
     const cardWordSearch=document.getElementById('cardWordSearch');
     const cardWordResults=document.getElementById('cardWordResults');
+    const cardWordResultsShell=document.createElement('div');cardWordResultsShell.className='card-word-results-shell';
+    const cardWordScrollbar=document.createElement('div');cardWordScrollbar.className='card-word-scrollbar';cardWordScrollbar.setAttribute('role','scrollbar');cardWordScrollbar.setAttribute('aria-label','単語候補のスクロール');cardWordScrollbar.setAttribute('aria-orientation','vertical');cardWordScrollbar.tabIndex=0;
+    const cardWordScrollThumb=document.createElement('span');cardWordScrollThumb.className='card-word-scroll-thumb';cardWordScrollbar.append(cardWordScrollThumb);
+    cardWordResults.before(cardWordResultsShell);cardWordResultsShell.append(cardWordResults,cardWordScrollbar);
     const cardSelectedWord=document.getElementById('cardSelectedWord');
     const cardSelectedWordText=document.getElementById('cardSelectedWordText');
     const cardWordReselect=document.getElementById('cardWordReselect');
@@ -1071,6 +1075,23 @@ const COL=Object.freeze({
     let cardEditorRowsSnapshot=null;
     let cardEditorHasStagedChanges=false;
     let cardEditorAnimationRun=0;
+    const updateCardWordScrollbar=()=>{
+      const maximum=Math.max(0,cardWordResults.scrollHeight-cardWordResults.clientHeight);const trackHeight=cardWordScrollbar.clientHeight;
+      cardWordScrollbar.hidden=!maximum||!trackHeight;if(!maximum||!trackHeight)return;
+      const thumbHeight=Math.max(36,trackHeight*(cardWordResults.clientHeight/cardWordResults.scrollHeight));const travel=Math.max(0,trackHeight-thumbHeight);const top=maximum?travel*(cardWordResults.scrollTop/maximum):0;
+      cardWordScrollThumb.style.height=`${thumbHeight}px`;cardWordScrollThumb.style.transform=`translateY(${top}px)`;cardWordScrollbar.setAttribute('aria-valuemin','0');cardWordScrollbar.setAttribute('aria-valuemax',String(Math.round(maximum)));cardWordScrollbar.setAttribute('aria-valuenow',String(Math.round(cardWordResults.scrollTop)));
+    };
+    let cardScrollbarDrag=null;
+    cardWordScrollbar.addEventListener('pointerdown',event=>{
+      event.preventDefault();const trackRect=cardWordScrollbar.getBoundingClientRect();const thumbRect=cardWordScrollThumb.getBoundingClientRect();const maximum=Math.max(0,cardWordResults.scrollHeight-cardWordResults.clientHeight);const travel=Math.max(1,trackRect.height-thumbRect.height);if(!maximum)return;
+      if(event.target!==cardWordScrollThumb){const thumbTop=Math.max(0,Math.min(travel,event.clientY-trackRect.top-thumbRect.height/2));cardWordResults.scrollTop=(thumbTop/travel)*maximum;updateCardWordScrollbar()}
+      cardScrollbarDrag={pointerId:event.pointerId,startY:event.clientY,startScroll:cardWordResults.scrollTop,maximum,travel};cardWordScrollbar.setPointerCapture?.(event.pointerId);cardWordScrollbar.classList.add('dragging');
+    });
+    cardWordScrollbar.addEventListener('pointermove',event=>{if(!cardScrollbarDrag||event.pointerId!==cardScrollbarDrag.pointerId)return;event.preventDefault();cardWordResults.scrollTop=cardScrollbarDrag.startScroll+((event.clientY-cardScrollbarDrag.startY)/cardScrollbarDrag.travel)*cardScrollbarDrag.maximum});
+    const finishCardScrollbarDrag=event=>{if(!cardScrollbarDrag||event.pointerId!==cardScrollbarDrag.pointerId)return;cardScrollbarDrag=null;cardWordScrollbar.classList.remove('dragging')};
+    cardWordScrollbar.addEventListener('pointerup',finishCardScrollbarDrag);cardWordScrollbar.addEventListener('pointercancel',finishCardScrollbarDrag);
+    cardWordScrollbar.addEventListener('keydown',event=>{if(!['ArrowUp','ArrowDown','PageUp','PageDown','Home','End'].includes(event.key))return;event.preventDefault();const page=cardWordResults.clientHeight*.85;const amount=event.key==='ArrowUp'?-44:event.key==='ArrowDown'?44:event.key==='PageUp'?-page:event.key==='PageDown'?page:event.key==='Home'?-cardWordResults.scrollHeight:cardWordResults.scrollHeight;cardWordResults.scrollBy({top:amount,behavior:'smooth'})});
+    new ResizeObserver(updateCardWordScrollbar).observe(cardWordResultsShell);
     const closeCardActions=()=>{cardActionsOverlay.hidden=true;cardActionRow=null};
     const openCardActions=row=>{
       if(autoPlaying)stopAutoPlayback();
@@ -1263,14 +1284,16 @@ const COL=Object.freeze({
       const appendNextBatch=()=>{
         const end=Math.min(matches.length,rendered+100);
         for(;rendered<end;rendered+=1)appendMatch(matches[rendered]);
+        requestAnimationFrame(updateCardWordScrollbar);
       };
       appendNextBatch();
       cardWordResults.onscroll=()=>{
         if(cardWordResults.scrollTop+cardWordResults.clientHeight>=cardWordResults.scrollHeight-120)appendNextBatch();
+        updateCardWordScrollbar();
       };
       const empty=document.createElement('p');empty.className='card-word-empty';empty.textContent=query?'この文字で始まる登録済み単語がありません':'追加する単語を候補から選択してください';
       if(!matches.length)cardWordResults.append(empty);
-      cardWordResults.hidden=false;cardWordSearch.setAttribute('aria-expanded','true');
+      cardWordResults.hidden=false;cardWordSearch.setAttribute('aria-expanded','true');requestAnimationFrame(updateCardWordScrollbar);
     };
     const syncCardEditorMessages=()=>{
       cardWordMessage.hidden=Boolean(selectedVocabularyRow);
