@@ -1368,15 +1368,14 @@ const COL=Object.freeze({
           const label=document.createElement('label');label.className='card-editor-field';
           const title=document.createElement('span');title.textContent=labelText;
           if(optional){const small=document.createElement('small');small.textContent=' 任意';title.append(small)}
-          else{const required=document.createElement('em');required.className='card-required-mark';required.setAttribute('aria-hidden','true');required.textContent='※';title.append(' ',required)}
           const input=document.createElement('textarea');input.rows=rows;input.placeholder=`${labelText}を入力`;input.dataset.exampleField=key;input.value=draft[key];if(key==='english')input.lang='en';
           input.addEventListener('input',()=>{draft[key]=input.value;cardEditorHasStagedChanges=true;syncCardEditorMessages()});label.append(title,input);return label;
         };
         const japaneseField=makeField('日本語','japanese',4);
-        const japaneseMessage=document.createElement('p');japaneseMessage.className='card-field-message';japaneseMessage.dataset.exampleMessage='japanese';japaneseMessage.textContent='※日本語を入力してください';
+        const japaneseMessage=document.createElement('em');japaneseMessage.className='card-field-message';japaneseMessage.dataset.exampleMessage='japanese';japaneseMessage.textContent='※テキストが入力されていません';japaneseField.querySelector(':scope > span').append(japaneseMessage);
         const englishField=makeField('英語','english',4);
-        const englishMessage=document.createElement('p');englishMessage.className='card-field-message';englishMessage.dataset.exampleMessage='english';englishMessage.textContent='※英語を入力してください';
-        form.append(heading,japaneseField,japaneseMessage,englishField,englishMessage,makeField('補足','note',3,true));cardExampleCarousel.append(form);
+        const englishMessage=document.createElement('em');englishMessage.className='card-field-message';englishMessage.dataset.exampleMessage='english';englishMessage.textContent='※テキストが入力されていません';englishField.querySelector(':scope > span').append(englishMessage);
+        form.append(heading,japaneseField,englishField,makeField('補足','note',3,true));cardExampleCarousel.append(form);
       });
       const nextExampleNo=String(nextNumber(cardExampleDrafts.map(draft=>{const row=[];row[COL.exampleNo]=draft.exampleNo;return row}),COL.exampleNo));
       const addPage=document.createElement('button');addPage.type='button';addPage.className='card-example-page card-example-add';
