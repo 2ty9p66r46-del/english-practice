@@ -1374,7 +1374,7 @@ const COL=Object.freeze({
       if(preserveSelection){
         pendingMeaningChoice={number:text(cardEditorRow?.[COL.meaningNo]),value:text(cardEditorRow?.[COL.meaning])};
         cardMeaningStep.classList.remove('is-choosing');cardMeaningResults.hidden=true;cardMeaningField.hidden=true;cardMeaningNumberBadge.hidden=true;cardMeaningEditActions.hidden=false;cardExampleStep.hidden=true;selectedMeaningMode='existing-choice';
-        showSelectedMeaning(pendingMeaningChoice.number,pendingMeaningChoice.value,false,false);syncCardEditorMessages();cardMeaningStep.hidden=false;return;
+        showSelectedMeaning(pendingMeaningChoice.number,pendingMeaningChoice.value,false,true);syncCardEditorMessages();cardMeaningStep.hidden=false;return;
       }
       const choices=[{value:'',label:'新規登録',number:String(nextNumber(samePair,COL.meaningNo)),kind:'new'},...meanings];
       choices.forEach(choice=>{
@@ -1389,12 +1389,12 @@ const COL=Object.freeze({
             await fadeMeaningTransition([cardMeaningResults],()=>{
               cardMeaningStep.classList.remove('is-choosing');selectedMeaningMode='new-draft';cardMeaningInput.value='';cardMeaningResults.hidden=true;cardMeaningField.hidden=false;
               cardMeaningNumberBadge.className='practice-meta-chip';cardMeaningNumberBadge.textContent=formatSingleDigitNumber(choice.number);cardMeaningNumberBadge.hidden=false;
-              cardMeaningConfirm.textContent='この意味で登録';cardMeaningConfirm.hidden=false;cardExampleStep.hidden=true;syncCardEditorMessages();
-            },[cardMeaningField,cardMeaningConfirm,cardMeaningMessage]);
+              cardMeaningConfirm.textContent='この意味で登録';cardMeaningConfirm.hidden=false;cardMeaningReselect.hidden=false;cardExampleStep.hidden=true;syncCardEditorMessages();
+            },[cardMeaningField,cardMeaningConfirm,cardMeaningMessage,cardMeaningReselect]);
           }else{
             await fadeMeaningTransition([cardMeaningResults,cardMeaningMessage],()=>{
               cardMeaningStep.classList.remove('is-choosing');selectedMeaningMode='existing-choice';pendingMeaningChoice={number:choice.number,value:choice.value};cardMeaningInput.value=choice.value;cardMeaningResults.hidden=true;cardMeaningField.hidden=true;cardMeaningConfirm.hidden=true;
-              showSelectedMeaning(choice.number,choice.value,false,false);cardMeaningEditActions.hidden=false;cardExampleStep.hidden=true;syncCardEditorMessages();
+              showSelectedMeaning(choice.number,choice.value,false,true);cardMeaningEditActions.hidden=false;cardExampleStep.hidden=true;syncCardEditorMessages();
             },[cardSelectedMeaning,cardMeaningEditActions]);
           }
         });
@@ -1503,7 +1503,7 @@ const COL=Object.freeze({
       selectedVocabularyRow=null;selectedMeaningMode=null;pendingMeaningChoice=null;selectedMeaningNumber='';cardExampleDrafts=[];cardDeletedExampleRows=[];cardExampleCarousel.replaceChildren();cardWordStep.classList.remove('has-selection');cardSelectedWord.hidden=true;cardWordSearchRow.hidden=false;cardWordSearch.disabled=false;cardWordSearch.value='';cardMeaningStep.classList.remove('is-choosing');cardMeaningStep.hidden=true;cardMeaningField.hidden=true;cardMeaningNumberBadge.hidden=true;cardMeaningConfirm.hidden=true;cardSelectedMeaning.hidden=true;cardMeaningChanged.hidden=true;cardMeaningEditActions.hidden=true;cardMeaningReselect.hidden=true;cardMeaningInput.value='';cardExampleStep.hidden=true;syncCardEditorMessages();renderWordResults();
     });
     cardMeaningReselect.addEventListener('click',async()=>{
-      await fadeMeaningTransition([cardSelectedMeaning,cardMeaningChanged,cardMeaningReselect,cardExampleStep],()=>{
+      await fadeMeaningTransition([cardSelectedMeaning,cardMeaningChanged,cardMeaningReselect,cardMeaningField,cardMeaningConfirm,cardExampleStep],()=>{
         cardMeaningReselect.hidden=true;cardExampleStep.hidden=true;
         renderMeaningResults(false);
       },[cardMeaningResults,cardMeaningEditActions,cardMeaningMessage]);
