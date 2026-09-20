@@ -1384,11 +1384,7 @@ const COL=Object.freeze({
       cardDeletedExampleRows=[];
     };
     const syncCardExampleCommitState=()=>{
-      const pages=[...cardExampleCarousel.querySelectorAll('.card-example-form')];
-      const pageWidth=cardExampleCarousel.clientWidth||1;
-      const page=pages[Math.max(0,Math.min(pages.length-1,Math.round(cardExampleCarousel.scrollLeft/pageWidth)))];
-      const draft=page&&cardExampleDrafts[Number(page.dataset.draftIndex)];
-      cardExampleCommit.disabled=!draft||Boolean(draft.isPendingAdd);
+      cardExampleCommit.disabled=!cardExampleDrafts.some(draft=>!draft.isPendingAdd);
     };
     cardExampleCarousel.addEventListener('scroll',syncCardExampleCommitState,{passive:true});
     const renderCardExampleCarousel=(focusIndex=null,animateFocus=true)=>{
@@ -1459,17 +1455,18 @@ const COL=Object.freeze({
     const showCardExampleEditor=()=>{loadCardExampleDrafts();renderCardExampleCarousel();cardExampleStep.hidden=false};
     cardExampleCommit.addEventListener('click',()=>{
       const pages=[...cardExampleCarousel.querySelectorAll('.card-example-form')];
-      if(!pages.length)return;
-      const pageWidth=cardExampleCarousel.clientWidth||1;
-      const page=pages[Math.max(0,Math.min(pages.length-1,Math.round(cardExampleCarousel.scrollLeft/pageWidth)))];
-      const draft=cardExampleDrafts[Number(page.dataset.draftIndex)];
-      if(!draft||draft.isPendingAdd)return;
-      const japanese=page.querySelector('[data-example-field="japanese"]')?.value||'';
-      const english=page.querySelector('[data-example-field="english"]')?.value||'';
-      const note=page.querySelector('[data-example-field="note"]')?.value||'';
-      if(!text(japanese)||!text(english)){syncCardEditorMessages();alert('未入力の日本語または英語があります。');return}
-      if(text(draft.japanese)!==text(japanese)||text(draft.english)!==text(english)||text(draft.note)!==text(note))cardEditorHasStagedChanges=true;
-      draft.japanese=japanese;draft.english=english;draft.note=note;draft.editing=null;
+      const entries=pages.map(page=>({page,draft:cardExampleDrafts[Number(page.dataset.draftIndex)]})).filter(entry=>entry.draft&&!entry.draft.isPendingAdd).map(({page,draft})=>({
+        draft,
+        japanese:page.querySelector('[data-example-field="japanese"]')?.value||'',
+        english:page.querySelector('[data-example-field="english"]')?.value||'',
+        note:page.querySelector('[data-example-field="note"]')?.value||''
+      }));
+      if(!entries.length)return;
+      if(entries.some(entry=>!text(entry.japanese)||!text(entry.english))){syncCardEditorMessages();alert('未入力の日本語または英語があります。');return}
+      entries.forEach(({draft,japanese,english,note})=>{
+        if(text(draft.japanese)!==text(japanese)||text(draft.english)!==text(english)||text(draft.note)!==text(note))cardEditorHasStagedChanges=true;
+        draft.japanese=japanese;draft.english=english;draft.note=note;draft.editing=null;
+      });
       syncCardEditorMessages();
     });
     const blockIncompleteExamples=()=>{
