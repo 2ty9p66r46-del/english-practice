@@ -497,6 +497,7 @@ const COL=Object.freeze({
     const cardSelectedMeaning=document.getElementById('cardSelectedMeaning');
     const cardSelectedMeaningNumber=document.getElementById('cardSelectedMeaningNumber');
     const cardSelectedMeaningText=document.getElementById('cardSelectedMeaningText');
+    const cardMeaningNew=document.getElementById('cardMeaningNew');
     const cardMeaningChanged=document.getElementById('cardMeaningChanged');
     const cardMeaningEditActions=document.getElementById('cardMeaningEditActions');
     const cardMeaningKeep=document.getElementById('cardMeaningKeep');
@@ -1304,6 +1305,7 @@ const COL=Object.freeze({
       cardWordReselect.hidden=!selectedVocabularyRow||cardEditorMode==='edit';
       const meaningConfirmed=['new','existing','unchanged','changed'].includes(selectedMeaningMode);
       cardMeaningMessage.hidden=meaningConfirmed||Boolean(text(cardMeaningInput.value));
+      cardMeaningNew.hidden=selectedMeaningMode!=='new-draft';
       cardExampleCarousel.querySelectorAll('.card-example-form').forEach(form=>{
         const japanese=form.querySelector('[data-example-field="japanese"]');
         const english=form.querySelector('[data-example-field="english"]');
@@ -1416,7 +1418,7 @@ const COL=Object.freeze({
               cardMeaningStep.classList.remove('is-choosing');selectedMeaningMode='new-draft';cardMeaningInput.value='';cardMeaningResults.hidden=true;cardMeaningField.hidden=false;
               cardMeaningNumberBadge.className='practice-meta-chip';cardMeaningNumberBadge.textContent=formatSingleDigitNumber(choice.number);cardMeaningNumberBadge.hidden=false;
               cardMeaningConfirm.textContent='この意味で登録';cardMeaningConfirm.hidden=false;cardMeaningReselect.hidden=false;cardExampleStep.hidden=true;syncCardEditorMessages();
-            },[cardMeaningField,cardMeaningConfirm,cardMeaningReselect]);
+            },[cardMeaningNew,cardMeaningField,cardMeaningConfirm,cardMeaningReselect]);
           }else{
             await fadeMeaningTransition([cardMeaningResults,cardMeaningMessage],()=>{
               cardMeaningStep.classList.remove('is-choosing');selectedMeaningMode='existing-choice';pendingMeaningChoice={number:choice.number,value:choice.value};cardMeaningInput.value=choice.value;cardMeaningResults.hidden=true;cardMeaningField.hidden=true;cardMeaningConfirm.hidden=true;
@@ -1529,7 +1531,7 @@ const COL=Object.freeze({
       selectedVocabularyRow=null;selectedMeaningMode=null;pendingMeaningChoice=null;selectedMeaningNumber='';cardExampleDrafts=[];cardDeletedExampleRows=[];cardExampleCarousel.replaceChildren();cardWordStep.classList.remove('has-selection');cardSelectedWord.hidden=true;cardWordSearchRow.hidden=false;cardWordSearch.disabled=false;cardWordSearch.value='';cardMeaningStep.classList.remove('is-choosing');cardMeaningStep.hidden=true;cardMeaningField.hidden=true;cardMeaningNumberBadge.hidden=true;cardMeaningConfirm.hidden=true;cardSelectedMeaning.hidden=true;cardMeaningChanged.hidden=true;cardMeaningEditActions.hidden=true;cardMeaningReselect.hidden=true;cardMeaningInput.value='';cardExampleStep.hidden=true;syncCardEditorMessages();renderWordResults();
     });
     cardMeaningReselect.addEventListener('click',async()=>{
-      await fadeMeaningTransition([cardSelectedMeaning,cardMeaningChanged,cardMeaningReselect,cardMeaningField,cardMeaningConfirm,cardExampleStep],()=>{
+      await fadeMeaningTransition([cardSelectedMeaning,cardMeaningNew,cardMeaningChanged,cardMeaningReselect,cardMeaningField,cardMeaningConfirm,cardExampleStep],()=>{
         cardMeaningReselect.hidden=true;cardExampleStep.hidden=true;
         renderMeaningResults(false);
       },[cardMeaningResults,cardMeaningEditActions,cardMeaningMessage]);
@@ -1576,7 +1578,7 @@ const COL=Object.freeze({
         if(value!==oldValue){samePair.filter(row=>text(row[COL.meaningNo])===currentNumber).forEach(row=>{row[COL.meaning]=value});cardEditorHasStagedChanges=true}
         changed=value!==oldValue;mode=changed?'changed':'unchanged';
       }
-      await fadeMeaningTransition([cardMeaningField,cardMeaningConfirm,cardMeaningMessage],()=>{
+      await fadeMeaningTransition([cardMeaningNew,cardMeaningField,cardMeaningConfirm,cardMeaningMessage],()=>{
         selectedMeaningMode=mode;cardMeaningField.hidden=true;cardMeaningConfirm.hidden=true;
         showSelectedMeaning(number,value,changed);showCardExampleEditor();syncCardEditorMessages();
       },[cardSelectedMeaning,cardMeaningChanged,cardExampleStep]);
