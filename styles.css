@@ -1050,3 +1050,4 @@ body[data-page="home"] .bottom-space{display:none}
 .card-meaning-new{margin:0;color:#d92d45;font-size:.68rem;font-weight:400}.card-meaning-new[hidden]{display:none!important}
 .card-example-form{position:relative}.card-example-remove:disabled{color:#c7ccd5}.card-example-add-cover{position:absolute;z-index:3;top:52px;right:0;bottom:0;left:0;display:grid;place-items:center;border:0;border-radius:0 0 15px 15px;background:#fff;color:var(--blue);font-size:.86rem;font-weight:800}
 .practice-list-empty{display:grid;min-height:210px;place-content:center;gap:8px;padding:28px;color:#7b8798;text-align:center}.practice-list-empty strong{color:#344054;font-size:.88rem}.practice-list-empty span{font-size:.7rem;line-height:1.5}
+.card-editor-confirm-changes ul{gap:12px}.card-editor-confirm-changes li{white-space:pre-wrap}
