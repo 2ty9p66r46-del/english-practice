@@ -1305,7 +1305,7 @@ const COL=Object.freeze({
       cardWordReselect.hidden=!selectedVocabularyRow||cardEditorMode==='edit';
       const meaningConfirmed=['new','existing','unchanged','changed'].includes(selectedMeaningMode);
       cardMeaningMessage.hidden=meaningConfirmed||Boolean(text(cardMeaningInput.value));
-      cardMeaningNew.hidden=selectedMeaningMode!=='new-draft';
+      cardMeaningNew.hidden=!['new-draft','new'].includes(selectedMeaningMode);
       cardExampleCarousel.querySelectorAll('.card-example-form').forEach(form=>{
         const japanese=form.querySelector('[data-example-field="japanese"]');
         const english=form.querySelector('[data-example-field="english"]');
@@ -1591,7 +1591,7 @@ const COL=Object.freeze({
         if(value!==oldValue){samePair.filter(row=>text(row[COL.meaningNo])===currentNumber).forEach(row=>{row[COL.meaning]=value});cardEditorHasStagedChanges=true}
         changed=value!==oldValue;mode=changed?'changed':'unchanged';
       }
-      await fadeMeaningTransition([cardMeaningNew,cardMeaningField,cardMeaningConfirm,cardMeaningMessage],()=>{
+      await fadeMeaningTransition([cardMeaningField,cardMeaningConfirm,cardMeaningMessage],()=>{
         selectedMeaningMode=mode;cardMeaningField.hidden=true;cardMeaningConfirm.hidden=true;
         showSelectedMeaning(number,value,changed);showCardExampleEditor();syncCardEditorMessages();
       },[cardSelectedMeaning,cardMeaningChanged,cardExampleStep]);
