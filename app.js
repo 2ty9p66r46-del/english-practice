@@ -583,7 +583,7 @@ const COL=Object.freeze({
       return result;
     };
     const comparePracticeNumber=(a,b)=>{
-      for(const column of [COL.wordNo,COL.meaningNo,COL.exampleNo]){
+      for(const column of [COL.wordNo,COL.posNo,COL.meaningNo,COL.exampleNo]){
         const aNumber=Number.parseInt(text(a?.[column]),10);
         const bNumber=Number.parseInt(text(b?.[column]),10);
         const difference=(Number.isFinite(aNumber)?aNumber:Number.MAX_SAFE_INTEGER)-(Number.isFinite(bNumber)?bNumber:Number.MAX_SAFE_INTEGER);
