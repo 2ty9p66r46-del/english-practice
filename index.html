@@ -230,6 +230,14 @@
         <div class="practice-setting-row"><span>日本語後のポーズ</span><div class="practice-setting-picker"><button class="practice-setting-trigger setting-cycle" id="japanesePauseSetting" type="button"><span class="practice-setting-value"></span></button><div class="practice-setting-menu" id="japanesePauseMenu" hidden></div></div></div>
         <div class="practice-setting-row"><span>英語後のポーズ</span><div class="practice-setting-picker"><button class="practice-setting-trigger setting-cycle" id="englishPauseSetting" type="button"><span class="practice-setting-value"></span></button><div class="practice-setting-menu" id="englishPauseMenu" hidden></div></div></div>
         <div class="practice-setting-row"><span>英語の読み上げ回数</span><div class="practice-setting-picker"><button class="practice-setting-trigger setting-cycle" id="englishRepeatSetting" type="button"><span class="practice-setting-value"></span></button><div class="practice-setting-menu" id="englishRepeatMenu" hidden></div></div></div>
+        <button class="practice-learning-reset" id="practiceLearningReset" type="button">学習データリセット</button>
+      </section>
+    </div>
+    <div class="learning-reset-overlay" id="learningResetOverlay" hidden>
+      <section class="learning-reset-dialog" role="alertdialog" aria-modal="true" aria-labelledby="learningResetTitle" aria-describedby="learningResetMessage">
+        <h2 id="learningResetTitle">学習データリセット</h2>
+        <p id="learningResetMessage">理解度、正答結果をすべてリセットします。</p>
+        <div><button id="learningResetCancel" type="button">キャンセル</button><button class="danger" id="learningResetConfirm" type="button">リセット</button></div>
       </section>
     </div>
     <div class="card-actions-overlay" id="cardActionsOverlay" hidden>
