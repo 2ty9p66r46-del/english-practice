@@ -1386,7 +1386,7 @@ const COL=Object.freeze({
       cardDeletedExampleRows=[];
     };
     const syncCardExampleCommitState=()=>{
-      cardExampleCommit.disabled=!cardExampleDrafts.some(draft=>!draft.isPendingAdd);
+      cardExampleCommit.disabled=!cardExampleDrafts.some(draft=>!draft.isPendingAdd)&&!cardDeletedExampleRows.length;
     };
     cardExampleCarousel.addEventListener('scroll',syncCardExampleCommitState,{passive:true});
     const renderCardExampleCarousel=(focusIndex=null,animateFocus=true)=>{
@@ -1407,7 +1407,7 @@ const COL=Object.freeze({
           if(draft.isPendingAdd||cardExampleDrafts[target]?.isPendingAdd)return;
           [cardExampleDrafts[index],cardExampleDrafts[target]]=[cardExampleDrafts[target],cardExampleDrafts[index]];
           cardExampleDrafts.forEach((item,itemIndex)=>{item.exampleNo=String(itemIndex+1)});
-          cardEditorHasStagedChanges=true;
+          cardEditorHasStagedChanges=true;cardExampleCommit.textContent='この内容を登録';
           renderCardExampleCarousel(target);
         };
         const moveUp=document.createElement('button');moveUp.type='button';moveUp.className='card-order-button';moveUp.textContent='↑';moveUp.setAttribute('aria-label',`${formatExampleLetter(draft.exampleNo)}の例文を前へ移動`);moveUp.disabled=draft.isPendingAdd||index===0||cardExampleDrafts[index-1]?.isPendingAdd;moveUp.addEventListener('click',()=>moveExample(-1));
@@ -1416,7 +1416,7 @@ const COL=Object.freeze({
         const remove=document.createElement('button');remove.type='button';remove.className='card-example-remove';remove.textContent='削除';remove.disabled=Boolean(draft.isPendingAdd);
         remove.addEventListener('click',()=>{
           if(draft.row)cardDeletedExampleRows.push(draft.row);
-          cardExampleDrafts.splice(index,1);cardExampleDrafts.forEach((item,itemIndex)=>{item.exampleNo=String(itemIndex+1)});cardEditorHasStagedChanges=true;renderCardExampleCarousel();
+          cardExampleDrafts.splice(index,1);cardExampleDrafts.forEach((item,itemIndex)=>{item.exampleNo=String(itemIndex+1)});cardEditorHasStagedChanges=true;cardExampleCommit.textContent='この内容を登録';renderCardExampleCarousel();
         });
         heading.append(remove);
         const makeField=(labelText,key,rows,optional=false)=>{
@@ -1424,7 +1424,7 @@ const COL=Object.freeze({
           const title=document.createElement('span');title.textContent=labelText;
           if(optional){const small=document.createElement('small');small.textContent=' 任意';title.append(small)}
           const input=document.createElement('textarea');input.rows=rows;input.placeholder=`${labelText}を入力`;input.dataset.exampleField=key;input.value=draft.editing?.[key]??draft[key];if(key==='english')input.lang='en';
-          input.addEventListener('input',()=>{draft.editing={...(draft.editing||{}),[key]:input.value};syncCardEditorMessages()});label.append(title,input);return label;
+          input.addEventListener('input',()=>{draft.editing={...(draft.editing||{}),[key]:input.value};cardExampleCommit.textContent='この内容を登録';syncCardEditorMessages()});label.append(title,input);return label;
         };
         const japaneseField=makeField('日本語','japanese',4);
         const japaneseMessage=document.createElement('em');japaneseMessage.className='card-field-message';japaneseMessage.dataset.exampleMessage='japanese';japaneseMessage.textContent='※入力は必須です';japaneseField.querySelector(':scope > span').append(japaneseMessage);
@@ -1439,7 +1439,7 @@ const COL=Object.freeze({
             const coverAnimation=addCover.animate([{opacity:1},{opacity:0}],options);
             const formAnimations=[japaneseField,englishField,noteField].map(field=>field.animate([{opacity:0},{opacity:1}],options));
             try{await Promise.all([coverAnimation.finished,...formAnimations.map(animation=>animation.finished)])}catch{}
-            formAnimations.forEach(animation=>animation.cancel());draft.isPendingAdd=false;remove.disabled=false;addCover.remove();syncCardEditorMessages();renderCardExampleCarousel(index,false);
+            formAnimations.forEach(animation=>animation.cancel());draft.isPendingAdd=false;remove.disabled=false;addCover.remove();cardExampleCommit.textContent='この内容を登録';syncCardEditorMessages();renderCardExampleCarousel(index,false);
           });
           form.append(addCover);
         }
@@ -1454,7 +1454,7 @@ const COL=Object.freeze({
         if(animateFocus&&focusedPage&&typeof focusedPage.animate==='function')focusedPage.animate([{opacity:0},{opacity:1}],{duration:420,easing:'ease-in-out'});
       });
     };
-    const showCardExampleEditor=()=>{loadCardExampleDrafts();renderCardExampleCarousel();cardExampleStep.hidden=false};
+    const showCardExampleEditor=()=>{loadCardExampleDrafts();cardExampleCommit.textContent='この内容を登録';renderCardExampleCarousel();cardExampleStep.hidden=false};
     cardExampleCommit.addEventListener('click',()=>{
       const pages=[...cardExampleCarousel.querySelectorAll('.card-example-form')];
       const entries=pages.map(page=>({page,draft:cardExampleDrafts[Number(page.dataset.draftIndex)]})).filter(entry=>entry.draft&&!entry.draft.isPendingAdd).map(({page,draft})=>({
@@ -1463,12 +1463,31 @@ const COL=Object.freeze({
         english:page.querySelector('[data-example-field="english"]')?.value||'',
         note:page.querySelector('[data-example-field="note"]')?.value||''
       }));
-      if(!entries.length)return;
+      if(!entries.length&&!cardDeletedExampleRows.length)return;
       if(entries.some(entry=>!text(entry.japanese)||!text(entry.english))){syncCardEditorMessages();alert('未入力の日本語または英語があります。');return}
+      const pairKey=vocabularyKey(selectedVocabularyRow);
+      const meaning=text(cardMeaningInput.value);
+      const meaningNo=selectedMeaningNumber;
+      const deletedRows=new Set(cardDeletedExampleRows);
+      cardDeletedExampleRows.forEach(row=>{const rowIndex=practiceStored.rows.indexOf(row);if(rowIndex>=0)practiceStored.rows.splice(rowIndex,1)});
+      const usedRows=new Set(entries.map(entry=>entry.draft.row).filter(Boolean));
       entries.forEach(({draft,japanese,english,note})=>{
         if(text(draft.japanese)!==text(japanese)||text(draft.english)!==text(english)||text(draft.note)!==text(note))cardEditorHasStagedChanges=true;
         draft.japanese=japanese;draft.english=english;draft.note=note;draft.editing=null;
+        let target=draft.row;
+        if(!target){
+          target=(practiceStored.rows||[]).find(row=>vocabularyKey(row)===pairKey&&!deletedRows.has(row)&&!usedRows.has(row)&&text(row[COL.meaningNo])===meaningNo&&!text(row[COL.japanese])&&!text(row[COL.english]));
+          if(!target){target=[...selectedVocabularyRow];let insertIndex=-1;practiceStored.rows.forEach((row,index)=>{if(vocabularyKey(row)===pairKey)insertIndex=index});practiceStored.rows.splice(insertIndex>=0?insertIndex+1:practiceStored.rows.length,0,target)}
+          draft.row=target;usedRows.add(target);target[COL.understanding]='';target[COL.correctCount]=0;target[COL.wrongCount]=0;target[COL.questionCount]=0;
+        }
+        target[COL.meaningNo]=meaningNo;target[COL.meaning]=meaning;target[COL.exampleNo]=draft.exampleNo;target[COL.japanese]=text(japanese);target[COL.english]=text(english);target[COL.note]=text(note);
       });
+      if(!entries.length){
+        let target=(practiceStored.rows||[]).find(row=>vocabularyKey(row)===pairKey&&text(row[COL.meaningNo])===meaningNo);
+        if(!target){target=[...selectedVocabularyRow];let insertIndex=-1;practiceStored.rows.forEach((row,index)=>{if(vocabularyKey(row)===pairKey)insertIndex=index});practiceStored.rows.splice(insertIndex>=0?insertIndex+1:practiceStored.rows.length,0,target)}
+        target[COL.meaningNo]=meaningNo;target[COL.meaning]=meaning;target[COL.exampleNo]='';target[COL.japanese]='';target[COL.english]='';target[COL.note]='';
+      }
+      cardDeletedExampleRows=[];cardEditorHasStagedChanges=true;cardExampleCommit.textContent='登録しました';syncCardExampleCommitState();
       syncCardEditorMessages();
     });
     const blockIncompleteExamples=()=>{
