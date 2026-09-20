@@ -1392,6 +1392,11 @@ const COL=Object.freeze({
       cardExampleCommit.textContent='この内容を登録';
       syncCardExampleCommitState();
     };
+    const blockUnregisteredCardExampleChanges=()=>{
+      if(cardExampleCommitStatus.get(cardExampleCommitKey())!==false)return false;
+      alert('例文の変更内容がまだ登録されていません。');
+      return true;
+    };
     const syncCardExampleCommitState=()=>{
       const hasContent=cardExampleDrafts.some(draft=>!draft.isPendingAdd)||cardDeletedExampleRows.length;
       const registered=cardExampleCommitStatus.get(cardExampleCommitKey())===true;
@@ -1506,37 +1511,47 @@ const COL=Object.freeze({
       syncCardEditorMessages();alert('未入力の日本語または英語があります。');return true;
     };
     const collectCardEditorChanges=()=>{
-      const groups=new Map();const currentRows=practiceStored.rows||[];
+      const changes=[];const seen=new Set();const currentRows=practiceStored.rows||[];
       const shown=value=>text(value)||'空欄';
-      const add=(row,message)=>{const source=row||selectedVocabularyRow||cardEditorRow;const key=source?vocabularyKey(source):'data';if(!groups.has(key))groups.set(key,{row:source,messages:new Set()});groups.get(key).messages.add(message)};
+      const add=(row,message,meaningNumber=null)=>{
+        const source=row||selectedVocabularyRow||cardEditorRow;
+        const word=source?shown(source[COL.word]):'データ';
+        const part=source?shown(source[COL.pos]):'';
+        const number=text(meaningNumber??source?.[COL.meaningNo]);
+        const prefix=`${word}${part?` ${part}`:''}${number?`の意味${formatSingleDigitNumber(number)}`:''}`;
+        const line=`${prefix} ${message}`;
+        if(!seen.has(line)){seen.add(line);changes.push(line)}
+      };
       cardEditorRowBaseline.forEach((before,row)=>{
         if(!currentRows.includes(row)){
-          if(text(before[COL.exampleNo]))add(before,`例文 ${formatExampleLetter(before[COL.exampleNo])}を削除（日本語：「${shown(before[COL.japanese])}」／英語：「${shown(before[COL.english])}」）`);
-          else add(before,`意味 ${formatSingleDigitNumber(before[COL.meaningNo])}を削除：「${shown(before[COL.meaning])}」`);
+          if(text(before[COL.exampleNo]))add(before,`例文${formatExampleLetter(before[COL.exampleNo])}が削除されます（日本語：「${shown(before[COL.japanese])}」／英語：「${shown(before[COL.english])}」）`,before[COL.meaningNo]);
+          else add(before,`が削除されます（意味：「${shown(before[COL.meaning])}」）`,before[COL.meaningNo]);
           return;
         }
-        if(text(before[COL.meaning])!==text(row[COL.meaning]))add(row,`意味：「${shown(before[COL.meaning])}」→「${shown(row[COL.meaning])}」`);
-        if(text(before[COL.meaningNo])!==text(row[COL.meaningNo]))add(row,`意味番号：${shown(before[COL.meaningNo])}→${shown(row[COL.meaningNo])}`);
-        const label=`例文 ${formatExampleLetter(row[COL.exampleNo]||before[COL.exampleNo])}`;
-        if(text(before[COL.exampleNo])!==text(row[COL.exampleNo]))add(row,`例文番号：${formatExampleLetter(before[COL.exampleNo])}→${formatExampleLetter(row[COL.exampleNo])}`);
-        if(text(before[COL.japanese])!==text(row[COL.japanese]))add(row,`${label} 日本語：「${shown(before[COL.japanese])}」→「${shown(row[COL.japanese])}」`);
-        if(text(before[COL.english])!==text(row[COL.english]))add(row,`${label} 英語：「${shown(before[COL.english])}」→「${shown(row[COL.english])}」`);
-        if(text(before[COL.note])!==text(row[COL.note]))add(row,`${label} 補足：「${shown(before[COL.note])}」→「${shown(row[COL.note])}」`);
+        if(text(before[COL.meaning])!==text(row[COL.meaning]))add(row,`が「${shown(before[COL.meaning])}」から「${shown(row[COL.meaning])}」に変更されます`,row[COL.meaningNo]);
+        if(text(before[COL.meaningNo])!==text(row[COL.meaningNo]))add(row,`の番号が意味${formatSingleDigitNumber(before[COL.meaningNo])}から意味${formatSingleDigitNumber(row[COL.meaningNo])}に変更されます`,row[COL.meaningNo]);
+        const exampleNumber=row[COL.exampleNo]||before[COL.exampleNo];
+        const label=`例文${formatExampleLetter(exampleNumber)}`;
+        if(text(before[COL.exampleNo])!==text(row[COL.exampleNo]))add(row,`例文${formatExampleLetter(before[COL.exampleNo])}が例文${formatExampleLetter(row[COL.exampleNo])}に変更されます`,row[COL.meaningNo]);
+        if(text(before[COL.japanese])!==text(row[COL.japanese]))add(row,`${label}の日本語が「${shown(before[COL.japanese])}」から「${shown(row[COL.japanese])}」に変更されます`,row[COL.meaningNo]);
+        if(text(before[COL.english])!==text(row[COL.english]))add(row,`${label}の英語が「${shown(before[COL.english])}」から「${shown(row[COL.english])}」に変更されます`,row[COL.meaningNo]);
+        if(text(before[COL.note])!==text(row[COL.note]))add(row,`${label}の補足が「${shown(before[COL.note])}」から「${shown(row[COL.note])}」に変更されます`,row[COL.meaningNo]);
       });
       currentRows.filter(row=>!cardEditorRowBaseline.has(row)).forEach(row=>{
-        if(text(row[COL.exampleNo]))add(row,`例文 ${formatExampleLetter(row[COL.exampleNo])}を追加（意味：「${shown(row[COL.meaning])}」／日本語：「${shown(row[COL.japanese])}」／英語：「${shown(row[COL.english])}」${text(row[COL.note])?`／補足：「${shown(row[COL.note])}」`:''}）`);
-        else if(text(row[COL.meaning]))add(row,`意味を新規登録：「${shown(row[COL.meaning])}」`);
+        if(text(row[COL.exampleNo]))add(row,`例文${formatExampleLetter(row[COL.exampleNo])}が追加されます（意味：「${shown(row[COL.meaning])}」／日本語：「${shown(row[COL.japanese])}」／英語：「${shown(row[COL.english])}」${text(row[COL.note])?`／補足：「${shown(row[COL.note])}」`:''}）`,row[COL.meaningNo]);
+        else if(text(row[COL.meaning]))add(row,`が新規登録されます（意味：「${shown(row[COL.meaning])}」）`,row[COL.meaningNo]);
       });
       const rowsChanged=Boolean(cardEditorRowsSnapshot)&&JSON.stringify(currentRows)!==JSON.stringify(cardEditorRowsSnapshot);
-      if(rowsChanged&&!groups.size)add(selectedVocabularyRow||cardEditorRow,'意味・例文の構成を変更');
-      return [...groups.values()].map(group=>{const number=group.row?`No ${formatPracticeNumber(group.row[COL.wordNo],5)}`:'データ';const part=group.row?text(group.row[COL.pos])||'品詞未登録':'';return `${number}${part?`・${part}`:''}について、以下が変更されました。\n${[...group.messages].map(message=>`・${message}`).join('\n')}`});
+      if(rowsChanged&&!changes.length)add(selectedVocabularyRow||cardEditorRow,'の意味・例文構成が変更されます');
+      return changes;
     };
     let cardEditorConfirmResolve=null;
-    const showCardEditorConfirmation=changes=>new Promise(resolve=>{
-      cardEditorConfirmResolve=resolve;cardEditorConfirmTitle.textContent=changes.length?'データ変更があります':'データ変更はありません';
+    const showCardEditorConfirmation=(changes,isCancel=false)=>new Promise(resolve=>{
+      cardEditorConfirmResolve=resolve;cardEditorConfirmTitle.textContent=isCancel?'キャンセルしますか？':changes.length?'データ変更があります':'データ変更はありません';
       cardEditorConfirmChanges.replaceChildren();
-      if(changes.length){const list=document.createElement('ul');changes.forEach(change=>{const item=document.createElement('li');item.textContent=change;list.append(item)});cardEditorConfirmChanges.append(list)}
-      cardEditorConfirmChanges.hidden=!changes.length;cardEditorConfirmCancel.hidden=false;cardEditorConfirmActions.classList.remove('single');cardEditorConfirm.hidden=false;cardEditorConfirmOk.focus({preventScroll:true});
+      if(isCancel){cardEditorConfirmChanges.textContent='編集中のデータはマスタに反映されません'}
+      else if(changes.length){const list=document.createElement('ul');changes.forEach(change=>{const item=document.createElement('li');item.textContent=change;list.append(item)});cardEditorConfirmChanges.append(list)}
+      cardEditorConfirmChanges.hidden=!isCancel&&!changes.length;cardEditorConfirmCancel.hidden=false;cardEditorConfirmActions.classList.remove('single');cardEditorConfirm.hidden=false;cardEditorConfirmOk.focus({preventScroll:true});
     });
     cardEditorConfirmCancel.addEventListener('click',()=>{cardEditorConfirm.hidden=true;const resolve=cardEditorConfirmResolve;cardEditorConfirmResolve=null;resolve?.(false)});
     cardEditorConfirmOk.addEventListener('click',()=>{
@@ -1672,7 +1687,7 @@ const COL=Object.freeze({
     };
     const requestCardEditorClose=async()=>{
       if(!cardEditorConfirm.hidden)return;
-      const confirmed=await showCardEditorConfirmation(collectCardEditorChanges());
+      const confirmed=await showCardEditorConfirmation([],true);
       if(!confirmed)return;
       await closeCardEditor(true);
     };
@@ -1688,10 +1703,12 @@ const COL=Object.freeze({
     cardWordSearch.addEventListener('input',()=>{if(!cardWordSearch.disabled)renderWordResults()});
     cardWordSearch.addEventListener('focus',()=>{if(!cardWordSearch.disabled)renderWordResults()});
     cardWordReselect.addEventListener('click',()=>{
+      if(blockUnregisteredCardExampleChanges())return;
       if(blockIncompleteExamples())return;
       selectedVocabularyRow=null;selectedMeaningMode=null;pendingMeaningChoice=null;selectedMeaningNumber='';cardExampleDrafts=[];cardDeletedExampleRows=[];cardExampleCarousel.replaceChildren();cardWordStep.classList.remove('has-selection');cardSelectedWord.hidden=true;cardWordSearchRow.hidden=false;cardWordSearch.disabled=false;cardWordSearch.value='';cardMeaningStep.classList.remove('is-choosing');cardMeaningStep.hidden=true;cardMeaningField.hidden=true;cardMeaningNumberBadge.hidden=true;cardMeaningConfirm.hidden=true;cardSelectedMeaning.hidden=true;cardMeaningChanged.hidden=true;cardMeaningEditActions.hidden=true;cardMeaningReselect.hidden=true;cardMeaningInput.value='';cardExampleStep.hidden=true;syncCardEditorMessages();renderWordResults();
     });
     cardMeaningReselect.addEventListener('click',async()=>{
+      if(blockUnregisteredCardExampleChanges())return;
       if(blockIncompleteExamples())return;
       await fadeMeaningTransition([cardSelectedMeaning,cardMeaningNew,cardMeaningChanged,cardMeaningReselect,cardMeaningField,cardMeaningConfirm,cardExampleStep],()=>{
         cardMeaningReselect.hidden=true;cardExampleStep.hidden=true;
@@ -1750,6 +1767,7 @@ const COL=Object.freeze({
     cardEditorOverlay.addEventListener('click',event=>{if(event.target===cardEditorOverlay)requestCardEditorClose()});
     const nextNumber=(rows,column)=>Math.max(0,...rows.map(row=>Number.parseInt(text(row[column]),10)||0))+1;
     cardEditorSave.addEventListener('click',async()=>{
+      if(blockUnregisteredCardExampleChanges())return;
       if(blockIncompleteExamples())return;
       const changes=collectCardEditorChanges();
       const confirmed=await showCardEditorConfirmation(changes);
