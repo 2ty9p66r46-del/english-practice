@@ -473,6 +473,12 @@ const COL=Object.freeze({
     const cardEditorTitle=document.getElementById('cardEditorTitle');
     const cardEditorCancel=document.getElementById('cardEditorCancel');
     const cardEditorSave=document.getElementById('cardEditorSave');
+    const cardEditorConfirm=document.createElement('div');cardEditorConfirm.className='card-editor-confirm';cardEditorConfirm.hidden=true;
+    const cardEditorConfirmPanel=document.createElement('section');cardEditorConfirmPanel.className='card-editor-confirm-panel';
+    const cardEditorConfirmTitle=document.createElement('h3');
+    const cardEditorConfirmChanges=document.createElement('div');cardEditorConfirmChanges.className='card-editor-confirm-changes';
+    const cardEditorConfirmOk=document.createElement('button');cardEditorConfirmOk.type='button';cardEditorConfirmOk.textContent='OK';
+    cardEditorConfirmPanel.append(cardEditorConfirmTitle,cardEditorConfirmChanges,cardEditorConfirmOk);cardEditorConfirm.append(cardEditorConfirmPanel);cardEditorSheet.append(cardEditorConfirm);
     const cardWordStep=document.getElementById('cardWordStep');
     const cardWordFilterToggle=document.getElementById('cardWordFilterToggle');
     const cardWordFilterPanel=document.getElementById('cardWordFilterPanel');
@@ -1418,6 +1424,34 @@ const COL=Object.freeze({
       if(!incomplete)return false;
       syncCardEditorMessages();alert('未入力の日本語または英語があります。');return true;
     };
+    const collectCardEditorChanges=()=>{
+      const changes=[];
+      if(selectedMeaningMode==='new')changes.push(`意味「${text(cardMeaningInput.value)}」を新規登録`);
+      else if(selectedMeaningMode==='changed')changes.push(`意味を「${text(cardMeaningInput.value)}」に変更`);
+      cardDeletedExampleRows.forEach(row=>changes.push(`例文 ${formatExampleLetter(row?.[COL.exampleNo])} を削除`));
+      cardExampleDrafts.filter(draft=>!draft.isPendingAdd).forEach(draft=>{
+        if(!draft.row){changes.push(`例文 ${formatExampleLetter(draft.exampleNo)} を追加`);return}
+        const fields=[];
+        if(text(draft.row[COL.japanese])!==text(draft.japanese))fields.push('日本語');
+        if(text(draft.row[COL.english])!==text(draft.english))fields.push('英語');
+        if(text(draft.row[COL.note])!==text(draft.note))fields.push('補足');
+        if(text(draft.row[COL.exampleNo])!==text(draft.exampleNo))fields.push('順序');
+        if(fields.length)changes.push(`例文 ${formatExampleLetter(draft.exampleNo)}：${fields.join('・')}を変更`);
+      });
+      const rowsChanged=Boolean(cardEditorRowsSnapshot)&&JSON.stringify(practiceStored.rows||[])!==JSON.stringify(cardEditorRowsSnapshot);
+      if(rowsChanged&&!changes.some(change=>change.startsWith('意味')))changes.unshift('意味・例文の構成を変更');
+      return [...new Set(changes)];
+    };
+    let cardEditorConfirmResolve=null;
+    const showCardEditorConfirmation=changes=>new Promise(resolve=>{
+      cardEditorConfirmResolve=resolve;cardEditorConfirmTitle.textContent=changes.length?'データ変更があります':'データ変更はありません';
+      cardEditorConfirmChanges.replaceChildren();
+      if(changes.length){const list=document.createElement('ul');changes.forEach(change=>{const item=document.createElement('li');item.textContent=change;list.append(item)});cardEditorConfirmChanges.append(list)}
+      cardEditorConfirmChanges.hidden=!changes.length;cardEditorConfirm.hidden=false;cardEditorConfirmOk.focus({preventScroll:true});
+    });
+    cardEditorConfirmOk.addEventListener('click',()=>{
+      cardEditorConfirm.hidden=true;const resolve=cardEditorConfirmResolve;cardEditorConfirmResolve=null;resolve?.(true);
+    });
     const renderMeaningResults=(preserveSelection=false)=>{
       cardMeaningResults.replaceChildren();
       pendingMeaningChoice=null;cardMeaningResults.hidden=false;cardSelectedMeaning.hidden=true;cardMeaningChanged.hidden=true;cardMeaningEditActions.hidden=true;cardMeaningConfirm.hidden=true;cardMeaningReselect.hidden=true;
@@ -1541,10 +1575,16 @@ const COL=Object.freeze({
       const animationRun=++cardEditorAnimationRun;
       if(restore&&cardEditorRowsSnapshot){practiceStored.rows=cardEditorRowsSnapshot.map(item=>[...item]);refreshPracticeAfterMutation()}
       cardEditorRowsSnapshot=null;cardEditorHasStagedChanges=false;
+      cardEditorConfirm.hidden=true;cardEditorConfirmResolve=null;
       cardEditorOverlay.classList.remove('open');
       await wait(340);
       if(animationRun!==cardEditorAnimationRun)return;
       cardEditorOverlay.hidden=true;cardEditorRow=null;selectedVocabularyRow=null;selectedMeaningMode=null;pendingMeaningChoice=null;selectedMeaningNumber='';cardExampleDrafts=[];cardDeletedExampleRows=[];
+    };
+    const requestCardEditorClose=async()=>{
+      if(!cardEditorConfirm.hidden)return;
+      await showCardEditorConfirmation(collectCardEditorChanges());
+      await closeCardEditor(true);
     };
     const refreshPracticeAfterMutation=()=>{
       practiceRows=getMatchingRows(practiceStored?.rows||[]);
@@ -1616,13 +1656,16 @@ const COL=Object.freeze({
       },[cardSelectedMeaning,cardMeaningChanged,cardExampleStep]);
     });
     cardMeaningInput.addEventListener('input',syncCardEditorMessages);
-    cardEditorCancel.addEventListener('click',closeCardEditor);
-    cardEditorOverlay.addEventListener('click',event=>{if(event.target===cardEditorOverlay)closeCardEditor()});
+    cardEditorCancel.addEventListener('click',requestCardEditorClose);
+    cardEditorOverlay.addEventListener('click',event=>{if(event.target===cardEditorOverlay)requestCardEditorClose()});
     const nextNumber=(rows,column)=>Math.max(0,...rows.map(row=>Number.parseInt(text(row[column]),10)||0))+1;
     cardEditorSave.addEventListener('click',async()=>{
       const meaning=text(cardMeaningInput.value);
-      if(!selectedVocabularyRow){alert('登録済みの単語を選択してください。');return}
       if(blockIncompleteExamples())return;
+      const changes=collectCardEditorChanges();
+      await showCardEditorConfirmation(changes);
+      if(!changes.length){await closeCardEditor(true);return}
+      if(!selectedVocabularyRow){alert('登録済みの単語を選択してください。');return}
       const hasSelectedMeaning=['new','existing','unchanged','changed'].includes(selectedMeaningMode)&&Boolean(meaning);
       const activeDrafts=cardExampleDrafts.filter(draft=>!draft.isPendingAdd);
       cardEditorSave.disabled=true;
@@ -2094,10 +2137,12 @@ const COL=Object.freeze({
         sheet.style.transition='transform 240ms cubic-bezier(.2,.8,.2,1)';
         overlay.style.transition='background-color 240ms ease';
         if(dismiss){
-          sheet.style.transform='translateY(104%)';
-          overlay.style.backgroundColor='rgba(17,24,39,0)';
-          onDismiss();
-          setTimeout(clearDragStyles,360);
+          const dismissResult=onDismiss();
+          if(dismissResult===false){
+            sheet.style.transform='translateY(0)';overlay.style.backgroundColor='rgba(17,24,39,.45)';setTimeout(clearDragStyles,250);
+          }else{
+            sheet.style.transform='translateY(104%)';overlay.style.backgroundColor='rgba(17,24,39,0)';setTimeout(clearDragStyles,360);
+          }
         }else{
           sheet.style.transform='translateY(0)';
           overlay.style.backgroundColor='rgba(17,24,39,.45)';
@@ -2108,7 +2153,7 @@ const COL=Object.freeze({
       handle.addEventListener('pointercancel',event=>finishDrag(event,true));
     };
     enableBottomSheetGrab(practiceFilterOverlay,practiceFilterSheet,practiceFilterHandle,()=>cancelPracticeFilter());
-    enableBottomSheetGrab(cardEditorOverlay,cardEditorSheet,cardEditorHandle,()=>closeCardEditor());
+    enableBottomSheetGrab(cardEditorOverlay,cardEditorSheet,cardEditorHandle,()=>{requestCardEditorClose();return false});
     const openPractice=async()=>{
       if(screenTransitionBusy)return;
       const stored=await getImportedData();
