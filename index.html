@@ -202,7 +202,7 @@
           </section>
           <footer class="practice-card-footer">
             <div class="practice-rating-footer"><div class="practice-rating-options" id="practiceRatingOptions" aria-label="理解度選択"><button class="practice-rating-button rating-zero red" type="button" data-value="0%" aria-label="理解度0パーセント">0</button><button class="practice-rating-button rating-fifty orange" type="button" data-value="50%" aria-label="理解度50パーセント">50</button><button class="practice-rating-button rating-eighty yellow" type="button" data-value="80%" aria-label="理解度80パーセント">80</button><button class="practice-rating-button rating-full green" type="button" data-value="100%" aria-label="理解度100パーセント">100</button></div></div>
-            <div class="practice-result-footer"><div class="practice-result-actions" id="practiceResultActions" aria-label="回答結果"><div class="practice-result-choice"><button class="practice-result-button result-correct" type="button" data-result="correct" aria-label="できた"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7.5"/></svg></button><small id="practiceCorrectCount">0</small></div><div class="practice-result-choice"><button class="practice-result-button result-unsure" type="button" data-result="unsure" aria-label="もう少し"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.8 20 18.7H4Z"/></svg></button><small id="practiceUnsureCount">0</small></div><div class="practice-result-choice"><button class="practice-result-button result-wrong" type="button" data-result="wrong" aria-label="できなかった"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6.5 6.5 11 11M17.5 6.5l-11 11"/></svg></button><small id="practiceWrongCount">0</small></div></div></div>
+            <div class="practice-result-footer"><div class="practice-result-actions" id="practiceResultActions" aria-label="回答結果"><div class="practice-result-choice"><button class="practice-result-button result-correct" type="button" data-result="correct" aria-label="できた"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7.5"/></svg></button><small id="practiceCorrectCount">0</small></div><div class="practice-result-choice"><button class="practice-result-button result-unsure" type="button" data-result="unsure" aria-label="もう少し"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.8 20 18.7H4Z"/></svg></button><small id="practiceUnsureCount">0</small></div><div class="practice-result-choice"><button class="practice-result-button result-wrong" type="button" data-result="wrong" aria-label="できなかった"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6.5 6.5 11 11M17.5 6.5l-11 11"/></svg></button><small id="practiceWrongCount">0</small></div></div><button class="practice-result-edit" id="practiceResultEdit" type="button" aria-label="結果を編集"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg></button></div>
           </footer>
         </article>
         <section class="practice-list-placeholder" id="practiceListPlaceholder" aria-label="例文一覧" hidden>
@@ -267,6 +267,17 @@
             <div class="card-step-title card-example-title-row"><span>例文</span><button id="cardExampleCommit" type="button">この内容を登録</button></div>
             <div class="card-example-carousel" id="cardExampleCarousel"></div>
           </section>
+        </div>
+      </section>
+    </div>
+    <div class="result-editor-overlay" id="resultEditorOverlay" hidden>
+      <section class="result-editor-sheet" role="dialog" aria-modal="true" aria-labelledby="resultEditorTitle">
+        <header><button id="resultEditorCancel" type="button">キャンセル</button><h2 id="resultEditorTitle">結果を編集</h2><button id="resultEditorSave" type="button">保存</button></header>
+        <div class="result-editor-body">
+          <div class="result-editor-row" data-result-edit="correct"><span class="result-editor-symbol result-correct">◯</span><button type="button" data-result-reset>リセット</button><button type="button" data-result-step="-1">−1</button><button type="button" data-result-step="1">＋1</button><label><span>直接入力</span><input id="resultEditorCorrect" type="number" min="0" step="1" inputmode="numeric"></label></div>
+          <div class="result-editor-row" data-result-edit="unsure"><span class="result-editor-symbol result-unsure">△</span><button type="button" data-result-reset>リセット</button><button type="button" data-result-step="-1">−1</button><button type="button" data-result-step="1">＋1</button><label><span>直接入力</span><input id="resultEditorUnsure" type="number" min="0" step="1" inputmode="numeric"></label></div>
+          <div class="result-editor-row" data-result-edit="wrong"><span class="result-editor-symbol result-wrong">×</span><button type="button" data-result-reset>リセット</button><button type="button" data-result-step="-1">−1</button><button type="button" data-result-step="1">＋1</button><label><span>直接入力</span><input id="resultEditorWrong" type="number" min="0" step="1" inputmode="numeric"></label></div>
+          <p id="resultEditorMessage" hidden>0以上の整数を入力してください。</p>
         </div>
       </section>
     </div>
