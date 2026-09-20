@@ -2176,7 +2176,7 @@ const COL=Object.freeze({
       handle.addEventListener('pointercancel',event=>finishDrag(event,true));
     };
     enableBottomSheetGrab(practiceFilterOverlay,practiceFilterSheet,practiceFilterHandle,()=>cancelPracticeFilter());
-    enableBottomSheetGrab(cardEditorOverlay,cardEditorSheet,cardEditorHandle,()=>{requestCardEditorClose();return false});
+    enableBottomSheetGrab(cardEditorOverlay,cardEditorSheet,cardEditorHandle,()=>closeCardEditor(true));
     const openPractice=async()=>{
       if(screenTransitionBusy)return;
       const stored=await getImportedData();
