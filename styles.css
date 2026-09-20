@@ -687,13 +687,9 @@
 .practice-filter-sheet-head button:disabled{color:#b7bec9;opacity:.72;pointer-events:none}
 .practice-filter-sheet-body{min-height:0;overflow-y:auto;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch;padding:18px 16px calc(28px + env(safe-area-inset-bottom))}
 .practice-filter-sheet-body>.card{padding:0;border-radius:0;background:transparent;box-shadow:none}
-.practice-filter-sheet-body>#filterCard>.section-head{position:sticky;z-index:8;top:-18px;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px;margin:0 -16px 8px;padding:18px 16px 14px;background:#f4f5f9;box-shadow:0 6px 12px #26354a0a}
-.practice-filter-sheet-body>#filterCard>.section-head>h2{display:none}
+.practice-filter-fixed-summary{display:block;flex:0 0 auto;padding:18px 16px 14px;background:#f4f5f9;box-shadow:0 6px 12px #26354a0a}.practice-filter-fixed-summary:empty{display:none}.practice-filter-fixed-summary>.section-head{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px;margin:0}.practice-filter-fixed-summary>.section-head>h2{display:none}
 .practice-filter-sheet-body>#filterCard .editor-only-filter{display:none}
-.practice-filter-sheet-body .filter-result-counts{display:grid;min-width:0;justify-self:center;justify-content:center;gap:5px;margin:0}
-.practice-filter-sheet-body .filter-result-counts>span{display:grid;grid-template-columns:48px minmax(0,1fr);justify-content:center;gap:9px;align-items:baseline}
-.practice-filter-sheet-body .filter-result-counts b{font-size:.72rem;line-height:1.1;text-align:right}
-.practice-filter-sheet-body .filter-result-counts strong{min-width:0;justify-content:flex-start;font-size:.86rem;line-height:1.15}
+.practice-filter-fixed-summary .filter-result-counts{display:grid;min-width:0;justify-self:center;justify-content:center;gap:5px;margin:0}.practice-filter-fixed-summary .filter-result-counts>span{display:grid;grid-template-columns:48px minmax(0,1fr);justify-content:center;gap:9px;align-items:baseline}.practice-filter-fixed-summary .filter-result-counts b{font-size:.72rem;line-height:1.1;text-align:right}.practice-filter-fixed-summary .filter-result-counts strong{min-width:0;justify-content:flex-start;font-size:.86rem;line-height:1.15}
 
 
 /* Home no longer shows filters; the same card exists only inside the practice filter sheet. */
