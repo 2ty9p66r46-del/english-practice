@@ -1348,10 +1348,12 @@ const COL=Object.freeze({
         row,exampleNo:text(row[COL.exampleNo])||'1',japanese:text(row[COL.japanese]),english:text(row[COL.english]),note:text(row[COL.note])
       }));
       cardDeletedExampleRows=[];
-      if(!cardExampleDrafts.length)cardExampleDrafts.push({row:null,exampleNo:'1',japanese:'',english:'',note:'',isPendingAdd:true});
     };
-    const renderCardExampleCarousel=(focusIndex=null)=>{
-      if(!cardExampleDrafts.length)cardExampleDrafts.push({row:null,exampleNo:'1',japanese:'',english:'',note:'',isPendingAdd:true});
+    const renderCardExampleCarousel=(focusIndex=null,animateFocus=true)=>{
+      if(!cardExampleDrafts.some(draft=>draft.isPendingAdd)){
+        const nextExampleNo=String(nextNumber(cardExampleDrafts.map(draft=>{const row=[];row[COL.exampleNo]=draft.exampleNo;return row}),COL.exampleNo));
+        cardExampleDrafts.push({row:null,exampleNo:nextExampleNo,japanese:'',english:'',note:'',isPendingAdd:true});
+      }
       cardExampleCarousel.replaceChildren();
       cardExampleDrafts.forEach((draft,index)=>{
         const form=document.createElement('article');form.className='card-example-page card-example-form';form.dataset.draftIndex=String(index);
@@ -1362,13 +1364,14 @@ const COL=Object.freeze({
         const orderActions=document.createElement('span');orderActions.className='card-example-order-actions';
         const moveExample=(delta)=>{
           const target=index+delta;if(target<0||target>=cardExampleDrafts.length)return;
+          if(draft.isPendingAdd||cardExampleDrafts[target]?.isPendingAdd)return;
           [cardExampleDrafts[index],cardExampleDrafts[target]]=[cardExampleDrafts[target],cardExampleDrafts[index]];
           cardExampleDrafts.forEach((item,itemIndex)=>{item.exampleNo=String(itemIndex+1)});
           cardEditorHasStagedChanges=true;
           renderCardExampleCarousel(target);
         };
-        const moveUp=document.createElement('button');moveUp.type='button';moveUp.className='card-order-button';moveUp.textContent='↑';moveUp.setAttribute('aria-label',`${formatExampleLetter(draft.exampleNo)}の例文を前へ移動`);moveUp.disabled=index===0;moveUp.addEventListener('click',()=>moveExample(-1));
-        const moveDown=document.createElement('button');moveDown.type='button';moveDown.className='card-order-button';moveDown.textContent='↓';moveDown.setAttribute('aria-label',`${formatExampleLetter(draft.exampleNo)}の例文を後ろへ移動`);moveDown.disabled=index===cardExampleDrafts.length-1;moveDown.addEventListener('click',()=>moveExample(1));
+        const moveUp=document.createElement('button');moveUp.type='button';moveUp.className='card-order-button';moveUp.textContent='↑';moveUp.setAttribute('aria-label',`${formatExampleLetter(draft.exampleNo)}の例文を前へ移動`);moveUp.disabled=draft.isPendingAdd||index===0||cardExampleDrafts[index-1]?.isPendingAdd;moveUp.addEventListener('click',()=>moveExample(-1));
+        const moveDown=document.createElement('button');moveDown.type='button';moveDown.className='card-order-button';moveDown.textContent='↓';moveDown.setAttribute('aria-label',`${formatExampleLetter(draft.exampleNo)}の例文を後ろへ移動`);moveDown.disabled=draft.isPendingAdd||index===cardExampleDrafts.length-1||cardExampleDrafts[index+1]?.isPendingAdd;moveDown.addEventListener('click',()=>moveExample(1));
         orderActions.append(moveUp,moveDown);heading.append(orderActions);
         const remove=document.createElement('button');remove.type='button';remove.className='card-example-remove';remove.textContent='削除';remove.disabled=Boolean(draft.isPendingAdd);
         remove.addEventListener('click',()=>{
@@ -1396,25 +1399,17 @@ const COL=Object.freeze({
             const coverAnimation=addCover.animate([{opacity:1},{opacity:0}],options);
             const formAnimations=[japaneseField,englishField,noteField].map(field=>field.animate([{opacity:0},{opacity:1}],options));
             try{await Promise.all([coverAnimation.finished,...formAnimations.map(animation=>animation.finished)])}catch{}
-            formAnimations.forEach(animation=>animation.cancel());draft.isPendingAdd=false;remove.disabled=false;addCover.remove();syncCardEditorMessages();
+            formAnimations.forEach(animation=>animation.cancel());draft.isPendingAdd=false;remove.disabled=false;addCover.remove();syncCardEditorMessages();renderCardExampleCarousel(index,false);
           });
           form.append(addCover);
         }
         cardExampleCarousel.append(form);
       });
-      if(!cardExampleDrafts.some(draft=>draft.isPendingAdd)){
-        const nextExampleNo=String(nextNumber(cardExampleDrafts.map(draft=>{const row=[];row[COL.exampleNo]=draft.exampleNo;return row}),COL.exampleNo));
-        const addPage=document.createElement('button');addPage.type='button';addPage.className='card-example-page card-example-add';
-        const addBadge=document.createElement('span');addBadge.className='practice-meta-chip';addBadge.textContent=formatExampleLetter(nextExampleNo);
-        const addText=document.createElement('strong');addText.textContent='＋例文追加';addPage.append(addBadge,addText);
-        addPage.addEventListener('click',()=>{const newIndex=cardExampleDrafts.length;cardExampleDrafts.push({row:null,exampleNo:nextExampleNo,japanese:'',english:'',note:''});cardEditorHasStagedChanges=true;renderCardExampleCarousel(newIndex)});
-        cardExampleCarousel.append(addPage);
-      }
       syncCardEditorMessages();
       if(Number.isInteger(focusIndex))requestAnimationFrame(()=>{
         cardExampleCarousel.scrollLeft=cardExampleCarousel.clientWidth*focusIndex;
         const focusedPage=cardExampleCarousel.querySelector(`[data-draft-index="${focusIndex}"]`);
-        if(focusedPage&&typeof focusedPage.animate==='function')focusedPage.animate([{opacity:0},{opacity:1}],{duration:420,easing:'ease-in-out'});
+        if(animateFocus&&focusedPage&&typeof focusedPage.animate==='function')focusedPage.animate([{opacity:0},{opacity:1}],{duration:420,easing:'ease-in-out'});
       });
     };
     const showCardExampleEditor=()=>{loadCardExampleDrafts();renderCardExampleCarousel();cardExampleStep.hidden=false};
