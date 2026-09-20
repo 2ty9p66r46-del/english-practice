@@ -269,11 +269,16 @@
     <div class="help-overlay" id="helpOverlay" hidden>
       <section class="help-sheet" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
         <div class="help-head"><h2 id="helpTitle">ヘルプ</h2><button class="help-close" id="helpClose" type="button" aria-label="閉じる">×</button></div>
-        <div class="help-version-card">
+        <div class="help-menu" id="helpMenu">
+          <button class="help-menu-item" id="helpVersionButton" type="button"><span>バージョン情報</span><span aria-hidden="true">›</span></button>
+          <button class="help-menu-item" id="templateButton" type="button"><span>入力用雛データダウンロード</span><span aria-hidden="true">↓</span></button>
+          <button class="help-menu-item" id="helpUsageButton" type="button"><span>利用方法</span><span aria-hidden="true">›</span></button>
+        </div>
+        <div class="help-version-card help-panel" id="helpVersionPanel" hidden>
           <h3 class="help-version-title">バージョン情報</h3>
           <dl class="help-version-list">
             <div class="help-version-row"><dt>アプリ</dt><dd>FloVo v1.0.0</dd></div>
-            <div class="help-version-row"><dt>ビルド</dt><dd>387</dd></div>
+            <div class="help-version-row"><dt>ビルド</dt><dd>388</dd></div>
             <div class="help-version-row"><dt>データ形式</dt><dd>v1.0</dd></div>
             <div class="help-version-row"><dt>更新日</dt><dd>2026.09.20</dd></div>
           </dl>
@@ -284,8 +289,19 @@
             <li>Excelインポート・エクスポート</li>
           </ul>
           <p class="help-note">不具合の報告時は、アプリバージョンとビルド番号をお知らせください。</p>
+          <button class="help-back-button" type="button" data-help-back>メニューへ戻る</button>
         </div>
-        <button class="help-template-button" id="templateButton" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h5M12 11v6M9.5 14.5 12 17l2.5-2.5"/></svg><span>Excel雛形をダウンロード</span></button>
+        <div class="help-version-card help-panel" id="helpUsagePanel" hidden>
+          <h3 class="help-version-title">利用方法</h3>
+          <ol class="help-usage-list">
+            <li>入力用雛データをダウンロードし、単語・意味・例文を入力します。</li>
+            <li>ホーム画面の「インポート」からExcelデータを読み込みます。</li>
+            <li>フィルタで出題範囲を選び、「練習する」から学習を開始します。</li>
+            <li>データ編集から意味や複数の例文を追加・変更できます。</li>
+            <li>変更したデータは「エクスポート」でExcelへ保存できます。</li>
+          </ol>
+          <button class="help-back-button" type="button" data-help-back>メニューへ戻る</button>
+        </div>
       </section>
     </div>
   </div>
