@@ -557,14 +557,19 @@ const COL=Object.freeze({
     const cardFilterWordSummary=document.createElement('span');const cardFilterWordLabel=document.createElement('b');cardFilterWordLabel.textContent='単語数';cardFilterWordSummary.append(cardFilterWordLabel,cardFilterWordCount);
     const cardFilterExampleSummary=document.createElement('span');const cardFilterExampleLabel=document.createElement('b');cardFilterExampleLabel.textContent='例文数';cardFilterExampleSummary.append(cardFilterExampleLabel,cardFilterExampleCount);cardFilterCounts.append(cardFilterWordSummary,cardFilterExampleSummary);
     const cardFilterStickySummary=document.createElement('div');cardFilterStickySummary.className='card-filter-sticky-summary';cardFilterStickySummary.hidden=true;cardFilterStickySummary.append(cardFilterCounts,cardSelectAllFilters);cardWordSticky.append(cardFilterStickySummary);
-    const sharedCardFilterSections=[...document.querySelectorAll('#filterCard .filter-section:not([data-filter-section="text"])')].map(section=>section.cloneNode(true));
+    const sharedCardFilterSections=[...document.querySelectorAll('#filterCard .filter-section')].map(section=>section.cloneNode(true));
+    sharedCardFilterSections.forEach(section=>section.querySelectorAll('[id]').forEach(element=>element.removeAttribute('id')));
     cardWordFilterPanel.replaceChildren(...sharedCardFilterSections);
+    const cardFilterStartsWith=cardWordFilterPanel.querySelector('[data-word-text-filter="starts"]');
+    const cardFilterEndsWith=cardWordFilterPanel.querySelector('[data-word-text-filter="ends"]');
+    const cardFilterIncludes=cardWordFilterPanel.querySelector('[data-word-text-filter="includes"]');
+    const cardTextFilterReset=cardWordFilterPanel.querySelector('.word-text-reset');
     const cardFilterLevelChoices=[...cardWordFilterPanel.querySelectorAll('.level-group .choice')];
     const cardFilterPartChoices=[...cardWordFilterPanel.querySelectorAll('.part-group .choice')];
     const cardFilterUnderstandingChoices=[...cardWordFilterPanel.querySelectorAll('.understanding .choice')];
     const cardFilterMeaningCountChoices=[...cardWordFilterPanel.querySelectorAll('.meaning-count-group .choice')];
     const cardFilterExampleCountChoices=[...cardWordFilterPanel.querySelectorAll('.example-count-group .choice')];
-    const cardFilterSections=[...cardWordFilterPanel.querySelectorAll('.filter-section')];
+    const cardFilterSections=[...cardWordFilterPanel.querySelectorAll('.filter-section:not([data-filter-section="text"])')];
     const practiceRatingButtons=[...document.querySelectorAll('.practice-rating-button')];
     const practiceResultActions=document.getElementById('practiceResultActions');
     const practiceResultButtons=[...document.querySelectorAll('.practice-result-button')];
@@ -629,6 +634,7 @@ const COL=Object.freeze({
     const PRACTICE_FILTER_STORAGE_KEY='flovo-practice-filter-v1';
     const PRACTICE_TEXT_FILTER_STORAGE_KEY='flovo-practice-text-filter-v1';
     const CARD_FILTER_STORAGE_KEY='flovo-card-filter-v1';
+    const CARD_TEXT_FILTER_STORAGE_KEY='flovo-card-text-filter-v1';
     const filterChoiceKey=choice=>`${choice.closest('.filter-section')?.dataset.filterSection||''}|${choice.closest('.group')?.querySelector('.group-title span')?.textContent.trim()||''}|${choice.dataset.value||choice.textContent.trim()}`;
     const saveFilterSelection=(key,choices)=>{try{localStorage.setItem(key,JSON.stringify(choices.filter(choice=>choice.classList.contains('selected')).map(filterChoiceKey)))}catch{}};
     const restoreFilterSelection=(key,choices)=>{try{const saved=JSON.parse(localStorage.getItem(key)||'null');if(!Array.isArray(saved))return false;const selected=new Set(saved);choices.forEach(choice=>choice.classList.toggle('selected',selected.has(filterChoiceKey(choice))));return true}catch{return false}};
@@ -1223,8 +1229,13 @@ const COL=Object.freeze({
       cardSelectAllFilters.classList.toggle('selected',choices.length>0&&choices.every(choice=>choice.classList.contains('selected')));
     };
     const cardFilterChoices=[...cardFilterLevelChoices,...cardFilterPartChoices,...cardFilterUnderstandingChoices,...cardFilterMeaningCountChoices,...cardFilterExampleCountChoices];
+    const cardTextFilterInputs=[cardFilterStartsWith,cardFilterEndsWith,cardFilterIncludes];
+    const syncCardTextFilterReset=()=>{cardTextFilterReset.disabled=!cardTextFilterInputs.some(input=>Boolean(text(input.value)))};
+    const saveCardTextFilters=()=>{try{localStorage.setItem(CARD_TEXT_FILTER_STORAGE_KEY,JSON.stringify({startsWith:cardFilterStartsWith.value,endsWith:cardFilterEndsWith.value,includes:cardFilterIncludes.value}))}catch{}};
+    const restoreCardTextFilters=()=>{try{const saved=JSON.parse(localStorage.getItem(CARD_TEXT_FILTER_STORAGE_KEY)||'null');if(!saved||typeof saved!=='object')return;cardFilterStartsWith.value=saved.startsWith||'';cardFilterEndsWith.value=saved.endsWith||'';cardFilterIncludes.value=saved.includes||''}catch{}};
     const initializeCardWordFilters=()=>{
       if(!restoreFilterSelection(CARD_FILTER_STORAGE_KEY,cardFilterChoices))cardFilterChoices.forEach(choice=>choice.classList.add('selected'));
+      restoreCardTextFilters();syncCardTextFilterReset();
       cardWordFilterPanel.querySelectorAll('.group').forEach(syncCardWordFilterGroup);
       syncCardFilterControls();
       cardWordFilterPanel.hidden=true;cardFilterStickySummary.hidden=true;
@@ -1232,6 +1243,10 @@ const COL=Object.freeze({
     };
     const saveCardWordFilters=()=>saveFilterSelection(CARD_FILTER_STORAGE_KEY,cardFilterChoices);
     initializeCardWordFilters();
+    cardTextFilterInputs.forEach(input=>input.addEventListener('input',()=>{syncCardTextFilterReset();saveCardTextFilters();renderWordResults()}));
+    cardTextFilterReset.addEventListener('click',()=>{
+      cardTextFilterInputs.forEach(input=>{input.value=''});syncCardTextFilterReset();saveCardTextFilters();renderWordResults();cardFilterStartsWith.focus();
+    });
     cardWordFilterToggle.addEventListener('click',()=>{
       const expand=cardWordFilterPanel.hidden;
       cardWordFilterPanel.hidden=!expand;
@@ -1291,6 +1306,9 @@ const COL=Object.freeze({
       const selectedUnderstanding=selectedValues(cardFilterUnderstandingChoices);
       const selectedMeaningCounts=selectedValues(cardFilterMeaningCountChoices);
       const selectedExampleCounts=selectedValues(cardFilterExampleCountChoices);
+      const startsWith=text(cardFilterStartsWith.value).toLowerCase();
+      const endsWith=text(cardFilterEndsWith.value).toLowerCase();
+      const includes=text(cardFilterIncludes.value).toLowerCase();
       const restrictLevels=selectedLevels.size!==cardFilterLevelChoices.length;
       const restrictParts=selectedParts.size!==cardFilterPartChoices.length;
       const restrictUnderstanding=selectedUnderstanding.size!==cardFilterUnderstandingChoices.length;
@@ -1306,6 +1324,9 @@ const COL=Object.freeze({
       candidates.forEach(row=>{
         const word=text(row[COL.word]).toLowerCase();
         if(query&&!word.startsWith(query))return;
+        if(startsWith&&!word.startsWith(startsWith))return;
+        if(endsWith&&!word.endsWith(endsWith))return;
+        if(includes&&!word.includes(includes))return;
         if(restrictLevels&&![text(row[COL.sLevel]),text(row[COL.wLevel])].some(value=>selectedLevels.has(value)))return;
         if(restrictParts&&!selectedParts.has(text(row[COL.pos])))return;
         const understandingValues=understandingByKey.get(vocabularyKey(row))||new Set(['未登録']);
