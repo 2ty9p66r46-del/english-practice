@@ -506,6 +506,15 @@ const COL=Object.freeze({
     const cardExampleStep=document.getElementById('cardExampleStep');
     const cardExampleCarousel=document.getElementById('cardExampleCarousel');
     const cardSelectAllFilters=document.getElementById('cardSelectAllFilters');
+    const cardEditorRevealObserver=new MutationObserver(mutations=>{
+      mutations.forEach(mutation=>{
+        const target=mutation.target;
+        if(!(target instanceof HTMLElement)||target.hidden||target===cardEditorOverlay||target.closest('[hidden]')||typeof target.animate!=='function')return;
+        if(target.getAnimations().some(animation=>animation.playState==='running'))return;
+        target.animate([{opacity:0},{opacity:1}],{duration:420,easing:'ease-in-out'});
+      });
+    });
+    cardEditorRevealObserver.observe(cardEditorOverlay,{subtree:true,attributes:true,attributeFilter:['hidden']});
     const cardFilterWordCount=document.createElement('strong');
     const cardFilterExampleCount=document.createElement('strong');
     const cardFilterCounts=document.createElement('div');cardFilterCounts.className='filter-result-counts';
@@ -1402,7 +1411,11 @@ const COL=Object.freeze({
         cardExampleCarousel.append(addPage);
       }
       syncCardEditorMessages();
-      if(Number.isInteger(focusIndex))requestAnimationFrame(()=>{cardExampleCarousel.scrollLeft=cardExampleCarousel.clientWidth*focusIndex});
+      if(Number.isInteger(focusIndex))requestAnimationFrame(()=>{
+        cardExampleCarousel.scrollLeft=cardExampleCarousel.clientWidth*focusIndex;
+        const focusedPage=cardExampleCarousel.querySelector(`[data-draft-index="${focusIndex}"]`);
+        if(focusedPage&&typeof focusedPage.animate==='function')focusedPage.animate([{opacity:0},{opacity:1}],{duration:420,easing:'ease-in-out'});
+      });
     };
     const showCardExampleEditor=()=>{loadCardExampleDrafts();renderCardExampleCarousel();cardExampleStep.hidden=false};
     const renderMeaningResults=(preserveSelection=false)=>{
