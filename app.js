@@ -464,6 +464,7 @@ const COL=Object.freeze({
     const resultEditorOverlay=document.getElementById('resultEditorOverlay');
     const resultEditorCancel=document.getElementById('resultEditorCancel');
     const resultEditorSave=document.getElementById('resultEditorSave');
+    const resultEditorResetAll=document.getElementById('resultEditorResetAll');
     const resultEditorMessage=document.getElementById('resultEditorMessage');
     const resultEditorInputs={correct:document.getElementById('resultEditorCorrect'),unsure:document.getElementById('resultEditorUnsure'),wrong:document.getElementById('resultEditorWrong')};
     const practiceJapaneseStop=document.getElementById('practiceJapaneseStop');
@@ -2451,6 +2452,7 @@ const COL=Object.freeze({
         input.value=String(Math.max(0,(Number(input.value)||0)+Number(button.dataset.resultStep)));resultEditorMessage.hidden=true;
       }));
     });
+    resultEditorResetAll.addEventListener('click',()=>{Object.values(resultEditorInputs).forEach(input=>{input.value='0'});resultEditorMessage.hidden=true});
     resultEditorSave.addEventListener('click',async()=>{
       const row=currentPracticeRow();if(!row||!practiceStored)return;
       const values=Object.fromEntries(Object.entries(resultEditorInputs).map(([key,input])=>[key,Number(input.value)]));
