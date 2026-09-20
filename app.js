@@ -1514,7 +1514,13 @@ const COL=Object.freeze({
         if(animateFocus&&focusedPage&&typeof focusedPage.animate==='function')focusedPage.animate([{opacity:0},{opacity:1}],{duration:420,easing:'ease-in-out'});
       });
     };
-    const showCardExampleEditor=()=>{loadCardExampleDrafts();renderCardExampleCarousel();cardExampleStep.hidden=false};
+    const showCardExampleEditor=()=>{
+      loadCardExampleDrafts();
+      renderCardExampleCarousel();
+      cardExampleStep.hidden=false;
+      cardExampleCarousel.scrollLeft=0;
+      requestAnimationFrame(()=>{cardExampleCarousel.scrollLeft=0});
+    };
     cardExampleCommit.addEventListener('click',()=>{
       const pages=[...cardExampleCarousel.querySelectorAll('.card-example-form')];
       const entries=pages.map(page=>({page,draft:cardExampleDrafts[Number(page.dataset.draftIndex)]})).filter(entry=>entry.draft&&!entry.draft.isPendingAdd).map(({page,draft})=>({
