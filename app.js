@@ -509,9 +509,9 @@ const COL=Object.freeze({
     const cardFilterCounts=document.createElement('div');cardFilterCounts.className='filter-result-counts';
     const cardFilterWordSummary=document.createElement('span');const cardFilterWordLabel=document.createElement('b');cardFilterWordLabel.textContent='単語数';cardFilterWordSummary.append(cardFilterWordLabel,cardFilterWordCount);
     const cardFilterExampleSummary=document.createElement('span');const cardFilterExampleLabel=document.createElement('b');cardFilterExampleLabel.textContent='例文数';cardFilterExampleSummary.append(cardFilterExampleLabel,cardFilterExampleCount);cardFilterCounts.append(cardFilterWordSummary,cardFilterExampleSummary);
-    const cardFilterStickySummary=document.createElement('div');cardFilterStickySummary.className='card-filter-sticky-summary';cardFilterStickySummary.append(cardFilterCounts,cardSelectAllFilters);
+    const cardFilterStickySummary=document.createElement('div');cardFilterStickySummary.className='card-filter-sticky-summary';cardFilterStickySummary.hidden=true;cardFilterStickySummary.append(cardFilterCounts,cardSelectAllFilters);cardEditorSheet.append(cardFilterStickySummary);
     const sharedCardFilterSections=[...document.querySelectorAll('#filterCard .filter-section')].map(section=>section.cloneNode(true));
-    cardWordFilterPanel.replaceChildren(cardFilterStickySummary,...sharedCardFilterSections);
+    cardWordFilterPanel.replaceChildren(...sharedCardFilterSections);
     const cardFilterLevelChoices=[...cardWordFilterPanel.querySelectorAll('.level-group .choice')];
     const cardFilterPartChoices=[...cardWordFilterPanel.querySelectorAll('.part-group .choice')];
     const cardFilterUnderstandingChoices=[...cardWordFilterPanel.querySelectorAll('.understanding .choice')];
@@ -1118,12 +1118,13 @@ const COL=Object.freeze({
       [...cardFilterLevelChoices,...cardFilterPartChoices,...cardFilterUnderstandingChoices,...cardFilterMeaningCountChoices,...cardFilterExampleCountChoices].forEach(choice=>choice.classList.add('selected'));
       cardWordFilterPanel.querySelectorAll('.group .all').forEach(button=>button.classList.add('selected'));
       syncCardFilterControls();
-      cardWordFilterPanel.hidden=true;
+      cardWordFilterPanel.hidden=true;cardFilterStickySummary.hidden=true;
       cardWordFilterToggle.setAttribute('aria-expanded','false');
     };
     cardWordFilterToggle.addEventListener('click',()=>{
       const expand=cardWordFilterPanel.hidden;
       cardWordFilterPanel.hidden=!expand;
+      cardFilterStickySummary.hidden=!expand;
       cardWordFilterToggle.setAttribute('aria-expanded',String(expand));
     });
     [...cardFilterLevelChoices,...cardFilterPartChoices,...cardFilterUnderstandingChoices,...cardFilterMeaningCountChoices,...cardFilterExampleCountChoices].forEach(button=>button.addEventListener('click',()=>{
@@ -1261,7 +1262,7 @@ const COL=Object.freeze({
           fadeAnimations.forEach(animation=>animation.cancel());
           selectedVocabularyRow=row;
           cardWordStep.classList.add('has-selection');
-          cardWordSearch.value=text(row[COL.word]);cardWordSearchRow.hidden=true;cardWordFilterPanel.hidden=true;cardWordFilterToggle.setAttribute('aria-expanded','false');
+          cardWordSearch.value=text(row[COL.word]);cardWordSearchRow.hidden=true;cardWordFilterPanel.hidden=true;cardFilterStickySummary.hidden=true;cardWordFilterToggle.setAttribute('aria-expanded','false');
           const rank=text(row[COL.posRank]).toUpperCase();
           const rankTone={S:'red',A:'orange',B:'yellow',C:'green',D:'purple'}[rank]||'';
           const numberBadge=document.createElement('span');numberBadge.className='practice-list-word-no practice-number';numberBadge.textContent=`No ${formatPracticeNumber(row?.[COL.wordNo],5)}`;
