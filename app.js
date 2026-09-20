@@ -451,6 +451,8 @@ const COL=Object.freeze({
     const practiceJapaneseAudio=document.getElementById('practiceJapaneseAudio');
     const practiceJapaneseCopy=document.getElementById('practiceJapaneseCopy');
     const practiceEnglishCopy=document.getElementById('practiceEnglishCopy');
+    const practiceJapaneseEdit=document.getElementById('practiceJapaneseEdit');
+    const practiceEnglishEdit=document.getElementById('practiceEnglishEdit');
     const practiceJapaneseStop=document.getElementById('practiceJapaneseStop');
     const practiceEnglishStop=document.getElementById('practiceEnglishStop');
     const practiceWord=document.getElementById('practiceWord');
@@ -2380,6 +2382,25 @@ const COL=Object.freeze({
     };
     practiceJapaneseCopy.addEventListener('click',()=>copyPracticeText(practiceJapanese,practiceJapaneseCopy));
     practiceEnglishCopy.addEventListener('click',()=>copyPracticeText(practiceEnglish,practiceEnglishCopy));
+    const editPracticeSentence=async(column,label)=>{
+      const row=currentPracticeRow();
+      if(!row||!practiceStored)return;
+      const original=text(row[column]);
+      const entered=window.prompt(`${label}を編集`,original);
+      if(entered===null)return;
+      const value=entered.trim();
+      if(!value){alert(`${label}は空欄では保存できません。`);return}
+      row[column]=value;practiceStored.modified=true;
+      try{
+        await saveImportedData(practiceStored);
+        renderPracticeQuestion();renderPracticeList();
+      }catch{
+        row[column]=original;
+        alert(`${label}を保存できませんでした。`);
+      }
+    };
+    practiceJapaneseEdit.addEventListener('click',()=>editPracticeSentence(COL.japanese,'日本語文'));
+    practiceEnglishEdit.addEventListener('click',()=>editPracticeSentence(COL.english,'英文'));
     practiceResultButtons.forEach(button=>button.addEventListener('click',async()=>{
       const row=currentPracticeRow();
       if(!row||!practiceStored||practiceMoving)return;
