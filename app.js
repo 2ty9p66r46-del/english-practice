@@ -601,6 +601,10 @@ const COL=Object.freeze({
     const practiceSettingsTab=document.getElementById('practiceSettingsTab');
     const practiceSettingsOverlay=document.getElementById('practiceSettingsOverlay');
     const practiceSettingsClose=document.getElementById('practiceSettingsClose');
+    const practiceLearningReset=document.getElementById('practiceLearningReset');
+    const learningResetOverlay=document.getElementById('learningResetOverlay');
+    const learningResetCancel=document.getElementById('learningResetCancel');
+    const learningResetConfirm=document.getElementById('learningResetConfirm');
     const japanesePauseSetting=document.getElementById('japanesePauseSetting');
     const englishPauseSetting=document.getElementById('englishPauseSetting');
     const englishRepeatSetting=document.getElementById('englishRepeatSetting');
@@ -2317,6 +2321,26 @@ const COL=Object.freeze({
     practiceSettingsOverlay.addEventListener('click',event=>{
       closePracticeSettingMenus();
       if(event.target===practiceSettingsOverlay)practiceSettingsOverlay.hidden=true;
+    });
+    const closeLearningReset=()=>{learningResetOverlay.hidden=true};
+    practiceLearningReset.addEventListener('click',()=>{closePracticeSettingMenus();learningResetOverlay.hidden=false});
+    learningResetCancel.addEventListener('click',closeLearningReset);
+    learningResetOverlay.addEventListener('click',event=>{if(event.target===learningResetOverlay)closeLearningReset()});
+    learningResetConfirm.addEventListener('click',async()=>{
+      if(!practiceStored)return;
+      learningResetConfirm.disabled=true;
+      const stores=[practiceStored.rows,practiceStored.vocabularyRows].filter(Array.isArray);
+      const rows=[...new Set(stores.flat())];
+      const snapshots=rows.map(row=>({row,values:[row[COL.understanding],row[COL.correctCount],row[COL.wrongCount],row[COL.questionCount]]}));
+      rows.forEach(row=>{row[COL.understanding]='';row[COL.correctCount]=0;row[COL.wrongCount]=0;row[COL.questionCount]=0});
+      practiceStored.modified=true;
+      try{
+        await saveImportedData(practiceStored);
+        closeLearningReset();practiceSettingsOverlay.hidden=true;
+        if(currentPracticeRow())renderPracticeQuestion();
+        renderPracticeList();await refreshQuestionCount();
+      }catch{snapshots.forEach(({row,values})=>{row[COL.understanding]=values[0];row[COL.correctCount]=values[1];row[COL.wrongCount]=values[2];row[COL.questionCount]=values[3]});alert('学習データをリセットできませんでした。')}
+      finally{learningResetConfirm.disabled=false}
     });
     navHome.addEventListener('click',()=>{if(!practiceScreen.hidden)closePractice()});
     practiceReveal.addEventListener('click',()=>setAnswerVisible(true,true));
