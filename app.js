@@ -483,7 +483,7 @@ const COL=Object.freeze({
     const cardEditorConfirmTitle=document.createElement('h3');
     const cardEditorConfirmChanges=document.createElement('div');cardEditorConfirmChanges.className='card-editor-confirm-changes';
     const cardEditorConfirmActions=document.createElement('div');cardEditorConfirmActions.className='card-editor-confirm-actions';
-    const cardEditorConfirmCancel=document.createElement('button');cardEditorConfirmCancel.type='button';cardEditorConfirmCancel.textContent='キャンセル';
+    const cardEditorConfirmCancel=document.createElement('button');cardEditorConfirmCancel.type='button';cardEditorConfirmCancel.textContent='編集画面に戻る';
     const cardEditorConfirmOk=document.createElement('button');cardEditorConfirmOk.type='button';cardEditorConfirmOk.textContent='OK';
     cardEditorConfirmActions.append(cardEditorConfirmCancel,cardEditorConfirmOk);cardEditorConfirmPanel.append(cardEditorConfirmTitle,cardEditorConfirmChanges,cardEditorConfirmActions);cardEditorConfirm.append(cardEditorConfirmPanel);cardEditorSheet.append(cardEditorConfirm);
     const cardWordStep=document.getElementById('cardWordStep');
@@ -1116,6 +1116,7 @@ const COL=Object.freeze({
     let cardEditorRowsSnapshot=null;
     let cardEditorRowBaseline=new Map();
     let cardEditorHasStagedChanges=false;
+    let cardExampleCommitStatus=new Map();
     let cardEditorAnimationRun=0;
     const updateCardWordScrollbar=()=>{
       const maximum=Math.max(0,cardWordResults.scrollHeight-cardWordResults.clientHeight);const trackHeight=cardWordScrollbar.clientHeight;
@@ -1385,8 +1386,17 @@ const COL=Object.freeze({
       }));
       cardDeletedExampleRows=[];
     };
+    const cardExampleCommitKey=()=>`${vocabularyKey(selectedVocabularyRow)}::${selectedMeaningNumber}`;
+    const markCardExampleDraftDirty=()=>{
+      cardExampleCommitStatus.set(cardExampleCommitKey(),false);
+      cardExampleCommit.textContent='この内容を登録';
+      syncCardExampleCommitState();
+    };
     const syncCardExampleCommitState=()=>{
-      cardExampleCommit.disabled=!cardExampleDrafts.some(draft=>!draft.isPendingAdd)&&!cardDeletedExampleRows.length;
+      const hasContent=cardExampleDrafts.some(draft=>!draft.isPendingAdd)||cardDeletedExampleRows.length;
+      const registered=cardExampleCommitStatus.get(cardExampleCommitKey())===true;
+      cardExampleCommit.textContent=registered?'登録しました':'この内容を登録';
+      cardExampleCommit.disabled=!hasContent||registered;
     };
     cardExampleCarousel.addEventListener('scroll',syncCardExampleCommitState,{passive:true});
     const renderCardExampleCarousel=(focusIndex=null,animateFocus=true)=>{
@@ -1407,7 +1417,7 @@ const COL=Object.freeze({
           if(draft.isPendingAdd||cardExampleDrafts[target]?.isPendingAdd)return;
           [cardExampleDrafts[index],cardExampleDrafts[target]]=[cardExampleDrafts[target],cardExampleDrafts[index]];
           cardExampleDrafts.forEach((item,itemIndex)=>{item.exampleNo=String(itemIndex+1)});
-          cardEditorHasStagedChanges=true;cardExampleCommit.textContent='この内容を登録';
+          cardEditorHasStagedChanges=true;markCardExampleDraftDirty();
           renderCardExampleCarousel(target);
         };
         const moveUp=document.createElement('button');moveUp.type='button';moveUp.className='card-order-button';moveUp.textContent='↑';moveUp.setAttribute('aria-label',`${formatExampleLetter(draft.exampleNo)}の例文を前へ移動`);moveUp.disabled=draft.isPendingAdd||index===0||cardExampleDrafts[index-1]?.isPendingAdd;moveUp.addEventListener('click',()=>moveExample(-1));
@@ -1416,7 +1426,7 @@ const COL=Object.freeze({
         const remove=document.createElement('button');remove.type='button';remove.className='card-example-remove';remove.textContent='削除';remove.disabled=Boolean(draft.isPendingAdd);
         remove.addEventListener('click',()=>{
           if(draft.row)cardDeletedExampleRows.push(draft.row);
-          cardExampleDrafts.splice(index,1);cardExampleDrafts.forEach((item,itemIndex)=>{item.exampleNo=String(itemIndex+1)});cardEditorHasStagedChanges=true;cardExampleCommit.textContent='この内容を登録';renderCardExampleCarousel();
+          cardExampleDrafts.splice(index,1);cardExampleDrafts.forEach((item,itemIndex)=>{item.exampleNo=String(itemIndex+1)});cardEditorHasStagedChanges=true;markCardExampleDraftDirty();renderCardExampleCarousel();
         });
         heading.append(remove);
         const makeField=(labelText,key,rows,optional=false)=>{
@@ -1424,7 +1434,7 @@ const COL=Object.freeze({
           const title=document.createElement('span');title.textContent=labelText;
           if(optional){const small=document.createElement('small');small.textContent=' 任意';title.append(small)}
           const input=document.createElement('textarea');input.rows=rows;input.placeholder=`${labelText}を入力`;input.dataset.exampleField=key;input.value=draft.editing?.[key]??draft[key];if(key==='english')input.lang='en';
-          input.addEventListener('input',()=>{draft.editing={...(draft.editing||{}),[key]:input.value};cardExampleCommit.textContent='この内容を登録';syncCardEditorMessages()});label.append(title,input);return label;
+          input.addEventListener('input',()=>{draft.editing={...(draft.editing||{}),[key]:input.value};markCardExampleDraftDirty();syncCardEditorMessages()});label.append(title,input);return label;
         };
         const japaneseField=makeField('日本語','japanese',4);
         const japaneseMessage=document.createElement('em');japaneseMessage.className='card-field-message';japaneseMessage.dataset.exampleMessage='japanese';japaneseMessage.textContent='※入力は必須です';japaneseField.querySelector(':scope > span').append(japaneseMessage);
@@ -1439,7 +1449,7 @@ const COL=Object.freeze({
             const coverAnimation=addCover.animate([{opacity:1},{opacity:0}],options);
             const formAnimations=[japaneseField,englishField,noteField].map(field=>field.animate([{opacity:0},{opacity:1}],options));
             try{await Promise.all([coverAnimation.finished,...formAnimations.map(animation=>animation.finished)])}catch{}
-            formAnimations.forEach(animation=>animation.cancel());draft.isPendingAdd=false;remove.disabled=false;addCover.remove();cardExampleCommit.textContent='この内容を登録';syncCardEditorMessages();renderCardExampleCarousel(index,false);
+            formAnimations.forEach(animation=>animation.cancel());draft.isPendingAdd=false;remove.disabled=false;addCover.remove();markCardExampleDraftDirty();syncCardEditorMessages();renderCardExampleCarousel(index,false);
           });
           form.append(addCover);
         }
@@ -1454,7 +1464,7 @@ const COL=Object.freeze({
         if(animateFocus&&focusedPage&&typeof focusedPage.animate==='function')focusedPage.animate([{opacity:0},{opacity:1}],{duration:420,easing:'ease-in-out'});
       });
     };
-    const showCardExampleEditor=()=>{loadCardExampleDrafts();cardExampleCommit.textContent='この内容を登録';renderCardExampleCarousel();cardExampleStep.hidden=false};
+    const showCardExampleEditor=()=>{loadCardExampleDrafts();renderCardExampleCarousel();cardExampleStep.hidden=false};
     cardExampleCommit.addEventListener('click',()=>{
       const pages=[...cardExampleCarousel.querySelectorAll('.card-example-form')];
       const entries=pages.map(page=>({page,draft:cardExampleDrafts[Number(page.dataset.draftIndex)]})).filter(entry=>entry.draft&&!entry.draft.isPendingAdd).map(({page,draft})=>({
@@ -1487,7 +1497,7 @@ const COL=Object.freeze({
         if(!target){target=[...selectedVocabularyRow];let insertIndex=-1;practiceStored.rows.forEach((row,index)=>{if(vocabularyKey(row)===pairKey)insertIndex=index});practiceStored.rows.splice(insertIndex>=0?insertIndex+1:practiceStored.rows.length,0,target)}
         target[COL.meaningNo]=meaningNo;target[COL.meaning]=meaning;target[COL.exampleNo]='';target[COL.japanese]='';target[COL.english]='';target[COL.note]='';
       }
-      cardDeletedExampleRows=[];cardEditorHasStagedChanges=true;cardExampleCommit.textContent='登録しました';syncCardExampleCommitState();
+      cardDeletedExampleRows=[];cardEditorHasStagedChanges=true;cardExampleCommitStatus.set(cardExampleCommitKey(),true);syncCardExampleCommitState();
       syncCardEditorMessages();
     });
     const blockIncompleteExamples=()=>{
@@ -1499,37 +1509,34 @@ const COL=Object.freeze({
       const groups=new Map();const currentRows=practiceStored.rows||[];
       const shown=value=>text(value)||'空欄';
       const add=(row,message)=>{const source=row||selectedVocabularyRow||cardEditorRow;const key=source?vocabularyKey(source):'data';if(!groups.has(key))groups.set(key,{row:source,messages:new Set()});groups.get(key).messages.add(message)};
-      if(selectedMeaningMode==='new')add(selectedVocabularyRow,`意味を新規登録：「${shown(cardMeaningInput.value)}」`);
       cardEditorRowBaseline.forEach((before,row)=>{
         if(!currentRows.includes(row)){
-          const label=text(before[COL.exampleNo])?`例文 ${formatExampleLetter(before[COL.exampleNo])}`:`意味 ${formatSingleDigitNumber(before[COL.meaningNo])}`;
-          add(before,`${label}を削除：「${shown(text(before[COL.japanese])||text(before[COL.meaning]))}」`);return;
+          if(text(before[COL.exampleNo]))add(before,`例文 ${formatExampleLetter(before[COL.exampleNo])}を削除（日本語：「${shown(before[COL.japanese])}」／英語：「${shown(before[COL.english])}」）`);
+          else add(before,`意味 ${formatSingleDigitNumber(before[COL.meaningNo])}を削除：「${shown(before[COL.meaning])}」`);
+          return;
         }
         if(text(before[COL.meaning])!==text(row[COL.meaning]))add(row,`意味：「${shown(before[COL.meaning])}」→「${shown(row[COL.meaning])}」`);
         if(text(before[COL.meaningNo])!==text(row[COL.meaningNo]))add(row,`意味番号：${shown(before[COL.meaningNo])}→${shown(row[COL.meaningNo])}`);
+        const label=`例文 ${formatExampleLetter(row[COL.exampleNo]||before[COL.exampleNo])}`;
+        if(text(before[COL.exampleNo])!==text(row[COL.exampleNo]))add(row,`例文番号：${formatExampleLetter(before[COL.exampleNo])}→${formatExampleLetter(row[COL.exampleNo])}`);
+        if(text(before[COL.japanese])!==text(row[COL.japanese]))add(row,`${label} 日本語：「${shown(before[COL.japanese])}」→「${shown(row[COL.japanese])}」`);
+        if(text(before[COL.english])!==text(row[COL.english]))add(row,`${label} 英語：「${shown(before[COL.english])}」→「${shown(row[COL.english])}」`);
+        if(text(before[COL.note])!==text(row[COL.note]))add(row,`${label} 補足：「${shown(before[COL.note])}」→「${shown(row[COL.note])}」`);
       });
-      cardDeletedExampleRows.forEach(row=>{
-        const before=cardEditorRowBaseline.get(row)||row;
-        add(before,`例文 ${formatExampleLetter(before?.[COL.exampleNo])}を削除（日本語：「${shown(before?.[COL.japanese])}」／英語：「${shown(before?.[COL.english])}」）`);
-      });
-      cardExampleDrafts.filter(draft=>!draft.isPendingAdd).forEach(draft=>{
-        if(!draft.row){add(selectedVocabularyRow,`例文 ${formatExampleLetter(draft.exampleNo)}を追加（日本語：「${shown(draft.japanese)}」／英語：「${shown(draft.english)}」${text(draft.note)?`／補足：「${shown(draft.note)}」`:''}）`);return}
-        const before=cardEditorRowBaseline.get(draft.row)||draft.row;const label=`例文 ${formatExampleLetter(draft.exampleNo)}`;
-        if(text(before[COL.exampleNo])!==text(draft.exampleNo))add(draft.row,`例文番号：${formatExampleLetter(before[COL.exampleNo])}→${formatExampleLetter(draft.exampleNo)}`);
-        if(text(before[COL.japanese])!==text(draft.japanese))add(draft.row,`${label} 日本語：「${shown(before[COL.japanese])}」→「${shown(draft.japanese)}」`);
-        if(text(before[COL.english])!==text(draft.english))add(draft.row,`${label} 英語：「${shown(before[COL.english])}」→「${shown(draft.english)}」`);
-        if(text(before[COL.note])!==text(draft.note))add(draft.row,`${label} 補足：「${shown(before[COL.note])}」→「${shown(draft.note)}」`);
+      currentRows.filter(row=>!cardEditorRowBaseline.has(row)).forEach(row=>{
+        if(text(row[COL.exampleNo]))add(row,`例文 ${formatExampleLetter(row[COL.exampleNo])}を追加（意味：「${shown(row[COL.meaning])}」／日本語：「${shown(row[COL.japanese])}」／英語：「${shown(row[COL.english])}」${text(row[COL.note])?`／補足：「${shown(row[COL.note])}」`:''}）`);
+        else if(text(row[COL.meaning]))add(row,`意味を新規登録：「${shown(row[COL.meaning])}」`);
       });
       const rowsChanged=Boolean(cardEditorRowsSnapshot)&&JSON.stringify(currentRows)!==JSON.stringify(cardEditorRowsSnapshot);
       if(rowsChanged&&!groups.size)add(selectedVocabularyRow||cardEditorRow,'意味・例文の構成を変更');
       return [...groups.values()].map(group=>{const number=group.row?`No ${formatPracticeNumber(group.row[COL.wordNo],5)}`:'データ';const part=group.row?text(group.row[COL.pos])||'品詞未登録':'';return `${number}${part?`・${part}`:''}について、以下が変更されました。\n${[...group.messages].map(message=>`・${message}`).join('\n')}`});
     };
     let cardEditorConfirmResolve=null;
-    const showCardEditorConfirmation=(changes,allowCancel=false)=>new Promise(resolve=>{
+    const showCardEditorConfirmation=changes=>new Promise(resolve=>{
       cardEditorConfirmResolve=resolve;cardEditorConfirmTitle.textContent=changes.length?'データ変更があります':'データ変更はありません';
       cardEditorConfirmChanges.replaceChildren();
       if(changes.length){const list=document.createElement('ul');changes.forEach(change=>{const item=document.createElement('li');item.textContent=change;list.append(item)});cardEditorConfirmChanges.append(list)}
-      cardEditorConfirmChanges.hidden=!changes.length;cardEditorConfirmCancel.hidden=!allowCancel;cardEditorConfirmActions.classList.toggle('single',!allowCancel);cardEditorConfirm.hidden=false;cardEditorConfirmOk.focus({preventScroll:true});
+      cardEditorConfirmChanges.hidden=!changes.length;cardEditorConfirmCancel.hidden=false;cardEditorConfirmActions.classList.remove('single');cardEditorConfirm.hidden=false;cardEditorConfirmOk.focus({preventScroll:true});
     });
     cardEditorConfirmCancel.addEventListener('click',()=>{cardEditorConfirm.hidden=true;const resolve=cardEditorConfirmResolve;cardEditorConfirmResolve=null;resolve?.(false)});
     cardEditorConfirmOk.addEventListener('click',()=>{
@@ -1611,7 +1618,7 @@ const COL=Object.freeze({
     };
     const openCardEditor=(mode,row=null)=>{
       if(autoPlaying)stopAutoPlayback();
-      cardEditorRowsSnapshot=(practiceStored.rows||[]).map(item=>[...item]);cardEditorRowBaseline=new Map((practiceStored.rows||[]).map(item=>[item,[...item]]));cardEditorHasStagedChanges=false;
+      cardEditorRowsSnapshot=(practiceStored.rows||[]).map(item=>[...item]);cardEditorRowBaseline=new Map((practiceStored.rows||[]).map(item=>[item,[...item]]));cardEditorHasStagedChanges=false;cardExampleCommitStatus=new Map();
       cardEditorMode=mode;cardEditorRow=row;selectedVocabularyRow=mode==='edit'?row:null;
       cardWordStep.classList.toggle('has-selection',mode==='edit');
       cardEditorOverlay.dataset.mode=mode;
@@ -1661,11 +1668,12 @@ const COL=Object.freeze({
       cardEditorOverlay.classList.remove('open');
       await wait(340);
       if(animationRun!==cardEditorAnimationRun)return;
-      cardEditorOverlay.hidden=true;cardEditorRow=null;selectedVocabularyRow=null;selectedMeaningMode=null;pendingMeaningChoice=null;selectedMeaningNumber='';cardExampleDrafts=[];cardDeletedExampleRows=[];
+      cardEditorOverlay.hidden=true;cardEditorRow=null;selectedVocabularyRow=null;selectedMeaningMode=null;pendingMeaningChoice=null;selectedMeaningNumber='';cardExampleDrafts=[];cardDeletedExampleRows=[];cardExampleCommitStatus=new Map();
     };
     const requestCardEditorClose=async()=>{
       if(!cardEditorConfirm.hidden)return;
-      await showCardEditorConfirmation(collectCardEditorChanges());
+      const confirmed=await showCardEditorConfirmation(collectCardEditorChanges());
+      if(!confirmed)return;
       await closeCardEditor(true);
     };
     const refreshPracticeAfterMutation=()=>{
@@ -1742,58 +1750,13 @@ const COL=Object.freeze({
     cardEditorOverlay.addEventListener('click',event=>{if(event.target===cardEditorOverlay)requestCardEditorClose()});
     const nextNumber=(rows,column)=>Math.max(0,...rows.map(row=>Number.parseInt(text(row[column]),10)||0))+1;
     cardEditorSave.addEventListener('click',async()=>{
-      const meaning=text(cardMeaningInput.value);
       if(blockIncompleteExamples())return;
       const changes=collectCardEditorChanges();
-      const confirmed=await showCardEditorConfirmation(changes,true);
+      const confirmed=await showCardEditorConfirmation(changes);
       if(!confirmed)return;
       if(!changes.length){await closeCardEditor(true);return}
-      if(!selectedVocabularyRow){await persistPracticeData();refreshPracticeAfterMutation();cardEditorRowsSnapshot=null;await closeCardEditor(false);return}
-      const hasSelectedMeaning=['new','existing','unchanged','changed'].includes(selectedMeaningMode)&&Boolean(meaning);
-      const activeDrafts=cardExampleDrafts.filter(draft=>!draft.isPendingAdd);
       cardEditorSave.disabled=true;
       try{
-        if(!hasSelectedMeaning){
-          await persistPracticeData();refreshPracticeAfterMutation();cardEditorRowsSnapshot=null;await closeCardEditor(false);return;
-        }
-        const pairKey=vocabularyKey(selectedVocabularyRow);
-        const deletedRows=new Set(cardDeletedExampleRows);
-        const samePair=(practiceStored.rows||[]).filter(row=>vocabularyKey(row)===pairKey&&!deletedRows.has(row));
-        const draftRows=new Set(activeDrafts.map(draft=>draft.row).filter(Boolean));
-        const duplicateMeaning=samePair.find(row=>!draftRows.has(row)&&text(row[COL.meaningNo])!==selectedMeaningNumber&&normalizedMeaning(row[COL.meaning])===normalizedMeaning(meaning));
-        if(duplicateMeaning){alert('同じ意味がすでに登録されています。');return}
-        cardDeletedExampleRows.forEach(row=>{const index=practiceStored.rows.indexOf(row);if(index>=0)practiceStored.rows.splice(index,1)});
-        const existingMeaning=samePair.find(row=>!draftRows.has(row)&&text(row[COL.meaning])===meaning)||samePair.find(row=>text(row[COL.meaning])===meaning);
-        const meaningNo=text(existingMeaning?.[COL.meaningNo])||selectedMeaningNumber||String(nextNumber(samePair,COL.meaningNo));
-        const occupied=new Set(samePair.filter(row=>!draftRows.has(row)&&text(row[COL.meaningNo])===meaningNo).map(row=>text(row[COL.exampleNo])).filter(Boolean));
-        let nextExample=Math.max(0,...samePair.filter(row=>text(row[COL.meaningNo])===meaningNo).map(row=>Number.parseInt(text(row[COL.exampleNo]),10)||0));
-        activeDrafts.forEach(draft=>{
-          let exampleNo=text(draft.exampleNo);
-          if(!exampleNo||occupied.has(exampleNo)){do{nextExample+=1;exampleNo=String(nextExample)}while(occupied.has(exampleNo))}
-          occupied.add(exampleNo);draft.exampleNo=exampleNo;
-          let target=draft.row;
-          if(!target){
-            target=samePair.find(row=>!draftRows.has(row)&&text(row[COL.meaningNo])===meaningNo&&!text(row[COL.japanese])&&!text(row[COL.english]))||samePair.find(row=>!draftRows.has(row)&&!text(row[COL.meaning])&&!text(row[COL.japanese])&&!text(row[COL.english]));
-            if(target)draftRows.add(target);
-            else{
-              target=[...selectedVocabularyRow];
-              let insertIndex=-1;practiceStored.rows.forEach((row,index)=>{if(vocabularyKey(row)===pairKey)insertIndex=index});
-              practiceStored.rows.splice(insertIndex>=0?insertIndex+1:practiceStored.rows.length,0,target);
-            }
-            draft.row=target;target[COL.understanding]='';target[COL.correctCount]=0;target[COL.wrongCount]=0;target[COL.questionCount]=0;
-          }
-          target[COL.meaningNo]=meaningNo;target[COL.meaning]=meaning;target[COL.exampleNo]=exampleNo;
-          target[COL.japanese]=text(draft.japanese);target[COL.english]=text(draft.english);target[COL.note]=text(draft.note);
-        });
-        if(!activeDrafts.length){
-          let target=samePair.find(row=>text(row[COL.meaningNo])===meaningNo&&!text(row[COL.japanese])&&!text(row[COL.english]));
-          if(!target){
-            target=[...selectedVocabularyRow];let insertIndex=-1;practiceStored.rows.forEach((row,index)=>{if(vocabularyKey(row)===pairKey)insertIndex=index});practiceStored.rows.splice(insertIndex>=0?insertIndex+1:practiceStored.rows.length,0,target);
-          }
-          target[COL.meaningNo]=meaningNo;target[COL.meaning]=meaning;target[COL.exampleNo]='';target[COL.japanese]='';target[COL.english]='';target[COL.note]='';target[COL.understanding]='';target[COL.correctCount]=0;target[COL.wrongCount]=0;target[COL.questionCount]=0;
-        }else{
-          practiceStored.rows=practiceStored.rows.filter(row=>vocabularyKey(row)!==pairKey||text(row[COL.meaningNo])!==meaningNo||text(row[COL.japanese])||text(row[COL.english])||draftRows.has(row));
-        }
         await persistPracticeData();refreshPracticeAfterMutation();cardEditorRowsSnapshot=null;await closeCardEditor(false);
       }catch{alert('カードを保存できませんでした。')}
       finally{cardEditorSave.disabled=false}
