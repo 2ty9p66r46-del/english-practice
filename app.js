@@ -1378,12 +1378,16 @@ const COL=Object.freeze({
         const japaneseMessage=document.createElement('em');japaneseMessage.className='card-field-message';japaneseMessage.dataset.exampleMessage='japanese';japaneseMessage.textContent='※テキストが入力されていません';japaneseField.querySelector(':scope > span').append(japaneseMessage);
         const englishField=makeField('英語','english',4);
         const englishMessage=document.createElement('em');englishMessage.className='card-field-message';englishMessage.dataset.exampleMessage='english';englishMessage.textContent='※テキストが入力されていません';englishField.querySelector(':scope > span').append(englishMessage);
-        form.append(heading,japaneseField,englishField,makeField('補足','note',3,true));
+        const noteField=makeField('補足','note',3,true);
+        form.append(heading,japaneseField,englishField,noteField);
         if(draft.isPendingAdd){
           const addCover=document.createElement('button');addCover.type='button';addCover.className='card-example-add-cover';addCover.textContent='＋例文追加';
           addCover.addEventListener('click',async()=>{
-            const animation=addCover.animate([{opacity:1},{opacity:0}],{duration:420,easing:'ease-in-out',fill:'forwards'});
-            try{await animation.finished}catch{}draft.isPendingAdd=false;remove.disabled=false;addCover.remove();syncCardEditorMessages();
+            const options={duration:420,easing:'ease-in-out',fill:'forwards'};
+            const coverAnimation=addCover.animate([{opacity:1},{opacity:0}],options);
+            const formAnimations=[japaneseField,englishField,noteField].map(field=>field.animate([{opacity:0},{opacity:1}],options));
+            try{await Promise.all([coverAnimation.finished,...formAnimations.map(animation=>animation.finished)])}catch{}
+            formAnimations.forEach(animation=>animation.cancel());draft.isPendingAdd=false;remove.disabled=false;addCover.remove();syncCardEditorMessages();
           });
           form.append(addCover);
         }
