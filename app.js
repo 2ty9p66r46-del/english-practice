@@ -844,7 +844,7 @@ const COL=Object.freeze({
     [wordStartsWith,wordEndsWith,wordIncludes].forEach(input=>input.addEventListener('input',()=>{syncWordTextFilterReset();refreshQuestionCount()}));
     wordTextFilterReset.addEventListener('click',()=>{
       [wordStartsWith.value,wordEndsWith.value,wordIncludes.value]=['','',''];
-      syncWordTextFilterReset();refreshQuestionCount();wordStartsWith.focus();
+      syncWordTextFilterReset();refreshQuestionCount();
     });
     restorePracticeTextFilters();
     syncWordTextFilterReset();
@@ -1245,7 +1245,7 @@ const COL=Object.freeze({
     initializeCardWordFilters();
     cardTextFilterInputs.forEach(input=>input.addEventListener('input',()=>{syncCardTextFilterReset();saveCardTextFilters();renderWordResults()}));
     cardTextFilterReset.addEventListener('click',()=>{
-      cardTextFilterInputs.forEach(input=>{input.value=''});syncCardTextFilterReset();saveCardTextFilters();renderWordResults();cardFilterStartsWith.focus();
+      cardTextFilterInputs.forEach(input=>{input.value=''});syncCardTextFilterReset();saveCardTextFilters();renderWordResults();
     });
     cardWordFilterToggle.addEventListener('click',()=>{
       const expand=cardWordFilterPanel.hidden;
