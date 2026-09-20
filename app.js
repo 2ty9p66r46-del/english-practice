@@ -1339,9 +1339,10 @@ const COL=Object.freeze({
         row,exampleNo:text(row[COL.exampleNo])||'1',japanese:text(row[COL.japanese]),english:text(row[COL.english]),note:text(row[COL.note])
       }));
       cardDeletedExampleRows=[];
-      if(!cardExampleDrafts.length)cardExampleDrafts.push({row:null,exampleNo:'1',japanese:'',english:'',note:''});
+      if(!cardExampleDrafts.length)cardExampleDrafts.push({row:null,exampleNo:'1',japanese:'',english:'',note:'',isPendingAdd:true});
     };
     const renderCardExampleCarousel=(focusIndex=null)=>{
+      if(!cardExampleDrafts.length)cardExampleDrafts.push({row:null,exampleNo:'1',japanese:'',english:'',note:'',isPendingAdd:true});
       cardExampleCarousel.replaceChildren();
       cardExampleDrafts.forEach((draft,index)=>{
         const form=document.createElement('article');form.className='card-example-page card-example-form';form.dataset.draftIndex=String(index);
@@ -1360,7 +1361,7 @@ const COL=Object.freeze({
         const moveUp=document.createElement('button');moveUp.type='button';moveUp.className='card-order-button';moveUp.textContent='↑';moveUp.setAttribute('aria-label',`${formatExampleLetter(draft.exampleNo)}の例文を前へ移動`);moveUp.disabled=index===0;moveUp.addEventListener('click',()=>moveExample(-1));
         const moveDown=document.createElement('button');moveDown.type='button';moveDown.className='card-order-button';moveDown.textContent='↓';moveDown.setAttribute('aria-label',`${formatExampleLetter(draft.exampleNo)}の例文を後ろへ移動`);moveDown.disabled=index===cardExampleDrafts.length-1;moveDown.addEventListener('click',()=>moveExample(1));
         orderActions.append(moveUp,moveDown);heading.append(orderActions);
-        const remove=document.createElement('button');remove.type='button';remove.className='card-example-remove';remove.textContent='削除';
+        const remove=document.createElement('button');remove.type='button';remove.className='card-example-remove';remove.textContent='削除';remove.disabled=Boolean(draft.isPendingAdd);
         remove.addEventListener('click',()=>{
           if(draft.row)cardDeletedExampleRows.push(draft.row);
           cardExampleDrafts.splice(index,1);cardExampleDrafts.forEach((item,itemIndex)=>{item.exampleNo=String(itemIndex+1)});cardEditorHasStagedChanges=true;renderCardExampleCarousel();
@@ -1377,14 +1378,26 @@ const COL=Object.freeze({
         const japaneseMessage=document.createElement('em');japaneseMessage.className='card-field-message';japaneseMessage.dataset.exampleMessage='japanese';japaneseMessage.textContent='※テキストが入力されていません';japaneseField.querySelector(':scope > span').append(japaneseMessage);
         const englishField=makeField('英語','english',4);
         const englishMessage=document.createElement('em');englishMessage.className='card-field-message';englishMessage.dataset.exampleMessage='english';englishMessage.textContent='※テキストが入力されていません';englishField.querySelector(':scope > span').append(englishMessage);
-        form.append(heading,japaneseField,englishField,makeField('補足','note',3,true));cardExampleCarousel.append(form);
+        form.append(heading,japaneseField,englishField,makeField('補足','note',3,true));
+        if(draft.isPendingAdd){
+          const addCover=document.createElement('button');addCover.type='button';addCover.className='card-example-add-cover';addCover.textContent='＋例文追加';
+          addCover.addEventListener('click',async()=>{
+            const animation=addCover.animate([{opacity:1},{opacity:0}],{duration:420,easing:'ease-in-out',fill:'forwards'});
+            try{await animation.finished}catch{}draft.isPendingAdd=false;remove.disabled=false;addCover.remove();syncCardEditorMessages();
+          });
+          form.append(addCover);
+        }
+        cardExampleCarousel.append(form);
       });
-      const nextExampleNo=String(nextNumber(cardExampleDrafts.map(draft=>{const row=[];row[COL.exampleNo]=draft.exampleNo;return row}),COL.exampleNo));
-      const addPage=document.createElement('button');addPage.type='button';addPage.className='card-example-page card-example-add';
-      const addBadge=document.createElement('span');addBadge.className='practice-meta-chip';addBadge.textContent=formatExampleLetter(nextExampleNo);
-      const addText=document.createElement('strong');addText.textContent='＋例文追加';addPage.append(addBadge,addText);
-      addPage.addEventListener('click',()=>{const newIndex=cardExampleDrafts.length;cardExampleDrafts.push({row:null,exampleNo:nextExampleNo,japanese:'',english:'',note:''});cardEditorHasStagedChanges=true;renderCardExampleCarousel(newIndex)});
-      cardExampleCarousel.append(addPage);syncCardEditorMessages();
+      if(!cardExampleDrafts.some(draft=>draft.isPendingAdd)){
+        const nextExampleNo=String(nextNumber(cardExampleDrafts.map(draft=>{const row=[];row[COL.exampleNo]=draft.exampleNo;return row}),COL.exampleNo));
+        const addPage=document.createElement('button');addPage.type='button';addPage.className='card-example-page card-example-add';
+        const addBadge=document.createElement('span');addBadge.className='practice-meta-chip';addBadge.textContent=formatExampleLetter(nextExampleNo);
+        const addText=document.createElement('strong');addText.textContent='＋例文追加';addPage.append(addBadge,addText);
+        addPage.addEventListener('click',()=>{const newIndex=cardExampleDrafts.length;cardExampleDrafts.push({row:null,exampleNo:nextExampleNo,japanese:'',english:'',note:''});cardEditorHasStagedChanges=true;renderCardExampleCarousel(newIndex)});
+        cardExampleCarousel.append(addPage);
+      }
+      syncCardEditorMessages();
       if(Number.isInteger(focusIndex))requestAnimationFrame(()=>{cardExampleCarousel.scrollLeft=cardExampleCarousel.clientWidth*focusIndex});
     };
     const showCardExampleEditor=()=>{loadCardExampleDrafts();renderCardExampleCarousel();cardExampleStep.hidden=false};
