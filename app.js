@@ -2471,6 +2471,9 @@ const COL=Object.freeze({
       row[column]=(Number(row[column])||0)+1;
       practiceStored.modified=true;
       syncPracticeResultCounts(row);
+      const count=button.closest('.practice-result-choice')?.querySelector('small');
+      button.animate?.([{transform:'scale(.82)'},{transform:'scale(1.18)'},{transform:'scale(1)'}],{duration:260,easing:'cubic-bezier(.2,.85,.3,1)'});
+      count?.animate?.([{transform:'translateY(2px) scale(.75)',opacity:.35},{transform:'translateY(-2px) scale(1.35)',opacity:1},{transform:'translateY(0) scale(1)',opacity:1}],{duration:320,easing:'cubic-bezier(.2,.85,.3,1)'});
       renderPracticeList();
       await saveImportedData(practiceStored);
     }));
