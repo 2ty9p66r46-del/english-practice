@@ -2034,7 +2034,8 @@ const COL=Object.freeze({
         option.addEventListener('click',event=>{
           event.stopPropagation();
           selectPracticeSettingOption(spec,option);
-          centerPracticeSettingOption(spec,option,'smooth');
+          spec.menu.hidden=true;
+          spec.trigger.setAttribute('aria-expanded','false');
         });
         spec.menu.appendChild(option);
       });
