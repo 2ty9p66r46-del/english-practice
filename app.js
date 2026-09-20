@@ -542,10 +542,12 @@ const COL=Object.freeze({
     const practiceFilterOverlay=document.getElementById('practiceFilterOverlay');
     const practiceFilterSheet=practiceFilterOverlay.querySelector('.practice-filter-sheet');
     const practiceFilterHandle=practiceFilterOverlay.querySelector('.practice-filter-handle');
+    const practiceFilterFixedSummary=document.getElementById('practiceFilterFixedSummary');
     const practiceFilterSheetBody=document.getElementById('practiceFilterSheetBody');
     const practiceFilterCancel=document.getElementById('practiceFilterCancel');
     const practiceFilterClose=document.getElementById('practiceFilterClose');
     const filterCard=document.getElementById('filterCard');
+    const filterCardSectionHead=filterCard.querySelector(':scope > .section-head');
     const filterCardHomeParent=filterCard.parentNode;
     const filterCardHomeNext=filterCard.nextSibling;
     const practiceSettingsTab=document.getElementById('practiceSettingsTab');
@@ -1979,6 +1981,7 @@ const COL=Object.freeze({
     let practiceFilterOpen=false;
     let practiceFilterSnapshot=null;
     const restoreFilterCard=()=>{
+      if(filterCardSectionHead.parentNode!==filterCard)filterCard.prepend(filterCardSectionHead);
       if(filterCardHomeNext?.parentNode===filterCardHomeParent)filterCardHomeParent.insertBefore(filterCard,filterCardHomeNext);
       else filterCardHomeParent.append(filterCard);
     };
@@ -1987,6 +1990,7 @@ const COL=Object.freeze({
       practiceFilterOpen=true;
       practiceFilterSnapshot=allFilterChoices.map(choice=>choice.classList.contains('selected'));
       if(autoPlaying)stopAutoPlayback();
+      practiceFilterFixedSummary.append(filterCardSectionHead);
       practiceFilterSheetBody.append(filterCard);
       practiceFilterOverlay.hidden=false;
       requestAnimationFrame(()=>requestAnimationFrame(()=>{
