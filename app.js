@@ -1537,10 +1537,10 @@ const COL=Object.freeze({
     });
     cardMeaningKeep.addEventListener('click',async()=>{
       const choice=pendingMeaningChoice||{number:text(cardEditorRow?.[COL.meaningNo]),value:text(cardEditorRow?.[COL.meaning])};
-      await fadeMeaningTransition([cardMeaningEditActions,cardSelectedMeaning,cardMeaningMessage],()=>{
+      await fadeMeaningTransition([cardMeaningEditActions,cardMeaningMessage],()=>{
         selectedMeaningMode=cardEditorMode==='edit'?'unchanged':'existing';cardMeaningInput.value=choice.value;cardMeaningEditActions.hidden=true;
         showSelectedMeaning(choice.number,choice.value);showCardExampleEditor();syncCardEditorMessages();
-      },[cardSelectedMeaning,cardExampleStep]);
+      },[cardExampleStep]);
     });
     cardMeaningChange.addEventListener('click',async()=>{
       const choice=pendingMeaningChoice||{number:text(cardEditorRow?.[COL.meaningNo]),value:text(cardEditorRow?.[COL.meaning])};
