@@ -16,6 +16,11 @@ const COL=Object.freeze({
     const helpButton=document.getElementById('helpButton');
     const helpOverlay=document.getElementById('helpOverlay');
     const helpClose=document.getElementById('helpClose');
+    const helpMenu=document.getElementById('helpMenu');
+    const helpVersionButton=document.getElementById('helpVersionButton');
+    const helpUsageButton=document.getElementById('helpUsageButton');
+    const helpVersionPanel=document.getElementById('helpVersionPanel');
+    const helpUsagePanel=document.getElementById('helpUsagePanel');
     const homeModules=document.querySelector('.home-modules');
     const homeModuleCards=[...document.querySelectorAll('.home-modules>.home-module-card')];
     const homeCarouselDots=[...document.querySelectorAll('.home-carousel-dots button')];
@@ -785,11 +790,17 @@ const COL=Object.freeze({
       helpOverlay.hidden=true;
       helpButton.classList.remove('active');
     };
+    const showHelpMenu=()=>{helpMenu.hidden=false;helpVersionPanel.hidden=true;helpUsagePanel.hidden=true};
+    const showHelpPanel=panel=>{helpMenu.hidden=true;helpVersionPanel.hidden=panel!==helpVersionPanel;helpUsagePanel.hidden=panel!==helpUsagePanel};
     helpButton.addEventListener('click',()=>{
+      showHelpMenu();
       helpOverlay.hidden=false;
       helpButton.classList.add('active');
       helpClose.focus();
     });
+    helpVersionButton.addEventListener('click',()=>showHelpPanel(helpVersionPanel));
+    helpUsageButton.addEventListener('click',()=>showHelpPanel(helpUsagePanel));
+    document.querySelectorAll('[data-help-back]').forEach(button=>button.addEventListener('click',showHelpMenu));
     helpClose.addEventListener('click',closeHelp);
     helpOverlay.addEventListener('click',event=>{if(event.target===helpOverlay)closeHelp();});
     document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!helpOverlay.hidden)closeHelp();});
