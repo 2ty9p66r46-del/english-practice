@@ -447,6 +447,7 @@ const COL=Object.freeze({
     const practiceJapanese=document.getElementById('practiceJapanese');
     const practiceEnglish=document.getElementById('practiceEnglish');
     const practiceReveal=document.getElementById('practiceReveal');
+    const practiceAnswer=practiceReveal.closest('.practice-answer');
     const practiceAudio=document.getElementById('practiceAudio');
     const practiceJapaneseAudio=document.getElementById('practiceJapaneseAudio');
     const practiceJapaneseCopy=document.getElementById('practiceJapaneseCopy');
@@ -459,6 +460,12 @@ const COL=Object.freeze({
     const sentenceEditorMessage=document.getElementById('sentenceEditorMessage');
     const sentenceEditorCancel=document.getElementById('sentenceEditorCancel');
     const sentenceEditorSave=document.getElementById('sentenceEditorSave');
+    const practiceResultEdit=document.getElementById('practiceResultEdit');
+    const resultEditorOverlay=document.getElementById('resultEditorOverlay');
+    const resultEditorCancel=document.getElementById('resultEditorCancel');
+    const resultEditorSave=document.getElementById('resultEditorSave');
+    const resultEditorMessage=document.getElementById('resultEditorMessage');
+    const resultEditorInputs={correct:document.getElementById('resultEditorCorrect'),unsure:document.getElementById('resultEditorUnsure'),wrong:document.getElementById('resultEditorWrong')};
     const practiceJapaneseStop=document.getElementById('practiceJapaneseStop');
     const practiceEnglishStop=document.getElementById('practiceEnglishStop');
     const practiceWord=document.getElementById('practiceWord');
@@ -885,19 +892,17 @@ const COL=Object.freeze({
     let answerTransitioning=false;
     const setAnswerVisible=async(visible,animate=false)=>{
       if(animate&&answerTransitioning)return;
-      const outgoing=answerVisible?practiceEnglish:practiceReveal;
-      if(animate&&outgoing.animate){
+      if(animate&&practiceAnswer.animate){
         answerTransitioning=true;
-        try{await outgoing.animate([{opacity:1},{opacity:0}],{duration:140,easing:'ease-in'}).finished}catch{}
+        try{await practiceAnswer.animate([{opacity:1},{opacity:0}],{duration:140,easing:'ease-in'}).finished}catch{}
       }
       answerVisible=visible;
       practiceReveal.hidden=visible;
       practiceEnglish.hidden=!visible;
       practiceAudio.disabled=!('speechSynthesis' in window);
       requestAnimationFrame(fitPracticeCardText);
-      const incoming=visible?practiceEnglish:practiceReveal;
-      if(animate&&incoming.animate){
-        try{await incoming.animate([{opacity:0},{opacity:1}],{duration:190,easing:'ease-out'}).finished}catch{}
+      if(animate&&practiceAnswer.animate){
+        try{await practiceAnswer.animate([{opacity:0},{opacity:1}],{duration:190,easing:'ease-out'}).finished}catch{}
       }
       answerTransitioning=false;
     };
@@ -2432,6 +2437,33 @@ const COL=Object.freeze({
     sentenceEditorOverlay.addEventListener('click',event=>{if(event.target===sentenceEditorOverlay)closeSentenceEditor()});
     practiceJapaneseEdit.addEventListener('click',()=>editPracticeSentence(COL.japanese,'日本語文'));
     practiceEnglishEdit.addEventListener('click',()=>editPracticeSentence(COL.english,'英文'));
+    const resultColumn={correct:COL.correctCount,unsure:COL.questionCount,wrong:COL.wrongCount};
+    const closeResultEditor=()=>{resultEditorOverlay.hidden=true;resultEditorMessage.hidden=true};
+    practiceResultEdit.addEventListener('click',()=>{
+      const row=currentPracticeRow();if(!row)return;
+      Object.entries(resultEditorInputs).forEach(([key,input])=>{input.value=String(Number(row[resultColumn[key]])||0)});
+      resultEditorMessage.hidden=true;resultEditorOverlay.hidden=false;
+    });
+    resultEditorOverlay.querySelectorAll('.result-editor-row').forEach(editorRow=>{
+      const input=resultEditorInputs[editorRow.dataset.resultEdit];
+      editorRow.querySelector('[data-result-reset]').addEventListener('click',()=>{input.value='0';resultEditorMessage.hidden=true});
+      editorRow.querySelectorAll('[data-result-step]').forEach(button=>button.addEventListener('click',()=>{
+        input.value=String(Math.max(0,(Number(input.value)||0)+Number(button.dataset.resultStep)));resultEditorMessage.hidden=true;
+      }));
+    });
+    resultEditorSave.addEventListener('click',async()=>{
+      const row=currentPracticeRow();if(!row||!practiceStored)return;
+      const values=Object.fromEntries(Object.entries(resultEditorInputs).map(([key,input])=>[key,Number(input.value)]));
+      if(Object.values(values).some(value=>!Number.isInteger(value)||value<0)){resultEditorMessage.hidden=false;return}
+      const originals=Object.fromEntries(Object.entries(resultColumn).map(([key,column])=>[key,row[column]]));
+      Object.entries(resultColumn).forEach(([key,column])=>{row[column]=values[key]});
+      practiceStored.modified=true;resultEditorSave.disabled=true;
+      try{await saveImportedData(practiceStored);closeResultEditor();syncPracticeResultCounts(row);renderPracticeList()}
+      catch{Object.entries(resultColumn).forEach(([key,column])=>{row[column]=originals[key]});alert('結果を保存できませんでした。')}
+      finally{resultEditorSave.disabled=false}
+    });
+    resultEditorCancel.addEventListener('click',closeResultEditor);
+    resultEditorOverlay.addEventListener('click',event=>{if(event.target===resultEditorOverlay)closeResultEditor()});
     practiceResultButtons.forEach(button=>button.addEventListener('click',async()=>{
       const row=currentPracticeRow();
       if(!row||!practiceStored||practiceMoving)return;
