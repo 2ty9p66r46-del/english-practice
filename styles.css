@@ -1008,6 +1008,7 @@ body[data-page="home"] .bottom-space{display:none}
 .card-word-reselect{padding:5px 2px;border:0;background:transparent;color:var(--blue);font-size:.7rem;font-weight:800}
 .card-required-mark{margin-left:2px;color:#d92d45;font-style:normal;font-weight:950}
 .card-field-message{margin:0 3px;color:#d92d45;font-size:.68rem;font-weight:800;line-height:1.4}.card-field-message[hidden]{display:none!important}
+.card-example-form .card-field-message{margin-left:7px;font-style:normal;font-weight:400}
 .card-editor-overlay[data-mode="edit"] .card-required-mark{display:none}
 .card-word-filter-toggle{display:flex;width:50px;height:44px;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:0;border:1px solid #dce2ec;border-radius:13px;background:#fff;color:#526078;box-shadow:0 3px 10px #26354a0b;font-size:.52rem;font-weight:800}
 .card-word-filter-toggle svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}.card-word-filter-toggle[aria-expanded="true"]{border-color:#8fc1f5;color:var(--blue);background:#f3f8ff}
