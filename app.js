@@ -617,11 +617,13 @@ const COL=Object.freeze({
     const japanesePauseSetting=document.getElementById('japanesePauseSetting');
     const englishPauseSetting=document.getElementById('englishPauseSetting');
     const englishRepeatSetting=document.getElementById('englishRepeatSetting');
-    const speechRateSetting=document.getElementById('speechRateSetting');
+    const japaneseRateSetting=document.getElementById('japaneseRateSetting');
+    const englishRateSetting=document.getElementById('englishRateSetting');
     const japanesePauseMenu=document.getElementById('japanesePauseMenu');
     const englishPauseMenu=document.getElementById('englishPauseMenu');
     const englishRepeatMenu=document.getElementById('englishRepeatMenu');
-    const speechRateMenu=document.getElementById('speechRateMenu');
+    const japaneseRateMenu=document.getElementById('japaneseRateMenu');
+    const englishRateMenu=document.getElementById('englishRateMenu');
     levelChoices.forEach(button=>button.classList.add(button.textContent.trim().endsWith('1')?'red':button.textContent.trim().endsWith('2')?'orange':'yellow'));
     document.querySelectorAll('.part-group').forEach(group=>{
       const rank=group.querySelector('.group-title span')?.textContent.trim().slice(-1);
@@ -1955,9 +1957,17 @@ const COL=Object.freeze({
     };
 
     const PLAYBACK_STORAGE_KEY='flovo-playback-settings';
-    const playbackDefaults={language:'both',repeat:'once',japanesePause:1,englishPause:1,englishRepeats:1,rate:.9};
+    const playbackDefaults={language:'both',repeat:'once',japanesePause:1,englishPause:1,englishRepeats:1,japaneseRate:.9,englishRate:.9};
     let playbackSettings={...playbackDefaults};
-    try{playbackSettings={...playbackDefaults,...JSON.parse(localStorage.getItem(PLAYBACK_STORAGE_KEY)||'{}')}}catch{}
+    try{
+      const savedPlayback=JSON.parse(localStorage.getItem(PLAYBACK_STORAGE_KEY)||'{}');
+      playbackSettings={...playbackDefaults,...savedPlayback};
+      if(savedPlayback.rate!=null){
+        if(savedPlayback.japaneseRate==null)playbackSettings.japaneseRate=savedPlayback.rate;
+        if(savedPlayback.englishRate==null)playbackSettings.englishRate=savedPlayback.rate;
+      }
+      delete playbackSettings.rate;
+    }catch{}
     const languageModes=['ja','en','both'];
     const repeatModes=['current','all','once'];
     const languageLabels={ja:'日',en:'英',both:'日・英'};
@@ -1969,7 +1979,8 @@ const COL=Object.freeze({
     const repeatOptions=[1,2,3,4,5].map(value=>({value:String(value),label:value+'回'}));
     const rateOptions=Array.from({length:16},(_,index)=>(.5+index*.1).toFixed(1)).map(value=>({value,label:value+'×'}));
     const practiceSettingSpecs=[
-      {trigger:speechRateSetting,menu:speechRateMenu,key:'rate',options:rateOptions,mode:'wheel'},
+      {trigger:japaneseRateSetting,menu:japaneseRateMenu,key:'japaneseRate',options:rateOptions,mode:'wheel'},
+      {trigger:englishRateSetting,menu:englishRateMenu,key:'englishRate',options:rateOptions,mode:'wheel'},
       {trigger:japanesePauseSetting,menu:japanesePauseMenu,key:'japanesePause',options:pauseOptions,mode:'cycle'},
       {trigger:englishPauseSetting,menu:englishPauseMenu,key:'englishPause',options:pauseOptions,mode:'cycle'},
       {trigger:englishRepeatSetting,menu:englishRepeatMenu,key:'englishRepeats',options:repeatOptions,mode:'cycle'}
@@ -2027,16 +2038,6 @@ const COL=Object.freeze({
         });
         spec.menu.appendChild(option);
       });
-      spec.menu.addEventListener('scroll',()=>{
-        clearTimeout(spec.scrollTimer);
-        spec.scrollTimer=setTimeout(()=>{
-          const center=spec.menu.scrollTop+spec.menu.clientHeight/2;
-          const options=[...spec.menu.querySelectorAll('.practice-setting-option')];
-          const nearest=options.reduce((best,item)=>Math.abs(item.offsetTop+item.offsetHeight/2-center)<Math.abs(best.offsetTop+best.offsetHeight/2-center)?item:best,options[0]);
-          selectPracticeSettingOption(spec,nearest);
-          centerPracticeSettingOption(spec,nearest,'smooth');
-        },110);
-      },{passive:true});
       spec.trigger.addEventListener('click',event=>{
         event.stopPropagation();
         const opening=spec.menu.hidden;
@@ -2079,7 +2080,7 @@ const COL=Object.freeze({
       if(!autoPlaying||run!==playbackRun||!('speechSynthesis' in window)){resolve(false);return}
       const utterance=new SpeechSynthesisUtterance(value);
       utterance.lang=lang;
-      utterance.rate=Number(playbackSettings.rate);
+      utterance.rate=Number(lang.startsWith('ja')?playbackSettings.japaneseRate:playbackSettings.englishRate);
       utterance.onstart=()=>setSentenceSpeaking(button,true,false);
       utterance.onend=utterance.onerror=()=>{setSentenceSpeaking(button,false,false);resolve(run===playbackRun)};
       speechSynthesis.speak(utterance);
@@ -2429,7 +2430,7 @@ const COL=Object.freeze({
       speechSynthesis.cancel();
       const utterance=new SpeechSynthesisUtterance(practiceWord.textContent);
       utterance.lang=lang;
-      utterance.rate=.82;
+      utterance.rate=Number(playbackSettings.englishRate);
       utterance.onstart=()=>button.classList.add('speaking');
       utterance.onend=utterance.onerror=()=>button.classList.remove('speaking');
       speechSynthesis.speak(utterance);
@@ -2442,7 +2443,7 @@ const COL=Object.freeze({
       speechSynthesis.cancel();
       const utterance=new SpeechSynthesisUtterance(practiceJapanese.textContent);
       utterance.lang='ja-JP';
-      utterance.rate=Number(playbackSettings.rate);
+      utterance.rate=Number(playbackSettings.japaneseRate);
       utterance.onstart=()=>setSentenceSpeaking(practiceJapaneseAudio,true);
       utterance.onend=utterance.onerror=()=>setSentenceSpeaking(practiceJapaneseAudio,false);
       speechSynthesis.speak(utterance);
@@ -2453,7 +2454,7 @@ const COL=Object.freeze({
       speechSynthesis.cancel();
       const utterance=new SpeechSynthesisUtterance(practiceEnglish.textContent);
       utterance.lang='en-US';
-      utterance.rate=Number(playbackSettings.rate);
+      utterance.rate=Number(playbackSettings.englishRate);
       utterance.onstart=()=>setSentenceSpeaking(practiceAudio,true);
       utterance.onend=utterance.onerror=()=>setSentenceSpeaking(practiceAudio,false);
       speechSynthesis.speak(utterance);
