@@ -210,16 +210,16 @@
 .practice-rating-footer>span,.practice-result-footer>span{color:#6f7b8e;font-size:.69rem;font-weight:850;line-height:1;letter-spacing:.04em}
 .practice-rating-footer .practice-rating-options{display:flex;gap:4px}
 .practice-rating-footer .practice-rating-button{width:30px;height:30px;min-width:30px;padding:0;border-radius:50%;font-size:.47rem}
-.practice-result-footer{display:flex;flex:0 0 auto;align-items:flex-start;gap:7px}
+.practice-result-footer{display:flex;flex:0 0 auto;align-items:flex-end;gap:7px}
 .practice-result-actions{display:flex;flex:0 0 auto;gap:10px}
 .practice-result-actions[hidden]{display:none!important}
-.practice-result-choice{display:flex;width:30px;flex-direction:column;align-items:center;gap:1px}
-.practice-result-button{display:grid;width:30px;height:30px;min-width:30px;place-items:center;padding:0;border:0;background:transparent;color:var(--result-symbol);box-shadow:none}
+.practice-result-choice{display:flex;width:30px;flex-direction:column;align-items:center;gap:2px}
+.practice-result-button{display:grid;width:30px;height:30px;min-width:30px;place-items:center;padding:0;border:0;border-radius:50%;background:linear-gradient(180deg,#f5f6f8 0%,#e3e6eb 100%);color:var(--result-symbol);box-shadow:inset 0 1px 0 #fff,0 2px 5px #26354a12}
 .practice-result-button svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round}
 .practice-result-button.result-correct{--result-symbol:#0876ee}
 .practice-result-button.result-unsure{--result-symbol:#d8ad2c}
 .practice-result-button.result-wrong{--result-symbol:#d43f52}
-.practice-result-choice small{max-width:30px;color:#59667b;font-size:.68rem;font-weight:850;line-height:1;font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis}
+.practice-result-choice small{order:-1;max-width:30px;color:#59667b;font-size:.68rem;font-weight:850;line-height:1;font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis}
 .practice-result-button:active{transform:scale(.97)}
 .practice-result-edit{display:grid;width:28px;height:28px;place-items:center;padding:0;border:1px solid #d6dce5;border-radius:50%;background:#fff;color:#65728a;box-shadow:0 2px 5px #26354a12}
 .practice-result-edit svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.practice-result-edit:active{transform:scale(.95)}
