@@ -548,6 +548,9 @@ const COL=Object.freeze({
     const practiceRatingButtons=[...document.querySelectorAll('.practice-rating-button')];
     const practiceResultActions=document.getElementById('practiceResultActions');
     const practiceResultButtons=[...document.querySelectorAll('.practice-result-button')];
+    const practiceCorrectCount=document.getElementById('practiceCorrectCount');
+    const practiceUnsureCount=document.getElementById('practiceUnsureCount');
+    const practiceWrongCount=document.getElementById('practiceWrongCount');
     const setSentenceSpeaking=(button,active,showStop=true)=>{
       button.classList.toggle('speaking',active);
       const stopButton=button===practiceJapaneseAudio?practiceJapaneseStop:practiceEnglishStop;
@@ -882,6 +885,11 @@ const COL=Object.freeze({
       const value=text(row?.[COL.understanding])||'未登録';
       practiceRatingButtons.forEach(button=>button.classList.toggle('selected',button.dataset.value===value));
     };
+    const syncPracticeResultCounts=row=>{
+      practiceCorrectCount.textContent=String(Number(row?.[COL.correctCount])||0);
+      practiceUnsureCount.textContent=String(Number(row?.[COL.questionCount])||0);
+      practiceWrongCount.textContent=String(Number(row?.[COL.wrongCount])||0);
+    };
     const formatPracticeNumber=(value,digits)=>{
       const raw=text(value);
       return /^\d+$/.test(raw)?raw.padStart(digits,'0'):raw||'—';
@@ -953,6 +961,7 @@ const COL=Object.freeze({
       practiceNote.textContent=note;
       practiceNote.closest('.practice-note-row').classList.toggle('is-empty',!note);
       syncPracticeRating(row);
+      syncPracticeResultCounts(row);
       setAnswerVisible(false);
       requestAnimationFrame(fitPracticeCardText);
     };
@@ -2377,6 +2386,7 @@ const COL=Object.freeze({
       const column=button.dataset.result==='correct'?COL.correctCount:button.dataset.result==='wrong'?COL.wrongCount:COL.questionCount;
       row[column]=(Number(row[column])||0)+1;
       practiceStored.modified=true;
+      syncPracticeResultCounts(row);
       renderPracticeList();
       await saveImportedData(practiceStored);
       if(practiceIndex<practiceRows.length-1)await movePractice(1);
