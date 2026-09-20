@@ -447,7 +447,6 @@ const COL=Object.freeze({
     const practiceJapanese=document.getElementById('practiceJapanese');
     const practiceEnglish=document.getElementById('practiceEnglish');
     const practiceReveal=document.getElementById('practiceReveal');
-    const practiceAnswer=practiceReveal.closest('.practice-answer');
     const practiceAudio=document.getElementById('practiceAudio');
     const practiceJapaneseAudio=document.getElementById('practiceJapaneseAudio');
     const practiceJapaneseCopy=document.getElementById('practiceJapaneseCopy');
@@ -886,17 +885,19 @@ const COL=Object.freeze({
     let answerTransitioning=false;
     const setAnswerVisible=async(visible,animate=false)=>{
       if(animate&&answerTransitioning)return;
-      if(animate&&practiceAnswer.animate){
+      const outgoing=answerVisible?practiceEnglish:practiceReveal;
+      if(animate&&outgoing.animate){
         answerTransitioning=true;
-        try{await practiceAnswer.animate([{opacity:1},{opacity:0}],{duration:140,easing:'ease-in'}).finished}catch{}
+        try{await outgoing.animate([{opacity:1},{opacity:0}],{duration:140,easing:'ease-in'}).finished}catch{}
       }
       answerVisible=visible;
       practiceReveal.hidden=visible;
       practiceEnglish.hidden=!visible;
       practiceAudio.disabled=!('speechSynthesis' in window);
       requestAnimationFrame(fitPracticeCardText);
-      if(animate&&practiceAnswer.animate){
-        try{await practiceAnswer.animate([{opacity:0},{opacity:1}],{duration:190,easing:'ease-out'}).finished}catch{}
+      const incoming=visible?practiceEnglish:practiceReveal;
+      if(animate&&incoming.animate){
+        try{await incoming.animate([{opacity:0},{opacity:1}],{duration:190,easing:'ease-out'}).finished}catch{}
       }
       answerTransitioning=false;
     };
