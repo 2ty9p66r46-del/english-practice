@@ -436,6 +436,7 @@ const COL=Object.freeze({
     const wordStartsWith=document.getElementById('wordStartsWith');
     const wordEndsWith=document.getElementById('wordEndsWith');
     const wordIncludes=document.getElementById('wordIncludes');
+    const wordTextFilterReset=document.getElementById('wordTextFilterReset');
     const allFilterChoices=[...levelChoices,...partChoices,...understandingChoices];
     const selectAllFilters=document.getElementById('selectAllFilters');
     const overallFilterWarning=document.getElementById('overallFilterWarning');
@@ -833,8 +834,14 @@ const COL=Object.freeze({
       button.addEventListener('click',()=>setSectionFilters(section,!button.classList.contains('selected')));
     });
     selectAllFilters.addEventListener('click',()=>setAllFilters(!selectAllFilters.classList.contains('selected')));
-    [wordStartsWith,wordEndsWith,wordIncludes].forEach(input=>input.addEventListener('input',refreshQuestionCount));
+    const syncWordTextFilterReset=()=>{wordTextFilterReset.disabled=![wordStartsWith,wordEndsWith,wordIncludes].some(input=>Boolean(text(input.value)))};
+    [wordStartsWith,wordEndsWith,wordIncludes].forEach(input=>input.addEventListener('input',()=>{syncWordTextFilterReset();refreshQuestionCount()}));
+    wordTextFilterReset.addEventListener('click',()=>{
+      [wordStartsWith.value,wordEndsWith.value,wordIncludes.value]=['','',''];
+      syncWordTextFilterReset();refreshQuestionCount();wordStartsWith.focus();
+    });
     restorePracticeTextFilters();
+    syncWordTextFilterReset();
     if(restoreFilterSelection(PRACTICE_FILTER_STORAGE_KEY,allFilterChoices)){
       subgroupAllButtons.forEach(button=>syncSubgroupAll(button.closest('.group')));
       filterSections.forEach(section=>syncSectionControls(section,false));syncGlobalControls();refreshQuestionCount();
@@ -2229,6 +2236,7 @@ const COL=Object.freeze({
       if(practiceFilterSnapshot){
         allFilterChoices.forEach((choice,index)=>choice.classList.toggle('selected',practiceFilterSnapshot.choices[index]));
         [wordStartsWith.value,wordEndsWith.value,wordIncludes.value]=practiceFilterSnapshot.text;
+        syncWordTextFilterReset();
         subgroupAllButtons.forEach(button=>syncSubgroupAll(button.closest('.group')));
         filterSections.forEach(section=>syncSectionControls(section,false));
         syncGlobalControls();
