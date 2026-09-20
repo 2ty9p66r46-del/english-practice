@@ -1539,7 +1539,7 @@ const COL=Object.freeze({
       const choice=pendingMeaningChoice||{number:text(cardEditorRow?.[COL.meaningNo]),value:text(cardEditorRow?.[COL.meaning])};
       await fadeMeaningTransition([cardMeaningEditActions,cardMeaningMessage],()=>{
         selectedMeaningMode=cardEditorMode==='edit'?'unchanged':'existing';cardMeaningInput.value=choice.value;cardMeaningEditActions.hidden=true;
-        showSelectedMeaning(choice.number,choice.value);showCardExampleEditor();syncCardEditorMessages();
+        showCardExampleEditor();syncCardEditorMessages();
       },[cardExampleStep]);
     });
     cardMeaningChange.addEventListener('click',async()=>{
