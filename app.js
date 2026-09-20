@@ -1498,7 +1498,7 @@ const COL=Object.freeze({
       cardEditorMode=mode;cardEditorRow=row;selectedVocabularyRow=mode==='edit'?row:null;
       cardWordStep.classList.toggle('has-selection',mode==='edit');
       cardEditorOverlay.dataset.mode=mode;
-      cardEditorTitle.textContent='例文編集';
+      cardEditorTitle.textContent='データ編集';
       cardEditorBody.scrollTop=0;pendingMeaningChoice=null;selectedMeaningNumber='';cardExampleDrafts=[];cardDeletedExampleRows=[];cardExampleCarousel.replaceChildren();
       selectedMeaningMode=mode==='edit'?'existing':null;
       cardWordStep.hidden=false;
