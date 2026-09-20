@@ -2364,10 +2364,9 @@ const COL=Object.freeze({
           helper.value=value;helper.setAttribute('readonly','');helper.style.position='fixed';helper.style.opacity='0';
           document.body.append(helper);helper.select();document.execCommand('copy');helper.remove();
         }
-        const label=button.querySelector('span');
-        label.textContent='コピー済み';button.classList.add('copied');
+        button.setAttribute('aria-label','コピー済み');button.classList.add('copied');
         clearTimeout(button._copyTimer);
-        button._copyTimer=setTimeout(()=>{label.textContent='コピー';button.classList.remove('copied')},1200);
+        button._copyTimer=setTimeout(()=>{button.setAttribute('aria-label',button===practiceJapaneseCopy?'日本語文をコピー':'英文をコピー');button.classList.remove('copied')},1200);
       }catch{alert('文をコピーできませんでした。')}
     };
     practiceJapaneseCopy.addEventListener('click',()=>copyPracticeText(practiceJapanese,practiceJapaneseCopy));
