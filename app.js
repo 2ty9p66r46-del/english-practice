@@ -428,9 +428,7 @@ const COL=Object.freeze({
     const levelChoices=[...document.querySelectorAll('#filterCard .level-group .choice')];
     const partChoices=[...document.querySelectorAll('#filterCard .part-group .choice')];
     const understandingChoices=[...document.querySelectorAll('#filterCard .understanding .choice')];
-    const meaningCountChoices=[...document.querySelectorAll('#filterCard .meaning-count-group .choice')];
-    const exampleCountChoices=[...document.querySelectorAll('#filterCard .example-count-group .choice')];
-    const allFilterChoices=[...levelChoices,...partChoices,...understandingChoices,...meaningCountChoices,...exampleCountChoices];
+    const allFilterChoices=[...levelChoices,...partChoices,...understandingChoices];
     const selectAllFilters=document.getElementById('selectAllFilters');
     const overallFilterWarning=document.getElementById('overallFilterWarning');
     const practiceScreen=document.getElementById('practiceScreen');
@@ -597,18 +595,13 @@ const COL=Object.freeze({
       const levels=selectedValues(levelChoices);
       const parts=selectedValues(partChoices);
       const understandings=selectedValues(understandingChoices);
-      const meaningCounts=selectedValues(meaningCountChoices);
-      const exampleCounts=selectedValues(exampleCountChoices);
-      const countsByKey=buildVocabularyCounts(rows);
       return rows.filter(row=>{
         if(!text(row[COL.japanese])||!text(row[COL.english]))return false;
         if(levels.size&&![text(row[COL.sLevel]),text(row[COL.wLevel])].some(value=>levels.has(value)))return false;
         if(parts.size&&!parts.has(text(row[COL.pos])))return false;
         const understanding=text(row[COL.understanding])||'未登録';
         if(understandings.size&&!understandings.has(understanding))return false;
-        const counts=countsByKey.get(vocabularyKey(row))||{meanings:new Set(),examples:0};
-        if(meaningCounts.size&&!meaningCounts.has(countCategory(counts.meanings.size)))return false;
-        return !exampleCounts.size||exampleCounts.has(countCategory(counts.examples));
+        return true;
       }).sort(comparePracticeNumber);
     };
     const refreshQuestionCount=async()=>{
@@ -732,7 +725,7 @@ const COL=Object.freeze({
       if(warning)warning.hidden=selectedCount>0;
       if(syncGlobal)syncGlobalControls();
     };
-    [...levelChoices,...partChoices,...understandingChoices,...meaningCountChoices,...exampleCountChoices].forEach(button=>button.addEventListener('click',()=>{
+    [...levelChoices,...partChoices,...understandingChoices].forEach(button=>button.addEventListener('click',()=>{
       button.classList.toggle('selected');
       syncSubgroupAll(button.closest('.group'));
       syncSectionControls(button.closest('.filter-section'));
