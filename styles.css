@@ -211,7 +211,7 @@
 .practice-rating-footer .practice-rating-options{display:flex;gap:4px}
 .practice-rating-footer .practice-rating-button{width:30px;height:30px;min-width:30px;padding:0;border-radius:50%;font-size:.47rem}
 .practice-result-footer{display:flex;flex:0 0 auto;align-items:flex-end;gap:7px}
-.practice-result-actions{display:flex;width:116px;flex:0 0 116px;justify-content:space-between;gap:0}
+.practice-result-actions{display:flex;width:130px;flex:0 0 130px;justify-content:space-between;gap:0}
 .practice-result-actions[hidden]{display:none!important}
 .practice-result-choice{display:flex;width:34px;flex-direction:column;align-items:center;gap:2px}
 .practice-result-button{display:grid;width:34px;height:34px;min-width:34px;place-items:center;padding:0;border:0;border-radius:50%;background:linear-gradient(180deg,#f5f6f8 0%,#e3e6eb 100%);color:var(--result-symbol);box-shadow:inset 0 1px 0 #fff,0 2px 5px #26354a12}
