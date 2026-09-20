@@ -447,6 +447,7 @@ const COL=Object.freeze({
     const practiceJapanese=document.getElementById('practiceJapanese');
     const practiceEnglish=document.getElementById('practiceEnglish');
     const practiceReveal=document.getElementById('practiceReveal');
+    const practiceAnswer=practiceReveal.closest('.practice-answer');
     const practiceAudio=document.getElementById('practiceAudio');
     const practiceJapaneseAudio=document.getElementById('practiceJapaneseAudio');
     const practiceJapaneseCopy=document.getElementById('practiceJapaneseCopy');
@@ -876,12 +877,22 @@ const COL=Object.freeze({
       fitTextToFixedArea(practiceJapanese,11);
       if(answerVisible)fitTextToFixedArea(practiceEnglish,11);
     };
-    const setAnswerVisible=visible=>{
+    let answerTransitioning=false;
+    const setAnswerVisible=async(visible,animate=false)=>{
+      if(animate&&answerTransitioning)return;
+      if(animate&&practiceAnswer.animate){
+        answerTransitioning=true;
+        try{await practiceAnswer.animate([{opacity:1},{opacity:0}],{duration:140,easing:'ease-in'}).finished}catch{}
+      }
       answerVisible=visible;
       practiceReveal.hidden=visible;
       practiceEnglish.hidden=!visible;
       practiceAudio.disabled=!('speechSynthesis' in window);
       requestAnimationFrame(fitPracticeCardText);
+      if(animate&&practiceAnswer.animate){
+        try{await practiceAnswer.animate([{opacity:0},{opacity:1}],{duration:190,easing:'ease-out'}).finished}catch{}
+      }
+      answerTransitioning=false;
     };
     const syncPracticeRating=row=>{
       const value=text(row?.[COL.understanding])||'未登録';
@@ -2293,8 +2304,8 @@ const COL=Object.freeze({
       if(event.target===practiceSettingsOverlay)practiceSettingsOverlay.hidden=true;
     });
     navHome.addEventListener('click',()=>{if(!practiceScreen.hidden)closePractice()});
-    practiceReveal.addEventListener('click',()=>setAnswerVisible(true));
-    practiceEnglish.addEventListener('click',()=>setAnswerVisible(false));
+    practiceReveal.addEventListener('click',()=>setAnswerVisible(true,true));
+    practiceEnglish.addEventListener('click',()=>setAnswerVisible(false,true));
     let practiceSwipeStart=null;
     practiceExerciseCard.addEventListener('pointerdown',event=>{
       if(practiceMoving||(event.pointerType==='mouse'&&event.button!==0)||event.target.closest('button'))return;
@@ -2410,8 +2421,6 @@ const COL=Object.freeze({
       syncPracticeResultCounts(row);
       renderPracticeList();
       await saveImportedData(practiceStored);
-      if(practiceIndex<practiceRows.length-1)await movePractice(1);
-      else await animatePracticeCard([{transform:'translateX(-18px)'},{transform:'translateX(0)'}],{duration:220,easing:'cubic-bezier(.2,.8,.2,1)'});
     }));
     practiceRatingButtons.forEach(button=>button.addEventListener('click',async()=>{
       const row=currentPracticeRow();
