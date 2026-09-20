@@ -482,8 +482,10 @@ const COL=Object.freeze({
     const cardEditorConfirmPanel=document.createElement('section');cardEditorConfirmPanel.className='card-editor-confirm-panel';
     const cardEditorConfirmTitle=document.createElement('h3');
     const cardEditorConfirmChanges=document.createElement('div');cardEditorConfirmChanges.className='card-editor-confirm-changes';
+    const cardEditorConfirmActions=document.createElement('div');cardEditorConfirmActions.className='card-editor-confirm-actions';
+    const cardEditorConfirmCancel=document.createElement('button');cardEditorConfirmCancel.type='button';cardEditorConfirmCancel.textContent='キャンセル';
     const cardEditorConfirmOk=document.createElement('button');cardEditorConfirmOk.type='button';cardEditorConfirmOk.textContent='OK';
-    cardEditorConfirmPanel.append(cardEditorConfirmTitle,cardEditorConfirmChanges,cardEditorConfirmOk);cardEditorConfirm.append(cardEditorConfirmPanel);cardEditorSheet.append(cardEditorConfirm);
+    cardEditorConfirmActions.append(cardEditorConfirmCancel,cardEditorConfirmOk);cardEditorConfirmPanel.append(cardEditorConfirmTitle,cardEditorConfirmChanges,cardEditorConfirmActions);cardEditorConfirm.append(cardEditorConfirmPanel);cardEditorSheet.append(cardEditorConfirm);
     const cardWordStep=document.getElementById('cardWordStep');
     const cardWordFilterToggle=document.getElementById('cardWordFilterToggle');
     const cardWordFilterPanel=document.getElementById('cardWordFilterPanel');
@@ -1466,12 +1468,13 @@ const COL=Object.freeze({
       return [...groups.values()].map(group=>{const number=group.row?`No ${formatPracticeNumber(group.row[COL.wordNo],5)}`:'データ';const part=group.row?text(group.row[COL.pos])||'品詞未登録':'';return `${number}${part?`・${part}`:''}について、以下が変更されました。\n${[...group.messages].map(message=>`・${message}`).join('\n')}`});
     };
     let cardEditorConfirmResolve=null;
-    const showCardEditorConfirmation=changes=>new Promise(resolve=>{
+    const showCardEditorConfirmation=(changes,allowCancel=false)=>new Promise(resolve=>{
       cardEditorConfirmResolve=resolve;cardEditorConfirmTitle.textContent=changes.length?'データ変更があります':'データ変更はありません';
       cardEditorConfirmChanges.replaceChildren();
       if(changes.length){const list=document.createElement('ul');changes.forEach(change=>{const item=document.createElement('li');item.textContent=change;list.append(item)});cardEditorConfirmChanges.append(list)}
-      cardEditorConfirmChanges.hidden=!changes.length;cardEditorConfirm.hidden=false;cardEditorConfirmOk.focus({preventScroll:true});
+      cardEditorConfirmChanges.hidden=!changes.length;cardEditorConfirmCancel.hidden=!allowCancel;cardEditorConfirmActions.classList.toggle('single',!allowCancel);cardEditorConfirm.hidden=false;cardEditorConfirmOk.focus({preventScroll:true});
     });
+    cardEditorConfirmCancel.addEventListener('click',()=>{cardEditorConfirm.hidden=true;const resolve=cardEditorConfirmResolve;cardEditorConfirmResolve=null;resolve?.(false)});
     cardEditorConfirmOk.addEventListener('click',()=>{
       cardEditorConfirm.hidden=true;const resolve=cardEditorConfirmResolve;cardEditorConfirmResolve=null;resolve?.(true);
     });
@@ -1686,7 +1689,8 @@ const COL=Object.freeze({
       const meaning=text(cardMeaningInput.value);
       if(blockIncompleteExamples())return;
       const changes=collectCardEditorChanges();
-      await showCardEditorConfirmation(changes);
+      const confirmed=await showCardEditorConfirmation(changes,true);
+      if(!confirmed)return;
       if(!changes.length){await closeCardEditor(true);return}
       if(!selectedVocabularyRow){await persistPracticeData();refreshPracticeAfterMutation();cardEditorRowsSnapshot=null;await closeCardEditor(false);return}
       const hasSelectedMeaning=['new','existing','unchanged','changed'].includes(selectedMeaningMode)&&Boolean(meaning);
