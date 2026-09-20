@@ -1413,7 +1413,7 @@ const COL=Object.freeze({
               cardMeaningStep.classList.remove('is-choosing');selectedMeaningMode='new-draft';cardMeaningInput.value='';cardMeaningResults.hidden=true;cardMeaningField.hidden=false;
               cardMeaningNumberBadge.className='practice-meta-chip';cardMeaningNumberBadge.textContent=formatSingleDigitNumber(choice.number);cardMeaningNumberBadge.hidden=false;
               cardMeaningConfirm.textContent='この意味で登録';cardMeaningConfirm.hidden=false;cardMeaningReselect.hidden=false;cardExampleStep.hidden=true;syncCardEditorMessages();
-            },[cardMeaningField,cardMeaningConfirm,cardMeaningMessage,cardMeaningReselect]);
+            },[cardMeaningField,cardMeaningConfirm,cardMeaningReselect]);
           }else{
             await fadeMeaningTransition([cardMeaningResults,cardMeaningMessage],()=>{
               cardMeaningStep.classList.remove('is-choosing');selectedMeaningMode='existing-choice';pendingMeaningChoice={number:choice.number,value:choice.value};cardMeaningInput.value=choice.value;cardMeaningResults.hidden=true;cardMeaningField.hidden=true;cardMeaningConfirm.hidden=true;
