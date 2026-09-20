@@ -211,7 +211,7 @@
 .practice-rating-footer .practice-rating-options{display:flex;gap:4px}
 .practice-rating-footer .practice-rating-button{width:30px;height:30px;min-width:30px;padding:0;border-radius:50%;font-size:.47rem}
 .practice-result-footer{display:flex;flex:0 0 auto;flex-direction:column;align-items:flex-start;gap:3px}
-.practice-result-actions{display:flex;flex:0 0 auto;gap:4px}
+.practice-result-actions{display:flex;flex:0 0 auto;gap:10px}
 .practice-result-actions[hidden]{display:none!important}
 .practice-result-choice{display:flex;width:30px;flex-direction:column;align-items:center;gap:1px}
 .practice-result-button{display:grid;width:30px;height:30px;min-width:30px;place-items:center;padding:0;border:0;background:transparent;color:var(--result-symbol);box-shadow:none}
@@ -219,7 +219,7 @@
 .practice-result-button.result-correct{--result-symbol:#0876ee}
 .practice-result-button.result-unsure{--result-symbol:#d8ad2c}
 .practice-result-button.result-wrong{--result-symbol:#d43f52}
-.practice-result-choice small{max-width:30px;color:#59667b;font-size:.55rem;font-weight:850;line-height:1;font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis}
+.practice-result-choice small{max-width:30px;color:#59667b;font-size:.68rem;font-weight:850;line-height:1;font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis}
 .practice-result-button:active{transform:scale(.97)}
 .practice-nav-button{display:grid;width:42px;height:34px;place-items:center;justify-self:center;border:1px solid #dce2eb;border-radius:var(--radius-pill);background:#fff;color:#526078;font-size:1.08rem;font-weight:850;box-shadow:0 3px 10px #26354a12}
 .practice-nav-button:disabled{color:#c5cad2;opacity:.65}
