@@ -167,7 +167,7 @@
           <button class="practice-back-to-list" id="practiceBackToList" type="button" aria-label="例文一覧へ戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg></button>
         </div>
         <div class="practice-header-actions">
-          <button class="practice-card-add" id="practiceCardAdd" type="button" aria-label="例文編集"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg><span>例文編集</span></button>
+          <button class="practice-card-add" id="practiceCardAdd" type="button" aria-label="データ編集"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg><span>データ編集</span></button>
           <button class="practice-filter-button" id="practiceFilterButton" type="button" aria-label="例文フィルタ条件を開く"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4v12M3.5 12.5 7 16l3.5-3.5M14 6h7M14 11h5.5M14 16h4"/></svg><span>フィルタ</span></button>
         </div>
       </header>
@@ -239,7 +239,7 @@
     <div class="card-editor-overlay" id="cardEditorOverlay" hidden>
       <section class="card-editor-sheet" role="dialog" aria-modal="true" aria-labelledby="cardEditorTitle">
         <span class="practice-filter-handle" aria-hidden="true"></span>
-        <header class="card-editor-head"><button id="cardEditorCancel" type="button">キャンセル</button><h2 id="cardEditorTitle">例文を追加</h2><button id="cardEditorSave" type="button">保存</button></header>
+        <header class="card-editor-head"><button id="cardEditorCancel" type="button">キャンセル</button><h2 id="cardEditorTitle">データ編集</h2><button id="cardEditorSave" type="button">保存</button></header>
         <div class="card-editor-body">
           <section class="card-word-step" id="cardWordStep">
             <div class="card-word-sticky"><div class="card-word-step-head"><span class="card-word-heading">単語 <em class="card-inline-message" id="cardWordMessage">※単語を選択してください</em></span><span class="card-selected-word-group" id="cardSelectedWord" hidden><span id="cardSelectedWordText"></span></span><button class="card-word-reselect" id="cardWordReselect" type="button" hidden>再選択</button></div><div class="card-word-search-row" id="cardWordSearchRow"><label class="card-editor-field card-word-field"><span class="card-search-input"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg><input id="cardWordSearch" type="search" aria-label="単語を検索" placeholder="単語を検索" autocomplete="off" autocapitalize="none" spellcheck="false" role="combobox" aria-autocomplete="list" aria-controls="cardWordResults" aria-expanded="false"></span></label><button class="card-word-filter-toggle" id="cardWordFilterToggle" type="button" aria-expanded="false" aria-controls="cardWordFilterPanel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4v12M3.5 12.5 7 16l3.5-3.5M14 6h7M14 11h5.5M14 16h4"/></svg><span>フィルタ</span></button></div></div>
