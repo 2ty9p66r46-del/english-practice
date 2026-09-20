@@ -454,6 +454,12 @@ const COL=Object.freeze({
     const practiceEnglishCopy=document.getElementById('practiceEnglishCopy');
     const practiceJapaneseEdit=document.getElementById('practiceJapaneseEdit');
     const practiceEnglishEdit=document.getElementById('practiceEnglishEdit');
+    const sentenceEditorOverlay=document.getElementById('sentenceEditorOverlay');
+    const sentenceEditorTitle=document.getElementById('sentenceEditorTitle');
+    const sentenceEditorInput=document.getElementById('sentenceEditorInput');
+    const sentenceEditorMessage=document.getElementById('sentenceEditorMessage');
+    const sentenceEditorCancel=document.getElementById('sentenceEditorCancel');
+    const sentenceEditorSave=document.getElementById('sentenceEditorSave');
     const practiceJapaneseStop=document.getElementById('practiceJapaneseStop');
     const practiceEnglishStop=document.getElementById('practiceEnglishStop');
     const practiceWord=document.getElementById('practiceWord');
@@ -2393,23 +2399,36 @@ const COL=Object.freeze({
     };
     practiceJapaneseCopy.addEventListener('click',()=>copyPracticeText(practiceJapanese,practiceJapaneseCopy));
     practiceEnglishCopy.addEventListener('click',()=>copyPracticeText(practiceEnglish,practiceEnglishCopy));
-    const editPracticeSentence=async(column,label)=>{
+    let sentenceEditorState=null;
+    const closeSentenceEditor=()=>{
+      sentenceEditorOverlay.hidden=true;sentenceEditorState=null;sentenceEditorMessage.hidden=true;
+    };
+    const editPracticeSentence=(column,label)=>{
       const row=currentPracticeRow();
       if(!row||!practiceStored)return;
-      const original=text(row[column]);
-      const entered=window.prompt(`${label}を編集`,original);
-      if(entered===null)return;
-      const value=entered.trim();
-      if(!value){alert(`${label}は空欄では保存できません。`);return}
-      row[column]=value;practiceStored.modified=true;
+      sentenceEditorState={row,column,label,original:text(row[column])};
+      sentenceEditorTitle.textContent=`${label}を編集`;
+      sentenceEditorInput.value=sentenceEditorState.original;
+      sentenceEditorMessage.hidden=true;sentenceEditorOverlay.hidden=false;
+      requestAnimationFrame(()=>{sentenceEditorInput.focus();sentenceEditorInput.setSelectionRange(sentenceEditorInput.value.length,sentenceEditorInput.value.length)});
+    };
+    sentenceEditorSave.addEventListener('click',async()=>{
+      if(!sentenceEditorState)return;
+      const value=sentenceEditorInput.value.trim();
+      if(!value){sentenceEditorMessage.hidden=false;sentenceEditorInput.focus();return}
+      const {row,column,label,original}=sentenceEditorState;
+      row[column]=value;practiceStored.modified=true;sentenceEditorSave.disabled=true;
       try{
         await saveImportedData(practiceStored);
-        renderPracticeQuestion();renderPracticeList();
+        closeSentenceEditor();renderPracticeQuestion();renderPracticeList();
       }catch{
         row[column]=original;
         alert(`${label}を保存できませんでした。`);
-      }
-    };
+      }finally{sentenceEditorSave.disabled=false}
+    });
+    sentenceEditorInput.addEventListener('input',()=>{if(sentenceEditorInput.value.trim())sentenceEditorMessage.hidden=true});
+    sentenceEditorCancel.addEventListener('click',closeSentenceEditor);
+    sentenceEditorOverlay.addEventListener('click',event=>{if(event.target===sentenceEditorOverlay)closeSentenceEditor()});
     practiceJapaneseEdit.addEventListener('click',()=>editPracticeSentence(COL.japanese,'日本語文'));
     practiceEnglishEdit.addEventListener('click',()=>editPracticeSentence(COL.english,'英文'));
     practiceResultButtons.forEach(button=>button.addEventListener('click',async()=>{
