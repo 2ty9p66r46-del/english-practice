@@ -1974,6 +1974,31 @@ const COL=Object.freeze({
     const repeatLabels={current:'1問反復',all:'全問周回',once:'1周終了'};
     let autoPlaying=false;
     let playbackRun=0;
+    let screenWakeLock=null;
+    let screenWakeLockRequest=null;
+    const acquireScreenWakeLock=()=>{
+      if(!autoPlaying||document.visibilityState!=='visible'||!('wakeLock' in navigator)||screenWakeLock)return Promise.resolve();
+      if(screenWakeLockRequest)return screenWakeLockRequest;
+      screenWakeLockRequest=navigator.wakeLock.request('screen').then(lock=>{
+        if(!autoPlaying||document.visibilityState!=='visible'){
+          lock.release().catch(()=>{});
+          return;
+        }
+        screenWakeLock=lock;
+        lock.addEventListener('release',()=>{if(screenWakeLock===lock)screenWakeLock=null});
+      }).catch(()=>{}).finally(()=>{screenWakeLockRequest=null});
+      return screenWakeLockRequest;
+    };
+    const releaseScreenWakeLock=()=>{
+      const lock=screenWakeLock;
+      screenWakeLock=null;
+      if(lock&&!lock.released)lock.release().catch(()=>{});
+    };
+    document.addEventListener('visibilitychange',()=>{
+      if(document.visibilityState==='visible'){
+        if(autoPlaying)acquireScreenWakeLock();
+      }else releaseScreenWakeLock();
+    });
     const savePlaybackSettings=()=>localStorage.setItem(PLAYBACK_STORAGE_KEY,JSON.stringify(playbackSettings));
     const pauseOptions=[0,1,2,3,4,5].map(value=>({value:String(value),label:value===0?'なし':value+'秒'}));
     const repeatOptions=[1,2,3,4,5].map(value=>({value:String(value),label:value+'回'}));
@@ -2072,6 +2097,7 @@ const COL=Object.freeze({
     const stopAutoPlayback=()=>{
       autoPlaying=false;
       playbackRun+=1;
+      releaseScreenWakeLock();
       if('speechSynthesis' in window&&!autoPlaying)speechSynthesis.cancel();
       clearSentenceSpeaking();
       syncPlaybackControls();
@@ -2121,6 +2147,7 @@ const COL=Object.freeze({
       speechSynthesis.cancel();
       clearSentenceSpeaking();
       autoPlaying=true;
+      acquireScreenWakeLock();
       playbackRun+=1;
       const run=playbackRun;
       syncPlaybackControls();
