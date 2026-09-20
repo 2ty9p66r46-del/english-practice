@@ -1965,9 +1965,9 @@ const COL=Object.freeze({
     let autoPlaying=false;
     let playbackRun=0;
     const savePlaybackSettings=()=>localStorage.setItem(PLAYBACK_STORAGE_KEY,JSON.stringify(playbackSettings));
-    const pauseOptions=[0,.5,1,1.5,2,3].map(value=>({value:String(value),label:value===0?'なし':value+'秒'}));
+    const pauseOptions=[0,1,2,3,4,5].map(value=>({value:String(value),label:value===0?'なし':value+'秒'}));
     const repeatOptions=[1,2,3,4,5].map(value=>({value:String(value),label:value+'回'}));
-    const rateOptions=Array.from({length:8},(_,index)=>(.6+index*.1).toFixed(1)).map(value=>({value,label:value+'×'}));
+    const rateOptions=Array.from({length:16},(_,index)=>(.5+index*.1).toFixed(1)).map(value=>({value,label:value+'×'}));
     const practiceSettingSpecs=[
       {trigger:speechRateSetting,menu:speechRateMenu,key:'rate',options:rateOptions,mode:'wheel'},
       {trigger:japanesePauseSetting,menu:japanesePauseMenu,key:'japanesePause',options:pauseOptions,mode:'cycle'},
