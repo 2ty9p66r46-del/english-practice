@@ -1169,6 +1169,7 @@ const COL=Object.freeze({
       cardWordFilterPanel.hidden=!expand;
       cardFilterStickySummary.hidden=!expand;
       cardWordFilterToggle.setAttribute('aria-expanded',String(expand));
+      if(expand)requestAnimationFrame(()=>{cardEditorBody.scrollTop=0;cardWordFilterPanel.scrollTop=0});
     });
     [...cardFilterLevelChoices,...cardFilterPartChoices,...cardFilterUnderstandingChoices,...cardFilterMeaningCountChoices,...cardFilterExampleCountChoices].forEach(button=>button.addEventListener('click',()=>{
       button.classList.toggle('selected');
@@ -1201,6 +1202,7 @@ const COL=Object.freeze({
     const renderWordResults=()=>{
       const query=text(cardWordSearch.value).toLowerCase();
       cardWordResults.replaceChildren();
+      cardWordResults.scrollTop=0;cardWordResults.scrollLeft=0;
       cardWordResults.onscroll=null;
       if(cardEditorMode==='edit'||selectedVocabularyRow){cardWordResults.hidden=true;cardWordSearch.setAttribute('aria-expanded','false');return}
       const candidates=getVocabularyRows();
@@ -2132,6 +2134,7 @@ const COL=Object.freeze({
       if(autoPlaying)stopAutoPlayback();
       practiceFilterFixedSummary.append(filterCardSectionHead);
       practiceFilterSheetBody.append(filterCard);
+      practiceFilterSheetBody.scrollTop=0;practiceFilterSheetBody.scrollLeft=0;
       practiceFilterOverlay.hidden=false;
       requestAnimationFrame(()=>requestAnimationFrame(()=>{
         practiceFilterOverlay.classList.add('open');
