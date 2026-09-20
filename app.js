@@ -873,8 +873,9 @@ const COL=Object.freeze({
       if(autoPlaying)restartAutoPlayback();
     };
     const currentPracticeRow=()=>practiceRows[practiceIndex];
-    const fitTextToFixedArea=(element,minSize)=>{
+    const fitTextToFixedArea=(element,minSize,allowScroll=false)=>{
       if(!element||element.hidden)return;
+      element.classList.remove('is-scrollable');
       element.style.fontSize='';
       let size=Number.parseFloat(getComputedStyle(element).fontSize)||16;
       const overflows=()=>element.scrollHeight>element.clientHeight+1||element.scrollWidth>element.clientWidth+1;
@@ -882,13 +883,14 @@ const COL=Object.freeze({
         size=Math.max(minSize,size-.5);
         element.style.fontSize=`${size}px`;
       }
+      if(allowScroll&&overflows())element.classList.add('is-scrollable');
     };
     const fitPracticeCardText=()=>{
       fitTextToFixedArea(practiceWord,11);
       fitTextToFixedArea(practiceMeaning,10);
       fitTextToFixedArea(practiceNote,9);
-      fitTextToFixedArea(practiceJapanese,11);
-      if(answerVisible)fitTextToFixedArea(practiceEnglish,11);
+      fitTextToFixedArea(practiceJapanese,11,true);
+      if(answerVisible)fitTextToFixedArea(practiceEnglish,11,true);
     };
     let answerTransitioning=false;
     const setAnswerVisible=async(visible,animate=false)=>{
