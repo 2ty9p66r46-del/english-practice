@@ -1426,32 +1426,33 @@ const COL=Object.freeze({
       syncCardEditorMessages();alert('未入力の日本語または英語があります。');return true;
     };
     const collectCardEditorChanges=()=>{
-      const changes=[];const currentRows=practiceStored.rows||[];
+      const groups=new Map();const currentRows=practiceStored.rows||[];
       const shown=value=>text(value)||'空欄';
-      if(selectedMeaningMode==='new')changes.push(`意味を新規登録：「${shown(cardMeaningInput.value)}」`);
+      const add=(row,message)=>{const source=row||selectedVocabularyRow||cardEditorRow;const key=source?vocabularyKey(source):'data';if(!groups.has(key))groups.set(key,{row:source,messages:new Set()});groups.get(key).messages.add(message)};
+      if(selectedMeaningMode==='new')add(selectedVocabularyRow,`意味を新規登録：「${shown(cardMeaningInput.value)}」`);
       cardEditorRowBaseline.forEach((before,row)=>{
         if(!currentRows.includes(row)){
           const label=text(before[COL.exampleNo])?`例文 ${formatExampleLetter(before[COL.exampleNo])}`:`意味 ${formatSingleDigitNumber(before[COL.meaningNo])}`;
-          changes.push(`${label}を削除：「${shown(text(before[COL.japanese])||text(before[COL.meaning]))}」`);return;
+          add(before,`${label}を削除：「${shown(text(before[COL.japanese])||text(before[COL.meaning]))}」`);return;
         }
-        if(text(before[COL.meaning])!==text(row[COL.meaning]))changes.push(`意味：「${shown(before[COL.meaning])}」→「${shown(row[COL.meaning])}」`);
-        if(text(before[COL.meaningNo])!==text(row[COL.meaningNo]))changes.push(`意味番号：${shown(before[COL.meaningNo])}→${shown(row[COL.meaningNo])}`);
+        if(text(before[COL.meaning])!==text(row[COL.meaning]))add(row,`意味：「${shown(before[COL.meaning])}」→「${shown(row[COL.meaning])}」`);
+        if(text(before[COL.meaningNo])!==text(row[COL.meaningNo]))add(row,`意味番号：${shown(before[COL.meaningNo])}→${shown(row[COL.meaningNo])}`);
       });
       cardDeletedExampleRows.forEach(row=>{
         const before=cardEditorRowBaseline.get(row)||row;
-        changes.push(`例文 ${formatExampleLetter(before?.[COL.exampleNo])}を削除（日本語：「${shown(before?.[COL.japanese])}」／英語：「${shown(before?.[COL.english])}」）`);
+        add(before,`例文 ${formatExampleLetter(before?.[COL.exampleNo])}を削除（日本語：「${shown(before?.[COL.japanese])}」／英語：「${shown(before?.[COL.english])}」）`);
       });
       cardExampleDrafts.filter(draft=>!draft.isPendingAdd).forEach(draft=>{
-        if(!draft.row){changes.push(`例文 ${formatExampleLetter(draft.exampleNo)}を追加（日本語：「${shown(draft.japanese)}」／英語：「${shown(draft.english)}」${text(draft.note)?`／補足：「${shown(draft.note)}」`:''}）`);return}
+        if(!draft.row){add(selectedVocabularyRow,`例文 ${formatExampleLetter(draft.exampleNo)}を追加（日本語：「${shown(draft.japanese)}」／英語：「${shown(draft.english)}」${text(draft.note)?`／補足：「${shown(draft.note)}」`:''}）`);return}
         const before=cardEditorRowBaseline.get(draft.row)||draft.row;const label=`例文 ${formatExampleLetter(draft.exampleNo)}`;
-        if(text(before[COL.exampleNo])!==text(draft.exampleNo))changes.push(`例文番号：${formatExampleLetter(before[COL.exampleNo])}→${formatExampleLetter(draft.exampleNo)}`);
-        if(text(before[COL.japanese])!==text(draft.japanese))changes.push(`${label} 日本語：「${shown(before[COL.japanese])}」→「${shown(draft.japanese)}」`);
-        if(text(before[COL.english])!==text(draft.english))changes.push(`${label} 英語：「${shown(before[COL.english])}」→「${shown(draft.english)}」`);
-        if(text(before[COL.note])!==text(draft.note))changes.push(`${label} 補足：「${shown(before[COL.note])}」→「${shown(draft.note)}」`);
+        if(text(before[COL.exampleNo])!==text(draft.exampleNo))add(draft.row,`例文番号：${formatExampleLetter(before[COL.exampleNo])}→${formatExampleLetter(draft.exampleNo)}`);
+        if(text(before[COL.japanese])!==text(draft.japanese))add(draft.row,`${label} 日本語：「${shown(before[COL.japanese])}」→「${shown(draft.japanese)}」`);
+        if(text(before[COL.english])!==text(draft.english))add(draft.row,`${label} 英語：「${shown(before[COL.english])}」→「${shown(draft.english)}」`);
+        if(text(before[COL.note])!==text(draft.note))add(draft.row,`${label} 補足：「${shown(before[COL.note])}」→「${shown(draft.note)}」`);
       });
       const rowsChanged=Boolean(cardEditorRowsSnapshot)&&JSON.stringify(currentRows)!==JSON.stringify(cardEditorRowsSnapshot);
-      if(rowsChanged&&!changes.some(change=>change.startsWith('意味')))changes.unshift('意味・例文の構成を変更');
-      return [...new Set(changes)];
+      if(rowsChanged&&!groups.size)add(selectedVocabularyRow||cardEditorRow,'意味・例文の構成を変更');
+      return [...groups.values()].map(group=>{const number=group.row?`No ${formatPracticeNumber(group.row[COL.wordNo],5)}`:'データ';const part=group.row?text(group.row[COL.pos])||'品詞未登録':'';return `${number}${part?`・${part}`:''}について、以下が変更されました。\n${[...group.messages].map(message=>`・${message}`).join('\n')}`});
     };
     let cardEditorConfirmResolve=null;
     const showCardEditorConfirmation=changes=>new Promise(resolve=>{
