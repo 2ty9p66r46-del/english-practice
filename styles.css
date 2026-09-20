@@ -1020,7 +1020,7 @@ body[data-page="home"] .bottom-space{display:none}
 .card-word-filter-panel .filter-section{padding:15px 0 17px}
 .card-word-filter-panel .group+.group{margin-top:13px;padding-top:12px;border-top:1px solid #d8dee8}
 .card-word-filter-panel .group-title{font-size:.75rem}.card-word-filter-panel .part-group .choice{min-height:28px;font-size:.68rem}
-.card-word-filter-panel .meaning-count-group .choice{min-height:30px;font-size:.7rem}
+.card-word-filter-panel .meaning-count-group .choice,.card-word-filter-panel .example-count-group .choice{min-height:30px;font-size:.7rem}
 .card-word-filter-panel .card-example-filter-group .choice-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
 .card-word-filter-panel .card-example-filter-group .choice{width:100%;padding:0 6px}
 .card-editor-field{display:grid;gap:7px}.card-editor-field[hidden]{display:none!important}.card-editor-field>span{color:#526078;font-size:.72rem;font-weight:850}
