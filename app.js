@@ -428,7 +428,9 @@ const COL=Object.freeze({
     const levelChoices=[...document.querySelectorAll('#filterCard .level-group .choice')];
     const partChoices=[...document.querySelectorAll('#filterCard .part-group .choice')];
     const understandingChoices=[...document.querySelectorAll('#filterCard .understanding .choice')];
-    const allFilterChoices=[...levelChoices,...partChoices,...understandingChoices];
+    const meaningCountChoices=[...document.querySelectorAll('#filterCard .meaning-count-group .choice')];
+    const exampleCountChoices=[...document.querySelectorAll('#filterCard .example-count-group .choice')];
+    const allFilterChoices=[...levelChoices,...partChoices,...understandingChoices,...meaningCountChoices,...exampleCountChoices];
     const selectAllFilters=document.getElementById('selectAllFilters');
     const overallFilterWarning=document.getElementById('overallFilterWarning');
     const practiceScreen=document.getElementById('practiceScreen');
@@ -503,6 +505,7 @@ const COL=Object.freeze({
     const cardFilterPartChoices=[...cardWordFilterPanel.querySelectorAll('.part-group .choice')];
     const cardFilterUnderstandingChoices=[...cardWordFilterPanel.querySelectorAll('[data-understanding-filter]')];
     const cardFilterMeaningCountChoices=[...cardWordFilterPanel.querySelectorAll('[data-meaning-count-filter]')];
+    const cardFilterExampleCountChoices=[...cardWordFilterPanel.querySelectorAll('[data-example-count-filter]')];
     const cardFilterSections=[...cardWordFilterPanel.querySelectorAll('[data-card-filter-section]')];
     const cardSelectAllFilters=document.getElementById('cardSelectAllFilters');
     const practiceRatingButtons=[...document.querySelectorAll('.practice-rating-button')];
@@ -555,6 +558,18 @@ const COL=Object.freeze({
     const understandingTones={'未登録':'purple','0%':'red','50%':'orange','80%':'yellow','100%':'green'};
     understandingChoices.forEach(button=>button.classList.add(understandingTones[button.dataset.value||button.textContent.trim()]));
     const selectedValues=buttons=>new Set(buttons.filter(button=>button.classList.contains('selected')).map(button=>button.dataset.value||button.textContent.trim()));
+    const countCategory=count=>count===0?'0':count===1?'1':'multiple';
+    const buildVocabularyCounts=rows=>{
+      const result=new Map();
+      (rows||[]).forEach(row=>{
+        const key=vocabularyKey(row);if(!key)return;
+        if(!result.has(key))result.set(key,{meanings:new Set(),examples:0});
+        const entry=result.get(key);const meaning=text(row[COL.meaning]);
+        if(meaning)entry.meanings.add(`${text(row[COL.meaningNo])}\u0000${meaning}`);
+        if(text(row[COL.japanese])&&text(row[COL.english]))entry.examples+=1;
+      });
+      return result;
+    };
     const comparePracticeNumber=(a,b)=>{
       for(const column of [COL.wordNo,COL.meaningNo,COL.exampleNo]){
         const aNumber=Number.parseInt(text(a?.[column]),10);
@@ -568,12 +583,18 @@ const COL=Object.freeze({
       const levels=selectedValues(levelChoices);
       const parts=selectedValues(partChoices);
       const understandings=selectedValues(understandingChoices);
+      const meaningCounts=selectedValues(meaningCountChoices);
+      const exampleCounts=selectedValues(exampleCountChoices);
+      const countsByKey=buildVocabularyCounts(rows);
       return rows.filter(row=>{
         if(!text(row[COL.japanese])||!text(row[COL.english]))return false;
         if(levels.size&&![text(row[COL.sLevel]),text(row[COL.wLevel])].some(value=>levels.has(value)))return false;
         if(parts.size&&!parts.has(text(row[COL.pos])))return false;
         const understanding=text(row[COL.understanding])||'未登録';
-        return !understandings.size||understandings.has(understanding);
+        if(understandings.size&&!understandings.has(understanding))return false;
+        const counts=countsByKey.get(vocabularyKey(row))||{meanings:new Set(),examples:0};
+        if(meaningCounts.size&&!meaningCounts.has(countCategory(counts.meanings.size)))return false;
+        return !exampleCounts.size||exampleCounts.has(countCategory(counts.examples));
       }).sort(comparePracticeNumber);
     };
     const refreshQuestionCount=async()=>{
@@ -711,7 +732,7 @@ const COL=Object.freeze({
       if(warning)warning.hidden=selectedCount>0;
       if(syncGlobal)syncGlobalControls();
     };
-    [...levelChoices,...partChoices,...understandingChoices].forEach(button=>button.addEventListener('click',()=>{
+    [...levelChoices,...partChoices,...understandingChoices,...meaningCountChoices,...exampleCountChoices].forEach(button=>button.addEventListener('click',()=>{
       button.classList.toggle('selected');
       syncSubgroupAll(button.closest('.group'));
       syncSectionControls(button.closest('.filter-section'));
@@ -1078,7 +1099,7 @@ const COL=Object.freeze({
       cardSelectAllFilters.classList.toggle('selected',choices.length>0&&choices.every(choice=>choice.classList.contains('selected')));
     };
     const resetCardWordFilters=()=>{
-      [...cardFilterLevelChoices,...cardFilterPartChoices,...cardFilterUnderstandingChoices,...cardFilterMeaningCountChoices].forEach(choice=>choice.classList.add('selected'));
+      [...cardFilterLevelChoices,...cardFilterPartChoices,...cardFilterUnderstandingChoices,...cardFilterMeaningCountChoices,...cardFilterExampleCountChoices].forEach(choice=>choice.classList.add('selected'));
       cardWordFilterPanel.querySelectorAll('.group .all').forEach(button=>button.classList.add('selected'));
       syncCardFilterControls();
       cardWordFilterPanel.hidden=true;
@@ -1089,7 +1110,7 @@ const COL=Object.freeze({
       cardWordFilterPanel.hidden=!expand;
       cardWordFilterToggle.setAttribute('aria-expanded',String(expand));
     });
-    [...cardFilterLevelChoices,...cardFilterPartChoices,...cardFilterUnderstandingChoices,...cardFilterMeaningCountChoices].forEach(button=>button.addEventListener('click',()=>{
+    [...cardFilterLevelChoices,...cardFilterPartChoices,...cardFilterUnderstandingChoices,...cardFilterMeaningCountChoices,...cardFilterExampleCountChoices].forEach(button=>button.addEventListener('click',()=>{
       button.classList.toggle('selected');
       syncCardWordFilterGroup(button.closest('.group'));
       syncCardFilterControls();
@@ -1122,6 +1143,7 @@ const COL=Object.freeze({
       if(cardEditorMode==='edit'||selectedVocabularyRow){cardWordResults.hidden=true;cardWordSearch.setAttribute('aria-expanded','false');return}
       const candidates=getVocabularyRows();
       const meaningsByKey=new Map();
+      const countsByKey=buildVocabularyCounts(practiceStored.rows||[]);
       (practiceStored.rows||[]).forEach(row=>{
         const key=vocabularyKey(row);
         const meaning=text(row?.[COL.meaning]);
@@ -1136,10 +1158,12 @@ const COL=Object.freeze({
       const selectedParts=new Set(cardFilterPartChoices.filter(choice=>choice.classList.contains('selected')).map(choice=>choice.dataset.value));
       const selectedUnderstanding=new Set(cardFilterUnderstandingChoices.filter(choice=>choice.classList.contains('selected')).map(choice=>choice.dataset.understandingFilter));
       const selectedMeaningCounts=new Set(cardFilterMeaningCountChoices.filter(choice=>choice.classList.contains('selected')).map(choice=>choice.dataset.meaningCountFilter));
+      const selectedExampleCounts=new Set(cardFilterExampleCountChoices.filter(choice=>choice.classList.contains('selected')).map(choice=>choice.dataset.exampleCountFilter));
       const restrictLevels=selectedLevels.size!==cardFilterLevelChoices.length;
       const restrictParts=selectedParts.size!==cardFilterPartChoices.length;
       const restrictUnderstanding=selectedUnderstanding.size!==cardFilterUnderstandingChoices.length;
       const restrictMeaningCounts=selectedMeaningCounts.size!==cardFilterMeaningCountChoices.length;
+      const restrictExampleCounts=selectedExampleCounts.size!==cardFilterExampleCountChoices.length;
       const understandingByKey=new Map();
       (practiceStored.rows||[]).forEach(example=>{
         const key=vocabularyKey(example);if(!key)return;
@@ -1155,8 +1179,10 @@ const COL=Object.freeze({
         const understandingValues=understandingByKey.get(vocabularyKey(row))||new Set(['未登録']);
         if(restrictUnderstanding&&![...understandingValues].some(value=>selectedUnderstanding.has(value)))return;
         const meaningCount=(meaningsByKey.get(vocabularyKey(row))||[]).length;
-        const meaningCountFilter=meaningCount===0?'0':meaningCount===1?'1':'multiple';
+        const meaningCountFilter=countCategory(meaningCount);
         if(restrictMeaningCounts&&!selectedMeaningCounts.has(meaningCountFilter))return;
+        const exampleCount=countsByKey.get(vocabularyKey(row))?.examples||0;
+        if(restrictExampleCounts&&!selectedExampleCounts.has(countCategory(exampleCount)))return;
         starts.push(row);
       });
       const matches=starts;
