@@ -1545,10 +1545,10 @@ const COL=Object.freeze({
     cardMeaningChange.addEventListener('click',async()=>{
       const choice=pendingMeaningChoice||{number:text(cardEditorRow?.[COL.meaningNo]),value:text(cardEditorRow?.[COL.meaning])};
       await fadeMeaningTransition([cardMeaningEditActions,cardSelectedMeaning],()=>{
-        selectedMeaningMode='change-draft';cardMeaningEditActions.hidden=true;cardSelectedMeaning.hidden=true;cardMeaningReselect.hidden=false;cardMeaningInput.value=choice.value;
+        selectedMeaningMode='change-draft';cardMeaningEditActions.hidden=true;cardSelectedMeaning.hidden=true;cardMeaningInput.value=choice.value;
         cardMeaningNumberBadge.className='practice-meta-chip';cardMeaningNumberBadge.textContent=formatSingleDigitNumber(choice.number);cardMeaningNumberBadge.hidden=false;
         cardMeaningField.hidden=false;cardMeaningConfirm.textContent='この意味に変更';cardMeaningConfirm.hidden=false;cardExampleStep.hidden=true;syncCardEditorMessages();
-      },[cardMeaningField,cardMeaningConfirm,cardMeaningReselect]);
+      },[cardMeaningField,cardMeaningConfirm]);
     });
     cardMeaningConfirm.addEventListener('click',async()=>{
       const value=text(cardMeaningInput.value);
