@@ -119,6 +119,7 @@
     .help-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
     .help-head h2{margin:0}
     .help-close{display:grid;width:36px;height:36px;place-items:center;border:1px solid #d9dee7;border-radius:50%;background:#f4f6f9;color:#526078;font-size:1.25rem;line-height:1}
+    .help-menu{display:grid;gap:10px}.help-menu[hidden],.help-panel[hidden]{display:none!important}.help-menu-item{display:flex;width:100%;min-height:58px;align-items:center;justify-content:space-between;padding:0 16px;border:1px solid #dce2eb;border-radius:15px;background:#fff;color:#344054;font-size:.82rem;font-weight:750;text-align:left;box-shadow:0 3px 10px #26354a0b}.help-menu-item span:last-child{color:var(--blue);font-size:1.25rem}.help-menu-item:active{background:#edf6ff}.help-back-button{width:100%;min-height:44px;margin-top:16px;border:1px solid #b8d7f5;border-radius:13px;background:#fff;color:var(--blue);font-size:.75rem;font-weight:800}.help-usage-list{display:grid;gap:10px;margin:0;padding-left:1.3rem;color:#526078;font-size:.74rem;line-height:1.6}
     .help-version-card{padding:16px;border:1px solid #dce2eb;border-radius:16px;background:#f8f9fc}
     .help-version-title{margin:0 0 14px;font-size:1.05rem}
     .help-version-list{display:grid;gap:10px;margin:0}
