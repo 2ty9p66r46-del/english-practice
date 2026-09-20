@@ -1665,7 +1665,7 @@ const COL=Object.freeze({
       const changes=collectCardEditorChanges();
       await showCardEditorConfirmation(changes);
       if(!changes.length){await closeCardEditor(true);return}
-      if(!selectedVocabularyRow){alert('登録済みの単語を選択してください。');return}
+      if(!selectedVocabularyRow){await persistPracticeData();refreshPracticeAfterMutation();cardEditorRowsSnapshot=null;await closeCardEditor(false);return}
       const hasSelectedMeaning=['new','existing','unchanged','changed'].includes(selectedMeaningMode)&&Boolean(meaning);
       const activeDrafts=cardExampleDrafts.filter(draft=>!draft.isPendingAdd);
       cardEditorSave.disabled=true;
