@@ -1546,7 +1546,7 @@ const COL=Object.freeze({
             await fadeMeaningTransition([cardMeaningResults],()=>{
               cardMeaningStep.classList.remove('is-choosing');selectedMeaningMode='new-draft';cardMeaningInput.value='';cardMeaningResults.hidden=true;cardMeaningField.hidden=false;
               cardMeaningNumberBadge.className='practice-meta-chip';cardMeaningNumberBadge.textContent=formatSingleDigitNumber(choice.number);cardMeaningNumberBadge.hidden=false;
-              cardMeaningConfirm.textContent='この意味で登録';cardMeaningConfirm.hidden=false;cardMeaningReselect.hidden=false;cardExampleStep.hidden=true;syncCardEditorMessages();
+              cardMeaningConfirm.textContent='この意味を登録';cardMeaningConfirm.hidden=false;cardMeaningReselect.hidden=false;cardExampleStep.hidden=true;syncCardEditorMessages();
             },[cardMeaningNew,cardMeaningField,cardMeaningConfirm,cardMeaningReselect]);
           }else{
             await fadeMeaningTransition([cardMeaningResults,cardMeaningMessage],()=>{
@@ -1684,7 +1684,7 @@ const COL=Object.freeze({
       await fadeMeaningTransition([cardMeaningEditActions,cardSelectedMeaning],()=>{
         selectedMeaningMode='change-draft';cardMeaningEditActions.hidden=true;cardSelectedMeaning.hidden=true;cardMeaningInput.value=choice.value;
         cardMeaningNumberBadge.className='practice-meta-chip';cardMeaningNumberBadge.textContent=formatSingleDigitNumber(choice.number);cardMeaningNumberBadge.hidden=false;
-        cardMeaningField.hidden=false;cardMeaningConfirm.textContent='この意味に変更';cardMeaningConfirm.hidden=false;cardExampleStep.hidden=true;syncCardEditorMessages();
+        cardMeaningField.hidden=false;cardMeaningConfirm.textContent='この意味を登録';cardMeaningConfirm.hidden=false;cardExampleStep.hidden=true;syncCardEditorMessages();
       },[cardMeaningField,cardMeaningConfirm]);
     });
     cardMeaningConfirm.addEventListener('click',async()=>{
