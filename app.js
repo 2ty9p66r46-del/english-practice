@@ -449,6 +449,8 @@ const COL=Object.freeze({
     const practiceReveal=document.getElementById('practiceReveal');
     const practiceAudio=document.getElementById('practiceAudio');
     const practiceJapaneseAudio=document.getElementById('practiceJapaneseAudio');
+    const practiceJapaneseCopy=document.getElementById('practiceJapaneseCopy');
+    const practiceEnglishCopy=document.getElementById('practiceEnglishCopy');
     const practiceJapaneseStop=document.getElementById('practiceJapaneseStop');
     const practiceEnglishStop=document.getElementById('practiceEnglishStop');
     const practiceWord=document.getElementById('practiceWord');
@@ -544,6 +546,8 @@ const COL=Object.freeze({
     const cardFilterExampleCountChoices=[...cardWordFilterPanel.querySelectorAll('.example-count-group .choice')];
     const cardFilterSections=[...cardWordFilterPanel.querySelectorAll('.filter-section')];
     const practiceRatingButtons=[...document.querySelectorAll('.practice-rating-button')];
+    const practiceResultActions=document.getElementById('practiceResultActions');
+    const practiceResultButtons=[...document.querySelectorAll('.practice-result-button')];
     const setSentenceSpeaking=(button,active,showStop=true)=>{
       button.classList.toggle('speaking',active);
       const stopButton=button===practiceJapaneseAudio?practiceJapaneseStop:practiceEnglishStop;
@@ -2047,6 +2051,7 @@ const COL=Object.freeze({
       const listMode=practiceViewMode==='list';
       if(listMode&&autoPlaying)stopAutoPlayback();
       practiceExerciseCard.hidden=listMode;
+      practiceResultActions.hidden=listMode;
       practiceListPlaceholder.hidden=!listMode;
       practiceBackToList.hidden=listMode;
       practiceHeaderCounts.hidden=!listMode;
@@ -2349,6 +2354,35 @@ const COL=Object.freeze({
     };
     practiceJapaneseStop.addEventListener('click',stopSentencePlayback);
     practiceEnglishStop.addEventListener('click',stopSentencePlayback);
+    const copyPracticeText=async(element,button)=>{
+      const value=element.textContent||'';
+      if(!value)return;
+      try{
+        if(navigator.clipboard?.writeText)await navigator.clipboard.writeText(value);
+        else{
+          const helper=document.createElement('textarea');
+          helper.value=value;helper.setAttribute('readonly','');helper.style.position='fixed';helper.style.opacity='0';
+          document.body.append(helper);helper.select();document.execCommand('copy');helper.remove();
+        }
+        const label=button.querySelector('span');
+        label.textContent='コピー済み';button.classList.add('copied');
+        clearTimeout(button._copyTimer);
+        button._copyTimer=setTimeout(()=>{label.textContent='コピー';button.classList.remove('copied')},1200);
+      }catch{alert('文をコピーできませんでした。')}
+    };
+    practiceJapaneseCopy.addEventListener('click',()=>copyPracticeText(practiceJapanese,practiceJapaneseCopy));
+    practiceEnglishCopy.addEventListener('click',()=>copyPracticeText(practiceEnglish,practiceEnglishCopy));
+    practiceResultButtons.forEach(button=>button.addEventListener('click',async()=>{
+      const row=currentPracticeRow();
+      if(!row||!practiceStored||practiceMoving)return;
+      const column=button.dataset.result==='correct'?COL.correctCount:button.dataset.result==='wrong'?COL.wrongCount:COL.questionCount;
+      row[column]=(Number(row[column])||0)+1;
+      practiceStored.modified=true;
+      renderPracticeList();
+      await saveImportedData(practiceStored);
+      if(practiceIndex<practiceRows.length-1)await movePractice(1);
+      else await animatePracticeCard([{transform:'translateX(-18px)'},{transform:'translateX(0)'}],{duration:220,easing:'cubic-bezier(.2,.8,.2,1)'});
+    }));
     practiceRatingButtons.forEach(button=>button.addEventListener('click',async()=>{
       const row=currentPracticeRow();
       if(!row||!practiceStored)return;
