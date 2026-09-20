@@ -518,6 +518,7 @@ const COL=Object.freeze({
     const cardMeaningReselect=document.getElementById('cardMeaningReselect');
     const cardExampleStep=document.getElementById('cardExampleStep');
     const cardExampleCarousel=document.getElementById('cardExampleCarousel');
+    const cardExampleCommit=document.getElementById('cardExampleCommit');
     const cardSelectAllFilters=document.getElementById('cardSelectAllFilters');
     const cardEditorRevealObserver=new MutationObserver(mutations=>{
       mutations.forEach(mutation=>{
@@ -594,6 +595,11 @@ const COL=Object.freeze({
     const understandingTones={'未登録':'purple','0%':'red','50%':'orange','80%':'yellow','100%':'green'};
     understandingChoices.forEach(button=>button.classList.add(understandingTones[button.dataset.value||button.textContent.trim()]));
     const selectedValues=buttons=>new Set(buttons.filter(button=>button.classList.contains('selected')).map(button=>button.dataset.value||button.textContent.trim()));
+    const PRACTICE_FILTER_STORAGE_KEY='flovo-practice-filter-v1';
+    const CARD_FILTER_STORAGE_KEY='flovo-card-filter-v1';
+    const filterChoiceKey=choice=>`${choice.closest('.filter-section')?.dataset.filterSection||''}|${choice.closest('.group')?.querySelector('.group-title span')?.textContent.trim()||''}|${choice.dataset.value||choice.textContent.trim()}`;
+    const saveFilterSelection=(key,choices)=>{try{localStorage.setItem(key,JSON.stringify(choices.filter(choice=>choice.classList.contains('selected')).map(filterChoiceKey)))}catch{}};
+    const restoreFilterSelection=(key,choices)=>{try{const saved=JSON.parse(localStorage.getItem(key)||'null');if(!Array.isArray(saved))return false;const selected=new Set(saved);choices.forEach(choice=>choice.classList.toggle('selected',selected.has(filterChoiceKey(choice))));return true}catch{return false}};
     const fiveDigitCountMarkup=value=>{
       const number=Math.min(99999,Math.max(0,Math.trunc(Number(value)||0)));const digits=String(number);const padding='0'.repeat(5-digits.length);
       return `<span class="count-padding">${padding}</span><span class="count-value">${digits}</span>`;
@@ -787,7 +793,10 @@ const COL=Object.freeze({
       button.addEventListener('click',()=>setSectionFilters(section,!button.classList.contains('selected')));
     });
     selectAllFilters.addEventListener('click',()=>setAllFilters(!selectAllFilters.classList.contains('selected')));
-    setAllFilters(true);
+    if(restoreFilterSelection(PRACTICE_FILTER_STORAGE_KEY,allFilterChoices)){
+      subgroupAllButtons.forEach(button=>syncSubgroupAll(button.closest('.group')));
+      filterSections.forEach(section=>syncSectionControls(section,false));syncGlobalControls();refreshQuestionCount();
+    }else setAllFilters(true);
     const closeHelp=()=>{
       helpOverlay.hidden=true;
       helpButton.classList.remove('active');
@@ -1145,13 +1154,16 @@ const COL=Object.freeze({
       const choices=[...cardWordFilterPanel.querySelectorAll('.choice')];
       cardSelectAllFilters.classList.toggle('selected',choices.length>0&&choices.every(choice=>choice.classList.contains('selected')));
     };
-    const resetCardWordFilters=()=>{
-      [...cardFilterLevelChoices,...cardFilterPartChoices,...cardFilterUnderstandingChoices,...cardFilterMeaningCountChoices,...cardFilterExampleCountChoices].forEach(choice=>choice.classList.add('selected'));
-      cardWordFilterPanel.querySelectorAll('.group .all').forEach(button=>button.classList.add('selected'));
+    const cardFilterChoices=[...cardFilterLevelChoices,...cardFilterPartChoices,...cardFilterUnderstandingChoices,...cardFilterMeaningCountChoices,...cardFilterExampleCountChoices];
+    const initializeCardWordFilters=()=>{
+      if(!restoreFilterSelection(CARD_FILTER_STORAGE_KEY,cardFilterChoices))cardFilterChoices.forEach(choice=>choice.classList.add('selected'));
+      cardWordFilterPanel.querySelectorAll('.group').forEach(syncCardWordFilterGroup);
       syncCardFilterControls();
       cardWordFilterPanel.hidden=true;cardFilterStickySummary.hidden=true;
       cardWordFilterToggle.setAttribute('aria-expanded','false');
     };
+    const saveCardWordFilters=()=>saveFilterSelection(CARD_FILTER_STORAGE_KEY,cardFilterChoices);
+    initializeCardWordFilters();
     cardWordFilterToggle.addEventListener('click',()=>{
       const expand=cardWordFilterPanel.hidden;
       cardWordFilterPanel.hidden=!expand;
@@ -1162,6 +1174,7 @@ const COL=Object.freeze({
       button.classList.toggle('selected');
       syncCardWordFilterGroup(button.closest('.group'));
       syncCardFilterControls();
+      saveCardWordFilters();
       renderWordResults();
     }));
     cardWordFilterPanel.querySelectorAll('.group .all').forEach(button=>button.addEventListener('click',()=>{
@@ -1170,19 +1183,20 @@ const COL=Object.freeze({
       group.querySelectorAll('.choice').forEach(choice=>choice.classList.toggle('selected',select));
       button.classList.toggle('selected',select);
       syncCardFilterControls();
+      saveCardWordFilters();
       renderWordResults();
     }));
     cardFilterSections.forEach(section=>section.querySelector('[data-section-action]')?.addEventListener('click',event=>{
       const select=!event.currentTarget.classList.contains('selected');
       section.querySelectorAll('.choice').forEach(choice=>choice.classList.toggle('selected',select));
       section.querySelectorAll('.group').forEach(syncCardWordFilterGroup);
-      syncCardFilterControls();renderWordResults();
+      syncCardFilterControls();saveCardWordFilters();renderWordResults();
     }));
     cardSelectAllFilters.addEventListener('click',()=>{
       const select=!cardSelectAllFilters.classList.contains('selected');
       cardWordFilterPanel.querySelectorAll('.choice').forEach(choice=>choice.classList.toggle('selected',select));
       cardWordFilterPanel.querySelectorAll('.group').forEach(syncCardWordFilterGroup);
-      syncCardFilterControls();renderWordResults();
+      syncCardFilterControls();saveCardWordFilters();renderWordResults();
     });
     const renderWordResults=()=>{
       const query=text(cardWordSearch.value).toLowerCase();
@@ -1369,6 +1383,14 @@ const COL=Object.freeze({
       }));
       cardDeletedExampleRows=[];
     };
+    const syncCardExampleCommitState=()=>{
+      const pages=[...cardExampleCarousel.querySelectorAll('.card-example-form')];
+      const pageWidth=cardExampleCarousel.clientWidth||1;
+      const page=pages[Math.max(0,Math.min(pages.length-1,Math.round(cardExampleCarousel.scrollLeft/pageWidth)))];
+      const draft=page&&cardExampleDrafts[Number(page.dataset.draftIndex)];
+      cardExampleCommit.disabled=!draft||Boolean(draft.isPendingAdd);
+    };
+    cardExampleCarousel.addEventListener('scroll',syncCardExampleCommitState,{passive:true});
     const renderCardExampleCarousel=(focusIndex=null,animateFocus=true)=>{
       if(!cardExampleDrafts.some(draft=>draft.isPendingAdd)){
         const nextExampleNo=String(nextNumber(cardExampleDrafts.map(draft=>{const row=[];row[COL.exampleNo]=draft.exampleNo;return row}),COL.exampleNo));
@@ -1403,8 +1425,8 @@ const COL=Object.freeze({
           const label=document.createElement('label');label.className='card-editor-field';
           const title=document.createElement('span');title.textContent=labelText;
           if(optional){const small=document.createElement('small');small.textContent=' 任意';title.append(small)}
-          const input=document.createElement('textarea');input.rows=rows;input.placeholder=`${labelText}を入力`;input.dataset.exampleField=key;input.value=draft[key];if(key==='english')input.lang='en';
-          input.addEventListener('input',()=>{draft[key]=input.value;cardEditorHasStagedChanges=true;syncCardEditorMessages()});label.append(title,input);return label;
+          const input=document.createElement('textarea');input.rows=rows;input.placeholder=`${labelText}を入力`;input.dataset.exampleField=key;input.value=draft.editing?.[key]??draft[key];if(key==='english')input.lang='en';
+          input.addEventListener('input',()=>{draft.editing={...(draft.editing||{}),[key]:input.value};syncCardEditorMessages()});label.append(title,input);return label;
         };
         const japaneseField=makeField('日本語','japanese',4);
         const japaneseMessage=document.createElement('em');japaneseMessage.className='card-field-message';japaneseMessage.dataset.exampleMessage='japanese';japaneseMessage.textContent='※入力は必須です';japaneseField.querySelector(':scope > span').append(japaneseMessage);
@@ -1426,13 +1448,30 @@ const COL=Object.freeze({
         cardExampleCarousel.append(form);
       });
       syncCardEditorMessages();
+      requestAnimationFrame(syncCardExampleCommitState);
       if(Number.isInteger(focusIndex))requestAnimationFrame(()=>{
         cardExampleCarousel.scrollLeft=cardExampleCarousel.clientWidth*focusIndex;
+        syncCardExampleCommitState();
         const focusedPage=cardExampleCarousel.querySelector(`[data-draft-index="${focusIndex}"]`);
         if(animateFocus&&focusedPage&&typeof focusedPage.animate==='function')focusedPage.animate([{opacity:0},{opacity:1}],{duration:420,easing:'ease-in-out'});
       });
     };
     const showCardExampleEditor=()=>{loadCardExampleDrafts();renderCardExampleCarousel();cardExampleStep.hidden=false};
+    cardExampleCommit.addEventListener('click',()=>{
+      const pages=[...cardExampleCarousel.querySelectorAll('.card-example-form')];
+      if(!pages.length)return;
+      const pageWidth=cardExampleCarousel.clientWidth||1;
+      const page=pages[Math.max(0,Math.min(pages.length-1,Math.round(cardExampleCarousel.scrollLeft/pageWidth)))];
+      const draft=cardExampleDrafts[Number(page.dataset.draftIndex)];
+      if(!draft||draft.isPendingAdd)return;
+      const japanese=page.querySelector('[data-example-field="japanese"]')?.value||'';
+      const english=page.querySelector('[data-example-field="english"]')?.value||'';
+      const note=page.querySelector('[data-example-field="note"]')?.value||'';
+      if(!text(japanese)||!text(english)){syncCardEditorMessages();alert('未入力の日本語または英語があります。');return}
+      if(text(draft.japanese)!==text(japanese)||text(draft.english)!==text(english)||text(draft.note)!==text(note))cardEditorHasStagedChanges=true;
+      draft.japanese=japanese;draft.english=english;draft.note=note;draft.editing=null;
+      syncCardEditorMessages();
+    });
     const blockIncompleteExamples=()=>{
       const incomplete=cardExampleDrafts.some(draft=>!draft.isPendingAdd&&(!text(draft.japanese)||!text(draft.english)));
       if(!incomplete)return false;
@@ -1562,7 +1601,6 @@ const COL=Object.freeze({
       cardEditorBody.scrollTop=0;pendingMeaningChoice=null;selectedMeaningNumber='';cardExampleDrafts=[];cardDeletedExampleRows=[];cardExampleCarousel.replaceChildren();
       selectedMeaningMode=mode==='edit'?'existing':null;
       cardWordStep.hidden=false;
-      if(mode==='add')resetCardWordFilters();
       cardWordSearch.value=mode==='edit'?text(row[COL.word]):'';cardWordSearch.disabled=mode==='edit';cardWordSearchRow.hidden=mode==='edit';
       cardSelectedWordText.replaceChildren();cardSelectedWordText.classList.toggle('is-badged',mode==='edit');
       if(mode==='edit'){
@@ -2113,6 +2151,7 @@ const COL=Object.freeze({
       restoreFilterCard();
       practiceFilterOverlay.hidden=true;
       if(applyFilters){
+        saveFilterSelection(PRACTICE_FILTER_STORAGE_KEY,allFilterChoices);
         applyPracticeMethodChange(previousRow);
         setPracticeViewMode(previousViewMode==='card'&&practiceRows.length?'card':'list');
       }
