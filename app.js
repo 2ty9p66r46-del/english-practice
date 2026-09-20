@@ -467,6 +467,7 @@ const COL=Object.freeze({
     const cardActionCancel=document.getElementById('cardActionCancel');
     const cardEditorOverlay=document.getElementById('cardEditorOverlay');
     const cardEditorSheet=cardEditorOverlay.querySelector('.card-editor-sheet');
+    const cardWordSticky=cardEditorOverlay.querySelector('.card-word-sticky');
     const cardEditorBody=cardEditorOverlay.querySelector('.card-editor-body');
     const cardEditorHandle=cardEditorOverlay.querySelector('.practice-filter-handle');
     const cardEditorTitle=document.getElementById('cardEditorTitle');
@@ -509,7 +510,7 @@ const COL=Object.freeze({
     const cardFilterCounts=document.createElement('div');cardFilterCounts.className='filter-result-counts';
     const cardFilterWordSummary=document.createElement('span');const cardFilterWordLabel=document.createElement('b');cardFilterWordLabel.textContent='単語数';cardFilterWordSummary.append(cardFilterWordLabel,cardFilterWordCount);
     const cardFilterExampleSummary=document.createElement('span');const cardFilterExampleLabel=document.createElement('b');cardFilterExampleLabel.textContent='例文数';cardFilterExampleSummary.append(cardFilterExampleLabel,cardFilterExampleCount);cardFilterCounts.append(cardFilterWordSummary,cardFilterExampleSummary);
-    const cardFilterStickySummary=document.createElement('div');cardFilterStickySummary.className='card-filter-sticky-summary';cardFilterStickySummary.hidden=true;cardFilterStickySummary.append(cardFilterCounts,cardSelectAllFilters);cardEditorSheet.append(cardFilterStickySummary);
+    const cardFilterStickySummary=document.createElement('div');cardFilterStickySummary.className='card-filter-sticky-summary';cardFilterStickySummary.hidden=true;cardFilterStickySummary.append(cardFilterCounts,cardSelectAllFilters);cardWordSticky.append(cardFilterStickySummary);
     const sharedCardFilterSections=[...document.querySelectorAll('#filterCard .filter-section')].map(section=>section.cloneNode(true));
     cardWordFilterPanel.replaceChildren(...sharedCardFilterSections);
     const cardFilterLevelChoices=[...cardWordFilterPanel.querySelectorAll('.level-group .choice')];
