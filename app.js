@@ -1318,10 +1318,10 @@ const COL=Object.freeze({
       cardExampleCarousel.querySelectorAll('.card-example-form').forEach(form=>{
         const japanese=form.querySelector('[data-example-field="japanese"]');
         const english=form.querySelector('[data-example-field="english"]');
-        const note=form.querySelector('[data-example-field="note"]');
-        const hasAny=Boolean(text(japanese?.value)||text(english?.value)||text(note?.value));
-        form.querySelector('[data-example-message="japanese"]').hidden=!hasAny||Boolean(text(japanese?.value));
-        form.querySelector('[data-example-message="english"]').hidden=!hasAny||Boolean(text(english?.value));
+        const draft=cardExampleDrafts[Number(form.dataset.draftIndex)];
+        const requiresInput=Boolean(draft&&!draft.isPendingAdd);
+        form.querySelector('[data-example-message="japanese"]').hidden=!requiresInput||Boolean(text(japanese?.value));
+        form.querySelector('[data-example-message="english"]').hidden=!requiresInput||Boolean(text(english?.value));
       });
     };
     const fadeMeaningTransition=async(outTargets,change,inTargets)=>{
@@ -1387,9 +1387,9 @@ const COL=Object.freeze({
           input.addEventListener('input',()=>{draft[key]=input.value;cardEditorHasStagedChanges=true;syncCardEditorMessages()});label.append(title,input);return label;
         };
         const japaneseField=makeField('日本語','japanese',4);
-        const japaneseMessage=document.createElement('em');japaneseMessage.className='card-field-message';japaneseMessage.dataset.exampleMessage='japanese';japaneseMessage.textContent='※テキストが入力されていません';japaneseField.querySelector(':scope > span').append(japaneseMessage);
+        const japaneseMessage=document.createElement('em');japaneseMessage.className='card-field-message';japaneseMessage.dataset.exampleMessage='japanese';japaneseMessage.textContent='※入力は必須です';japaneseField.querySelector(':scope > span').append(japaneseMessage);
         const englishField=makeField('英語','english',4);
-        const englishMessage=document.createElement('em');englishMessage.className='card-field-message';englishMessage.dataset.exampleMessage='english';englishMessage.textContent='※テキストが入力されていません';englishField.querySelector(':scope > span').append(englishMessage);
+        const englishMessage=document.createElement('em');englishMessage.className='card-field-message';englishMessage.dataset.exampleMessage='english';englishMessage.textContent='※入力は必須です';englishField.querySelector(':scope > span').append(englishMessage);
         const noteField=makeField('補足','note',3,true);
         form.append(heading,japaneseField,englishField,noteField);
         if(draft.isPendingAdd){
@@ -1413,6 +1413,11 @@ const COL=Object.freeze({
       });
     };
     const showCardExampleEditor=()=>{loadCardExampleDrafts();renderCardExampleCarousel();cardExampleStep.hidden=false};
+    const blockIncompleteExamples=()=>{
+      const incomplete=cardExampleDrafts.some(draft=>!draft.isPendingAdd&&(!text(draft.japanese)||!text(draft.english)));
+      if(!incomplete)return false;
+      syncCardEditorMessages();alert('未入力の日本語または英語があります。');return true;
+    };
     const renderMeaningResults=(preserveSelection=false)=>{
       cardMeaningResults.replaceChildren();
       pendingMeaningChoice=null;cardMeaningResults.hidden=false;cardSelectedMeaning.hidden=true;cardMeaningChanged.hidden=true;cardMeaningEditActions.hidden=true;cardMeaningConfirm.hidden=true;cardMeaningReselect.hidden=true;
@@ -1553,9 +1558,11 @@ const COL=Object.freeze({
     cardWordSearch.addEventListener('input',()=>{if(!cardWordSearch.disabled)renderWordResults()});
     cardWordSearch.addEventListener('focus',()=>{if(!cardWordSearch.disabled)renderWordResults()});
     cardWordReselect.addEventListener('click',()=>{
+      if(blockIncompleteExamples())return;
       selectedVocabularyRow=null;selectedMeaningMode=null;pendingMeaningChoice=null;selectedMeaningNumber='';cardExampleDrafts=[];cardDeletedExampleRows=[];cardExampleCarousel.replaceChildren();cardWordStep.classList.remove('has-selection');cardSelectedWord.hidden=true;cardWordSearchRow.hidden=false;cardWordSearch.disabled=false;cardWordSearch.value='';cardMeaningStep.classList.remove('is-choosing');cardMeaningStep.hidden=true;cardMeaningField.hidden=true;cardMeaningNumberBadge.hidden=true;cardMeaningConfirm.hidden=true;cardSelectedMeaning.hidden=true;cardMeaningChanged.hidden=true;cardMeaningEditActions.hidden=true;cardMeaningReselect.hidden=true;cardMeaningInput.value='';cardExampleStep.hidden=true;syncCardEditorMessages();renderWordResults();
     });
     cardMeaningReselect.addEventListener('click',async()=>{
+      if(blockIncompleteExamples())return;
       await fadeMeaningTransition([cardSelectedMeaning,cardMeaningNew,cardMeaningChanged,cardMeaningReselect,cardMeaningField,cardMeaningConfirm,cardExampleStep],()=>{
         cardMeaningReselect.hidden=true;cardExampleStep.hidden=true;
         renderMeaningResults(false);
@@ -1615,9 +1622,9 @@ const COL=Object.freeze({
     cardEditorSave.addEventListener('click',async()=>{
       const meaning=text(cardMeaningInput.value);
       if(!selectedVocabularyRow){alert('登録済みの単語を選択してください。');return}
+      if(blockIncompleteExamples())return;
       const hasSelectedMeaning=['new','existing','unchanged','changed'].includes(selectedMeaningMode)&&Boolean(meaning);
-      const activeDrafts=cardExampleDrafts.filter(draft=>text(draft.japanese)||text(draft.english)||text(draft.note));
-      if(hasSelectedMeaning&&activeDrafts.some(draft=>!text(draft.japanese)||!text(draft.english))){alert('入力中の例文には日本語と英語の両方を入力してください。');syncCardEditorMessages();return}
+      const activeDrafts=cardExampleDrafts.filter(draft=>!draft.isPendingAdd);
       cardEditorSave.disabled=true;
       try{
         if(!hasSelectedMeaning){
