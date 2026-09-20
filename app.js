@@ -501,13 +501,21 @@ const COL=Object.freeze({
     const cardMeaningReselect=document.getElementById('cardMeaningReselect');
     const cardExampleStep=document.getElementById('cardExampleStep');
     const cardExampleCarousel=document.getElementById('cardExampleCarousel');
+    const cardSelectAllFilters=document.getElementById('cardSelectAllFilters');
+    const cardFilterWordCount=document.createElement('strong');
+    const cardFilterExampleCount=document.createElement('strong');
+    const cardFilterCounts=document.createElement('div');cardFilterCounts.className='filter-result-counts';
+    const cardFilterWordSummary=document.createElement('span');const cardFilterWordLabel=document.createElement('b');cardFilterWordLabel.textContent='単語数';cardFilterWordSummary.append(cardFilterWordLabel,cardFilterWordCount);
+    const cardFilterExampleSummary=document.createElement('span');const cardFilterExampleLabel=document.createElement('b');cardFilterExampleLabel.textContent='例文数';cardFilterExampleSummary.append(cardFilterExampleLabel,cardFilterExampleCount);cardFilterCounts.append(cardFilterWordSummary,cardFilterExampleSummary);
+    const cardFilterStickySummary=document.createElement('div');cardFilterStickySummary.className='card-filter-sticky-summary';cardFilterStickySummary.append(cardFilterCounts,cardSelectAllFilters);
+    const sharedCardFilterSections=[...document.querySelectorAll('#filterCard .filter-section')].map(section=>section.cloneNode(true));
+    cardWordFilterPanel.replaceChildren(cardFilterStickySummary,...sharedCardFilterSections);
     const cardFilterLevelChoices=[...cardWordFilterPanel.querySelectorAll('.level-group .choice')];
     const cardFilterPartChoices=[...cardWordFilterPanel.querySelectorAll('.part-group .choice')];
-    const cardFilterUnderstandingChoices=[...cardWordFilterPanel.querySelectorAll('[data-understanding-filter]')];
-    const cardFilterMeaningCountChoices=[...cardWordFilterPanel.querySelectorAll('[data-meaning-count-filter]')];
-    const cardFilterExampleCountChoices=[...cardWordFilterPanel.querySelectorAll('[data-example-count-filter]')];
-    const cardFilterSections=[...cardWordFilterPanel.querySelectorAll('[data-card-filter-section]')];
-    const cardSelectAllFilters=document.getElementById('cardSelectAllFilters');
+    const cardFilterUnderstandingChoices=[...cardWordFilterPanel.querySelectorAll('.understanding .choice')];
+    const cardFilterMeaningCountChoices=[...cardWordFilterPanel.querySelectorAll('.meaning-count-group .choice')];
+    const cardFilterExampleCountChoices=[...cardWordFilterPanel.querySelectorAll('.example-count-group .choice')];
+    const cardFilterSections=[...cardWordFilterPanel.querySelectorAll('.filter-section')];
     const practiceRatingButtons=[...document.querySelectorAll('.practice-rating-button')];
     const setSentenceSpeaking=(button,active,showStop=true)=>{
       button.classList.toggle('speaking',active);
@@ -558,6 +566,12 @@ const COL=Object.freeze({
     const understandingTones={'未登録':'purple','0%':'red','50%':'orange','80%':'yellow','100%':'green'};
     understandingChoices.forEach(button=>button.classList.add(understandingTones[button.dataset.value||button.textContent.trim()]));
     const selectedValues=buttons=>new Set(buttons.filter(button=>button.classList.contains('selected')).map(button=>button.dataset.value||button.textContent.trim()));
+    const fiveDigitCountMarkup=value=>{
+      const number=Math.min(99999,Math.max(0,Math.trunc(Number(value)||0)));const digits=String(number);const padding='0'.repeat(5-digits.length);
+      return `<span class="count-padding">${padding}</span><span class="count-value">${digits}</span>`;
+    };
+    const renderFiveDigitCount=(element,value)=>{if(element)element.innerHTML=fiveDigitCountMarkup(value)};
+    const renderCountFraction=(element,value,total)=>{if(element)element.innerHTML=`<span class="count-current">${fiveDigitCountMarkup(value)}</span><span class="count-separator">/</span><span class="count-total">${fiveDigitCountMarkup(total)}</span>`};
     const countCategory=count=>count===0?'0':count===1?'1':'multiple';
     const buildVocabularyCounts=rows=>{
       const result=new Map();
@@ -608,20 +622,6 @@ const COL=Object.freeze({
       const totalWordKeys=new Set(sourceRows.map(wordKey).filter(Boolean));
       practiceButton.dataset.questionCount=String(matchingRows.length);
       practiceButton.dataset.pairCount=String(matchingPairCount);
-      const fiveDigitCountMarkup=value=>{
-        const number=Math.min(99999,Math.max(0,Math.trunc(Number(value)||0)));
-        const digits=String(number);
-        const padding='0'.repeat(5-digits.length);
-        return `<span class="count-padding">${padding}</span><span class="count-value">${digits}</span>`;
-      };
-      const renderFiveDigitCount=(element,value)=>{
-        if(!element)return;
-        element.innerHTML=fiveDigitCountMarkup(value);
-      };
-      const renderCountFraction=(element,value,total)=>{
-        if(!element)return;
-        element.innerHTML=`<span class="count-current">${fiveDigitCountMarkup(value)}</span><span class="count-separator">/</span><span class="count-total">${fiveDigitCountMarkup(total)}</span>`;
-      };
       renderCountFraction(wordCount,matchingPairCount,totalPairCount);
       renderCountFraction(exampleCount,matchingRows.length,allExampleRows.length);
       renderCountFraction(filterWordCount,matchingPairCount,totalPairCount);
@@ -1093,7 +1093,7 @@ const COL=Object.freeze({
     const syncCardFilterControls=()=>{
       cardFilterSections.forEach(section=>{
         const choices=[...section.querySelectorAll('.choice')];
-        section.querySelector('[data-card-section-action]')?.classList.toggle('selected',choices.length>0&&choices.every(choice=>choice.classList.contains('selected')));
+        section.querySelector('[data-section-action]')?.classList.toggle('selected',choices.length>0&&choices.every(choice=>choice.classList.contains('selected')));
       });
       const choices=[...cardWordFilterPanel.querySelectorAll('.choice')];
       cardSelectAllFilters.classList.toggle('selected',choices.length>0&&choices.every(choice=>choice.classList.contains('selected')));
@@ -1124,7 +1124,7 @@ const COL=Object.freeze({
       syncCardFilterControls();
       renderWordResults();
     }));
-    cardFilterSections.forEach(section=>section.querySelector('[data-card-section-action]')?.addEventListener('click',event=>{
+    cardFilterSections.forEach(section=>section.querySelector('[data-section-action]')?.addEventListener('click',event=>{
       const select=!event.currentTarget.classList.contains('selected');
       section.querySelectorAll('.choice').forEach(choice=>choice.classList.toggle('selected',select));
       section.querySelectorAll('.group').forEach(syncCardWordFilterGroup);
@@ -1154,11 +1154,11 @@ const COL=Object.freeze({
         if(!meanings.some(item=>item.number===meaningNo&&item.text===meaning))meanings.push({number:meaningNo,text:meaning});
       });
       meaningsByKey.forEach(meanings=>meanings.sort((a,b)=>(Number(a.number)||Number.MAX_SAFE_INTEGER)-(Number(b.number)||Number.MAX_SAFE_INTEGER)));
-      const selectedLevels=new Set(cardFilterLevelChoices.filter(choice=>choice.classList.contains('selected')).map(choice=>choice.dataset.value));
-      const selectedParts=new Set(cardFilterPartChoices.filter(choice=>choice.classList.contains('selected')).map(choice=>choice.dataset.value));
-      const selectedUnderstanding=new Set(cardFilterUnderstandingChoices.filter(choice=>choice.classList.contains('selected')).map(choice=>choice.dataset.understandingFilter));
-      const selectedMeaningCounts=new Set(cardFilterMeaningCountChoices.filter(choice=>choice.classList.contains('selected')).map(choice=>choice.dataset.meaningCountFilter));
-      const selectedExampleCounts=new Set(cardFilterExampleCountChoices.filter(choice=>choice.classList.contains('selected')).map(choice=>choice.dataset.exampleCountFilter));
+      const selectedLevels=selectedValues(cardFilterLevelChoices);
+      const selectedParts=selectedValues(cardFilterPartChoices);
+      const selectedUnderstanding=selectedValues(cardFilterUnderstandingChoices);
+      const selectedMeaningCounts=selectedValues(cardFilterMeaningCountChoices);
+      const selectedExampleCounts=selectedValues(cardFilterExampleCountChoices);
       const restrictLevels=selectedLevels.size!==cardFilterLevelChoices.length;
       const restrictParts=selectedParts.size!==cardFilterPartChoices.length;
       const restrictUnderstanding=selectedUnderstanding.size!==cardFilterUnderstandingChoices.length;
@@ -1186,6 +1186,11 @@ const COL=Object.freeze({
         starts.push(row);
       });
       const matches=starts;
+      const allCandidateKeys=new Set(candidates.map(vocabularyKey));
+      const matchedCandidateKeys=new Set(matches.map(vocabularyKey));
+      const countExamples=keys=>[...keys].reduce((sum,key)=>sum+(countsByKey.get(key)?.examples||0),0);
+      renderCountFraction(cardFilterWordCount,matches.length,candidates.length);
+      renderCountFraction(cardFilterExampleCount,countExamples(matchedCandidateKeys),countExamples(allCandidateKeys));
       const appendMatch=row=>{
         const button=document.createElement('button');
         button.type='button';button.className='card-word-option';button.setAttribute('role','option');
