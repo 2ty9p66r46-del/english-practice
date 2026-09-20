@@ -1092,6 +1092,7 @@ const COL=Object.freeze({
     let cardExampleDrafts=[];
     let cardDeletedExampleRows=[];
     let cardEditorRowsSnapshot=null;
+    let cardEditorRowBaseline=new Map();
     let cardEditorHasStagedChanges=false;
     let cardEditorAnimationRun=0;
     const updateCardWordScrollbar=()=>{
@@ -1425,20 +1426,30 @@ const COL=Object.freeze({
       syncCardEditorMessages();alert('未入力の日本語または英語があります。');return true;
     };
     const collectCardEditorChanges=()=>{
-      const changes=[];
-      if(selectedMeaningMode==='new')changes.push(`意味「${text(cardMeaningInput.value)}」を新規登録`);
-      else if(selectedMeaningMode==='changed')changes.push(`意味を「${text(cardMeaningInput.value)}」に変更`);
-      cardDeletedExampleRows.forEach(row=>changes.push(`例文 ${formatExampleLetter(row?.[COL.exampleNo])} を削除`));
-      cardExampleDrafts.filter(draft=>!draft.isPendingAdd).forEach(draft=>{
-        if(!draft.row){changes.push(`例文 ${formatExampleLetter(draft.exampleNo)} を追加`);return}
-        const fields=[];
-        if(text(draft.row[COL.japanese])!==text(draft.japanese))fields.push('日本語');
-        if(text(draft.row[COL.english])!==text(draft.english))fields.push('英語');
-        if(text(draft.row[COL.note])!==text(draft.note))fields.push('補足');
-        if(text(draft.row[COL.exampleNo])!==text(draft.exampleNo))fields.push('順序');
-        if(fields.length)changes.push(`例文 ${formatExampleLetter(draft.exampleNo)}：${fields.join('・')}を変更`);
+      const changes=[];const currentRows=practiceStored.rows||[];
+      const shown=value=>text(value)||'空欄';
+      if(selectedMeaningMode==='new')changes.push(`意味を新規登録：「${shown(cardMeaningInput.value)}」`);
+      cardEditorRowBaseline.forEach((before,row)=>{
+        if(!currentRows.includes(row)){
+          const label=text(before[COL.exampleNo])?`例文 ${formatExampleLetter(before[COL.exampleNo])}`:`意味 ${formatSingleDigitNumber(before[COL.meaningNo])}`;
+          changes.push(`${label}を削除：「${shown(text(before[COL.japanese])||text(before[COL.meaning]))}」`);return;
+        }
+        if(text(before[COL.meaning])!==text(row[COL.meaning]))changes.push(`意味：「${shown(before[COL.meaning])}」→「${shown(row[COL.meaning])}」`);
+        if(text(before[COL.meaningNo])!==text(row[COL.meaningNo]))changes.push(`意味番号：${shown(before[COL.meaningNo])}→${shown(row[COL.meaningNo])}`);
       });
-      const rowsChanged=Boolean(cardEditorRowsSnapshot)&&JSON.stringify(practiceStored.rows||[])!==JSON.stringify(cardEditorRowsSnapshot);
+      cardDeletedExampleRows.forEach(row=>{
+        const before=cardEditorRowBaseline.get(row)||row;
+        changes.push(`例文 ${formatExampleLetter(before?.[COL.exampleNo])}を削除（日本語：「${shown(before?.[COL.japanese])}」／英語：「${shown(before?.[COL.english])}」）`);
+      });
+      cardExampleDrafts.filter(draft=>!draft.isPendingAdd).forEach(draft=>{
+        if(!draft.row){changes.push(`例文 ${formatExampleLetter(draft.exampleNo)}を追加（日本語：「${shown(draft.japanese)}」／英語：「${shown(draft.english)}」${text(draft.note)?`／補足：「${shown(draft.note)}」`:''}）`);return}
+        const before=cardEditorRowBaseline.get(draft.row)||draft.row;const label=`例文 ${formatExampleLetter(draft.exampleNo)}`;
+        if(text(before[COL.exampleNo])!==text(draft.exampleNo))changes.push(`例文番号：${formatExampleLetter(before[COL.exampleNo])}→${formatExampleLetter(draft.exampleNo)}`);
+        if(text(before[COL.japanese])!==text(draft.japanese))changes.push(`${label} 日本語：「${shown(before[COL.japanese])}」→「${shown(draft.japanese)}」`);
+        if(text(before[COL.english])!==text(draft.english))changes.push(`${label} 英語：「${shown(before[COL.english])}」→「${shown(draft.english)}」`);
+        if(text(before[COL.note])!==text(draft.note))changes.push(`${label} 補足：「${shown(before[COL.note])}」→「${shown(draft.note)}」`);
+      });
+      const rowsChanged=Boolean(cardEditorRowsSnapshot)&&JSON.stringify(currentRows)!==JSON.stringify(cardEditorRowsSnapshot);
       if(rowsChanged&&!changes.some(change=>change.startsWith('意味')))changes.unshift('意味・例文の構成を変更');
       return [...new Set(changes)];
     };
@@ -1528,7 +1539,7 @@ const COL=Object.freeze({
     };
     const openCardEditor=(mode,row=null)=>{
       if(autoPlaying)stopAutoPlayback();
-      cardEditorRowsSnapshot=(practiceStored.rows||[]).map(item=>[...item]);cardEditorHasStagedChanges=false;
+      cardEditorRowsSnapshot=(practiceStored.rows||[]).map(item=>[...item]);cardEditorRowBaseline=new Map((practiceStored.rows||[]).map(item=>[item,[...item]]));cardEditorHasStagedChanges=false;
       cardEditorMode=mode;cardEditorRow=row;selectedVocabularyRow=mode==='edit'?row:null;
       cardWordStep.classList.toggle('has-selection',mode==='edit');
       cardEditorOverlay.dataset.mode=mode;
@@ -1574,7 +1585,7 @@ const COL=Object.freeze({
     const closeCardEditor=async(restore=true)=>{
       const animationRun=++cardEditorAnimationRun;
       if(restore&&cardEditorRowsSnapshot){practiceStored.rows=cardEditorRowsSnapshot.map(item=>[...item]);refreshPracticeAfterMutation()}
-      cardEditorRowsSnapshot=null;cardEditorHasStagedChanges=false;
+      cardEditorRowsSnapshot=null;cardEditorRowBaseline=new Map();cardEditorHasStagedChanges=false;
       cardEditorConfirm.hidden=true;cardEditorConfirmResolve=null;
       cardEditorOverlay.classList.remove('open');
       await wait(340);
