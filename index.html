@@ -270,6 +270,12 @@
         </div>
       </section>
     </div>
+    <div class="sentence-editor-overlay" id="sentenceEditorOverlay" hidden>
+      <section class="sentence-editor-sheet" role="dialog" aria-modal="true" aria-labelledby="sentenceEditorTitle">
+        <header><button id="sentenceEditorCancel" type="button">キャンセル</button><h2 id="sentenceEditorTitle">例文を編集</h2><button id="sentenceEditorSave" type="button">保存</button></header>
+        <div class="sentence-editor-body"><textarea id="sentenceEditorInput" rows="7" aria-label="例文" spellcheck="true"></textarea><p id="sentenceEditorMessage" hidden>空欄では保存できません。</p></div>
+      </section>
+    </div>
     <div class="help-overlay" id="helpOverlay" hidden>
       <section class="help-sheet" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
         <div class="help-head"><h2 id="helpTitle">ヘルプ</h2><button class="help-close" id="helpClose" type="button" aria-label="閉じる">×</button></div>
