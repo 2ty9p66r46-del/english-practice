@@ -4,6 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
   <meta name="theme-color" content="#f6f6fb">
+  <script>
+    (()=>{try{const preference=localStorage.getItem('flovo-theme')||'auto';const dark=preference==='dark'||(preference==='auto'&&matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.dataset.theme=dark?'dark':'light';document.documentElement.dataset.themePreference=preference}catch{}})();
+  </script>
   <meta name="description" content="FloVo — 英語を声に変える練習アプリ">
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" href="./icon.svg" type="image/svg+xml">
@@ -157,7 +160,7 @@
       <button class="tab nav-reload" id="reloadButton" type="button" aria-label="アプリを最新版に更新"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.35 5.65"/><path d="M20 4v7h-7"/></svg><span>リロード</span></button>
       <button class="tab nav-home active" type="button"><svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8v9a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg><span>ホーム</span></button>
       <div class="nav-scroll">
-        <button class="tab" type="button" data-coming><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.83 2.83-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1.1V21h-4v-.1A1.7 1.7 0 0 0 8.6 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1.1-.4H3v-4h.1A1.7 1.7 0 0 0 4.6 8.6a1.7 1.7 0 0 0-.34-1.88l-.06-.06 2.83-2.83.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-.6 1.7 1.7 0 0 0 .4-1.1V3h4v.1A1.7 1.7 0 0 0 15.4 4.6a1.7 1.7 0 0 0 1.88-.34l.06-.06 2.83 2.83-.06.06A1.7 1.7 0 0 0 19.4 9c.1.38.32.73.6 1 .3.28.69.42 1.1.4h.1v4h-.1a1.7 1.7 0 0 0-1.7.6z"/></svg><span>設定</span></button>
+        <button class="tab" id="homeSettingsButton" type="button" aria-haspopup="dialog"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.83 2.83-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1.1V21h-4v-.1A1.7 1.7 0 0 0 8.6 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1.1-.4H3v-4h.1A1.7 1.7 0 0 0 4.6 8.6a1.7 1.7 0 0 0-.34-1.88l-.06-.06 2.83-2.83.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-.6 1.7 1.7 0 0 0 .4-1.1V3h4v.1A1.7 1.7 0 0 0 15.4 4.6a1.7 1.7 0 0 0 1.88-.34l.06-.06 2.83 2.83-.06.06A1.7 1.7 0 0 0 19.4 9c.1.38.32.73.6 1 .3.28.69.42 1.1.4h.1v4h-.1a1.7 1.7 0 0 0-1.7.6z"/></svg><span>設定</span></button>
         <button class="tab" id="helpButton" type="button" aria-haspopup="dialog"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.7 9a2.4 2.4 0 1 1 3.8 1.95c-.95.68-1.5 1.08-1.5 2.05M12 17h.01"/></svg><span>ヘルプ</span></button>
             </div>
         <button class="tab practice-control-tab practice-play-fixed" id="autoPlayTab" type="button"><svg class="practice-control-icon practice-play-svg" id="autoPlayIcon" viewBox="0 0 24 24" aria-hidden="true"><path class="play-mark" d="m9 6 9 6-9 6Z"/><g class="pause-mark"><path d="M9 7v10"/><path d="M15 7v10"/></g></svg><span id="autoPlayLabel">再生</span></button>
@@ -169,6 +172,20 @@
         <button class="tab practice-control-tab" id="practiceSettingsTab" type="button"><svg class="practice-control-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h7M15 6h5M4 12h3M11 12h9M4 18h10M18 18h2"/><circle cx="13" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="16" cy="18" r="2"/></svg><span>設定</span></button>
       </div>
     </nav>
+    <div class="home-settings-overlay" id="homeSettingsOverlay" hidden>
+      <section class="home-settings-sheet" role="dialog" aria-modal="true" aria-labelledby="homeSettingsTitle">
+        <div class="home-settings-head"><h2 id="homeSettingsTitle">設定</h2><button id="homeSettingsClose" type="button" aria-label="閉じる">×</button></div>
+        <div class="home-setting-section">
+          <h3>画面テーマ</h3>
+          <p>「自動」は端末の外観設定に合わせます。</p>
+          <div class="theme-options" role="radiogroup" aria-label="画面テーマ">
+            <button type="button" data-theme-option="auto" role="radio">自動</button>
+            <button type="button" data-theme-option="light" role="radio">ライト</button>
+            <button type="button" data-theme-option="dark" role="radio">ダーク</button>
+          </div>
+        </div>
+      </section>
+    </div>
     <section class="practice-screen" id="practiceScreen" aria-label="英作文練習" hidden>
       <header class="practice-screen-header">
         <div class="practice-header-left">
@@ -317,7 +334,7 @@
           <h3 class="help-version-title">バージョン情報</h3>
           <dl class="help-version-list">
             <div class="help-version-row"><dt>アプリ</dt><dd>FloVo v1.0.0</dd></div>
-            <div class="help-version-row"><dt>ビルド</dt><dd>441</dd></div>
+            <div class="help-version-row"><dt>ビルド</dt><dd>442</dd></div>
             <div class="help-version-row"><dt>データ形式</dt><dd>v1.0</dd></div>
             <div class="help-version-row"><dt>更新日</dt><dd>2026.09.21</dd></div>
           </dl>
