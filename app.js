@@ -25,6 +25,15 @@ const COL=Object.freeze({
     const homeModuleCards=[...document.querySelectorAll('.home-modules>.home-module-card')];
     const homeCarouselDots=[...document.querySelectorAll('.home-carousel-dots button')];
     const text=value=>String(value??'').trim();
+    const compareDataRows=(a,b)=>{
+      for(const column of [COL.wordNo,COL.posNo,COL.meaningNo,COL.exampleNo]){
+        const aNumber=Number.parseInt(text(a?.[column]),10);
+        const bNumber=Number.parseInt(text(b?.[column]),10);
+        const difference=(Number.isFinite(aNumber)?aNumber:Number.MAX_SAFE_INTEGER)-(Number.isFinite(bNumber)?bNumber:Number.MAX_SAFE_INTEGER);
+        if(difference)return difference;
+      }
+      return 0;
+    };
     let homeCarouselFrame=0;
     const syncHomeCarousel=()=>{
       homeCarouselFrame=0;
@@ -364,16 +373,16 @@ const COL=Object.freeze({
       try{
         const stored=await getImportedData();
         if(!stored)throw new Error('書き出すデータがありません。先にExcelを読み込んでください。');
-        let bytes=stored.fileBytes;
-        if(!bytes||stored.modified){
-          if(typeof XLSX==='undefined')throw new Error('Excel書出機能を準備できませんでした。通信状態を確認してください。');
-          if(stored.fileBytes)bytes=writeRowsIntoOriginalWorkbook(stored);
-          else{
-            const sheet=XLSX.utils.aoa_to_sheet([stored.headers,...stored.rows]);
-            const workbook=XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook,sheet,'単語リスト');
-            bytes=XLSX.write(workbook,{bookType:'xlsx',type:'array',cellStyles:true});
-          }
+        if(typeof XLSX==='undefined')throw new Error('Excel書出機能を準備できませんでした。通信状態を確認してください。');
+        const sortedRows=[...stored.rows].sort(compareDataRows);
+        const exportData={...stored,rows:sortedRows};
+        let bytes;
+        if(stored.fileBytes)bytes=writeRowsIntoOriginalWorkbook(exportData);
+        else{
+          const sheet=XLSX.utils.aoa_to_sheet([stored.headers,...sortedRows]);
+          const workbook=XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(workbook,sheet,'単語リスト');
+          bytes=XLSX.write(workbook,{bookType:'xlsx',type:'array',cellStyles:true});
         }
         const now=new Date();
         const pad=value=>String(value).padStart(2,'0');
@@ -689,15 +698,6 @@ const COL=Object.freeze({
       });
       return result;
     };
-    const comparePracticeNumber=(a,b)=>{
-      for(const column of [COL.wordNo,COL.posNo,COL.meaningNo,COL.exampleNo]){
-        const aNumber=Number.parseInt(text(a?.[column]),10);
-        const bNumber=Number.parseInt(text(b?.[column]),10);
-        const difference=(Number.isFinite(aNumber)?aNumber:Number.MAX_SAFE_INTEGER)-(Number.isFinite(bNumber)?bNumber:Number.MAX_SAFE_INTEGER);
-        if(difference)return difference;
-      }
-      return 0;
-    };
     const getMatchingRows=rows=>{
       const levels=selectedValues(levelChoices);
       const parts=selectedValues(partChoices);
@@ -716,7 +716,7 @@ const COL=Object.freeze({
         const understanding=text(row[COL.understanding])||'未登録';
         if(understandings.size&&!understandings.has(understanding))return false;
         return true;
-      }).sort(comparePracticeNumber);
+      }).sort(compareDataRows);
     };
     const refreshQuestionCount=async()=>{
       const stored=await getImportedData();
