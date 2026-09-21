@@ -1784,7 +1784,7 @@ const COL=Object.freeze({
       cardWordStep.classList.toggle('has-selection',mode==='edit');
       cardEditorOverlay.dataset.mode=mode;
       cardEditorTitle.textContent='データ編集';
-      cardEditorBody.scrollTop=0;pendingMeaningChoice=null;selectedMeaningNumber='';cardExampleDrafts=[];cardDeletedExampleRows=[];cardExampleCarousel.replaceChildren();
+      cardEditorBody.scrollTop=0;cardWordFilterPanel.scrollTop=0;cardWordFilterPanel.hidden=true;cardFilterStickySummary.hidden=true;cardWordFilterToggle.setAttribute('aria-expanded','false');pendingMeaningChoice=null;selectedMeaningNumber='';cardExampleDrafts=[];cardDeletedExampleRows=[];cardExampleCarousel.replaceChildren();
       selectedMeaningMode=mode==='edit'?'existing':null;
       cardWordStep.hidden=false;
       cardWordSearch.value=mode==='edit'?text(row[COL.word]):'';cardWordSearch.disabled=mode==='edit';cardWordSearchRow.hidden=mode==='edit';
@@ -1826,6 +1826,7 @@ const COL=Object.freeze({
       if(restore&&cardEditorRowsSnapshot){practiceStored.rows=cardEditorRowsSnapshot.map(item=>[...item]);refreshPracticeAfterMutation()}
       cardEditorRowsSnapshot=null;cardEditorRowBaseline=new Map();cardEditorHasStagedChanges=false;
       cardEditorConfirm.hidden=true;cardEditorConfirmResolve=null;
+      cardWordFilterPanel.hidden=true;cardFilterStickySummary.hidden=true;cardWordFilterToggle.setAttribute('aria-expanded','false');cardEditorBody.scrollTop=0;cardWordFilterPanel.scrollTop=0;
       cardEditorOverlay.classList.remove('open');
       await wait(340);
       if(animationRun!==cardEditorAnimationRun)return;
