@@ -538,6 +538,129 @@
 .practice-settings-method h3{margin:0 0 9px;color:#344054;font-size:.82rem}
 .practice-settings-method .practice-options{grid-template-columns:minmax(0,1fr) 88px}
 .practice-settings-method .practice-control{padding:7px 8px 8px}
+
+/* Home appearance settings and dark theme. */
+.home-settings-overlay{position:absolute;z-index:140;inset:0;display:flex;align-items:flex-end;padding-top:env(safe-area-inset-top);background:#11182770;backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+.home-settings-overlay[hidden]{display:none}
+.home-settings-sheet{width:100%;padding:18px 20px calc(24px + env(safe-area-inset-bottom));border-radius:24px 24px 0 0;background:#fff;box-shadow:0 -14px 36px #1118272e}
+.home-settings-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.home-settings-head h2{margin:0;font-size:1.15rem}
+.home-settings-head button{display:grid;width:36px;height:36px;place-items:center;border:1px solid #d9dee7;border-radius:50%;background:#f4f6f9;color:#526078;font-size:1.25rem;line-height:1}
+.home-setting-section{padding:16px;border:1px solid #dce2eb;border-radius:16px;background:#f8f9fc}
+.home-setting-section h3{margin:0;color:#344054;font-size:.9rem}
+.home-setting-section p{margin:7px 0 14px;color:#6f7b8e;font-size:.72rem;line-height:1.5}
+.theme-options{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.theme-options button{min-height:44px;border:1px solid #d8dee8;border-radius:12px;background:#fff;color:#59667b;font-size:.78rem;font-weight:850}
+.theme-options button.selected{border:3px solid var(--action-border-color);background:linear-gradient(180deg,var(--action-top),var(--action-bottom));color:#fff;box-shadow:0 4px 10px #087cff30}
+
+html[data-theme="dark"]{color-scheme:dark;--ink:#eef4ff;--muted:#9aa8bc;--soft:#283241;--card:#1b2431;background:#0d121b}
+html[data-theme="dark"] body,
+html[data-theme="dark"] .shell,
+html[data-theme="dark"] .practice-screen{background:#0d121b;color:#eef4ff}
+html[data-theme="dark"] .topbar,
+html[data-theme="dark"] .practice-screen-header{background:#111722;border-color:#2b3544}
+html[data-theme="dark"] .card,
+html[data-theme="dark"] .practice-exercise-card,
+html[data-theme="dark"] .practice-rating-panel,
+html[data-theme="dark"] .practice-meta-panel,
+html[data-theme="dark"] .home-module-card{background:#1b2431;box-shadow:0 9px 28px #00000038}
+html[data-theme="dark"] .nav,
+html[data-theme="dark"] .nav-home,
+html[data-theme="dark"] .tab{background:#151d28;border-color:#2d3848}
+html[data-theme="dark"] .tab{color:#8f9bad}
+html[data-theme="dark"] .tab.active,
+html[data-theme="dark"] .nav-reload:active{color:#55a9ff}
+html[data-theme="dark"] .file-state,
+html[data-theme="dark"] .practice-japanese,
+html[data-theme="dark"] .practice-answer,
+html[data-theme="dark"] .practice-meta-id-row span,
+html[data-theme="dark"] .practice-meta-top span,
+html[data-theme="dark"] .home-stat-panel,
+html[data-theme="dark"] .home-stat-empty{background:#222d3b;color:#a9b5c6}
+html[data-theme="dark"] .practice-english,
+html[data-theme="dark"] .practice-japanese{color:#eef4ff}
+html[data-theme="dark"] .practice-meaning,
+html[data-theme="dark"] .practice-number,
+html[data-theme="dark"] .practice-language-label,
+html[data-theme="dark"] .practice-panel-label,
+html[data-theme="dark"] .practice-result-choice small,
+html[data-theme="dark"] .group-title,
+html[data-theme="dark"] .section-head h2,
+html[data-theme="dark"] .practice-list-header,
+html[data-theme="dark"] .practice-list-item strong{color:#dce6f5}
+html[data-theme="dark"] .practice-progress,
+html[data-theme="dark"] .practice-note,
+html[data-theme="dark"] .practice-brand small,
+html[data-theme="dark"] .filter-warning{color:#9aa8bc;border-color:#354153}
+html[data-theme="dark"] .practice-info-primary,
+html[data-theme="dark"] .practice-note-row,
+html[data-theme="dark"] .practice-rating-panel,
+html[data-theme="dark"] .filter-section,
+html[data-theme="dark"] .filter-section .group + .group,
+html[data-theme="dark"] .filter-section>.filter-warning + .group{border-color:#354153}
+html[data-theme="dark"] .practice-info-divider,
+html[data-theme="dark"] .practice-language-divider{background:#354153}
+html[data-theme="dark"] .practice-control,
+html[data-theme="dark"] .choice,
+html[data-theme="dark"] .all,
+html[data-theme="dark"] .bulk-filter-button,
+html[data-theme="dark"] .section-filter-button,
+html[data-theme="dark"] .practice-rating-button,
+html[data-theme="dark"] .practice-result-button{border-color:#465264;background:linear-gradient(#303b4a,#252f3d);color:#aeb9c8;box-shadow:inset 0 1px 0 #ffffff12}
+html[data-theme="dark"] .practice-result-button.result-correct{color:#55a9ff}
+html[data-theme="dark"] .practice-result-button.result-unsure{color:#f0c84e}
+html[data-theme="dark"] .practice-result-button.result-wrong{color:#ff7282}
+html[data-theme="dark"] .word-text-filter-fields input,
+html[data-theme="dark"] input,
+html[data-theme="dark"] textarea,
+html[data-theme="dark"] select{border-color:#465264;background:#111923;color:#eef4ff}
+html[data-theme="dark"] input::placeholder,
+html[data-theme="dark"] textarea::placeholder{color:#758398}
+html[data-theme="dark"] .practice-copy-button,
+html[data-theme="dark"] .practice-edit-button,
+html[data-theme="dark"] .practice-audio,
+html[data-theme="dark"] .practice-result-edit,
+html[data-theme="dark"] .practice-nav-button,
+html[data-theme="dark"] .word-text-reset:not(:disabled){border-color:#315d86;background:#17293b;color:#55a9ff;box-shadow:none}
+html[data-theme="dark"] .practice-audio:disabled{border-color:#3a4555;background:#252e3a;color:#69778a}
+html[data-theme="dark"] .practice-meta-chip{box-shadow:inset 0 1px 0 #ffffff18}
+html[data-theme="dark"] .help-sheet,
+html[data-theme="dark"] .practice-settings-sheet,
+html[data-theme="dark"] .practice-filter-sheet,
+html[data-theme="dark"] .card-actions-sheet,
+html[data-theme="dark"] .card-editor-sheet,
+html[data-theme="dark"] .result-editor-sheet,
+html[data-theme="dark"] .sentence-editor-sheet,
+html[data-theme="dark"] .learning-reset-dialog,
+html[data-theme="dark"] .home-settings-sheet{background:#18212d;color:#eef4ff;box-shadow:0 -14px 36px #0008}
+html[data-theme="dark"] .help-version-card,
+html[data-theme="dark"] .home-setting-section,
+html[data-theme="dark"] .card-editor-confirm-panel{border-color:#354153;background:#202b39}
+html[data-theme="dark"] .help-menu-item,
+html[data-theme="dark"] .help-back-button,
+html[data-theme="dark"] .theme-options button,
+html[data-theme="dark"] .home-settings-head button,
+html[data-theme="dark"] .help-close{border-color:#3b4758;background:#222d3b;color:#c5d0df}
+html[data-theme="dark"] .theme-options button.selected{border-color:var(--action-border-color);background:linear-gradient(180deg,var(--action-top),var(--action-bottom));color:#fff}
+html[data-theme="dark"] .home-setting-section h3,
+html[data-theme="dark"] .help-version-row dd,
+html[data-theme="dark"] .help-version-title,
+html[data-theme="dark"] .practice-settings-head h2,
+html[data-theme="dark"] .card-editor-head h2{color:#eef4ff}
+html[data-theme="dark"] .home-setting-section p,
+html[data-theme="dark"] .help-usage-list,
+html[data-theme="dark"] .help-change-list,
+html[data-theme="dark"] .help-note,
+html[data-theme="dark"] .help-version-row dt{color:#9aa8bc}
+html[data-theme="dark"] .practice-list-item,
+html[data-theme="dark"] .card-word-result,
+html[data-theme="dark"] .card-meaning-choice,
+html[data-theme="dark"] .card-example-page{border-color:#354153;background:#1b2431;color:#eef4ff}
+html[data-theme="dark"] .segmented{border-color:#354153;background:#101721}
+html[data-theme="dark"] .segment{color:#9aa8bc}
+html[data-theme="dark"] .segment.active{background:#263343;color:#55a9ff;box-shadow:none}
+html[data-theme="dark"] .screen-fade{background:#0d121b}
+@media (min-width:700px){html[data-theme="dark"] body{background:#090d13}html[data-theme="dark"] .shell{box-shadow:0 0 50px #0009}}
 .practice-settings-method .question-menu{z-index:170}
 
 
