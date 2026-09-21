@@ -53,31 +53,63 @@ const COL=Object.freeze({
     window.addEventListener('resize',syncHomeCarousel,{passive:true});
     const openDatabase=()=>new Promise((resolve,reject)=>{
       const request=indexedDB.open('flovo-data',1);
-      request.onupgradeneeded=()=>request.result.createObjectStore('app');
+      request.onupgradeneeded=()=>{
+        if(!request.result.objectStoreNames.contains('app'))request.result.createObjectStore('app');
+      };
       request.onsuccess=()=>resolve(request.result);
       request.onerror=()=>reject(request.error);
     });
     let importedDataPromise=null;
-    const saveImportedData=async payload=>{
+    let pendingImportedDataSave=null;
+    let importedDataSaveActive=false;
+    const writeImportedData=async payload=>{
       const database=await openDatabase();
-      await new Promise((resolve,reject)=>{
-        const transaction=database.transaction('app','readwrite');
-        transaction.objectStore('app').put(payload,'importedExcel');
-        transaction.oncomplete=resolve;
-        transaction.onerror=()=>reject(transaction.error);
-      });
-      database.close();
+      try{
+        await new Promise((resolve,reject)=>{
+          const transaction=database.transaction('app','readwrite');
+          transaction.objectStore('app').put(payload,'importedExcel');
+          transaction.oncomplete=resolve;
+          transaction.onerror=()=>reject(transaction.error);
+          transaction.onabort=()=>reject(transaction.error||new Error('データ保存が中断されました。'));
+        });
+      }finally{database.close()}
       importedDataPromise=Promise.resolve(payload);
     };
+    const drainImportedDataSaves=async()=>{
+      if(importedDataSaveActive)return;
+      importedDataSaveActive=true;
+      try{
+        while(pendingImportedDataSave){
+          const batch=pendingImportedDataSave;
+          pendingImportedDataSave=null;
+          try{
+            await writeImportedData(batch.payload);
+            batch.waiters.forEach(waiter=>waiter.resolve());
+          }catch(error){batch.waiters.forEach(waiter=>waiter.reject(error))}
+        }
+      }finally{
+        importedDataSaveActive=false;
+        if(pendingImportedDataSave)drainImportedDataSaves();
+      }
+    };
+    const saveImportedData=payload=>new Promise((resolve,reject)=>{
+      if(pendingImportedDataSave){
+        pendingImportedDataSave.payload=payload;
+        pendingImportedDataSave.waiters.push({resolve,reject});
+      }else pendingImportedDataSave={payload,waiters:[{resolve,reject}]};
+      drainImportedDataSaves();
+    });
     const loadImportedData=async()=>{
       const database=await openDatabase();
-      const result=await new Promise((resolve,reject)=>{
-        const request=database.transaction('app','readonly').objectStore('app').get('importedExcel');
-        request.onsuccess=()=>resolve(request.result);
-        request.onerror=()=>reject(request.error);
-      });
-      database.close();
-      return result;
+      try{
+        return await new Promise((resolve,reject)=>{
+          const transaction=database.transaction('app','readonly');
+          const request=transaction.objectStore('app').get('importedExcel');
+          request.onsuccess=()=>resolve(request.result);
+          request.onerror=()=>reject(request.error);
+          transaction.onabort=()=>reject(transaction.error||new Error('データ読込が中断されました。'));
+        });
+      }finally{database.close()}
     };
     const headersMatch=headers=>Array.isArray(headers)&&headers.length===EXPECTED_HEADERS.length&&(
       EXPECTED_HEADERS.every((header,index)=>text(headers[index])===header)||
@@ -398,8 +430,6 @@ const COL=Object.freeze({
     const exampleCount=document.getElementById('exampleCount');
     const filterWordCount=document.getElementById('filterWordCount');
     const filterExampleCount=document.getElementById('filterExampleCount');
-    const homeWordCount=document.getElementById('homeWordCount');
-    const homeExampleCount=document.getElementById('homeExampleCount');
     const homeImportFileName=document.getElementById('homeImportFileName');
     const homeUnderstandingDonut=document.getElementById('homeUnderstandingDonut');
     const homeMasteryRate=document.getElementById('homeMasteryRate');
@@ -646,7 +676,6 @@ const COL=Object.freeze({
       const number=Math.min(99999,Math.max(0,Math.trunc(Number(value)||0)));const digits=String(number);const padding='0'.repeat(5-digits.length);
       return `<span class="count-padding">${padding}</span><span class="count-value">${digits}</span>`;
     };
-    const renderFiveDigitCount=(element,value)=>{if(element)element.innerHTML=fiveDigitCountMarkup(value)};
     const renderCountFraction=(element,value,total)=>{if(element)element.innerHTML=`<span class="count-current">${fiveDigitCountMarkup(value)}</span><span class="count-separator">/</span><span class="count-total">${fiveDigitCountMarkup(total)}</span>`};
     const countCategory=count=>count===0?'0':count===1?'1':'multiple';
     const buildVocabularyCounts=rows=>{
@@ -704,8 +733,6 @@ const COL=Object.freeze({
       renderCountFraction(exampleCount,matchingRows.length,allExampleRows.length);
       renderCountFraction(filterWordCount,matchingPairCount,totalPairCount);
       renderCountFraction(filterExampleCount,matchingRows.length,allExampleRows.length);
-      renderFiveDigitCount(homeWordCount,totalPairCount);
-      renderFiveDigitCount(homeExampleCount,allExampleRows.length);
       const understandingCounts={mastered:0,steady:0,learning:0,new:0};
       allExampleRows.forEach(row=>{
         const value=text(row[COL.understanding]);
@@ -1921,6 +1948,7 @@ const COL=Object.freeze({
       const resumePlayback=autoPlaying;
       if(resumePlayback){
         playbackRun+=1;
+        cancelActiveAutoSpeech();
         if('speechSynthesis' in window)speechSynthesis.cancel();
       }
       practiceMoving=true;
@@ -1974,6 +2002,7 @@ const COL=Object.freeze({
     const repeatLabels={current:'1問反復',all:'全問周回',once:'1周終了'};
     let autoPlaying=false;
     let playbackRun=0;
+    let activeAutoSpeech=null;
     let screenWakeLock=null;
     let screenWakeLockRequest=null;
     const acquireScreenWakeLock=()=>{
@@ -1999,7 +2028,7 @@ const COL=Object.freeze({
         if(autoPlaying)acquireScreenWakeLock();
       }else releaseScreenWakeLock();
     });
-    const savePlaybackSettings=()=>localStorage.setItem(PLAYBACK_STORAGE_KEY,JSON.stringify(playbackSettings));
+    const savePlaybackSettings=()=>{try{localStorage.setItem(PLAYBACK_STORAGE_KEY,JSON.stringify(playbackSettings))}catch{}};
     const pauseOptions=[0,1,2,3,4,5].map(value=>({value:String(value),label:value===0?'なし':value+'秒'}));
     const repeatOptions=[1,2,3,4,5].map(value=>({value:String(value),label:value+'回'}));
     const rateOptions=Array.from({length:16},(_,index)=>(.5+index*.1).toFixed(1)).map(value=>({value,label:value+'×'}));
@@ -2098,6 +2127,7 @@ const COL=Object.freeze({
       autoPlaying=false;
       playbackRun+=1;
       releaseScreenWakeLock();
+      cancelActiveAutoSpeech();
       if('speechSynthesis' in window&&!autoPlaying)speechSynthesis.cancel();
       clearSentenceSpeaking();
       syncPlaybackControls();
@@ -2109,9 +2139,23 @@ const COL=Object.freeze({
       utterance.lang=lang;
       utterance.rate=Number(lang.startsWith('ja')?playbackSettings.japaneseRate:playbackSettings.englishRate);
       utterance.onstart=()=>setSentenceSpeaking(button,true,false);
-      utterance.onend=utterance.onerror=()=>{setSentenceSpeaking(button,false,false);resolve(run===playbackRun)};
+      const finish=()=>{
+        if(activeAutoSpeech?.utterance===utterance)activeAutoSpeech=null;
+        setSentenceSpeaking(button,false,false);
+        resolve(run===playbackRun);
+      };
+      utterance.onend=utterance.onerror=finish;
+      activeAutoSpeech={utterance,resolve:()=>{setSentenceSpeaking(button,false,false);resolve(false)}};
       speechSynthesis.speak(utterance);
     });
+    const cancelActiveAutoSpeech=()=>{
+      const active=activeAutoSpeech;
+      activeAutoSpeech=null;
+      if(!active)return;
+      active.utterance.onend=null;
+      active.utterance.onerror=null;
+      active.resolve();
+    };
     const runAutoPlayback=async run=>{
       while(autoPlaying&&run===playbackRun){
         const language=playbackSettings.language;
@@ -2158,6 +2202,7 @@ const COL=Object.freeze({
     const restartAutoPlayback=()=>{
       if(!autoPlaying||!('speechSynthesis' in window))return;
       playbackRun+=1;
+      cancelActiveAutoSpeech();
       speechSynthesis.cancel();
       const run=playbackRun;
       syncPlaybackControls();
@@ -2454,6 +2499,7 @@ const COL=Object.freeze({
       animatePracticeCard([{transform:practiceExerciseCard.style.transform||'translateX(0)'},{transform:'translateX(0)'}],{duration:180,easing:'ease-out'}).finally(resetPracticeDrag);
     });
     const speakPracticeWord=(lang,button)=>{
+      if(autoPlaying)stopAutoPlayback();
       if(!('speechSynthesis' in window))return;
       speechSynthesis.cancel();
       const utterance=new SpeechSynthesisUtterance(practiceWord.textContent);
@@ -2567,7 +2613,7 @@ const COL=Object.freeze({
       const originals=Object.fromEntries(Object.entries(resultColumn).map(([key,column])=>[key,row[column]]));
       Object.entries(resultColumn).forEach(([key,column])=>{row[column]=values[key]});
       practiceStored.modified=true;resultEditorSave.disabled=true;
-      try{await saveImportedData(practiceStored);closeResultEditor();syncPracticeResultCounts(row);renderPracticeList()}
+      try{await saveImportedData(practiceStored);closeResultEditor();syncPracticeResultCounts(row)}
       catch{Object.entries(resultColumn).forEach(([key,column])=>{row[column]=originals[key]});alert('結果を保存できませんでした。')}
       finally{resultEditorSave.disabled=false}
     });
@@ -2583,8 +2629,7 @@ const COL=Object.freeze({
       const count=button.closest('.practice-result-choice')?.querySelector('small');
       button.animate?.([{transform:'scale(.82)'},{transform:'scale(1.18)'},{transform:'scale(1)'}],{duration:260,easing:'cubic-bezier(.2,.85,.3,1)'});
       count?.animate?.([{transform:'translateY(2px) scale(.75)',opacity:.35},{transform:'translateY(-2px) scale(1.35)',opacity:1},{transform:'translateY(0) scale(1)',opacity:1}],{duration:320,easing:'cubic-bezier(.2,.85,.3,1)'});
-      renderPracticeList();
-      await saveImportedData(practiceStored);
+      try{await saveImportedData(practiceStored)}catch{alert('結果を保存できませんでした。')}
     }));
     practiceRatingButtons.forEach(button=>button.addEventListener('click',async()=>{
       const row=currentPracticeRow();
@@ -2592,8 +2637,7 @@ const COL=Object.freeze({
       row[COL.understanding]=text(row[COL.understanding])===button.dataset.value?'':button.dataset.value;
       practiceStored.modified=true;
       syncPracticeRating(row);
-      renderPracticeList();
-      await saveImportedData(practiceStored);
+      try{await saveImportedData(practiceStored)}catch{alert('理解度を保存できませんでした。')}
     }));
     window.addEventListener('resize',()=>{
       if(!practiceScreen.hidden&&practiceViewMode==='card')requestAnimationFrame(fitPracticeCardText);
@@ -2615,7 +2659,9 @@ const COL=Object.freeze({
         location.reload();
       });
       window.addEventListener('load',async()=>{
-        const registration=await navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'});
-        registration.update();
+        try{
+          const registration=await navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'});
+          await registration.update();
+        }catch(error){console.warn('アプリ更新の確認に失敗しました。',error)}
       });
     }
