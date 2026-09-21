@@ -1364,7 +1364,7 @@ html[data-theme="dark"] .practice-header-counts .count-padding{color:#748297}
 html[data-theme="dark"] .practice-list-header>strong{color:#f4f7fc;text-shadow:0 1px 1px #0008}
 
 
-/* Copy the current keyword from the right edge of the word area. */
-.practice-word-stack{position:relative;padding-inline:32px;box-sizing:border-box}
-.practice-word-copy{position:absolute;top:50%;right:0;z-index:1;transform:translateY(-50%)}
-.practice-word-copy:active{transform:translateY(-50%) scale(.96)}
+/* Copy the current keyword from the right edge of the word title row. */
+.practice-word-heading{grid-column:1;grid-row:1;display:flex;min-width:0;align-items:center;justify-content:space-between}
+.practice-word-heading .practice-word-title{width:auto;grid-column:auto;grid-row:auto;align-self:center}
+.practice-word-copy{width:24px;height:24px;min-width:24px}
