@@ -1527,6 +1527,11 @@ const COL=Object.freeze({
       cardDeletedExampleRows=[];
     };
     const cardExampleCommitKey=()=>`${vocabularyKey(selectedVocabularyRow)}::${selectedMeaningNumber}`;
+    const renumberCardExampleDrafts=()=>{
+      let nextNumber=1;
+      cardExampleDrafts.forEach(draft=>{if(!draft.isPendingAdd)draft.exampleNo=String(nextNumber++)});
+      cardExampleDrafts.forEach(draft=>{if(draft.isPendingAdd)draft.exampleNo=String(nextNumber)});
+    };
     const markCardExampleDraftDirty=()=>{
       cardExampleCommitStatus.set(cardExampleCommitKey(),false);
       cardExampleCommit.textContent='この内容を登録';
@@ -1561,7 +1566,7 @@ const COL=Object.freeze({
           const target=index+delta;if(target<0||target>=cardExampleDrafts.length)return;
           if(draft.isPendingAdd||cardExampleDrafts[target]?.isPendingAdd)return;
           [cardExampleDrafts[index],cardExampleDrafts[target]]=[cardExampleDrafts[target],cardExampleDrafts[index]];
-          cardExampleDrafts.forEach((item,itemIndex)=>{item.exampleNo=String(itemIndex+1)});
+          renumberCardExampleDrafts();
           cardEditorHasStagedChanges=true;markCardExampleDraftDirty();
           renderCardExampleCarousel(target);
         };
@@ -1571,7 +1576,7 @@ const COL=Object.freeze({
         const remove=document.createElement('button');remove.type='button';remove.className='card-example-remove';remove.textContent='削除';remove.disabled=Boolean(draft.isPendingAdd);
         remove.addEventListener('click',()=>{
           if(draft.row)cardDeletedExampleRows.push(draft.row);
-          cardExampleDrafts.splice(index,1);cardExampleDrafts.forEach((item,itemIndex)=>{item.exampleNo=String(itemIndex+1)});cardEditorHasStagedChanges=true;markCardExampleDraftDirty();renderCardExampleCarousel();
+          cardExampleDrafts.splice(index,1);renumberCardExampleDrafts();cardEditorHasStagedChanges=true;markCardExampleDraftDirty();renderCardExampleCarousel();
         });
         heading.append(remove);
         const makeField=(labelText,key,rows,optional=false)=>{
@@ -1617,6 +1622,7 @@ const COL=Object.freeze({
       requestAnimationFrame(()=>{cardExampleCarousel.scrollLeft=0});
     };
     cardExampleCommit.addEventListener('click',()=>{
+      renumberCardExampleDrafts();
       const pages=[...cardExampleCarousel.querySelectorAll('.card-example-form')];
       const entries=pages.map(page=>({page,draft:cardExampleDrafts[Number(page.dataset.draftIndex)]})).filter(entry=>entry.draft&&!entry.draft.isPendingAdd).map(({page,draft})=>({
         draft,
