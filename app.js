@@ -21,6 +21,28 @@ const COL=Object.freeze({
     const helpUsageButton=document.getElementById('helpUsageButton');
     const helpVersionPanel=document.getElementById('helpVersionPanel');
     const helpUsagePanel=document.getElementById('helpUsagePanel');
+    const homeSettingsButton=document.getElementById('homeSettingsButton');
+    const homeSettingsOverlay=document.getElementById('homeSettingsOverlay');
+    const homeSettingsClose=document.getElementById('homeSettingsClose');
+    const themeOptions=[...document.querySelectorAll('[data-theme-option]')];
+    const THEME_STORAGE_KEY='flovo-theme';
+    const systemTheme=matchMedia('(prefers-color-scheme: dark)');
+    let themePreference=document.documentElement.dataset.themePreference||'auto';
+    const applyTheme=preference=>{
+      themePreference=['auto','light','dark'].includes(preference)?preference:'auto';
+      const dark=themePreference==='dark'||(themePreference==='auto'&&systemTheme.matches);
+      document.documentElement.dataset.theme=dark?'dark':'light';
+      document.documentElement.dataset.themePreference=themePreference;
+      document.querySelector('meta[name="theme-color"]')?.setAttribute('content',dark?'#111722':'#f6f6fb');
+      themeOptions.forEach(button=>{const selected=button.dataset.themeOption===themePreference;button.classList.toggle('selected',selected);button.setAttribute('aria-checked',String(selected))});
+    };
+    applyTheme(themePreference);
+    systemTheme.addEventListener?.('change',()=>{if(themePreference==='auto')applyTheme('auto')});
+    homeSettingsButton.addEventListener('click',()=>{applyTheme(themePreference);homeSettingsOverlay.hidden=false;homeSettingsClose.focus({preventScroll:true})});
+    const closeHomeSettings=()=>{homeSettingsOverlay.hidden=true;homeSettingsButton.focus({preventScroll:true})};
+    homeSettingsClose.addEventListener('click',closeHomeSettings);
+    homeSettingsOverlay.addEventListener('click',event=>{if(event.target===homeSettingsOverlay)closeHomeSettings()});
+    themeOptions.forEach(button=>button.addEventListener('click',()=>{const preference=button.dataset.themeOption;try{localStorage.setItem(THEME_STORAGE_KEY,preference)}catch{}applyTheme(preference)}));
     const homeModules=document.querySelector('.home-modules');
     const homeModuleCards=[...document.querySelectorAll('.home-modules>.home-module-card')];
     const homeCarouselDots=[...document.querySelectorAll('.home-carousel-dots button')];
@@ -898,7 +920,7 @@ const COL=Object.freeze({
     document.querySelectorAll('[data-help-back]').forEach(button=>button.addEventListener('click',showHelpMenu));
     helpClose.addEventListener('click',closeHelp);
     helpOverlay.addEventListener('click',event=>{if(event.target===helpOverlay)closeHelp();});
-    document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!helpOverlay.hidden)closeHelp();});
+    document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!helpOverlay.hidden)closeHelp();else if(event.key==='Escape'&&!homeSettingsOverlay.hidden)closeHomeSettings();});
     document.querySelectorAll('[data-coming]').forEach(button=>button.addEventListener('click',()=>alert('この機能は次の段階で追加します。')));
     const practiceOrderTab=document.getElementById('practiceOrderTab');
     const practiceOrderLabel=document.getElementById('practiceOrderLabel');
