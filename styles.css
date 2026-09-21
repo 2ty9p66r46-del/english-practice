@@ -1365,6 +1365,6 @@ html[data-theme="dark"] .practice-list-header>strong{color:#f4f7fc;text-shadow:0
 
 
 /* Copy the current keyword from the right edge of the word title row. */
-.practice-word-heading{grid-column:1;grid-row:1;display:flex;min-width:0;align-items:center;justify-content:space-between}
-.practice-word-heading .practice-word-title{width:auto;grid-column:auto;grid-row:auto;align-self:center}
-.practice-word-copy{width:24px;height:24px;min-width:24px}
+.practice-word-heading{box-sizing:border-box;width:100%;min-width:0;grid-column:1/2;grid-row:1;justify-self:stretch;display:flex;align-items:center}
+.practice-word-heading .practice-word-title{width:auto;grid-column:auto;grid-row:auto;align-self:center;flex:0 0 auto}
+.practice-word-heading .practice-word-copy{position:static;flex:0 0 24px;width:24px;height:24px;min-width:24px;margin-left:auto;margin-right:0}
