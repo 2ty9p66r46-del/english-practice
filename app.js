@@ -535,6 +535,7 @@ const COL=Object.freeze({
     const practiceJapaneseStop=document.getElementById('practiceJapaneseStop');
     const practiceEnglishStop=document.getElementById('practiceEnglishStop');
     const practiceWord=document.getElementById('practiceWord');
+    const practiceWordCopy=document.getElementById('practiceWordCopy');
     const practiceWordNumber=document.getElementById('practiceWordNumber');
     const practicePart=document.getElementById('practicePart');
     const practiceMeaningExampleNumber=document.getElementById('practiceMeaningExampleNumber');
@@ -2584,9 +2585,10 @@ const COL=Object.freeze({
         }
         button.setAttribute('aria-label','コピー済み');button.classList.add('copied');
         clearTimeout(button._copyTimer);
-        button._copyTimer=setTimeout(()=>{button.setAttribute('aria-label',button===practiceJapaneseCopy?'日本語文をコピー':'英文をコピー');button.classList.remove('copied')},1200);
+        button._copyTimer=setTimeout(()=>{button.setAttribute('aria-label',button===practiceWordCopy?'単語をコピー':button===practiceJapaneseCopy?'日本語文をコピー':'英文をコピー');button.classList.remove('copied')},1200);
       }catch{alert('文をコピーできませんでした。')}
     };
+    practiceWordCopy.addEventListener('click',()=>copyPracticeText(practiceWord,practiceWordCopy));
     practiceJapaneseCopy.addEventListener('click',()=>copyPracticeText(practiceJapanese,practiceJapaneseCopy));
     practiceEnglishCopy.addEventListener('click',()=>copyPracticeText(practiceEnglish,practiceEnglishCopy));
     let sentenceEditorState=null;
