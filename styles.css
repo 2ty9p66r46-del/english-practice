@@ -1362,3 +1362,9 @@ html[data-theme="dark"] .practice-header-counts strong,
 html[data-theme="dark"] .practice-header-counts .count-value{color:#eef4ff}
 html[data-theme="dark"] .practice-header-counts .count-padding{color:#748297}
 html[data-theme="dark"] .practice-list-header>strong{color:#f4f7fc;text-shadow:0 1px 1px #0008}
+
+
+/* Copy the current keyword from the right edge of the word area. */
+.practice-word-stack{position:relative;padding-inline:32px;box-sizing:border-box}
+.practice-word-copy{position:absolute;top:50%;right:0;z-index:1;transform:translateY(-50%)}
+.practice-word-copy:active{transform:translateY(-50%) scale(.96)}
