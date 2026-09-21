@@ -1520,7 +1520,7 @@ const COL=Object.freeze({
     const loadCardExampleDrafts=()=>{
       const pairKey=vocabularyKey(selectedVocabularyRow);
       const matching=(practiceStored.rows||[]).filter(row=>vocabularyKey(row)===pairKey&&text(row[COL.meaningNo])===selectedMeaningNumber&&text(row[COL.japanese])&&text(row[COL.english]));
-      if(cardEditorMode==='edit'&&cardEditorRow&&!matching.includes(cardEditorRow))matching.push(cardEditorRow);
+      if(cardEditorMode==='edit'&&cardEditorRow&&!matching.includes(cardEditorRow)&&text(cardEditorRow[COL.meaningNo])===selectedMeaningNumber&&text(cardEditorRow[COL.japanese])&&text(cardEditorRow[COL.english]))matching.push(cardEditorRow);
       cardExampleDrafts=matching.sort((a,b)=>(Number(a[COL.exampleNo])||Number.MAX_SAFE_INTEGER)-(Number(b[COL.exampleNo])||Number.MAX_SAFE_INTEGER)).map(row=>({
         row,exampleNo:text(row[COL.exampleNo])||'1',japanese:text(row[COL.japanese]),english:text(row[COL.english]),note:text(row[COL.note])
       }));
