@@ -2623,21 +2623,31 @@ const COL=Object.freeze({
       const row=currentPracticeRow();
       if(!row||!practiceStored||practiceMoving)return;
       const column=button.dataset.result==='correct'?COL.correctCount:button.dataset.result==='wrong'?COL.wrongCount:COL.questionCount;
+      const originalValue=row[column];
       row[column]=(Number(row[column])||0)+1;
       practiceStored.modified=true;
       syncPracticeResultCounts(row);
       const count=button.closest('.practice-result-choice')?.querySelector('small');
       button.animate?.([{transform:'scale(.82)'},{transform:'scale(1.18)'},{transform:'scale(1)'}],{duration:260,easing:'cubic-bezier(.2,.85,.3,1)'});
       count?.animate?.([{transform:'translateY(2px) scale(.75)',opacity:.35},{transform:'translateY(-2px) scale(1.35)',opacity:1},{transform:'translateY(0) scale(1)',opacity:1}],{duration:320,easing:'cubic-bezier(.2,.85,.3,1)'});
-      try{await saveImportedData(practiceStored)}catch{alert('結果を保存できませんでした。')}
+      try{await saveImportedData(practiceStored)}catch{
+        row[column]=originalValue;
+        syncPracticeResultCounts(row);
+        alert('結果を保存できませんでした。');
+      }
     }));
     practiceRatingButtons.forEach(button=>button.addEventListener('click',async()=>{
       const row=currentPracticeRow();
       if(!row||!practiceStored)return;
+      const originalValue=row[COL.understanding];
       row[COL.understanding]=text(row[COL.understanding])===button.dataset.value?'':button.dataset.value;
       practiceStored.modified=true;
       syncPracticeRating(row);
-      try{await saveImportedData(practiceStored)}catch{alert('理解度を保存できませんでした。')}
+      try{await saveImportedData(practiceStored)}catch{
+        row[COL.understanding]=originalValue;
+        syncPracticeRating(row);
+        alert('理解度を保存できませんでした。');
+      }
     }));
     window.addEventListener('resize',()=>{
       if(!practiceScreen.hidden&&practiceViewMode==='card')requestAnimationFrame(fitPracticeCardText);
