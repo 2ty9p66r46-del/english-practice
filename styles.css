@@ -1325,3 +1325,6 @@ html[data-theme="dark"] .card-editor-confirm-changes{border-color:#3c4a5d;backgr
 html[data-theme="dark"] .card-editor-confirm-changes ul{color:#cbd6e5}
 html[data-theme="dark"] .card-editor-confirm-actions button{border-color:#315d86;background:#17293b;color:#55a9ff}
 html[data-theme="dark"] .card-editor-confirm-actions button:first-child{border-color:#465468;background:#202b39;color:#b5c1d2}
+html[data-theme="dark"] .card-meaning-form{border-color:#3c4a5d;background:#1c2734}
+html[data-theme="dark"] .card-meaning-form .card-editor-field>span{color:#b5c1d2}
+html[data-theme="dark"] .card-meaning-form .practice-meta-chip{background:#192330;color:#eef4ff;border-color:#c4cedc;text-shadow:none;box-shadow:none}
