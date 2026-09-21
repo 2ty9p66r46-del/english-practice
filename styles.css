@@ -1361,3 +1361,4 @@ html[data-theme="dark"] .practice-header-counts{color:#a8b6ca}
 html[data-theme="dark"] .practice-header-counts strong,
 html[data-theme="dark"] .practice-header-counts .count-value{color:#eef4ff}
 html[data-theme="dark"] .practice-header-counts .count-padding{color:#748297}
+html[data-theme="dark"] .practice-list-header>strong{color:#f4f7fc;text-shadow:0 1px 1px #0008}
