@@ -2027,16 +2027,20 @@ const COL=Object.freeze({
     let activeAutoSpeech=null;
     let screenWakeLock=null;
     let screenWakeLockRequest=null;
+    let pageActive=true;
     const acquireScreenWakeLock=()=>{
-      if(!autoPlaying||document.visibilityState!=='visible'||!('wakeLock' in navigator)||screenWakeLock)return Promise.resolve();
+      if(!pageActive||document.visibilityState!=='visible'||!('wakeLock' in navigator)||screenWakeLock)return Promise.resolve();
       if(screenWakeLockRequest)return screenWakeLockRequest;
       screenWakeLockRequest=navigator.wakeLock.request('screen').then(lock=>{
-        if(!autoPlaying||document.visibilityState!=='visible'){
+        if(!pageActive||document.visibilityState!=='visible'){
           lock.release().catch(()=>{});
           return;
         }
         screenWakeLock=lock;
-        lock.addEventListener('release',()=>{if(screenWakeLock===lock)screenWakeLock=null});
+        lock.addEventListener('release',()=>{
+          if(screenWakeLock===lock)screenWakeLock=null;
+          if(pageActive&&document.visibilityState==='visible')setTimeout(acquireScreenWakeLock,250);
+        });
       }).catch(()=>{}).finally(()=>{screenWakeLockRequest=null});
       return screenWakeLockRequest;
     };
@@ -2046,10 +2050,15 @@ const COL=Object.freeze({
       if(lock&&!lock.released)lock.release().catch(()=>{});
     };
     document.addEventListener('visibilitychange',()=>{
-      if(document.visibilityState==='visible'){
-        if(autoPlaying)acquireScreenWakeLock();
+      if(pageActive&&document.visibilityState==='visible'){
+        acquireScreenWakeLock();
       }else releaseScreenWakeLock();
     });
+    window.addEventListener('pageshow',()=>{pageActive=true;acquireScreenWakeLock()});
+    window.addEventListener('pagehide',()=>{pageActive=false;releaseScreenWakeLock()});
+    window.addEventListener('focus',acquireScreenWakeLock);
+    document.addEventListener('pointerdown',acquireScreenWakeLock,{passive:true});
+    acquireScreenWakeLock();
     const savePlaybackSettings=()=>{try{localStorage.setItem(PLAYBACK_STORAGE_KEY,JSON.stringify(playbackSettings))}catch{}};
     const pauseOptions=[0,1,2,3,4,5].map(value=>({value:String(value),label:value===0?'なし':value+'秒'}));
     const repeatOptions=[1,2,3,4,5].map(value=>({value:String(value),label:value+'回'}));
@@ -2148,7 +2157,6 @@ const COL=Object.freeze({
     const stopAutoPlayback=()=>{
       autoPlaying=false;
       playbackRun+=1;
-      releaseScreenWakeLock();
       cancelActiveAutoSpeech();
       if('speechSynthesis' in window&&!autoPlaying)speechSynthesis.cancel();
       clearSentenceSpeaking();
