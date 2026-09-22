@@ -1380,7 +1380,7 @@ html[data-theme="dark"] .practice-list-header>strong{color:#f4f7fc;text-shadow:0
 .practice-note-popover-actions{display:flex;align-items:center;gap:6px;margin-left:auto}
 .practice-note-popover-head button{display:grid;width:26px;height:26px;place-items:center;padding:0;border:0;border-radius:50%;background:#f8edbd;color:#795300;line-height:1}
 .practice-note-popover-head .practice-note-close{font-size:1.1rem}
-.practice-note-edit svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.practice-note-edit svg,.practice-note-copy svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .practice-note-popover .practice-note{max-height:min(300px,38vh);margin:0;color:#344054;font-size:1rem;font-weight:650;line-height:1.6}
 html[data-theme="dark"] .practice-word-heading .practice-note-button{border-color:#8c712d;background:#3a321d;color:#ffd96d}
 html[data-theme="dark"] .practice-note-overlay{background:#0009}

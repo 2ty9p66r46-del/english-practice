@@ -550,6 +550,7 @@ const COL=Object.freeze({
     const practiceNoteButton=document.getElementById('practiceNoteButton');
     const practiceNotePopover=document.getElementById('practiceNotePopover');
     const practiceNoteEdit=document.getElementById('practiceNoteEdit');
+    const practiceNoteCopy=document.getElementById('practiceNoteCopy');
     const practiceNoteClose=document.getElementById('practiceNoteClose');
     const practiceCardAdd=document.getElementById('practiceCardAdd');
     const practiceCardMenu=document.getElementById('practiceCardMenu');
@@ -2652,6 +2653,7 @@ const COL=Object.freeze({
     practiceEnglishStop.addEventListener('click',stopSentencePlayback);
     const practiceCopyEntries=[
       {button:practiceWordCopy,element:practiceWord,label:'単語をコピー'},
+      {button:practiceNoteCopy,element:practiceNote,label:'補足をコピー'},
       {button:practiceJapaneseCopy,element:practiceJapanese,label:'日本語文をコピー'},
       {button:practiceEnglishCopy,element:practiceEnglish,label:'英文をコピー'}
     ];
@@ -2687,6 +2689,7 @@ const COL=Object.freeze({
       }catch{alert('文をコピーできませんでした。')}
     };
     practiceWordCopy.addEventListener('click',()=>copyPracticeText(practiceWord,practiceWordCopy));
+    practiceNoteCopy.addEventListener('click',()=>copyPracticeText(practiceNote,practiceNoteCopy));
     practiceJapaneseCopy.addEventListener('click',()=>copyPracticeText(practiceJapanese,practiceJapaneseCopy));
     practiceEnglishCopy.addEventListener('click',()=>copyPracticeText(practiceEnglish,practiceEnglishCopy));
     document.addEventListener('copy',event=>{if(!event.target.closest?.('.practice-copy-button'))practiceCopyEntries.forEach(({button})=>resetPracticeCopyButton(button))});
