@@ -1390,10 +1390,9 @@ html[data-theme="dark"] .practice-note-popover-head button{background:#453b20;co
 html[data-theme="dark"] .practice-note-popover .practice-note{color:#e6edf7}
 
 /* Meaning uses the same quiet panel treatment as Japanese and scrolls at a fixed size. */
-.practice-meaning-column{position:relative;border-radius:11px;background:#f5f7fa}
+.practice-meaning-column{position:relative}
 .practice-meaning-column .practice-meaning{box-sizing:border-box;display:block;width:100%;height:100%;margin:0;padding:8px 76px 8px 10px;color:#111827;font-size:1.04rem;font-weight:800;line-height:1.3;text-align:left;white-space:pre-wrap;overflow-x:hidden;overflow-y:auto;overflow-wrap:anywhere;overscroll-behavior-y:contain;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .practice-meaning-column .practice-meaning::-webkit-scrollbar{display:none}
 .practice-meaning-actions{position:absolute;z-index:2;top:50%;right:0;display:flex;align-items:center;gap:6px;transform:translateY(-50%)}
 .practice-meaning-actions .practice-edit-button{margin-left:0}
-html[data-theme="dark"] .practice-meaning-column{background:#222d3b}
 html[data-theme="dark"] .practice-meaning-column .practice-meaning{color:#eef4ff}
