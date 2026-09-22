@@ -548,6 +548,7 @@ const COL=Object.freeze({
     const practiceNote=document.getElementById('practiceNote');
     const practiceNoteButton=document.getElementById('practiceNoteButton');
     const practiceNotePopover=document.getElementById('practiceNotePopover');
+    const practiceNoteEdit=document.getElementById('practiceNoteEdit');
     const practiceNoteClose=document.getElementById('practiceNoteClose');
     const practiceCardAdd=document.getElementById('practiceCardAdd');
     const practiceCardMenu=document.getElementById('practiceCardMenu');
@@ -2474,6 +2475,12 @@ const COL=Object.freeze({
       practiceNoteButton.setAttribute('aria-expanded',String(opening));
     });
     practiceNoteClose.addEventListener('click',event=>{event.stopPropagation();closePracticeNote()});
+    practiceNoteEdit.addEventListener('click',event=>{
+      event.stopPropagation();
+      const row=currentPracticeRow();
+      closePracticeNote();
+      if(row)openCardEditor('edit',row);
+    });
     practiceNotePopover.addEventListener('pointerdown',event=>event.stopPropagation());
     document.addEventListener('click',event=>{if(!practiceNotePopover.hidden&&!event.target.closest?.('#practiceNotePopover,#practiceNoteButton'))closePracticeNote()});
     autoPlayTab.addEventListener('click',()=>autoPlaying?stopAutoPlayback():startAutoPlayback());
