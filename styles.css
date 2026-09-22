@@ -1372,9 +1372,9 @@ html[data-theme="dark"] .practice-list-header>strong{color:#f4f7fc;text-shadow:0
 .practice-word-heading .practice-note-button[hidden]{display:none}
 .practice-word-heading .practice-note-button svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .practice-word-heading .practice-word-copy{position:static;flex:0 0 24px;width:24px;height:24px;min-width:24px;margin-left:5px;margin-right:0}
-.practice-note-overlay{position:absolute;z-index:250;inset:0;display:block;border-radius:23px;background:#11182773;overflow:hidden;touch-action:none}
+.practice-note-overlay{position:absolute;z-index:250;inset:0;display:block;background:#11182773;overflow:hidden;touch-action:none}
 .practice-note-overlay[hidden]{display:none}
-.practice-note-popover{position:absolute;box-sizing:border-box;top:203px;right:10px;bottom:10px;left:10px;width:auto;padding:14px 18px 18px;border:1.5px solid #efc14d;border-radius:18px;background:#fffdf2;box-shadow:0 12px 30px #11182738}
+.practice-note-popover{position:absolute;box-sizing:border-box;top:var(--practice-note-top,260px);right:var(--practice-note-right,24px);bottom:var(--practice-note-bottom,96px);left:var(--practice-note-left,24px);width:auto;padding:14px 18px 18px;border:1.5px solid #efc14d;border-radius:18px;background:#fffdf2;box-shadow:0 12px 30px #11182738}
 .practice-note-popover-head{display:flex;align-items:center;margin-bottom:8px;color:#9a6700}
 .practice-note-popover-head strong{font-size:.78rem}
 .practice-note-popover-actions{display:flex;align-items:center;gap:6px;margin-left:auto}

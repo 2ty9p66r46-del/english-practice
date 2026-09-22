@@ -1077,6 +1077,7 @@ const COL=Object.freeze({
       practiceNoteButton.hidden=!note;
       practiceNotePopover.hidden=!keepNoteOpen;
       practiceNoteButton.setAttribute('aria-expanded',String(keepNoteOpen));
+      if(keepNoteOpen)requestAnimationFrame(syncPracticeNotePosition);
       syncPracticeRating(row);
       syncPracticeResultCounts(row);
       setAnswerVisible(keepAnswerVisible);
@@ -2468,6 +2469,18 @@ const COL=Object.freeze({
     practiceButton.addEventListener('click',()=>openPractice().catch(()=>alert('練習画面を開けませんでした。')));
     practiceCardMenu.addEventListener('click',()=>{const row=currentPracticeRow();if(row)openCardEditor('edit',row)});
     let practiceNoteAnimation=null;
+    const syncPracticeNotePosition=()=>{
+      const shell=document.querySelector('.shell');
+      const questionMeta=practiceExerciseCard.querySelector('.practice-question-meta');
+      if(!shell||!questionMeta)return;
+      const shellRect=shell.getBoundingClientRect();
+      const cardRect=practiceExerciseCard.getBoundingClientRect();
+      const metaRect=questionMeta.getBoundingClientRect();
+      practiceNotePopover.style.setProperty('--practice-note-top',`${Math.round(metaRect.bottom-shellRect.top+8)}px`);
+      practiceNotePopover.style.setProperty('--practice-note-left',`${Math.round(cardRect.left-shellRect.left+10)}px`);
+      practiceNotePopover.style.setProperty('--practice-note-right',`${Math.round(shellRect.right-cardRect.right+10)}px`);
+      practiceNotePopover.style.setProperty('--practice-note-bottom',`${Math.round(shellRect.bottom-cardRect.bottom+10)}px`);
+    };
     const closePracticeNote=async()=>{
       if(practiceNotePopover.hidden)return;
       practiceNoteAnimation?.cancel();
@@ -2487,6 +2500,7 @@ const COL=Object.freeze({
       if(!opening){closePracticeNote();return}
       practiceNoteAnimation?.cancel();
       practiceNotePopover.hidden=false;
+      syncPracticeNotePosition();
       practiceNoteButton.setAttribute('aria-expanded',String(opening));
       if(practiceNotePopover.animate){
         practiceNoteAnimation=practiceNotePopover.animate([{opacity:0},{opacity:1}],{duration:200,easing:'ease-out'});
@@ -2499,6 +2513,7 @@ const COL=Object.freeze({
       editPracticeSentence(COL.note,'補足',true);
     });
     practiceNotePopover.addEventListener('pointerdown',event=>event.stopPropagation());
+    window.addEventListener('resize',()=>{if(!practiceNotePopover.hidden)syncPracticeNotePosition()});
     document.addEventListener('click',event=>{if(!practiceNotePopover.hidden&&!event.target.closest?.('#practiceNotePopover,#practiceNoteButton'))closePracticeNote()});
     autoPlayTab.addEventListener('click',()=>autoPlaying?stopAutoPlayback():startAutoPlayback());
     practiceBackToList.addEventListener('click',()=>returnToPracticeList());
