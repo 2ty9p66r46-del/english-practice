@@ -1369,8 +1369,8 @@ html[data-theme="dark"] .practice-list-header>strong{color:#f4f7fc;text-shadow:0
 .practice-word-heading{box-sizing:border-box;width:100%;min-width:0;grid-column:1/2;grid-row:1;justify-self:stretch;display:flex;align-items:center}
 .practice-word-heading .practice-word-title{width:auto;grid-column:auto;grid-row:auto;align-self:center;flex:0 0 auto}
 .practice-word-heading .practice-note-button{display:flex;width:24px;height:24px;flex:0 0 24px;align-items:center;justify-content:center;margin-left:auto;padding:0;border:1.5px solid #efc14d;border-radius:50%;background:#fff8d7;color:#9a6700}
+.practice-word-heading .practice-note-button[hidden]{display:none}
 .practice-word-heading .practice-note-button svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.practice-word-heading .practice-note-button:disabled{opacity:.38}
 .practice-word-heading .practice-word-copy{position:static;flex:0 0 24px;width:24px;height:24px;min-width:24px;margin-left:5px;margin-right:0}
 .practice-note-popover{position:absolute;z-index:8;top:72px;right:16px;left:16px;box-sizing:border-box;max-height:min(210px,38%);padding:12px 14px 14px;border:1.5px solid #efc14d;border-radius:15px;background:#fffdf2;box-shadow:0 12px 30px #17203338}
 .practice-note-popover[hidden]{display:none}

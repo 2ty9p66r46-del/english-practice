@@ -1072,7 +1072,7 @@ const COL=Object.freeze({
       practicePronUkAudio.disabled=!('speechSynthesis' in window);
       const note=text(row[COL.note]);
       practiceNote.textContent=note||'補足なし';
-      practiceNoteButton.disabled=!note;
+      practiceNoteButton.hidden=!note;
       practiceNotePopover.hidden=true;
       practiceNoteButton.setAttribute('aria-expanded','false');
       syncPracticeRating(row);
@@ -2468,7 +2468,7 @@ const COL=Object.freeze({
     const closePracticeNote=()=>{practiceNotePopover.hidden=true;practiceNoteButton.setAttribute('aria-expanded','false')};
     practiceNoteButton.addEventListener('click',event=>{
       event.stopPropagation();
-      if(practiceNoteButton.disabled)return;
+      if(practiceNoteButton.hidden)return;
       const opening=practiceNotePopover.hidden;
       practiceNotePopover.hidden=!opening;
       practiceNoteButton.setAttribute('aria-expanded',String(opening));
