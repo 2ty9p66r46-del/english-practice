@@ -972,9 +972,7 @@ const COL=Object.freeze({
     const fitPracticeCardText=()=>{
       fitTextToFixedArea(practiceWord,11);
       fitTextToFixedArea(practiceMeaning,10);
-      fitTextToFixedArea(practiceNote,9);
-      fitTextToFixedArea(practiceJapanese,11,true);
-      if(answerVisible)fitTextToFixedArea(practiceEnglish,11,true);
+      [practiceNote,practiceJapanese,practiceEnglish].forEach(element=>{element.style.fontSize='';element.classList.remove('is-scrollable')});
     };
     let answerTransitioning=false;
     const setAnswerVisible=async(visible,animate=false)=>{
@@ -2580,6 +2578,27 @@ const COL=Object.freeze({
     };
     practiceJapaneseStop.addEventListener('click',stopSentencePlayback);
     practiceEnglishStop.addEventListener('click',stopSentencePlayback);
+    const practiceCopyEntries=[
+      {button:practiceWordCopy,element:practiceWord,label:'単語をコピー'},
+      {button:practiceJapaneseCopy,element:practiceJapanese,label:'日本語文をコピー'},
+      {button:practiceEnglishCopy,element:practiceEnglish,label:'英文をコピー'}
+    ];
+    const resetPracticeCopyButton=button=>{
+      const entry=practiceCopyEntries.find(candidate=>candidate.button===button);
+      button.classList.remove('copied');
+      button.removeAttribute('data-copied-text');
+      button.setAttribute('aria-label',entry?.label||'コピー');
+    };
+    const syncPracticeCopyButtons=async()=>{
+      const copiedEntries=practiceCopyEntries.filter(({button})=>button.classList.contains('copied'));
+      copiedEntries.forEach(({button,element})=>{if(button.dataset.copiedText!==(element.textContent||''))resetPracticeCopyButton(button)});
+      const remaining=copiedEntries.filter(({button})=>button.classList.contains('copied'));
+      if(!remaining.length||!navigator.clipboard?.readText)return;
+      try{
+        const clipboardText=await navigator.clipboard.readText();
+        remaining.forEach(({button})=>{if(button.dataset.copiedText!==clipboardText)resetPracticeCopyButton(button)});
+      }catch{}
+    };
     const copyPracticeText=async(element,button)=>{
       const value=element.textContent||'';
       if(!value)return;
@@ -2590,14 +2609,20 @@ const COL=Object.freeze({
           helper.value=value;helper.setAttribute('readonly','');helper.style.position='fixed';helper.style.opacity='0';
           document.body.append(helper);helper.select();document.execCommand('copy');helper.remove();
         }
+        practiceCopyEntries.forEach(({button:copyButton})=>resetPracticeCopyButton(copyButton));
+        button.dataset.copiedText=value;
         button.setAttribute('aria-label','コピー済み');button.classList.add('copied');
-        clearTimeout(button._copyTimer);
-        button._copyTimer=setTimeout(()=>{button.setAttribute('aria-label',button===practiceWordCopy?'単語をコピー':button===practiceJapaneseCopy?'日本語文をコピー':'英文をコピー');button.classList.remove('copied')},1200);
       }catch{alert('文をコピーできませんでした。')}
     };
     practiceWordCopy.addEventListener('click',()=>copyPracticeText(practiceWord,practiceWordCopy));
     practiceJapaneseCopy.addEventListener('click',()=>copyPracticeText(practiceJapanese,practiceJapaneseCopy));
     practiceEnglishCopy.addEventListener('click',()=>copyPracticeText(practiceEnglish,practiceEnglishCopy));
+    document.addEventListener('copy',event=>{if(!event.target.closest?.('.practice-copy-button'))practiceCopyEntries.forEach(({button})=>resetPracticeCopyButton(button))});
+    document.addEventListener('cut',()=>practiceCopyEntries.forEach(({button})=>resetPracticeCopyButton(button)));
+    window.addEventListener('focus',syncPracticeCopyButtons);
+    document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncPracticeCopyButtons()});
+    const practiceCopyObserver=new MutationObserver(()=>syncPracticeCopyButtons());
+    practiceCopyEntries.forEach(({element})=>practiceCopyObserver.observe(element,{childList:true,characterData:true,subtree:true}));
     let sentenceEditorState=null;
     const closeSentenceEditor=()=>{
       sentenceEditorOverlay.hidden=true;sentenceEditorState=null;sentenceEditorMessage.hidden=true;
