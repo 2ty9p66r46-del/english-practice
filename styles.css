@@ -1368,7 +1368,7 @@ html[data-theme="dark"] .practice-list-header>strong{color:#f4f7fc;text-shadow:0
 /* Copy the current keyword from the right edge of the word title row. */
 .practice-word-heading{box-sizing:border-box;width:100%;min-width:0;grid-column:1/2;grid-row:1;justify-self:stretch;display:flex;align-items:center}
 .practice-word-heading .practice-word-title{width:auto;grid-column:auto;grid-row:auto;align-self:center;flex:0 0 auto}
-.practice-word-heading .practice-note-button{display:flex;height:24px;align-items:center;gap:3px;margin-left:auto;padding:0 6px;border:1.5px solid #efc14d;border-radius:12px;background:#fff8d7;color:#9a6700;font-size:.56rem;font-weight:850}
+.practice-word-heading .practice-note-button{display:flex;width:24px;height:24px;flex:0 0 24px;align-items:center;justify-content:center;margin-left:auto;padding:0;border:1.5px solid #efc14d;border-radius:50%;background:#fff8d7;color:#9a6700}
 .practice-word-heading .practice-note-button svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .practice-word-heading .practice-note-button:disabled{opacity:.38}
 .practice-word-heading .practice-word-copy{position:static;flex:0 0 24px;width:24px;height:24px;min-width:24px;margin-left:5px;margin-right:0}
