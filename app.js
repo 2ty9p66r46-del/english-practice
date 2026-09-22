@@ -2467,13 +2467,31 @@ const COL=Object.freeze({
     };
     practiceButton.addEventListener('click',()=>openPractice().catch(()=>alert('練習画面を開けませんでした。')));
     practiceCardMenu.addEventListener('click',()=>{const row=currentPracticeRow();if(row)openCardEditor('edit',row)});
-    const closePracticeNote=()=>{practiceNotePopover.hidden=true;practiceNoteButton.setAttribute('aria-expanded','false')};
+    let practiceNoteAnimation=null;
+    const closePracticeNote=async()=>{
+      if(practiceNotePopover.hidden)return;
+      practiceNoteAnimation?.cancel();
+      practiceNoteButton.setAttribute('aria-expanded','false');
+      if(practiceNotePopover.animate){
+        practiceNoteAnimation=practiceNotePopover.animate([{opacity:1},{opacity:0}],{duration:180,easing:'ease-in',fill:'both'});
+        await practiceNoteAnimation.finished.catch(()=>{});
+      }
+      practiceNotePopover.hidden=true;
+      practiceNoteAnimation?.cancel();
+      practiceNoteAnimation=null;
+    };
     practiceNoteButton.addEventListener('click',event=>{
       event.stopPropagation();
       if(practiceNoteButton.hidden)return;
       const opening=practiceNotePopover.hidden;
-      practiceNotePopover.hidden=!opening;
+      if(!opening){closePracticeNote();return}
+      practiceNoteAnimation?.cancel();
+      practiceNotePopover.hidden=false;
       practiceNoteButton.setAttribute('aria-expanded',String(opening));
+      if(practiceNotePopover.animate){
+        practiceNoteAnimation=practiceNotePopover.animate([{opacity:0},{opacity:1}],{duration:200,easing:'ease-out'});
+        practiceNoteAnimation.finished.catch(()=>{}).finally(()=>{practiceNoteAnimation=null});
+      }
     });
     practiceNoteClose.addEventListener('click',event=>{event.stopPropagation();closePracticeNote()});
     practiceNoteEdit.addEventListener('click',event=>{
