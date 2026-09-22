@@ -1372,9 +1372,9 @@ html[data-theme="dark"] .practice-list-header>strong{color:#f4f7fc;text-shadow:0
 .practice-word-heading .practice-note-button[hidden]{display:none}
 .practice-word-heading .practice-note-button svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .practice-word-heading .practice-word-copy{position:static;flex:0 0 24px;width:24px;height:24px;min-width:24px;margin-left:5px;margin-right:0}
-.practice-note-overlay{position:absolute;z-index:250;inset:0;display:block;border-radius:23px;background:transparent;overflow:hidden;touch-action:none}
+.practice-note-overlay{position:absolute;z-index:250;inset:0;display:block;border-radius:23px;background:#11182773;overflow:hidden;touch-action:none}
 .practice-note-overlay[hidden]{display:none}
-.practice-note-popover{position:absolute;box-sizing:border-box;top:195px;right:0;bottom:0;left:0;width:100%;padding:14px 18px 18px;border-top:1.5px solid #efc14d;border-radius:0 0 23px 23px;background:#fffdf2;box-shadow:0 -10px 24px #1118271f}
+.practice-note-popover{position:absolute;box-sizing:border-box;top:203px;right:10px;bottom:10px;left:10px;width:auto;padding:14px 18px 18px;border:1.5px solid #efc14d;border-radius:18px;background:#fffdf2;box-shadow:0 12px 30px #11182738}
 .practice-note-popover-head{display:flex;align-items:center;margin-bottom:8px;color:#9a6700}
 .practice-note-popover-head strong{font-size:.78rem}
 .practice-note-popover-actions{display:flex;align-items:center;gap:6px;margin-left:auto}
@@ -1383,7 +1383,7 @@ html[data-theme="dark"] .practice-list-header>strong{color:#f4f7fc;text-shadow:0
 .practice-note-edit svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .practice-note-popover .practice-note{max-height:min(300px,38vh);margin:0;color:#344054;font-size:.82rem;font-weight:650;line-height:1.5}
 html[data-theme="dark"] .practice-word-heading .practice-note-button{border-color:#8c712d;background:#3a321d;color:#ffd96d}
-html[data-theme="dark"] .practice-note-overlay{background:transparent}
+html[data-theme="dark"] .practice-note-overlay{background:#0009}
 html[data-theme="dark"] .practice-note-popover{border-color:#8c712d;background:#24291f;box-shadow:0 12px 30px #0009}
 html[data-theme="dark"] .practice-note-popover-head{color:#ffd96d}
 html[data-theme="dark"] .practice-note-popover-head button{background:#453b20;color:#ffe38a}
