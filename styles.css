@@ -462,8 +462,8 @@
 .practice-japanese-block,.practice-english-block{box-sizing:border-box;width:100%;height:100%;min-height:0}
 
 /* Every practice-card section keeps a stable area; long text is fitted by JavaScript. */
-.practice-exercise-card{min-height:501px;grid-template-rows:251px minmax(0,1fr) minmax(0,1fr) 54px;row-gap:5px}
-.practice-question-meta{display:grid;height:251px;grid-template-rows:28px 38px 121px 64px;overflow:hidden}
+.practice-exercise-card{position:relative;min-height:470px;grid-template-rows:187px minmax(0,1fr) minmax(0,1fr) 54px;row-gap:5px}
+.practice-question-meta{display:grid;height:187px;grid-template-rows:28px 38px 121px;overflow:hidden}
 .practice-question-meta>.practice-progress{height:28px;box-sizing:border-box}
 .practice-info-primary{height:38px}
 .practice-detail-grid{height:121px;min-height:0;grid-template-rows:17px 44px 60px;row-gap:0;margin-top:0;padding-top:0}
@@ -472,8 +472,7 @@
 .practice-word-stack .practice-keyword{height:100%;min-height:0;overflow:hidden}
 .practice-meaning-column{grid-row:3;height:60px;min-height:0;overflow:hidden}
 .practice-meaning{display:block;width:100%;height:100%;min-height:0;overflow:hidden}
-.practice-note-row{box-sizing:border-box;height:64px;min-height:64px;margin-top:0;padding-top:6px;overflow:hidden}
-.practice-note{height:100%;min-height:0;flex:1 1 auto;overflow-x:hidden;overflow-y:auto;white-space:normal;text-overflow:clip;overflow-wrap:anywhere;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.practice-note{min-height:0;overflow-x:hidden;overflow-y:auto;white-space:pre-wrap;text-overflow:clip;overflow-wrap:anywhere;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 .practice-language{overflow:hidden}
 .practice-japanese,.practice-english{display:block!important;width:100%;height:100%;min-height:0;max-height:none;margin:0;overflow-x:hidden;overflow-y:auto;overflow-wrap:anywhere;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 .practice-english[hidden]{display:none!important}
@@ -1369,4 +1368,18 @@ html[data-theme="dark"] .practice-list-header>strong{color:#f4f7fc;text-shadow:0
 /* Copy the current keyword from the right edge of the word title row. */
 .practice-word-heading{box-sizing:border-box;width:100%;min-width:0;grid-column:1/2;grid-row:1;justify-self:stretch;display:flex;align-items:center}
 .practice-word-heading .practice-word-title{width:auto;grid-column:auto;grid-row:auto;align-self:center;flex:0 0 auto}
-.practice-word-heading .practice-word-copy{position:static;flex:0 0 24px;width:24px;height:24px;min-width:24px;margin-left:auto;margin-right:0}
+.practice-word-heading .practice-note-button{display:flex;height:24px;align-items:center;gap:3px;margin-left:auto;padding:0 6px;border:1.5px solid #efc14d;border-radius:12px;background:#fff8d7;color:#9a6700;font-size:.56rem;font-weight:850}
+.practice-word-heading .practice-note-button svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.practice-word-heading .practice-note-button:disabled{opacity:.38}
+.practice-word-heading .practice-word-copy{position:static;flex:0 0 24px;width:24px;height:24px;min-width:24px;margin-left:5px;margin-right:0}
+.practice-note-popover{position:absolute;z-index:8;top:72px;right:16px;left:16px;box-sizing:border-box;max-height:min(210px,38%);padding:12px 14px 14px;border:1.5px solid #efc14d;border-radius:15px;background:#fffdf2;box-shadow:0 12px 30px #17203338}
+.practice-note-popover[hidden]{display:none}
+.practice-note-popover-head{display:flex;align-items:center;margin-bottom:8px;color:#9a6700}
+.practice-note-popover-head strong{font-size:.78rem}
+.practice-note-popover-head button{display:grid;width:26px;height:26px;place-items:center;margin-left:auto;padding:0;border:0;border-radius:50%;background:#f8edbd;color:#795300;font-size:1.1rem;line-height:1}
+.practice-note-popover .practice-note{max-height:150px;margin:0;color:#344054;font-size:.82rem;font-weight:650;line-height:1.5}
+html[data-theme="dark"] .practice-word-heading .practice-note-button{border-color:#8c712d;background:#3a321d;color:#ffd96d}
+html[data-theme="dark"] .practice-note-popover{border-color:#8c712d;background:#24291f;box-shadow:0 12px 30px #0009}
+html[data-theme="dark"] .practice-note-popover-head{color:#ffd96d}
+html[data-theme="dark"] .practice-note-popover-head button{background:#453b20;color:#ffe38a}
+html[data-theme="dark"] .practice-note-popover .practice-note{color:#e6edf7}

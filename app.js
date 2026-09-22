@@ -546,6 +546,9 @@ const COL=Object.freeze({
     const practicePronUsAudio=document.getElementById('practicePronUsAudio');
     const practicePronUkAudio=document.getElementById('practicePronUkAudio');
     const practiceNote=document.getElementById('practiceNote');
+    const practiceNoteButton=document.getElementById('practiceNoteButton');
+    const practiceNotePopover=document.getElementById('practiceNotePopover');
+    const practiceNoteClose=document.getElementById('practiceNoteClose');
     const practiceCardAdd=document.getElementById('practiceCardAdd');
     const practiceCardMenu=document.getElementById('practiceCardMenu');
     const cardActionsOverlay=document.getElementById('cardActionsOverlay');
@@ -972,7 +975,7 @@ const COL=Object.freeze({
     const fitPracticeCardText=()=>{
       fitTextToFixedArea(practiceWord,11);
       fitTextToFixedArea(practiceMeaning,10);
-      [practiceNote,practiceJapanese,practiceEnglish].forEach(element=>{element.style.fontSize='';element.classList.remove('is-scrollable')});
+      [practiceJapanese,practiceEnglish].forEach(element=>{element.style.fontSize='';element.classList.remove('is-scrollable')});
     };
     let answerTransitioning=false;
     const setAnswerVisible=async(visible,animate=false)=>{
@@ -1068,8 +1071,10 @@ const COL=Object.freeze({
       practicePronUsAudio.disabled=!('speechSynthesis' in window);
       practicePronUkAudio.disabled=!('speechSynthesis' in window);
       const note=text(row[COL.note]);
-      practiceNote.textContent=note;
-      practiceNote.closest('.practice-note-row').classList.toggle('is-empty',!note);
+      practiceNote.textContent=note||'補足なし';
+      practiceNoteButton.disabled=!note;
+      practiceNotePopover.hidden=true;
+      practiceNoteButton.setAttribute('aria-expanded','false');
       syncPracticeRating(row);
       syncPracticeResultCounts(row);
       setAnswerVisible(false);
@@ -2460,6 +2465,17 @@ const COL=Object.freeze({
     };
     practiceButton.addEventListener('click',()=>openPractice().catch(()=>alert('練習画面を開けませんでした。')));
     practiceCardMenu.addEventListener('click',()=>{const row=currentPracticeRow();if(row)openCardEditor('edit',row)});
+    const closePracticeNote=()=>{practiceNotePopover.hidden=true;practiceNoteButton.setAttribute('aria-expanded','false')};
+    practiceNoteButton.addEventListener('click',event=>{
+      event.stopPropagation();
+      if(practiceNoteButton.disabled)return;
+      const opening=practiceNotePopover.hidden;
+      practiceNotePopover.hidden=!opening;
+      practiceNoteButton.setAttribute('aria-expanded',String(opening));
+    });
+    practiceNoteClose.addEventListener('click',event=>{event.stopPropagation();closePracticeNote()});
+    practiceNotePopover.addEventListener('pointerdown',event=>event.stopPropagation());
+    document.addEventListener('click',event=>{if(!practiceNotePopover.hidden&&!event.target.closest?.('#practiceNotePopover,#practiceNoteButton'))closePracticeNote()});
     autoPlayTab.addEventListener('click',()=>autoPlaying?stopAutoPlayback():startAutoPlayback());
     practiceBackToList.addEventListener('click',()=>returnToPracticeList());
     practiceFilterButton.addEventListener('click',openPracticeFilter);
