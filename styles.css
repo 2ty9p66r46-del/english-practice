@@ -1370,7 +1370,6 @@ html[data-theme="dark"] .practice-list-header>strong{color:#f4f7fc;text-shadow:0
 .practice-word-heading .practice-word-title{width:auto;grid-column:auto;grid-row:auto;align-self:center;flex:0 0 auto}
 .practice-word-heading .practice-note-button{display:flex;width:24px;height:24px;flex:0 0 24px;align-items:center;justify-content:center;margin-left:auto;padding:0;border:1.5px solid #efc14d;border-radius:50%;background:#fff8d7;color:#9a6700}
 .practice-word-heading .practice-note-button[hidden]{display:none}
-.practice-word-heading .practice-note-button:disabled{border-color:#c5cbd4;background:#eef0f3;color:#949ca8;box-shadow:none}
 .practice-word-heading .practice-note-button svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .practice-word-heading .practice-word-copy{position:static;flex:0 0 24px;width:24px;height:24px;min-width:24px;margin-left:5px;margin-right:0}
 .practice-note-overlay{position:absolute;z-index:250;inset:0;display:block;background:#11182773;overflow:hidden;touch-action:none}
@@ -1384,7 +1383,6 @@ html[data-theme="dark"] .practice-list-header>strong{color:#f4f7fc;text-shadow:0
 .practice-note-edit svg,.practice-note-copy svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .practice-note-popover .practice-note{max-height:min(300px,38vh);margin:0;color:#344054;font-size:1rem;font-weight:650;line-height:1.6}
 html[data-theme="dark"] .practice-word-heading .practice-note-button{border-color:#8c712d;background:#3a321d;color:#ffd96d}
-html[data-theme="dark"] .practice-word-heading .practice-note-button:disabled{border-color:#4d5867;background:#2a3441;color:#7f8997}
 html[data-theme="dark"] .practice-note-overlay{background:#0009}
 html[data-theme="dark"] .practice-note-popover{border-color:#8c712d;background:#24291f;box-shadow:0 12px 30px #0009}
 html[data-theme="dark"] .practice-note-popover-head{color:#ffd96d}

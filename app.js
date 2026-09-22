@@ -1079,7 +1079,7 @@ const COL=Object.freeze({
       const note=text(row[COL.note]);
       practiceNote.textContent=note||'補足なし';
       practiceNoteButton.hidden=false;
-      practiceNoteButton.disabled=!note;
+      practiceNoteButton.disabled=false;
       practiceNotePopover.hidden=!keepNoteOpen;
       practiceNoteButton.setAttribute('aria-expanded',String(keepNoteOpen));
       if(keepNoteOpen)requestAnimationFrame(syncPracticeNotePosition);
@@ -2507,11 +2507,10 @@ const COL=Object.freeze({
       practiceNotePopover.hidden=true;
       practiceNoteAnimation?.cancel();
       practiceNoteAnimation=null;
-      if(!practiceNoteButton.disabled)practiceNoteButton.focus({preventScroll:true});
+      practiceNoteButton.focus({preventScroll:true});
     };
     practiceNoteButton.addEventListener('click',event=>{
       event.stopPropagation();
-      if(practiceNoteButton.disabled)return;
       const opening=practiceNotePopover.hidden;
       if(!opening){closePracticeNote();return}
       practiceNoteAnimation?.cancel();
