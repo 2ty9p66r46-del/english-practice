@@ -1382,12 +1382,14 @@ html[data-theme="dark"] .practice-list-header>strong{color:#f4f7fc;text-shadow:0
 .practice-note-popover-head .practice-note-edit{margin-left:0}
 .practice-note-edit svg,.practice-note-copy svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .practice-note-popover .practice-note{max-height:min(300px,38vh);margin:0;color:#344054;font-size:1rem;font-weight:650;line-height:1.6}
+.practice-note-popover .practice-note.is-empty{display:flex;height:calc(100% - 36px);max-height:none;align-items:center;justify-content:center;color:#98a2b3;text-align:center}
 html[data-theme="dark"] .practice-word-heading .practice-note-button{border-color:#8c712d;background:#3a321d;color:#ffd96d}
 html[data-theme="dark"] .practice-note-overlay{background:#0009}
 html[data-theme="dark"] .practice-note-popover{border-color:#8c712d;background:#24291f;box-shadow:0 12px 30px #0009}
 html[data-theme="dark"] .practice-note-popover-head{color:#ffd96d}
 html[data-theme="dark"] .practice-note-popover-head button{background:#453b20;color:#ffe38a}
 html[data-theme="dark"] .practice-note-popover .practice-note{color:#e6edf7}
+html[data-theme="dark"] .practice-note-popover .practice-note.is-empty{color:#7f8b9c}
 
 /* Meaning uses the same quiet panel treatment as Japanese and scrolls at a fixed size. */
 .practice-meaning-column{position:relative}
