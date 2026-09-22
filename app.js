@@ -2512,10 +2512,16 @@ const COL=Object.freeze({
       event.stopPropagation();
       editPracticeSentence(COL.note,'補足',true);
     });
-    practiceNotePopover.addEventListener('pointerdown',event=>event.stopPropagation());
+    practiceNotePopover.addEventListener('pointerdown',event=>{
+      event.stopPropagation();
+      if(!event.target.closest?.('.practice-note-popover')){
+        event.preventDefault();
+        closePracticeNote();
+      }
+    });
     practiceNotePopover.addEventListener('click',event=>{
       event.stopPropagation();
-      if(event.target===practiceNotePopover)closePracticeNote();
+      if(!event.target.closest?.('.practice-note-popover'))closePracticeNote();
     });
     window.addEventListener('resize',()=>{if(!practiceNotePopover.hidden)syncPracticeNotePosition()});
     document.addEventListener('click',event=>{if(!practiceNotePopover.hidden&&!event.target.closest?.('#practiceNotePopover,#practiceNoteButton'))closePracticeNote()});
