@@ -1031,7 +1031,7 @@ const COL=Object.freeze({
       formatSingleDigitNumber(row?.[COL.meaningNo]),
       formatSingleDigitNumber(row?.[COL.exampleNo])
     ].join('-');
-    const renderPracticeQuestion=(keepNoteOpen=false)=>{
+    const renderPracticeQuestion=(keepNoteOpen=false,keepAnswerVisible=false)=>{
       const row=currentPracticeRow();
       if(!row)return;
       if('speechSynthesis' in window&&!autoPlaying)speechSynthesis.cancel();
@@ -1079,7 +1079,7 @@ const COL=Object.freeze({
       practiceNoteButton.setAttribute('aria-expanded',String(keepNoteOpen));
       syncPracticeRating(row);
       syncPracticeResultCounts(row);
-      setAnswerVisible(false);
+      setAnswerVisible(keepAnswerVisible);
       requestAnimationFrame(fitPracticeCardText);
     };
     const renderPracticeList=()=>{
@@ -2688,10 +2688,11 @@ const COL=Object.freeze({
       if(!value&&!sentenceEditorState.allowEmpty){sentenceEditorMessage.hidden=false;sentenceEditorInput.focus();return}
       const {row,column,label,original}=sentenceEditorState;
       const keepNoteOpen=column===COL.note;
+      const keepAnswerVisible=answerVisible;
       row[column]=value;practiceStored.modified=true;sentenceEditorSave.disabled=true;
       try{
         await saveImportedData(practiceStored);
-        await closeSentenceEditor();renderPracticeQuestion(keepNoteOpen);renderPracticeList();
+        await closeSentenceEditor();renderPracticeQuestion(keepNoteOpen,keepAnswerVisible);renderPracticeList();
       }catch{
         row[column]=original;
         alert(`${label}を保存できませんでした。`);
