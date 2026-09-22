@@ -1378,9 +1378,9 @@ html[data-theme="dark"] .practice-list-header>strong{color:#f4f7fc;text-shadow:0
 .practice-note-popover-head{display:flex;align-items:center;margin-bottom:8px;color:#9a6700}
 .practice-note-popover-head strong{font-size:.78rem}
 .practice-note-popover-actions{display:flex;align-items:center;gap:6px;margin-left:auto}
-.practice-note-popover-head button{display:grid;width:26px;height:26px;place-items:center;padding:0;border:0;border-radius:50%;background:#f8edbd;color:#795300;line-height:1}
-.practice-note-popover-head .practice-note-close{font-size:1.1rem}
-.practice-note-edit svg,.practice-note-copy svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.practice-note-popover-head button{display:grid;width:28px;height:28px;min-width:28px;min-height:28px;place-items:center;padding:0;border:1.5px solid #efc14d;border-radius:50%;background:#f8edbd;color:#795300;line-height:1}
+.practice-note-popover-head .practice-note-edit{margin-left:0}
+.practice-note-edit svg,.practice-note-copy svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .practice-note-popover .practice-note{max-height:min(300px,38vh);margin:0;color:#344054;font-size:1rem;font-weight:650;line-height:1.6}
 html[data-theme="dark"] .practice-word-heading .practice-note-button{border-color:#8c712d;background:#3a321d;color:#ffd96d}
 html[data-theme="dark"] .practice-note-overlay{background:#0009}
@@ -1388,3 +1388,9 @@ html[data-theme="dark"] .practice-note-popover{border-color:#8c712d;background:#
 html[data-theme="dark"] .practice-note-popover-head{color:#ffd96d}
 html[data-theme="dark"] .practice-note-popover-head button{background:#453b20;color:#ffe38a}
 html[data-theme="dark"] .practice-note-popover .practice-note{color:#e6edf7}
+
+/* Meaning actions fit inside the fixed meaning row without changing card height. */
+.practice-meaning-column{position:relative}
+.practice-meaning-column .practice-meaning{box-sizing:border-box;padding-right:70px}
+.practice-meaning-actions{position:absolute;z-index:2;top:50%;right:0;display:flex;align-items:center;gap:6px;transform:translateY(-50%)}
+.practice-meaning-actions .practice-edit-button{margin-left:0}

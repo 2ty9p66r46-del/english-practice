@@ -542,6 +542,8 @@ const COL=Object.freeze({
     const practiceMeaningExampleNumber=document.getElementById('practiceMeaningExampleNumber');
     const practiceLevels=document.getElementById('practiceLevels');
     const practiceMeaning=document.getElementById('practiceMeaning');
+    const practiceMeaningEdit=document.getElementById('practiceMeaningEdit');
+    const practiceMeaningCopy=document.getElementById('practiceMeaningCopy');
     const practicePronUs=document.getElementById('practicePronUs');
     const practicePronUk=document.getElementById('practicePronUk');
     const practicePronUsAudio=document.getElementById('practicePronUsAudio');
@@ -551,7 +553,6 @@ const COL=Object.freeze({
     const practiceNotePopover=document.getElementById('practiceNotePopover');
     const practiceNoteEdit=document.getElementById('practiceNoteEdit');
     const practiceNoteCopy=document.getElementById('practiceNoteCopy');
-    const practiceNoteClose=document.getElementById('practiceNoteClose');
     const practiceCardAdd=document.getElementById('practiceCardAdd');
     const practiceCardMenu=document.getElementById('practiceCardMenu');
     const cardActionsOverlay=document.getElementById('cardActionsOverlay');
@@ -2047,6 +2048,11 @@ const COL=Object.freeze({
     let screenWakeLock=null;
     let screenWakeLockRequest=null;
     let pageActive=true;
+    let clearFocusAfterBackground=false;
+    const clearActiveFocus=()=>{
+      const active=document.activeElement;
+      if(active instanceof HTMLElement&&active!==document.body)active.blur();
+    };
     const acquireScreenWakeLock=()=>{
       if(!pageActive||document.visibilityState!=='visible'||!('wakeLock' in navigator)||screenWakeLock)return Promise.resolve();
       if(screenWakeLockRequest)return screenWakeLockRequest;
@@ -2069,12 +2075,14 @@ const COL=Object.freeze({
       if(lock&&!lock.released)lock.release().catch(()=>{});
     };
     document.addEventListener('visibilitychange',()=>{
+      if(document.hidden){clearFocusAfterBackground=true;clearActiveFocus()}
+      else if(clearFocusAfterBackground){requestAnimationFrame(clearActiveFocus);clearFocusAfterBackground=false}
       if(pageActive&&document.visibilityState==='visible'){
         acquireScreenWakeLock();
       }else releaseScreenWakeLock();
     });
-    window.addEventListener('pageshow',()=>{pageActive=true;acquireScreenWakeLock()});
-    window.addEventListener('pagehide',()=>{pageActive=false;releaseScreenWakeLock()});
+    window.addEventListener('pageshow',()=>{pageActive=true;if(clearFocusAfterBackground){requestAnimationFrame(clearActiveFocus);clearFocusAfterBackground=false}acquireScreenWakeLock()});
+    window.addEventListener('pagehide',()=>{clearFocusAfterBackground=true;clearActiveFocus();pageActive=false;releaseScreenWakeLock()});
     window.addEventListener('focus',acquireScreenWakeLock);
     document.addEventListener('pointerdown',acquireScreenWakeLock,{passive:true});
     acquireScreenWakeLock();
@@ -2508,23 +2516,15 @@ const COL=Object.freeze({
       practiceNotePopover.hidden=false;
       syncPracticeNotePosition();
       practiceNoteButton.setAttribute('aria-expanded',String(opening));
-      practiceNoteClose.focus({preventScroll:true});
+      practiceNoteEdit.focus({preventScroll:true});
       if(practiceNotePopover.animate){
         practiceNoteAnimation=practiceNotePopover.animate([{opacity:0},{opacity:1}],{duration:200,easing:'ease-out'});
         practiceNoteAnimation.finished.catch(()=>{}).finally(()=>{practiceNoteAnimation=null});
       }
     });
-    practiceNoteClose.addEventListener('click',event=>{event.stopPropagation();closePracticeNote()});
     practiceNoteEdit.addEventListener('click',event=>{
       event.stopPropagation();
       editPracticeSentence(COL.note,'補足',true);
-    });
-    practiceNotePopover.addEventListener('pointerdown',event=>{
-      event.stopPropagation();
-      if(!event.target.closest?.('.practice-note-popover')){
-        event.preventDefault();
-        closePracticeNote();
-      }
     });
     practiceNotePopover.addEventListener('click',event=>{
       event.stopPropagation();
@@ -2653,6 +2653,7 @@ const COL=Object.freeze({
     practiceEnglishStop.addEventListener('click',stopSentencePlayback);
     const practiceCopyEntries=[
       {button:practiceWordCopy,element:practiceWord,label:'単語をコピー'},
+      {button:practiceMeaningCopy,element:practiceMeaning,label:'意味をコピー'},
       {button:practiceNoteCopy,element:practiceNote,label:'補足をコピー'},
       {button:practiceJapaneseCopy,element:practiceJapanese,label:'日本語文をコピー'},
       {button:practiceEnglishCopy,element:practiceEnglish,label:'英文をコピー'}
@@ -2689,6 +2690,7 @@ const COL=Object.freeze({
       }catch{alert('文をコピーできませんでした。')}
     };
     practiceWordCopy.addEventListener('click',()=>copyPracticeText(practiceWord,practiceWordCopy));
+    practiceMeaningCopy.addEventListener('click',()=>copyPracticeText(practiceMeaning,practiceMeaningCopy));
     practiceNoteCopy.addEventListener('click',()=>copyPracticeText(practiceNote,practiceNoteCopy));
     practiceJapaneseCopy.addEventListener('click',()=>copyPracticeText(practiceJapanese,practiceJapaneseCopy));
     practiceEnglishCopy.addEventListener('click',()=>copyPracticeText(practiceEnglish,practiceEnglishCopy));
@@ -2705,7 +2707,7 @@ const COL=Object.freeze({
       if(sentenceEditorOverlay.hidden)return;
       if(sentenceEditorTransitioning){sentenceEditorCloseRequested=true;return}
       sentenceEditorCloseRequested=false;
-      const returnTarget=sentenceEditorState?.column===COL.note?practiceNoteEdit:sentenceEditorState?.column===COL.english?practiceEnglishEdit:practiceJapaneseEdit;
+      const returnTarget=sentenceEditorState?.column===COL.note?practiceNoteEdit:sentenceEditorState?.column===COL.meaning?practiceMeaningEdit:sentenceEditorState?.column===COL.english?practiceEnglishEdit:practiceJapaneseEdit;
       sentenceEditorTransitioning=true;
       const animations=[];
       if(sentenceEditorSheet.animate){
@@ -2724,7 +2726,10 @@ const COL=Object.freeze({
       const row=currentPracticeRow();
       if(!row||!practiceStored||sentenceEditorTransitioning)return;
       sentenceEditorCloseRequested=false;
-      sentenceEditorState={row,column,label,original:text(row[column]),allowEmpty};
+      const targets=column===COL.meaning
+        ? [...new Set([...(practiceStored.rows||[]),...(practiceStored.vocabularyRows||[])])].filter(candidate=>vocabularyKey(candidate)===vocabularyKey(row)&&text(candidate[COL.meaningNo])===text(row[COL.meaningNo]))
+        : [row];
+      sentenceEditorState={row,targets,column,label,originals:targets.map(target=>target[column]),original:text(row[column]),allowEmpty};
       sentenceEditorTitle.textContent=`${label}を編集`;
       sentenceEditorInput.value=sentenceEditorState.original;
       sentenceEditorMessage.hidden=true;sentenceEditorOverlay.hidden=false;
@@ -2746,15 +2751,15 @@ const COL=Object.freeze({
       if(!sentenceEditorState)return;
       const value=sentenceEditorInput.value.trim();
       if(!value&&!sentenceEditorState.allowEmpty){sentenceEditorMessage.hidden=false;sentenceEditorInput.focus();return}
-      const {row,column,label,original}=sentenceEditorState;
+      const {targets,column,label,originals}=sentenceEditorState;
       const keepNoteOpen=column===COL.note;
       const keepAnswerVisible=answerVisible;
-      row[column]=value;practiceStored.modified=true;sentenceEditorSave.disabled=true;
+      targets.forEach(target=>{target[column]=value});practiceStored.modified=true;sentenceEditorSave.disabled=true;
       try{
         await saveImportedData(practiceStored);
         await closeSentenceEditor();renderPracticeQuestion(keepNoteOpen,keepAnswerVisible);renderPracticeList();
       }catch{
-        row[column]=original;
+        targets.forEach((target,index)=>{target[column]=originals[index]});
         alert(`${label}を保存できませんでした。`);
       }finally{sentenceEditorSave.disabled=false}
     });
@@ -2763,6 +2768,7 @@ const COL=Object.freeze({
     sentenceEditorOverlay.addEventListener('click',event=>{event.stopPropagation();if(event.target===sentenceEditorOverlay)closeSentenceEditor()});
     practiceJapaneseEdit.addEventListener('click',()=>editPracticeSentence(COL.japanese,'日本語'));
     practiceEnglishEdit.addEventListener('click',()=>editPracticeSentence(COL.english,'英語'));
+    practiceMeaningEdit.addEventListener('click',()=>editPracticeSentence(COL.meaning,'意味'));
     const resultColumn={correct:COL.correctCount,unsure:COL.questionCount,wrong:COL.wrongCount};
     const closeResultEditor=()=>{resultEditorOverlay.hidden=true;resultEditorMessage.hidden=true;practiceResultEdit.focus({preventScroll:true})};
     practiceResultEdit.addEventListener('click',()=>{
