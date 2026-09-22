@@ -1078,7 +1078,8 @@ const COL=Object.freeze({
       practicePronUkAudio.disabled=!('speechSynthesis' in window);
       const note=text(row[COL.note]);
       practiceNote.textContent=note||'補足なし';
-      practiceNoteButton.hidden=!note;
+      practiceNoteButton.hidden=false;
+      practiceNoteButton.disabled=!note;
       practiceNotePopover.hidden=!keepNoteOpen;
       practiceNoteButton.setAttribute('aria-expanded',String(keepNoteOpen));
       if(keepNoteOpen)requestAnimationFrame(syncPracticeNotePosition);
@@ -2506,11 +2507,11 @@ const COL=Object.freeze({
       practiceNotePopover.hidden=true;
       practiceNoteAnimation?.cancel();
       practiceNoteAnimation=null;
-      if(!practiceNoteButton.hidden)practiceNoteButton.focus({preventScroll:true});
+      if(!practiceNoteButton.disabled)practiceNoteButton.focus({preventScroll:true});
     };
     practiceNoteButton.addEventListener('click',event=>{
       event.stopPropagation();
-      if(practiceNoteButton.hidden)return;
+      if(practiceNoteButton.disabled)return;
       const opening=practiceNotePopover.hidden;
       if(!opening){closePracticeNote();return}
       practiceNoteAnimation?.cancel();
