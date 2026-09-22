@@ -1077,7 +1077,7 @@ const COL=Object.freeze({
       practicePronUsAudio.disabled=!('speechSynthesis' in window);
       practicePronUkAudio.disabled=!('speechSynthesis' in window);
       const note=text(row[COL.note]);
-      practiceNote.textContent=note||'補足はありません。';
+      practiceNote.textContent=note||'まだ補足は記入されていません';
       practiceNote.classList.toggle('is-empty',!note);
       practiceNoteButton.hidden=false;
       practiceNoteButton.disabled=false;
