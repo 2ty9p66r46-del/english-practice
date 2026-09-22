@@ -2697,8 +2697,11 @@ const COL=Object.freeze({
     practiceCopyEntries.forEach(({element})=>practiceCopyObserver.observe(element,{childList:true,characterData:true,subtree:true}));
     let sentenceEditorState=null;
     let sentenceEditorTransitioning=false;
+    let sentenceEditorCloseRequested=false;
     const closeSentenceEditor=async()=>{
-      if(sentenceEditorOverlay.hidden||sentenceEditorTransitioning)return;
+      if(sentenceEditorOverlay.hidden)return;
+      if(sentenceEditorTransitioning){sentenceEditorCloseRequested=true;return}
+      sentenceEditorCloseRequested=false;
       const returnTarget=sentenceEditorState?.column===COL.note?practiceNoteEdit:sentenceEditorState?.column===COL.english?practiceEnglishEdit:practiceJapaneseEdit;
       sentenceEditorTransitioning=true;
       const animations=[];
@@ -2717,6 +2720,7 @@ const COL=Object.freeze({
     const editPracticeSentence=async(column,label,allowEmpty=false)=>{
       const row=currentPracticeRow();
       if(!row||!practiceStored||sentenceEditorTransitioning)return;
+      sentenceEditorCloseRequested=false;
       sentenceEditorState={row,column,label,original:text(row[column]),allowEmpty};
       sentenceEditorTitle.textContent=`${label}を編集`;
       sentenceEditorInput.value=sentenceEditorState.original;
@@ -2732,6 +2736,7 @@ const COL=Object.freeze({
       }
       animations.forEach(animation=>animation.cancel());
       sentenceEditorTransitioning=false;
+      if(sentenceEditorCloseRequested){closeSentenceEditor();return}
       if(!sentenceEditorOverlay.hidden)requestAnimationFrame(()=>{sentenceEditorInput.focus();sentenceEditorInput.setSelectionRange(sentenceEditorInput.value.length,sentenceEditorInput.value.length)});
     };
     sentenceEditorSave.addEventListener('click',async()=>{
