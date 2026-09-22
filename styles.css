@@ -1160,7 +1160,7 @@ body[data-page="home"] .bottom-space{display:none}
 .card-editor-overlay.open .card-editor-sheet{transform:translateY(0)}
 .sentence-editor-overlay{position:absolute;z-index:260;inset:0;display:flex;align-items:flex-end;background:#11182773}
 .sentence-editor-overlay[hidden]{display:none!important}
-.sentence-editor-sheet{width:100%;padding-bottom:calc(18px + env(safe-area-inset-bottom));border-radius:24px 24px 0 0;background:#f4f5f9;box-shadow:0 -18px 45px #1118272e}
+.sentence-editor-sheet{width:100%;padding-bottom:calc(18px + env(safe-area-inset-bottom));border-radius:24px 24px 0 0;background:#f4f5f9;box-shadow:0 -18px 45px #1118272e;will-change:transform}
 .sentence-editor-sheet header{display:grid;min-height:58px;grid-template-columns:88px 1fr 88px;align-items:center;padding:4px 10px;border-bottom:1px solid #dfe3ea;border-radius:24px 24px 0 0;background:#fff}
 .sentence-editor-sheet header h2{margin:0;color:#182230;font-size:1rem;text-align:center}
 .sentence-editor-sheet header button{height:38px;padding:0 8px;border:0;background:transparent;color:var(--blue);font-size:.8rem;font-weight:800}

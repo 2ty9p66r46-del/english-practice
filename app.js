@@ -1031,7 +1031,7 @@ const COL=Object.freeze({
       formatSingleDigitNumber(row?.[COL.meaningNo]),
       formatSingleDigitNumber(row?.[COL.exampleNo])
     ].join('-');
-    const renderPracticeQuestion=()=>{
+    const renderPracticeQuestion=(keepNoteOpen=false)=>{
       const row=currentPracticeRow();
       if(!row)return;
       if('speechSynthesis' in window&&!autoPlaying)speechSynthesis.cancel();
@@ -1075,8 +1075,8 @@ const COL=Object.freeze({
       const note=text(row[COL.note]);
       practiceNote.textContent=note||'補足なし';
       practiceNoteButton.hidden=!note;
-      practiceNotePopover.hidden=true;
-      practiceNoteButton.setAttribute('aria-expanded','false');
+      practiceNotePopover.hidden=!keepNoteOpen;
+      practiceNoteButton.setAttribute('aria-expanded',String(keepNoteOpen));
       syncPracticeRating(row);
       syncPracticeResultCounts(row);
       setAnswerVisible(false);
@@ -2650,26 +2650,37 @@ const COL=Object.freeze({
     const closeSentenceEditor=async()=>{
       if(sentenceEditorOverlay.hidden||sentenceEditorTransitioning)return;
       sentenceEditorTransitioning=true;
+      const animations=[];
       if(sentenceEditorSheet.animate){
-        await Promise.all([
-          sentenceEditorSheet.animate([{transform:'translateY(0)'},{transform:'translateY(105%)'}],{duration:240,easing:'cubic-bezier(.4,0,1,1)'}).finished.catch(()=>{}),
-          sentenceEditorOverlay.animate([{backgroundColor:'rgba(17,24,39,.45)'},{backgroundColor:'rgba(17,24,39,0)'}],{duration:220,easing:'ease-in'}).finished.catch(()=>{})
-        ]);
+        animations.push(
+          sentenceEditorSheet.animate([{transform:'translateY(0)'},{transform:'translateY(100%)'}],{duration:240,easing:'cubic-bezier(.4,0,1,1)',fill:'both'}),
+          sentenceEditorOverlay.animate([{opacity:1},{opacity:0}],{duration:220,easing:'ease-in',fill:'both'})
+        );
+        await Promise.all(animations.map(animation=>animation.finished.catch(()=>{})));
       }
-      sentenceEditorOverlay.hidden=true;sentenceEditorState=null;sentenceEditorMessage.hidden=true;sentenceEditorTransitioning=false;
+      sentenceEditorOverlay.hidden=true;
+      animations.forEach(animation=>animation.cancel());
+      sentenceEditorState=null;sentenceEditorMessage.hidden=true;sentenceEditorTransitioning=false;
     };
-    const editPracticeSentence=(column,label,allowEmpty=false)=>{
+    const editPracticeSentence=async(column,label,allowEmpty=false)=>{
       const row=currentPracticeRow();
       if(!row||!practiceStored||sentenceEditorTransitioning)return;
       sentenceEditorState={row,column,label,original:text(row[column]),allowEmpty};
       sentenceEditorTitle.textContent=`${label}を編集`;
       sentenceEditorInput.value=sentenceEditorState.original;
       sentenceEditorMessage.hidden=true;sentenceEditorOverlay.hidden=false;
+      sentenceEditorTransitioning=true;
+      const animations=[];
       if(sentenceEditorSheet.animate){
-        sentenceEditorSheet.animate([{transform:'translateY(105%)'},{transform:'translateY(0)'}],{duration:270,easing:'cubic-bezier(.2,.8,.2,1)'});
-        sentenceEditorOverlay.animate([{backgroundColor:'rgba(17,24,39,0)'},{backgroundColor:'rgba(17,24,39,.45)'}],{duration:240,easing:'ease-out'});
+        animations.push(
+          sentenceEditorSheet.animate([{transform:'translateY(100%)'},{transform:'translateY(0)'}],{duration:270,easing:'cubic-bezier(.2,.8,.2,1)',fill:'both'}),
+          sentenceEditorOverlay.animate([{opacity:0},{opacity:1}],{duration:240,easing:'ease-out',fill:'both'})
+        );
+        await Promise.all(animations.map(animation=>animation.finished.catch(()=>{})));
       }
-      requestAnimationFrame(()=>{sentenceEditorInput.focus();sentenceEditorInput.setSelectionRange(sentenceEditorInput.value.length,sentenceEditorInput.value.length)});
+      animations.forEach(animation=>animation.cancel());
+      sentenceEditorTransitioning=false;
+      if(!sentenceEditorOverlay.hidden)requestAnimationFrame(()=>{sentenceEditorInput.focus();sentenceEditorInput.setSelectionRange(sentenceEditorInput.value.length,sentenceEditorInput.value.length)});
     };
     sentenceEditorSave.addEventListener('click',async()=>{
       if(!sentenceEditorState)return;
@@ -2680,8 +2691,7 @@ const COL=Object.freeze({
       row[column]=value;practiceStored.modified=true;sentenceEditorSave.disabled=true;
       try{
         await saveImportedData(practiceStored);
-        await closeSentenceEditor();renderPracticeQuestion();renderPracticeList();
-        if(keepNoteOpen){practiceNotePopover.hidden=false;practiceNoteButton.setAttribute('aria-expanded','true')}
+        await closeSentenceEditor();renderPracticeQuestion(keepNoteOpen);renderPracticeList();
       }catch{
         row[column]=original;
         alert(`${label}を保存できませんでした。`);
@@ -2689,7 +2699,7 @@ const COL=Object.freeze({
     });
     sentenceEditorInput.addEventListener('input',()=>{if(sentenceEditorInput.value.trim())sentenceEditorMessage.hidden=true});
     sentenceEditorCancel.addEventListener('click',closeSentenceEditor);
-    sentenceEditorOverlay.addEventListener('click',event=>{if(event.target===sentenceEditorOverlay)closeSentenceEditor()});
+    sentenceEditorOverlay.addEventListener('click',event=>{event.stopPropagation();if(event.target===sentenceEditorOverlay)closeSentenceEditor()});
     practiceJapaneseEdit.addEventListener('click',()=>editPracticeSentence(COL.japanese,'日本語'));
     practiceEnglishEdit.addEventListener('click',()=>editPracticeSentence(COL.english,'英語'));
     const resultColumn={correct:COL.correctCount,unsure:COL.questionCount,wrong:COL.wrongCount};
