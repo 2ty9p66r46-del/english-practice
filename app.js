@@ -2477,9 +2477,8 @@ const COL=Object.freeze({
     practiceNoteClose.addEventListener('click',event=>{event.stopPropagation();closePracticeNote()});
     practiceNoteEdit.addEventListener('click',event=>{
       event.stopPropagation();
-      const row=currentPracticeRow();
       closePracticeNote();
-      if(row)openCardEditor('edit',row);
+      editPracticeSentence(COL.note,'補足',true);
     });
     practiceNotePopover.addEventListener('pointerdown',event=>event.stopPropagation());
     document.addEventListener('click',event=>{if(!practiceNotePopover.hidden&&!event.target.closest?.('#practiceNotePopover,#practiceNoteButton'))closePracticeNote()});
@@ -2650,10 +2649,10 @@ const COL=Object.freeze({
     const closeSentenceEditor=()=>{
       sentenceEditorOverlay.hidden=true;sentenceEditorState=null;sentenceEditorMessage.hidden=true;
     };
-    const editPracticeSentence=(column,label)=>{
+    const editPracticeSentence=(column,label,allowEmpty=false)=>{
       const row=currentPracticeRow();
       if(!row||!practiceStored)return;
-      sentenceEditorState={row,column,label,original:text(row[column])};
+      sentenceEditorState={row,column,label,original:text(row[column]),allowEmpty};
       sentenceEditorTitle.textContent=`${label}を編集`;
       sentenceEditorInput.value=sentenceEditorState.original;
       sentenceEditorMessage.hidden=true;sentenceEditorOverlay.hidden=false;
@@ -2662,7 +2661,7 @@ const COL=Object.freeze({
     sentenceEditorSave.addEventListener('click',async()=>{
       if(!sentenceEditorState)return;
       const value=sentenceEditorInput.value.trim();
-      if(!value){sentenceEditorMessage.hidden=false;sentenceEditorInput.focus();return}
+      if(!value&&!sentenceEditorState.allowEmpty){sentenceEditorMessage.hidden=false;sentenceEditorInput.focus();return}
       const {row,column,label,original}=sentenceEditorState;
       row[column]=value;practiceStored.modified=true;sentenceEditorSave.disabled=true;
       try{
