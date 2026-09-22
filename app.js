@@ -979,7 +979,8 @@ const COL=Object.freeze({
     };
     const fitPracticeCardText=()=>{
       fitTextToFixedArea(practiceWord,11);
-      fitTextToFixedArea(practiceMeaning,10);
+      practiceMeaning.style.fontSize='';
+      practiceMeaning.classList.remove('is-scrollable');
       [practiceJapanese,practiceEnglish].forEach(element=>{element.style.fontSize='';element.classList.remove('is-scrollable')});
     };
     let answerTransitioning=false;
