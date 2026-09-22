@@ -654,6 +654,7 @@ const COL=Object.freeze({
       setSentenceSpeaking(practiceJapaneseAudio,false);
       setSentenceSpeaking(practiceAudio,false);
     };
+    let activeManualSpeech=null;
     const autoPlayTab=document.getElementById('autoPlayTab');
     const autoPlayIcon=document.getElementById('autoPlayIcon');
     const autoPlayLabel=document.getElementById('autoPlayLabel');
@@ -1038,7 +1039,7 @@ const COL=Object.freeze({
     const renderPracticeQuestion=(keepNoteOpen=false,keepAnswerVisible=false)=>{
       const row=currentPracticeRow();
       if(!row)return;
-      if('speechSynthesis' in window&&!autoPlaying)speechSynthesis.cancel();
+      if('speechSynthesis' in window&&!autoPlaying){speechSynthesis.cancel();activeManualSpeech=null}
       clearSentenceSpeaking();
       practiceJapaneseAudio.disabled=!('speechSynthesis' in window);
       practiceProgress.textContent=`${practiceIndex+1} / ${practiceRows.length}`;
@@ -2206,6 +2207,7 @@ const COL=Object.freeze({
       };
       utterance.onend=utterance.onerror=finish;
       activeAutoSpeech={utterance,resolve:()=>{setSentenceSpeaking(button,false,false);resolve(false)}};
+      speechSynthesis.resume();
       speechSynthesis.speak(utterance);
     });
     const cancelActiveAutoSpeech=()=>{
@@ -2609,45 +2611,40 @@ const COL=Object.freeze({
       practiceSwipeStart=null;
       animatePracticeCard([{transform:practiceExerciseCard.style.transform||'translateX(0)'},{transform:'translateX(0)'}],{duration:180,easing:'ease-out'}).finally(resetPracticeDrag);
     });
-    const speakPracticeWord=(lang,button)=>{
-      if(autoPlaying)stopAutoPlayback();
+    const speakManual=(value,lang,rate,onStart,onFinish)=>{
       if(!('speechSynthesis' in window))return;
       speechSynthesis.cancel();
-      const utterance=new SpeechSynthesisUtterance(practiceWord.textContent);
+      speechSynthesis.resume();
+      const utterance=new SpeechSynthesisUtterance(value);
       utterance.lang=lang;
-      utterance.rate=Number(playbackSettings.englishRate);
-      utterance.onstart=()=>button.classList.add('speaking');
-      utterance.onend=utterance.onerror=()=>button.classList.remove('speaking');
+      utterance.rate=Number(rate);
+      utterance.onstart=onStart;
+      utterance.onend=utterance.onerror=()=>{
+        if(activeManualSpeech===utterance)activeManualSpeech=null;
+        onFinish();
+      };
+      activeManualSpeech=utterance;
       speechSynthesis.speak(utterance);
+    };
+    const speakPracticeWord=(lang,button)=>{
+      if(autoPlaying)stopAutoPlayback();
+      speakManual(practiceWord.textContent,lang,playbackSettings.englishRate,()=>button.classList.add('speaking'),()=>button.classList.remove('speaking'));
     };
     practicePronUsAudio.addEventListener('click',()=>speakPracticeWord('en-US',practicePronUsAudio));
     practicePronUkAudio.addEventListener('click',()=>speakPracticeWord('en-GB',practicePronUkAudio));
     practiceJapaneseAudio.addEventListener('click',()=>{
       if(autoPlaying)stopAutoPlayback();
-      if(!('speechSynthesis' in window))return;
-      speechSynthesis.cancel();
-      const utterance=new SpeechSynthesisUtterance(practiceJapanese.textContent);
-      utterance.lang='ja-JP';
-      utterance.rate=Number(playbackSettings.japaneseRate);
-      utterance.onstart=()=>setSentenceSpeaking(practiceJapaneseAudio,true);
-      utterance.onend=utterance.onerror=()=>setSentenceSpeaking(practiceJapaneseAudio,false);
-      speechSynthesis.speak(utterance);
+      speakManual(practiceJapanese.textContent,'ja-JP',playbackSettings.japaneseRate,()=>setSentenceSpeaking(practiceJapaneseAudio,true),()=>setSentenceSpeaking(practiceJapaneseAudio,false));
     });
     practiceAudio.addEventListener('click',()=>{
       if(autoPlaying)stopAutoPlayback();
-      if(!('speechSynthesis' in window))return;
-      speechSynthesis.cancel();
-      const utterance=new SpeechSynthesisUtterance(practiceEnglish.textContent);
-      utterance.lang='en-US';
-      utterance.rate=Number(playbackSettings.englishRate);
-      utterance.onstart=()=>setSentenceSpeaking(practiceAudio,true);
-      utterance.onend=utterance.onerror=()=>setSentenceSpeaking(practiceAudio,false);
-      speechSynthesis.speak(utterance);
+      speakManual(practiceEnglish.textContent,'en-US',playbackSettings.englishRate,()=>setSentenceSpeaking(practiceAudio,true),()=>setSentenceSpeaking(practiceAudio,false));
     });
     const stopSentencePlayback=()=>{
       if(autoPlaying)stopAutoPlayback();
       else{
         if('speechSynthesis' in window)speechSynthesis.cancel();
+        activeManualSpeech=null;
         clearSentenceSpeaking();
       }
     };
