@@ -912,6 +912,7 @@ const COL=Object.freeze({
     const closeHelp=()=>{
       helpOverlay.hidden=true;
       helpButton.classList.remove('active');
+      helpButton.focus({preventScroll:true});
     };
     const showHelpMenu=()=>{helpMenu.hidden=false;helpVersionPanel.hidden=true;helpUsagePanel.hidden=true};
     const showHelpPanel=panel=>{helpMenu.hidden=true;helpVersionPanel.hidden=panel!==helpVersionPanel;helpUsagePanel.hidden=panel!==helpUsagePanel};
@@ -1273,6 +1274,7 @@ const COL=Object.freeze({
       cardActionsWord.textContent=text(row[COL.word])||'—';
       cardActionsNumber.textContent=`No ${formatCardNumber(row)}`;
       cardActionsOverlay.hidden=false;
+      cardActionEdit.focus({preventScroll:true});
     };
     const syncCardWordFilterGroup=group=>{
       const choices=[...group.querySelectorAll('.choice')];
@@ -1711,7 +1713,7 @@ const COL=Object.freeze({
       else if(changes.length){const list=document.createElement('ul');changes.forEach(change=>{const item=document.createElement('li');item.textContent=change;list.append(item)});cardEditorConfirmChanges.append(list)}
       cardEditorConfirmChanges.hidden=!isCancel&&!changes.length;cardEditorConfirmCancel.hidden=false;cardEditorConfirmActions.classList.remove('single');cardEditorConfirm.hidden=false;cardEditorConfirmOk.focus({preventScroll:true});
     });
-    cardEditorConfirmCancel.addEventListener('click',()=>{cardEditorConfirm.hidden=true;const resolve=cardEditorConfirmResolve;cardEditorConfirmResolve=null;resolve?.(false)});
+    cardEditorConfirmCancel.addEventListener('click',()=>{cardEditorConfirm.hidden=true;const resolve=cardEditorConfirmResolve;cardEditorConfirmResolve=null;resolve?.(false);cardEditorCancel.focus({preventScroll:true})});
     cardEditorConfirmOk.addEventListener('click',()=>{
       cardEditorConfirm.hidden=true;const resolve=cardEditorConfirmResolve;cardEditorConfirmResolve=null;resolve?.(true);
     });
@@ -1831,6 +1833,7 @@ const COL=Object.freeze({
       requestAnimationFrame(()=>requestAnimationFrame(()=>{
         if(animationRun!==cardEditorAnimationRun)return;
         cardEditorOverlay.classList.add('open');
+        cardEditorCancel.focus({preventScroll:true});
       }));
     };
     const closeCardEditor=async(restore=true)=>{
@@ -1843,6 +1846,7 @@ const COL=Object.freeze({
       await wait(340);
       if(animationRun!==cardEditorAnimationRun)return;
       cardEditorOverlay.hidden=true;cardEditorRow=null;selectedVocabularyRow=null;selectedMeaningMode=null;pendingMeaningChoice=null;selectedMeaningNumber='';cardExampleDrafts=[];cardDeletedExampleRows=[];cardExampleCommitStatus=new Map();
+      if(!practiceScreen.hidden)(practiceViewMode==='card'?practiceCardMenu:practiceList.querySelector('[aria-current="true"] .practice-list-menu'))?.focus({preventScroll:true});
     };
     const requestCardEditorClose=async()=>{
       if(!cardEditorConfirm.hidden)return;
@@ -2492,6 +2496,7 @@ const COL=Object.freeze({
       practiceNotePopover.hidden=true;
       practiceNoteAnimation?.cancel();
       practiceNoteAnimation=null;
+      if(!practiceNoteButton.hidden)practiceNoteButton.focus({preventScroll:true});
     };
     practiceNoteButton.addEventListener('click',event=>{
       event.stopPropagation();
@@ -2504,8 +2509,8 @@ const COL=Object.freeze({
       practiceNoteButton.setAttribute('aria-expanded',String(opening));
       if(practiceNotePopover.animate){
         practiceNoteAnimation=practiceNotePopover.animate([{opacity:0},{opacity:1}],{duration:200,easing:'ease-out'});
-        practiceNoteAnimation.finished.catch(()=>{}).finally(()=>{practiceNoteAnimation=null});
-      }
+        practiceNoteAnimation.finished.catch(()=>{}).finally(()=>{practiceNoteAnimation=null;practiceNoteClose.focus({preventScroll:true})});
+      }else practiceNoteClose.focus({preventScroll:true});
     });
     practiceNoteClose.addEventListener('click',event=>{event.stopPropagation();closePracticeNote()});
     practiceNoteEdit.addEventListener('click',event=>{
@@ -2543,14 +2548,15 @@ const COL=Object.freeze({
       playbackSettings.repeat=repeatModes[(index+1)%repeatModes.length];
       savePlaybackSettings();syncPlaybackControls();
     });
-    practiceSettingsTab.addEventListener('click',()=>{syncPlaybackControls();closePracticeSettingMenus();practiceSettingsOverlay.hidden=false});
-    practiceSettingsClose.addEventListener('click',()=>{closePracticeSettingMenus();practiceSettingsOverlay.hidden=true});
+    const closePracticeSettings=()=>{closePracticeSettingMenus();practiceSettingsOverlay.hidden=true;practiceSettingsTab.focus({preventScroll:true})};
+    practiceSettingsTab.addEventListener('click',()=>{syncPlaybackControls();closePracticeSettingMenus();practiceSettingsOverlay.hidden=false;practiceSettingsClose.focus({preventScroll:true})});
+    practiceSettingsClose.addEventListener('click',closePracticeSettings);
     practiceSettingsOverlay.addEventListener('click',event=>{
       closePracticeSettingMenus();
-      if(event.target===practiceSettingsOverlay)practiceSettingsOverlay.hidden=true;
+      if(event.target===practiceSettingsOverlay)closePracticeSettings();
     });
-    const closeLearningReset=()=>{learningResetOverlay.hidden=true};
-    practiceLearningReset.addEventListener('click',()=>{closePracticeSettingMenus();learningResetOverlay.hidden=false});
+    const closeLearningReset=()=>{learningResetOverlay.hidden=true;practiceLearningReset.focus({preventScroll:true})};
+    practiceLearningReset.addEventListener('click',()=>{closePracticeSettingMenus();learningResetOverlay.hidden=false;learningResetCancel.focus({preventScroll:true})});
     learningResetCancel.addEventListener('click',closeLearningReset);
     learningResetOverlay.addEventListener('click',event=>{if(event.target===learningResetOverlay)closeLearningReset()});
     learningResetConfirm.addEventListener('click',async()=>{
@@ -2692,6 +2698,7 @@ const COL=Object.freeze({
     let sentenceEditorTransitioning=false;
     const closeSentenceEditor=async()=>{
       if(sentenceEditorOverlay.hidden||sentenceEditorTransitioning)return;
+      const returnTarget=sentenceEditorState?.column===COL.note?practiceNoteEdit:sentenceEditorState?.column===COL.english?practiceEnglishEdit:practiceJapaneseEdit;
       sentenceEditorTransitioning=true;
       const animations=[];
       if(sentenceEditorSheet.animate){
@@ -2704,6 +2711,7 @@ const COL=Object.freeze({
       sentenceEditorOverlay.hidden=true;
       animations.forEach(animation=>animation.cancel());
       sentenceEditorState=null;sentenceEditorMessage.hidden=true;sentenceEditorTransitioning=false;
+      returnTarget?.focus({preventScroll:true});
     };
     const editPracticeSentence=async(column,label,allowEmpty=false)=>{
       const row=currentPracticeRow();
@@ -2747,11 +2755,11 @@ const COL=Object.freeze({
     practiceJapaneseEdit.addEventListener('click',()=>editPracticeSentence(COL.japanese,'日本語'));
     practiceEnglishEdit.addEventListener('click',()=>editPracticeSentence(COL.english,'英語'));
     const resultColumn={correct:COL.correctCount,unsure:COL.questionCount,wrong:COL.wrongCount};
-    const closeResultEditor=()=>{resultEditorOverlay.hidden=true;resultEditorMessage.hidden=true};
+    const closeResultEditor=()=>{resultEditorOverlay.hidden=true;resultEditorMessage.hidden=true;practiceResultEdit.focus({preventScroll:true})};
     practiceResultEdit.addEventListener('click',()=>{
       const row=currentPracticeRow();if(!row)return;
       Object.entries(resultEditorInputs).forEach(([key,input])=>{input.value=String(Number(row[resultColumn[key]])||0)});
-      resultEditorMessage.hidden=true;resultEditorOverlay.hidden=false;
+      resultEditorMessage.hidden=true;resultEditorOverlay.hidden=false;resultEditorCancel.focus({preventScroll:true});
     });
     resultEditorOverlay.querySelectorAll('.result-editor-row').forEach(editorRow=>{
       const input=resultEditorInputs[editorRow.dataset.resultEdit];
@@ -2809,7 +2817,20 @@ const COL=Object.freeze({
     },{passive:true});
     document.addEventListener('keydown',event=>{
       if(practiceScreen.hidden)return;
-      if(event.key==='Escape'&&practiceFilterOpen){cancelPracticeFilter();return}
+      const modalOpen=practiceFilterOpen||!cardEditorOverlay.hidden||!sentenceEditorOverlay.hidden||!resultEditorOverlay.hidden||!practiceNotePopover.hidden||!practiceSettingsOverlay.hidden||!learningResetOverlay.hidden||!cardActionsOverlay.hidden;
+      if(modalOpen){
+        if(event.key!=='Escape')return;
+        event.preventDefault();event.stopPropagation();
+        if(!cardEditorConfirm.hidden){cardEditorConfirmCancel.click();return}
+        if(!sentenceEditorOverlay.hidden){closeSentenceEditor();return}
+        if(!resultEditorOverlay.hidden){closeResultEditor();return}
+        if(!practiceNotePopover.hidden){closePracticeNote();return}
+        if(!learningResetOverlay.hidden){closeLearningReset();return}
+        if(!practiceSettingsOverlay.hidden){closePracticeSettings();return}
+        if(!cardActionsOverlay.hidden){closeCardActions();return}
+        if(!cardEditorOverlay.hidden){requestCardEditorClose();return}
+        if(practiceFilterOpen){cancelPracticeFilter();return}
+      }
       if(practiceViewMode==='list')return;
       if(event.key==='ArrowLeft')movePractice(-1);
       if(event.key==='ArrowRight')movePractice(1);
