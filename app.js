@@ -2507,7 +2507,7 @@ const COL=Object.freeze({
       practiceNotePopover.hidden=false;
       syncPracticeNotePosition();
       practiceNoteButton.setAttribute('aria-expanded',String(opening));
-      requestAnimationFrame(()=>practiceNoteClose.focus({preventScroll:true}));
+      practiceNoteClose.focus({preventScroll:true});
       if(practiceNotePopover.animate){
         practiceNoteAnimation=practiceNotePopover.animate([{opacity:0},{opacity:1}],{duration:200,easing:'ease-out'});
         practiceNoteAnimation.finished.catch(()=>{}).finally(()=>{practiceNoteAnimation=null});
