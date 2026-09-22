@@ -2507,10 +2507,11 @@ const COL=Object.freeze({
       practiceNotePopover.hidden=false;
       syncPracticeNotePosition();
       practiceNoteButton.setAttribute('aria-expanded',String(opening));
+      requestAnimationFrame(()=>practiceNoteClose.focus({preventScroll:true}));
       if(practiceNotePopover.animate){
         practiceNoteAnimation=practiceNotePopover.animate([{opacity:0},{opacity:1}],{duration:200,easing:'ease-out'});
-        practiceNoteAnimation.finished.catch(()=>{}).finally(()=>{practiceNoteAnimation=null;practiceNoteClose.focus({preventScroll:true})});
-      }else practiceNoteClose.focus({preventScroll:true});
+        practiceNoteAnimation.finished.catch(()=>{}).finally(()=>{practiceNoteAnimation=null});
+      }
     });
     practiceNoteClose.addEventListener('click',event=>{event.stopPropagation();closePracticeNote()});
     practiceNoteEdit.addEventListener('click',event=>{
