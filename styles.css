@@ -146,7 +146,7 @@
     .tab{display:flex;flex:0 0 78px;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:0;background:#fff;color:#92959c;font-size:.7rem;font-weight:700;white-space:nowrap}
     .tab.active{color:var(--blue)}
     .tab svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
-    @media (min-width:700px){body{background:#e7e8ee}.shell{box-shadow:0 0 50px #26354a20}}
+    @media (min-width:700px){body{background:#e7e8ee}.shell{width:min(100%,760px);box-shadow:0 0 50px #26354a20}}
 
 /* Practice screen prototype — uses the Home screen design tokens and surfaces. */
 .practice-screen{position:absolute;z-index:80;inset:0 0 calc(72px + env(safe-area-inset-bottom));display:flex;min-height:0;flex-direction:column;background:#f5f5fa}
@@ -1011,6 +1011,12 @@ body[data-page="home"] .bottom-space{display:none}
 .nav.practice-mode .practice-play-fixed{position:relative;z-index:2;display:flex;flex:0 0 78px;min-width:78px;width:78px;padding:0;background:#fff;color:var(--blue);box-shadow:8px 0 18px #26354a0d}
 .nav.practice-mode .practice-play-fixed.is-stopping{color:#d52b3f}
 .nav.practice-mode .practice-play-fixed svg{width:25px!important;height:25px!important}
+
+/* Tablet navigation uses the available width instead of clipping a phone-sized rail. */
+@media (min-width:700px){
+  .nav.practice-mode .practice-nav-controls{overflow-x:hidden}
+  .nav.practice-mode .practice-nav-controls .tab{flex:1 1 0;min-width:0;width:auto}
+}
 
 
 /* Practice controls inherit the Home screen's button palette and surface treatment. */
