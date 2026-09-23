@@ -1557,10 +1557,9 @@ const COL=Object.freeze({
       return true;
     };
     const syncCardExampleCommitState=()=>{
-      const hasContent=cardExampleDrafts.some(draft=>!draft.isPendingAdd)||cardDeletedExampleRows.length;
       const registered=cardExampleCommitStatus.get(cardExampleCommitKey())===true;
       cardExampleCommit.textContent=registered?'登録しました':'この内容を登録';
-      cardExampleCommit.disabled=!hasContent||registered;
+      cardExampleCommit.disabled=registered;
     };
     cardExampleCarousel.addEventListener('scroll',syncCardExampleCommitState,{passive:true});
     const renderCardExampleCarousel=(focusIndex=null,animateFocus=true)=>{
@@ -1644,7 +1643,6 @@ const COL=Object.freeze({
         english:page.querySelector('[data-example-field="english"]')?.value||'',
         note:page.querySelector('[data-example-field="note"]')?.value||''
       }));
-      if(!entries.length&&!cardDeletedExampleRows.length)return;
       if(entries.some(entry=>!text(entry.japanese)||!text(entry.english))){syncCardEditorMessages();alert('未入力の日本語または英語があります。');return}
       const pairKey=vocabularyKey(selectedVocabularyRow);
       const meaning=text(cardMeaningInput.value);
