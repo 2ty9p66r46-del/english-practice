@@ -565,6 +565,27 @@ const COL=Object.freeze({
     const practiceNotePopover=document.getElementById('practiceNotePopover');
     const practiceNoteEdit=document.getElementById('practiceNoteEdit');
     const practiceNoteCopy=document.getElementById('practiceNoteCopy');
+
+    const fitPracticeWord=()=>{
+      if(!practiceWord)return;
+      const maxSize=1.3;
+      const minSize=.58;
+      practiceWord.style.fontSize=`${maxSize}rem`;
+      if(!practiceWord.clientWidth||practiceWord.scrollWidth<=practiceWord.clientWidth)return;
+      let low=minSize;
+      let high=maxSize;
+      for(let index=0;index<9;index+=1){
+        const size=(low+high)/2;
+        practiceWord.style.fontSize=`${size}rem`;
+        if(practiceWord.scrollWidth<=practiceWord.clientWidth)low=size;
+        else high=size;
+      }
+      practiceWord.style.fontSize=`${low}rem`;
+    };
+
+    const schedulePracticeWordFit=()=>requestAnimationFrame(fitPracticeWord);
+    if('ResizeObserver' in window)new ResizeObserver(schedulePracticeWordFit).observe(practiceWord.parentElement);
+    else window.addEventListener('resize',schedulePracticeWordFit);
     const practiceCardAdd=document.getElementById('practiceCardAdd');
     const practiceCardMenu=document.getElementById('practiceCardMenu');
     const cardActionsOverlay=document.getElementById('cardActionsOverlay');
@@ -1175,6 +1196,7 @@ const COL=Object.freeze({
       practiceJapanese.textContent=text(row[COL.japanese]);
       practiceEnglish.textContent=text(row[COL.english]);
       practiceWord.textContent=text(row[COL.word])||'—';
+      schedulePracticeWordFit();
       practiceWordNumber.textContent=`No ${formatPracticeNumber(row?.[COL.wordNo],5)}`;
       const part=text(row[COL.pos])||'—';
       const meaningNumber=formatSingleDigitNumber(row?.[COL.meaningNo]);
