@@ -106,6 +106,8 @@
               <label><input id="wordStartsWith" data-word-text-filter="starts" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="この文字列で始まる"><span>で始まる</span></label>
               <label><input id="wordEndsWith" data-word-text-filter="ends" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="この文字列で終わる"><span>で終わる</span></label>
               <label><input id="wordIncludes" data-word-text-filter="includes" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="この文字列を含む"><span>を含む</span></label>
+              <label><input id="wordRegex" data-word-text-filter="regex" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="例: ^(a|b).*ing$" aria-label="正規表現で絞り込む" aria-describedby="wordRegexWarning"><span>正規表現</span></label>
+              <p class="word-regex-warning" id="wordRegexWarning" data-regex-warning hidden>※正規表現が正しくありません</p>
             </div>
           </div>
           <div class="filter-section" data-filter-section="word">
@@ -335,9 +337,9 @@
           <h3 class="help-version-title">バージョン情報</h3>
           <dl class="help-version-list">
             <div class="help-version-row"><dt>アプリ</dt><dd>FloVo v1.0.0</dd></div>
-            <div class="help-version-row"><dt>ビルド</dt><dd>492</dd></div>
+            <div class="help-version-row"><dt>ビルド</dt><dd>493</dd></div>
             <div class="help-version-row"><dt>データ形式</dt><dd>v1.0</dd></div>
-            <div class="help-version-row"><dt>更新日</dt><dd>2026.09.23</dd></div>
+            <div class="help-version-row"><dt>更新日</dt><dd>2026.09.24</dd></div>
           </dl>
           <button class="help-back-button" type="button" data-help-back>メニューへ戻る</button>
         </div>
