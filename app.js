@@ -747,6 +747,7 @@ const COL=Object.freeze({
       return {filters,valid};
     };
     const syncAnswerCountRows=container=>container.querySelectorAll('[data-answer-count]').forEach(row=>{const selected=row.querySelector('[data-answer-mode].selected');setAnswerCountMode(row,selected?.dataset.answerMode||'any')});
+    const resetAnswerCountFilters=container=>{container.querySelectorAll('[data-answer-count]').forEach(row=>{row.querySelectorAll('input').forEach(input=>{input.value=''});setAnswerCountMode(row,'any')});readAnswerCountFilters(container)};
     const bindAnswerCountFilters=(container,onChange)=>{
       container.querySelectorAll('[data-answer-count]').forEach(row=>{
         row.querySelectorAll('input').forEach(input=>input.addEventListener('input',()=>{
@@ -965,7 +966,7 @@ const COL=Object.freeze({
       const button=section.querySelector('[data-section-action="select"]');
       button.addEventListener('click',()=>setSectionFilters(section,!button.classList.contains('selected')));
     });
-    selectAllFilters.addEventListener('click',()=>setAllFilters(!selectAllFilters.classList.contains('selected')));
+    selectAllFilters.addEventListener('click',()=>{resetAnswerCountFilters(answerCountFilters);setAllFilters(!selectAllFilters.classList.contains('selected'))});
     const practiceTextFilterInputs=[wordStartsWith,wordEndsWith,wordIncludes,wordRegex];
     const syncWordTextFilterReset=()=>{wordTextFilterReset.disabled=!practiceTextFilterInputs.some(input=>Boolean(text(input.value)));syncWordRegexValidity(wordRegex,wordRegexWarning)};
     practiceTextFilterInputs.forEach(input=>input.addEventListener('input',()=>{syncWordTextFilterReset();syncGlobalControls();refreshQuestionCount()}));
@@ -1414,6 +1415,7 @@ const COL=Object.freeze({
     }));
     cardSelectAllFilters.addEventListener('click',()=>{
       const select=!cardSelectAllFilters.classList.contains('selected');
+      resetAnswerCountFilters(cardAnswerCountFilters);
       cardWordFilterPanel.querySelectorAll('.choice').forEach(choice=>choice.classList.toggle('selected',select));
       cardWordFilterPanel.querySelectorAll('.group').forEach(syncCardWordFilterGroup);
       syncCardFilterControls();saveCardWordFilters();renderWordResults();
