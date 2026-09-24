@@ -497,6 +497,8 @@ const COL=Object.freeze({
     const wordStartsWith=document.getElementById('wordStartsWith');
     const wordEndsWith=document.getElementById('wordEndsWith');
     const wordIncludes=document.getElementById('wordIncludes');
+    const wordRegex=document.getElementById('wordRegex');
+    const wordRegexWarning=document.getElementById('wordRegexWarning');
     const wordTextFilterReset=document.getElementById('wordTextFilterReset');
     const allFilterChoices=[...levelChoices,...partChoices,...understandingChoices];
     const selectAllFilters=document.getElementById('selectAllFilters');
@@ -632,6 +634,9 @@ const COL=Object.freeze({
     const cardFilterStartsWith=cardWordFilterPanel.querySelector('[data-word-text-filter="starts"]');
     const cardFilterEndsWith=cardWordFilterPanel.querySelector('[data-word-text-filter="ends"]');
     const cardFilterIncludes=cardWordFilterPanel.querySelector('[data-word-text-filter="includes"]');
+    const cardFilterRegex=cardWordFilterPanel.querySelector('[data-word-text-filter="regex"]');
+    const cardRegexWarning=cardWordFilterPanel.querySelector('[data-regex-warning]');
+    cardRegexWarning.id='cardWordRegexWarning';cardFilterRegex.setAttribute('aria-describedby',cardRegexWarning.id);
     const cardTextFilterReset=cardWordFilterPanel.querySelector('.word-text-reset');
     const cardFilterLevelChoices=[...cardWordFilterPanel.querySelectorAll('.level-group .choice')];
     const cardFilterPartChoices=[...cardWordFilterPanel.querySelectorAll('.part-group .choice')];
@@ -710,8 +715,10 @@ const COL=Object.freeze({
     const filterChoiceKey=choice=>`${choice.closest('.filter-section')?.dataset.filterSection||''}|${choice.closest('.group')?.querySelector('.group-title span')?.textContent.trim()||''}|${choice.dataset.value||choice.textContent.trim()}`;
     const saveFilterSelection=(key,choices)=>{try{localStorage.setItem(key,JSON.stringify(choices.filter(choice=>choice.classList.contains('selected')).map(filterChoiceKey)))}catch{}};
     const restoreFilterSelection=(key,choices)=>{try{const saved=JSON.parse(localStorage.getItem(key)||'null');if(!Array.isArray(saved))return false;const selected=new Set(saved);choices.forEach(choice=>choice.classList.toggle('selected',selected.has(filterChoiceKey(choice))));return true}catch{return false}};
-    const savePracticeTextFilters=()=>{try{localStorage.setItem(PRACTICE_TEXT_FILTER_STORAGE_KEY,JSON.stringify({startsWith:wordStartsWith.value,endsWith:wordEndsWith.value,includes:wordIncludes.value}))}catch{}};
-    const restorePracticeTextFilters=()=>{try{const saved=JSON.parse(localStorage.getItem(PRACTICE_TEXT_FILTER_STORAGE_KEY)||'null');if(!saved||typeof saved!=='object')return;wordStartsWith.value=saved.startsWith||'';wordEndsWith.value=saved.endsWith||'';wordIncludes.value=saved.includes||''}catch{}};
+    const parseWordRegex=value=>{const pattern=text(value);if(!pattern)return null;try{return new RegExp(pattern,'i')}catch{return false}};
+    const syncWordRegexValidity=(input,warning)=>{const valid=parseWordRegex(input.value)!==false;input.setAttribute('aria-invalid',String(!valid));warning.hidden=valid;return valid};
+    const savePracticeTextFilters=()=>{try{localStorage.setItem(PRACTICE_TEXT_FILTER_STORAGE_KEY,JSON.stringify({startsWith:wordStartsWith.value,endsWith:wordEndsWith.value,includes:wordIncludes.value,regex:wordRegex.value}))}catch{}};
+    const restorePracticeTextFilters=()=>{try{const saved=JSON.parse(localStorage.getItem(PRACTICE_TEXT_FILTER_STORAGE_KEY)||'null');if(!saved||typeof saved!=='object')return;wordStartsWith.value=saved.startsWith||'';wordEndsWith.value=saved.endsWith||'';wordIncludes.value=saved.includes||'';wordRegex.value=saved.regex||''}catch{}};
     const fiveDigitCountMarkup=value=>{
       const number=Math.min(99999,Math.max(0,Math.trunc(Number(value)||0)));const digits=String(number);const padding='0'.repeat(5-digits.length);
       return `<span class="count-padding">${padding}</span><span class="count-value">${digits}</span>`;
@@ -736,12 +743,15 @@ const COL=Object.freeze({
       const startsWith=text(wordStartsWith.value).toLowerCase();
       const endsWith=text(wordEndsWith.value).toLowerCase();
       const includes=text(wordIncludes.value).toLowerCase();
+      const regex=parseWordRegex(wordRegex.value);
+      if(regex===false)return [];
       return rows.filter(row=>{
         if(!text(row[COL.japanese])||!text(row[COL.english]))return false;
         const word=text(row[COL.word]).toLowerCase();
         if(startsWith&&!word.startsWith(startsWith))return false;
         if(endsWith&&!word.endsWith(endsWith))return false;
         if(includes&&!word.includes(includes))return false;
+        if(regex&&!regex.test(text(row[COL.word])))return false;
         if(levels.size&&![text(row[COL.sLevel]),text(row[COL.wLevel])].some(value=>levels.has(value)))return false;
         if(parts.size&&!parts.has(text(row[COL.pos])))return false;
         const understanding=text(row[COL.understanding])||'未登録';
@@ -854,8 +864,9 @@ const COL=Object.freeze({
       const hasEmptyConditions=emptyConditions.length>0;
       overallFilterWarning.textContent=hasEmptyConditions?`条件${emptyConditions.join(',')}の項目がひとつも選択されていません`:'';
       overallFilterWarning.hidden=!hasEmptyConditions;
-      practiceFilterClose.disabled=hasEmptyConditions;
-      practiceFilterClose.setAttribute('aria-disabled',String(hasEmptyConditions));
+      const hasInvalidRegex=!syncWordRegexValidity(wordRegex,wordRegexWarning);
+      practiceFilterClose.disabled=hasEmptyConditions||hasInvalidRegex;
+      practiceFilterClose.setAttribute('aria-disabled',String(hasEmptyConditions||hasInvalidRegex));
       practiceButton.disabled=false;
       practiceButton.setAttribute('aria-disabled','false');
     };
@@ -900,11 +911,12 @@ const COL=Object.freeze({
       button.addEventListener('click',()=>setSectionFilters(section,!button.classList.contains('selected')));
     });
     selectAllFilters.addEventListener('click',()=>setAllFilters(!selectAllFilters.classList.contains('selected')));
-    const syncWordTextFilterReset=()=>{wordTextFilterReset.disabled=![wordStartsWith,wordEndsWith,wordIncludes].some(input=>Boolean(text(input.value)))};
-    [wordStartsWith,wordEndsWith,wordIncludes].forEach(input=>input.addEventListener('input',()=>{syncWordTextFilterReset();refreshQuestionCount()}));
+    const practiceTextFilterInputs=[wordStartsWith,wordEndsWith,wordIncludes,wordRegex];
+    const syncWordTextFilterReset=()=>{wordTextFilterReset.disabled=!practiceTextFilterInputs.some(input=>Boolean(text(input.value)));syncWordRegexValidity(wordRegex,wordRegexWarning)};
+    practiceTextFilterInputs.forEach(input=>input.addEventListener('input',()=>{syncWordTextFilterReset();syncGlobalControls();refreshQuestionCount()}));
     wordTextFilterReset.addEventListener('click',()=>{
-      [wordStartsWith.value,wordEndsWith.value,wordIncludes.value]=['','',''];
-      syncWordTextFilterReset();refreshQuestionCount();
+      practiceTextFilterInputs.forEach(input=>{input.value=''});
+      syncWordTextFilterReset();syncGlobalControls();refreshQuestionCount();
     });
     restorePracticeTextFilters();
     syncWordTextFilterReset();
@@ -1295,10 +1307,10 @@ const COL=Object.freeze({
       cardSelectAllFilters.classList.toggle('selected',choices.length>0&&choices.every(choice=>choice.classList.contains('selected')));
     };
     const cardFilterChoices=[...cardFilterLevelChoices,...cardFilterPartChoices,...cardFilterUnderstandingChoices,...cardFilterMeaningCountChoices,...cardFilterExampleCountChoices];
-    const cardTextFilterInputs=[cardFilterStartsWith,cardFilterEndsWith,cardFilterIncludes];
-    const syncCardTextFilterReset=()=>{cardTextFilterReset.disabled=!cardTextFilterInputs.some(input=>Boolean(text(input.value)))};
-    const saveCardTextFilters=()=>{try{localStorage.setItem(CARD_TEXT_FILTER_STORAGE_KEY,JSON.stringify({startsWith:cardFilterStartsWith.value,endsWith:cardFilterEndsWith.value,includes:cardFilterIncludes.value}))}catch{}};
-    const restoreCardTextFilters=()=>{try{const saved=JSON.parse(localStorage.getItem(CARD_TEXT_FILTER_STORAGE_KEY)||'null');if(!saved||typeof saved!=='object')return;cardFilterStartsWith.value=saved.startsWith||'';cardFilterEndsWith.value=saved.endsWith||'';cardFilterIncludes.value=saved.includes||''}catch{}};
+    const cardTextFilterInputs=[cardFilterStartsWith,cardFilterEndsWith,cardFilterIncludes,cardFilterRegex];
+    const syncCardTextFilterReset=()=>{cardTextFilterReset.disabled=!cardTextFilterInputs.some(input=>Boolean(text(input.value)));syncWordRegexValidity(cardFilterRegex,cardRegexWarning)};
+    const saveCardTextFilters=()=>{try{localStorage.setItem(CARD_TEXT_FILTER_STORAGE_KEY,JSON.stringify({startsWith:cardFilterStartsWith.value,endsWith:cardFilterEndsWith.value,includes:cardFilterIncludes.value,regex:cardFilterRegex.value}))}catch{}};
+    const restoreCardTextFilters=()=>{try{const saved=JSON.parse(localStorage.getItem(CARD_TEXT_FILTER_STORAGE_KEY)||'null');if(!saved||typeof saved!=='object')return;cardFilterStartsWith.value=saved.startsWith||'';cardFilterEndsWith.value=saved.endsWith||'';cardFilterIncludes.value=saved.includes||'';cardFilterRegex.value=saved.regex||''}catch{}};
     const initializeCardWordFilters=()=>{
       if(!restoreFilterSelection(CARD_FILTER_STORAGE_KEY,cardFilterChoices))cardFilterChoices.forEach(choice=>choice.classList.add('selected'));
       restoreCardTextFilters();syncCardTextFilterReset();
@@ -1375,6 +1387,7 @@ const COL=Object.freeze({
       const startsWith=text(cardFilterStartsWith.value).toLowerCase();
       const endsWith=text(cardFilterEndsWith.value).toLowerCase();
       const includes=text(cardFilterIncludes.value).toLowerCase();
+      const regex=parseWordRegex(cardFilterRegex.value);
       const restrictLevels=selectedLevels.size!==cardFilterLevelChoices.length;
       const restrictParts=selectedParts.size!==cardFilterPartChoices.length;
       const restrictUnderstanding=selectedUnderstanding.size!==cardFilterUnderstandingChoices.length;
@@ -1393,6 +1406,7 @@ const COL=Object.freeze({
         if(startsWith&&!word.startsWith(startsWith))return;
         if(endsWith&&!word.endsWith(endsWith))return;
         if(includes&&!word.includes(includes))return;
+        if(regex===false||regex&&!regex.test(text(row[COL.word])))return;
         if(restrictLevels&&![text(row[COL.sLevel]),text(row[COL.wLevel])].some(value=>selectedLevels.has(value)))return;
         if(restrictParts&&!selectedParts.has(text(row[COL.pos])))return;
         const understandingValues=understandingByKey.get(vocabularyKey(row))||new Set(['未登録']);
@@ -2359,7 +2373,7 @@ const COL=Object.freeze({
     const openPracticeFilter=()=>{
       if(practiceFilterOpen)return;
       practiceFilterOpen=true;
-      practiceFilterSnapshot={choices:allFilterChoices.map(choice=>choice.classList.contains('selected')),text:[wordStartsWith.value,wordEndsWith.value,wordIncludes.value]};
+      practiceFilterSnapshot={choices:allFilterChoices.map(choice=>choice.classList.contains('selected')),text:practiceTextFilterInputs.map(input=>input.value)};
       if(autoPlaying)stopAutoPlayback();
       practiceFilterFixedSummary.append(filterCardSectionHead);
       practiceFilterSheetBody.append(filterCard);
@@ -2390,7 +2404,7 @@ const COL=Object.freeze({
     const cancelPracticeFilter=()=>{
       if(practiceFilterSnapshot){
         allFilterChoices.forEach((choice,index)=>choice.classList.toggle('selected',practiceFilterSnapshot.choices[index]));
-        [wordStartsWith.value,wordEndsWith.value,wordIncludes.value]=practiceFilterSnapshot.text;
+        practiceTextFilterInputs.forEach((input,index)=>{input.value=practiceFilterSnapshot.text[index]||''});
         syncWordTextFilterReset();
         subgroupAllButtons.forEach(button=>syncSubgroupAll(button.closest('.group')));
         filterSections.forEach(section=>syncSectionControls(section,false));
