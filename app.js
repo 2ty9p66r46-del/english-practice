@@ -828,16 +828,20 @@ const COL=Object.freeze({
       const sourceRows=stored?.rows||[];
       const matchingRows=getMatchingRows(sourceRows);
       const allExampleRows=sourceRows.filter(row=>text(row[COL.japanese])&&text(row[COL.english]));
+      const displayLimitValue=practiceDisplayLimit.value;
+      const displayedExampleCount=displayLimitValue!==''&&Number.isInteger(Number(displayLimitValue))&&Number(displayLimitValue)>=1
+        ?Math.min(matchingRows.length,Number(displayLimitValue))
+        :matchingRows.length;
       const matchingPairCount=new Set(matchingRows.map(row=>text(row[COL.wordNo])||text(row[COL.word]).toLowerCase())).size;
       const totalPairCount=new Set(allExampleRows.map(row=>text(row[COL.wordNo])||text(row[COL.word]).toLowerCase())).size;
       const wordKey=row=>text(row[COL.wordNo])||text(row[COL.word]).toLowerCase();
       const totalWordKeys=new Set(sourceRows.map(wordKey).filter(Boolean));
-      practiceButton.dataset.questionCount=String(matchingRows.length);
+      practiceButton.dataset.questionCount=String(displayedExampleCount);
       practiceButton.dataset.pairCount=String(matchingPairCount);
       renderCountFraction(wordCount,matchingPairCount,totalPairCount);
-      renderCountFraction(exampleCount,matchingRows.length,allExampleRows.length);
+      renderCountFraction(exampleCount,displayedExampleCount,allExampleRows.length);
       renderCountFraction(filterWordCount,matchingPairCount,totalPairCount);
-      renderCountFraction(filterExampleCount,matchingRows.length,allExampleRows.length);
+      renderCountFraction(filterExampleCount,displayedExampleCount,allExampleRows.length);
       const understandingCounts={mastered:0,steady:0,learning:0,new:0};
       allExampleRows.forEach(row=>{
         const value=text(row[COL.understanding]);
@@ -981,8 +985,8 @@ const COL=Object.freeze({
     const syncWordTextFilterReset=()=>{wordTextFilterReset.disabled=!practiceTextFilterInputs.some(input=>Boolean(text(input.value)));syncWordRegexValidity(wordRegex,wordRegexWarning)};
     practiceTextFilterInputs.forEach(input=>input.addEventListener('input',()=>{syncWordTextFilterReset();syncGlobalControls();refreshQuestionCount()}));
     bindAnswerCountFilters(answerCountFilters,()=>{syncGlobalControls();refreshQuestionCount()});
-    practiceDisplayLimit.addEventListener('input',()=>{syncDisplayLimitValidity();syncGlobalControls()});
-    practiceDisplayLimitAll.addEventListener('click',()=>{practiceDisplayLimit.value='';syncDisplayLimitValidity();syncGlobalControls()});
+    practiceDisplayLimit.addEventListener('input',()=>{syncDisplayLimitValidity();syncGlobalControls();refreshQuestionCount()});
+    practiceDisplayLimitAll.addEventListener('click',()=>{practiceDisplayLimit.value='';syncDisplayLimitValidity();syncGlobalControls();refreshQuestionCount()});
     wordTextFilterReset.addEventListener('click',()=>{
       practiceTextFilterInputs.forEach(input=>{input.value=''});
       syncWordTextFilterReset();syncGlobalControls();refreshQuestionCount();
