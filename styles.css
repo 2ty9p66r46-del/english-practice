@@ -249,6 +249,8 @@
 .practice-result-button.result-correct{--result-symbol:#0876ee}
 .practice-result-button.result-unsure{--result-symbol:#d8ad2c}
 .practice-result-button.result-wrong{--result-symbol:#d43f52}
+.practice-result-button.is-result-locked{opacity:.32;filter:grayscale(.65);cursor:default}
+.practice-result-button.is-result-locked.is-result-selected{opacity:1;filter:none;box-shadow:inset 0 1px 0 #fff,0 0 0 3px color-mix(in srgb,var(--result-symbol) 28%,transparent),0 3px 8px #26354a20;cursor:pointer}
 .practice-result-choice small{order:-1;max-width:34px;color:#59667b;font-size:.68rem;font-weight:850;line-height:1;font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis}
 .practice-result-button:active{transform:scale(.97)}
 .practice-result-edit{display:grid;width:28px;height:28px;place-items:center;padding:0;border:1.5px solid #a8cfff;border-radius:50%;background:#f1f7ff;color:var(--blue);box-shadow:inset 0 1px 0 #fff,0 2px 5px #087cff12}
@@ -633,6 +635,7 @@ html[data-theme="dark"] .practice-result-button{border-color:#465264;background:
 html[data-theme="dark"] .practice-result-button.result-correct{color:#55a9ff}
 html[data-theme="dark"] .practice-result-button.result-unsure{color:#f0c84e}
 html[data-theme="dark"] .practice-result-button.result-wrong{color:#ff7282}
+html[data-theme="dark"] .practice-result-button.is-result-locked.is-result-selected{box-shadow:inset 0 1px 0 #ffffff18,0 0 0 3px color-mix(in srgb,currentColor 32%,transparent),0 3px 8px #0006}
 html[data-theme="dark"] .word-text-filter-fields input,
 html[data-theme="dark"] .answer-count-filter-row input,
 html[data-theme="dark"] .practice-display-limit-control input,

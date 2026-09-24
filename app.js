@@ -1036,6 +1036,8 @@ const COL=Object.freeze({
     let practiceRows=[];
     let practiceIndex=0;
     let practiceStored=null;
+    let practiceResultLocks=new WeakMap();
+    let practiceResultSaving=false;
     let answerVisible=false;
     const applyPracticeMethodChange=(preserveRow=null)=>{
       if(practiceScreen.hidden||!practiceStored)return;
@@ -1093,6 +1095,14 @@ const COL=Object.freeze({
       practiceCorrectCount.textContent=String(Number(row?.[COL.correctCount])||0);
       practiceUnsureCount.textContent=String(Number(row?.[COL.questionCount])||0);
       practiceWrongCount.textContent=String(Number(row?.[COL.wrongCount])||0);
+    };
+    const syncPracticeResultLock=row=>{
+      const lock=row?practiceResultLocks.get(row):null;
+      practiceResultButtons.forEach(button=>{
+        const selected=Boolean(lock&&lock.result===button.dataset.result);
+        button.classList.toggle('is-result-locked',Boolean(lock));button.classList.toggle('is-result-selected',selected);
+        button.setAttribute('aria-disabled',String(Boolean(lock)));
+      });
     };
     const formatPracticeNumber=(value,digits)=>{
       const raw=text(value);
@@ -1171,6 +1181,7 @@ const COL=Object.freeze({
       if(keepNoteOpen)requestAnimationFrame(syncPracticeNotePosition);
       syncPracticeRating(row);
       syncPracticeResultCounts(row);
+      syncPracticeResultLock(row);
       setAnswerVisible(keepAnswerVisible);
       requestAnimationFrame(fitPracticeCardText);
     };
@@ -2554,6 +2565,7 @@ const COL=Object.freeze({
     const openPractice=async()=>{
       if(screenTransitionBusy)return;
       const stored=await getImportedData();
+      practiceResultLocks=new WeakMap();practiceResultSaving=false;
       let rows=getMatchingRows(stored?.rows||[]);
       if(practiceButton.dataset.order==='random')rows=shuffleRows(rows);
       const limit=practiceButton.dataset.questionLimit==='all'?rows.length:Number(practiceButton.dataset.questionLimit);
@@ -2887,7 +2899,7 @@ const COL=Object.freeze({
       const originals=Object.fromEntries(Object.entries(resultColumn).map(([key,column])=>[key,row[column]]));
       Object.entries(resultColumn).forEach(([key,column])=>{row[column]=values[key]});
       practiceStored.modified=true;resultEditorSave.disabled=true;
-      try{await saveImportedData(practiceStored);closeResultEditor();syncPracticeResultCounts(row)}
+      try{await saveImportedData(practiceStored);practiceResultLocks.delete(row);closeResultEditor();syncPracticeResultCounts(row);syncPracticeResultLock(row)}
       catch{Object.entries(resultColumn).forEach(([key,column])=>{row[column]=originals[key]});alert('結果を保存できませんでした。')}
       finally{resultEditorSave.disabled=false}
     });
@@ -2895,20 +2907,26 @@ const COL=Object.freeze({
     resultEditorOverlay.addEventListener('click',event=>{if(event.target===resultEditorOverlay)closeResultEditor()});
     practiceResultButtons.forEach(button=>button.addEventListener('click',async()=>{
       const row=currentPracticeRow();
-      if(!row||!practiceStored||practiceMoving)return;
+      if(!row||!practiceStored||practiceMoving||practiceResultSaving)return;
       const column=button.dataset.result==='correct'?COL.correctCount:button.dataset.result==='wrong'?COL.wrongCount:COL.questionCount;
-      const originalValue=row[column];
-      row[column]=(Number(row[column])||0)+1;
-      practiceStored.modified=true;
-      syncPracticeResultCounts(row);
+      const currentLock=practiceResultLocks.get(row);
+      if(currentLock){
+        if(currentLock.result!==button.dataset.result)return;
+        practiceResultSaving=true;row[currentLock.column]=currentLock.originalValue;practiceStored.modified=true;syncPracticeResultCounts(row);
+        try{await saveImportedData(practiceStored);practiceResultLocks.delete(row);syncPracticeResultLock(row)}
+        catch{row[currentLock.column]=currentLock.recordedValue;syncPracticeResultCounts(row);alert('結果を取り消せませんでした。')}
+        finally{practiceResultSaving=false}
+        return;
+      }
+      const originalValue=row[column];const recordedValue=(Number(originalValue)||0)+1;
+      row[column]=recordedValue;practiceResultLocks.set(row,{result:button.dataset.result,column,originalValue,recordedValue});practiceResultSaving=true;
+      practiceStored.modified=true;syncPracticeResultCounts(row);syncPracticeResultLock(row);
       const count=button.closest('.practice-result-choice')?.querySelector('small');
       button.animate?.([{transform:'scale(.82)'},{transform:'scale(1.18)'},{transform:'scale(1)'}],{duration:260,easing:'cubic-bezier(.2,.85,.3,1)'});
       count?.animate?.([{transform:'translateY(2px) scale(.75)',opacity:.35},{transform:'translateY(-2px) scale(1.35)',opacity:1},{transform:'translateY(0) scale(1)',opacity:1}],{duration:320,easing:'cubic-bezier(.2,.85,.3,1)'});
       try{await saveImportedData(practiceStored)}catch{
-        row[column]=originalValue;
-        syncPracticeResultCounts(row);
-        alert('結果を保存できませんでした。');
-      }
+        row[column]=originalValue;practiceResultLocks.delete(row);syncPracticeResultCounts(row);syncPracticeResultLock(row);alert('結果を保存できませんでした。');
+      }finally{practiceResultSaving=false}
     }));
     practiceRatingButtons.forEach(button=>button.addEventListener('click',async()=>{
       const row=currentPracticeRow();
