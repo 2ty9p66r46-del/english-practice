@@ -980,9 +980,15 @@ const COL=Object.freeze({
       const button=section.querySelector('[data-section-action="select"]');
       button.addEventListener('click',()=>setSectionFilters(section,!button.classList.contains('selected')));
     });
-    selectAllFilters.addEventListener('click',()=>{resetAnswerCountFilters(answerCountFilters);setAllFilters(!selectAllFilters.classList.contains('selected'))});
+    selectAllFilters.addEventListener('click',()=>{
+      resetAnswerCountFilters(answerCountFilters);
+      practiceTextFilterInputs.forEach(input=>{input.value=''});
+      practiceDisplayLimit.value='';
+      syncDisplayLimitValidity();syncWordTextFilterReset();
+      setAllFilters(!selectAllFilters.classList.contains('selected'));
+    });
     const practiceTextFilterInputs=[wordStartsWith,wordEndsWith,wordIncludes,wordFrom,wordRegex];
-    const syncWordTextFilterReset=()=>{wordTextFilterReset.disabled=!practiceTextFilterInputs.some(input=>Boolean(text(input.value)));syncWordRegexValidity(wordRegex,wordRegexWarning)};
+    const syncWordTextFilterReset=()=>{const active=practiceTextFilterInputs.some(input=>Boolean(text(input.value)));wordTextFilterReset.disabled=!active;wordTextFilterReset.classList.toggle('selected',active);wordTextFilterReset.setAttribute('aria-pressed',String(active));syncWordRegexValidity(wordRegex,wordRegexWarning)};
     practiceTextFilterInputs.forEach(input=>input.addEventListener('input',()=>{syncWordTextFilterReset();syncGlobalControls();refreshQuestionCount()}));
     bindAnswerCountFilters(answerCountFilters,()=>{syncGlobalControls();refreshQuestionCount()});
     practiceDisplayLimit.addEventListener('input',()=>{syncDisplayLimitValidity();syncGlobalControls();refreshQuestionCount()});
