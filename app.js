@@ -721,13 +721,15 @@ const COL=Object.freeze({
     const syncWordRegexValidity=(input,warning)=>{const valid=parseWordRegex(input.value)!==false;input.setAttribute('aria-invalid',String(!valid));warning.hidden=valid;return valid};
     const answerCountColumns={correct:COL.correctCount,unsure:COL.questionCount,wrong:COL.wrongCount};
     const getAnswerCountValues=container=>Object.fromEntries([...container.querySelectorAll('[data-answer-count]')].map(row=>{
-      const key=row.dataset.answerCount;return [key,{min:row.querySelector('[data-answer-bound="min"]').value,max:row.querySelector('[data-answer-bound="max"]').value}];
+      const key=row.dataset.answerCount;return [key,{min:row.querySelector('[data-answer-bound="min"]').value,max:row.querySelector('[data-answer-bound="max"]').value,mode:row.querySelector('[data-answer-mode].selected')?.dataset.answerMode||'any'}];
     }));
+    const setAnswerCountMode=(row,mode)=>row.querySelectorAll('[data-answer-mode]').forEach(button=>{const selected=button.dataset.answerMode===mode;button.classList.toggle('selected',selected);button.setAttribute('aria-checked',String(selected))});
     const restoreAnswerCountValues=(container,values={})=>{
       container.querySelectorAll('[data-answer-count]').forEach(row=>{
         const saved=values[row.dataset.answerCount]||{};
         row.querySelector('[data-answer-bound="min"]').value=saved.min??'';
         row.querySelector('[data-answer-bound="max"]').value=saved.max??'';
+        const hasValue=(saved.min??'')!==''||(saved.max??'')!=='';setAnswerCountMode(row,saved.mode|| (hasValue?'and':'any'));
       });
     };
     const readAnswerCountFilters=container=>{
@@ -736,28 +738,37 @@ const COL=Object.freeze({
         const minValue=row.querySelector('[data-answer-bound="min"]').value;
         const maxValue=row.querySelector('[data-answer-bound="max"]').value;
         const min=minValue===''?null:Number(minValue);const max=maxValue===''?null:Number(maxValue);
+        const mode=row.querySelector('[data-answer-mode].selected')?.dataset.answerMode||'any';
         const values=[min,max].filter(value=>value!==null);
         if(values.some(value=>!Number.isInteger(value)||value<0)||(min!==null&&max!==null&&min>max))valid=false;
-        filters[row.dataset.answerCount]={min,max};
+        filters[row.dataset.answerCount]={min,max,mode};
       });
       container.querySelector('[data-answer-count-warning]').hidden=valid;
       return {filters,valid};
     };
-    const syncAnswerCountRows=container=>container.querySelectorAll('[data-answer-count]').forEach(row=>{
-      const any=[...row.querySelectorAll('input')].every(input=>input.value==='');const button=row.querySelector('.answer-count-any');
-      button.classList.toggle('selected',any);button.setAttribute('aria-pressed',String(any));
-    });
+    const syncAnswerCountRows=container=>container.querySelectorAll('[data-answer-count]').forEach(row=>{const selected=row.querySelector('[data-answer-mode].selected');setAnswerCountMode(row,selected?.dataset.answerMode||'any')});
     const bindAnswerCountFilters=(container,onChange)=>{
       container.querySelectorAll('[data-answer-count]').forEach(row=>{
-        row.querySelectorAll('input').forEach(input=>input.addEventListener('input',()=>{syncAnswerCountRows(container);readAnswerCountFilters(container);onChange()}));
-        row.querySelector('.answer-count-any').addEventListener('click',()=>{row.querySelectorAll('input').forEach(input=>{input.value=''});syncAnswerCountRows(container);readAnswerCountFilters(container);onChange()});
+        row.querySelectorAll('input').forEach(input=>input.addEventListener('input',()=>{
+          const hasValue=[...row.querySelectorAll('input')].some(field=>field.value!=='');const mode=row.querySelector('[data-answer-mode].selected')?.dataset.answerMode;
+          if(!hasValue)setAnswerCountMode(row,'any');else if(mode==='any')setAnswerCountMode(row,'and');
+          readAnswerCountFilters(container);onChange();
+        }));
+        row.querySelectorAll('[data-answer-mode]').forEach(button=>button.addEventListener('click',()=>{
+          const mode=button.dataset.answerMode;setAnswerCountMode(row,mode);
+          if(mode==='any')row.querySelectorAll('input').forEach(input=>{input.value=''});
+          readAnswerCountFilters(container);onChange();
+        }));
       });
       syncAnswerCountRows(container);readAnswerCountFilters(container);
     };
-    const matchesAnswerCountFilters=(row,state)=>Object.entries(state.filters).every(([key,{min,max}])=>{
-      const count=Number.parseInt(text(row[answerCountColumns[key]]),10)||0;return (min===null||count>=min)&&(max===null||count<=max);
-    });
-    const hasAnswerCountFilters=state=>Object.values(state.filters).some(({min,max})=>min!==null||max!==null);
+    const matchesAnswerCountFilters=(row,state)=>{
+      const active=Object.entries(state.filters).filter(([,filter])=>filter.mode!=='any'&&(filter.min!==null||filter.max!==null));
+      const matches=([key,{min,max}])=>{const count=Number.parseInt(text(row[answerCountColumns[key]]),10)||0;return (min===null||count>=min)&&(max===null||count<=max)};
+      const andFilters=active.filter(([,filter])=>filter.mode!=='or');const orFilters=active.filter(([,filter])=>filter.mode==='or');
+      return andFilters.every(matches)&&(!orFilters.length||orFilters.some(matches));
+    };
+    const hasAnswerCountFilters=state=>Object.values(state.filters).some(({min,max,mode})=>mode!=='any'&&(min!==null||max!==null));
     const savePracticeTextFilters=()=>{try{localStorage.setItem(PRACTICE_TEXT_FILTER_STORAGE_KEY,JSON.stringify({startsWith:wordStartsWith.value,endsWith:wordEndsWith.value,includes:wordIncludes.value,regex:wordRegex.value,answerCounts:getAnswerCountValues(answerCountFilters)}))}catch{}};
     const restorePracticeTextFilters=()=>{try{const saved=JSON.parse(localStorage.getItem(PRACTICE_TEXT_FILTER_STORAGE_KEY)||'null');if(!saved||typeof saved!=='object')return;wordStartsWith.value=saved.startsWith||'';wordEndsWith.value=saved.endsWith||'';wordIncludes.value=saved.includes||'';wordRegex.value=saved.regex||'';restoreAnswerCountValues(answerCountFilters,saved.answerCounts)}catch{}};
     const fiveDigitCountMarkup=value=>{
