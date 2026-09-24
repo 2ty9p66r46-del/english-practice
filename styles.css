@@ -119,9 +119,7 @@
     .level-filter-row{margin-top:10px}.level-filter-row+.level-filter-row{margin-top:14px;padding-top:12px;border-top:1px solid #d8dee8}
     .level-filter-label{margin-bottom:7px;color:#526078;font-size:.76rem;font-weight:850}
     .level-filter-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:5px}
-    .level-filter-grid .choice{box-sizing:border-box;width:100%;min-width:0;min-height:34px;padding:0 2px;border-radius:var(--radius-pill);font-size:.65rem}
-    .level-filter-row.include .choice{--solid-hi:#78bfff;--solid:#2e91ed;--solid-lo:#176fc2;--solid-line:#064faa;--solid-shadow:#064faa4d}
-    .level-filter-row.exclude .choice{--solid-hi:#f19aa3;--solid:#e36270;--solid-lo:#bd3a49;--solid-line:#8e1928;--solid-shadow:#8e19284d}
+    .level-filter-grid .choice{box-sizing:border-box;width:38px;height:38px;min-width:38px;min-height:38px;justify-self:center;padding:0;border-radius:50%;font-size:.7rem}
     .part-group .choice-grid{display:flex;flex-wrap:wrap;gap:8px}
     .part-group .choice{display:inline-flex;width:auto;min-height:30px;align-items:center;justify-content:center;padding:0 13px;line-height:1;font-size:.74rem}
     .choice.selected{color:#fff;border:3px solid var(--solid-line);background:linear-gradient(180deg,var(--solid-hi) 0%,var(--solid) 44%,var(--solid-lo) 100%);box-shadow:inset 0 1px 0 #ffffff99,inset 0 -2px 0 #00000024,0 4px 10px var(--solid-shadow);text-shadow:0 1px 1px #00000052;font-weight:850}
