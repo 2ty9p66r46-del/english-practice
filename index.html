@@ -106,6 +106,7 @@
               <label><input id="wordStartsWith" data-word-text-filter="starts" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="この文字列で始まる"><span>で始まる</span></label>
               <label><input id="wordEndsWith" data-word-text-filter="ends" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="この文字列で終わる"><span>で終わる</span></label>
               <label><input id="wordIncludes" data-word-text-filter="includes" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="この文字列を含む"><span>を含む</span></label>
+              <label><input id="wordFrom" data-word-text-filter="from" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="例: act" aria-label="この単語以降"><span>以降</span></label>
               <label><input id="wordRegex" data-word-text-filter="regex" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="例: ^(a|b).*ing$" aria-label="正規表現で絞り込む" aria-describedby="wordRegexWarning"><span>正規表現</span></label>
               <p class="word-regex-warning" id="wordRegexWarning" data-regex-warning hidden>※正規表現が正しくありません</p>
             </div>
@@ -164,6 +165,11 @@
           </div>
           <div class="group meaning-count-group editor-only-filter"><div class="group-title"><span>意味の数</span><button class="all blue" type="button">ALL</button></div><div class="choice-grid"><button class="choice red" type="button" data-value="0">0</button><button class="choice yellow" type="button" data-value="1">1</button><button class="choice blue" type="button" data-value="multiple">複数</button></div></div>
           <div class="group example-count-group editor-only-filter"><div class="group-title"><span>例文の数</span><button class="all blue" type="button">ALL</button></div><div class="choice-grid"><button class="choice red" type="button" data-value="0">0</button><button class="choice yellow" type="button" data-value="1">1</button><button class="choice blue" type="button" data-value="multiple">複数</button></div></div>
+          </div>
+          <div class="practice-display-limit-section practice-only-filter">
+            <div class="group-title"><span>表示例文数</span></div>
+            <div class="practice-display-limit-control"><input id="practiceDisplayLimit" type="number" min="1" step="1" inputmode="numeric" placeholder="すべて" aria-label="表示する例文数"><span>件</span><button id="practiceDisplayLimitAll" type="button">すべて</button></div>
+            <p class="practice-display-limit-warning" id="practiceDisplayLimitWarning" hidden>※1以上の整数を指定してください</p>
           </div>
         </section>
         <div class="bottom-space"></div>
@@ -347,7 +353,7 @@
           <h3 class="help-version-title">バージョン情報</h3>
           <dl class="help-version-list">
             <div class="help-version-row"><dt>アプリ</dt><dd>FloVo v1.0.0</dd></div>
-            <div class="help-version-row"><dt>ビルド</dt><dd>495</dd></div>
+            <div class="help-version-row"><dt>ビルド</dt><dd>496</dd></div>
             <div class="help-version-row"><dt>データ形式</dt><dd>v1.0</dd></div>
             <div class="help-version-row"><dt>更新日</dt><dd>2026.09.24</dd></div>
           </dl>

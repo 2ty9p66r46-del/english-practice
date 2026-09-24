@@ -497,9 +497,13 @@ const COL=Object.freeze({
     const wordStartsWith=document.getElementById('wordStartsWith');
     const wordEndsWith=document.getElementById('wordEndsWith');
     const wordIncludes=document.getElementById('wordIncludes');
+    const wordFrom=document.getElementById('wordFrom');
     const wordRegex=document.getElementById('wordRegex');
     const wordRegexWarning=document.getElementById('wordRegexWarning');
     const answerCountFilters=document.querySelector('#filterCard [data-answer-count-filters]');
+    const practiceDisplayLimit=document.getElementById('practiceDisplayLimit');
+    const practiceDisplayLimitAll=document.getElementById('practiceDisplayLimitAll');
+    const practiceDisplayLimitWarning=document.getElementById('practiceDisplayLimitWarning');
     const wordTextFilterReset=document.getElementById('wordTextFilterReset');
     const allFilterChoices=[...levelChoices,...partChoices,...understandingChoices];
     const selectAllFilters=document.getElementById('selectAllFilters');
@@ -635,6 +639,7 @@ const COL=Object.freeze({
     const cardFilterStartsWith=cardWordFilterPanel.querySelector('[data-word-text-filter="starts"]');
     const cardFilterEndsWith=cardWordFilterPanel.querySelector('[data-word-text-filter="ends"]');
     const cardFilterIncludes=cardWordFilterPanel.querySelector('[data-word-text-filter="includes"]');
+    const cardFilterFrom=cardWordFilterPanel.querySelector('[data-word-text-filter="from"]');
     const cardFilterRegex=cardWordFilterPanel.querySelector('[data-word-text-filter="regex"]');
     const cardRegexWarning=cardWordFilterPanel.querySelector('[data-regex-warning]');
     const cardAnswerCountFilters=cardWordFilterPanel.querySelector('[data-answer-count-filters]');
@@ -719,6 +724,8 @@ const COL=Object.freeze({
     const restoreFilterSelection=(key,choices)=>{try{const saved=JSON.parse(localStorage.getItem(key)||'null');if(!Array.isArray(saved))return false;const selected=new Set(saved);choices.forEach(choice=>choice.classList.toggle('selected',selected.has(filterChoiceKey(choice))));return true}catch{return false}};
     const parseWordRegex=value=>{const pattern=text(value);if(!pattern)return null;try{return new RegExp(pattern,'i')}catch{return false}};
     const syncWordRegexValidity=(input,warning)=>{const valid=parseWordRegex(input.value)!==false;input.setAttribute('aria-invalid',String(!valid));warning.hidden=valid;return valid};
+    const syncDisplayLimitValidity=()=>{const value=practiceDisplayLimit.value;const valid=value===''||(Number.isInteger(Number(value))&&Number(value)>=1);practiceDisplayLimit.setAttribute('aria-invalid',String(!valid));practiceDisplayLimitWarning.hidden=valid;return valid};
+    const applyDisplayLimit=()=>{practiceButton.dataset.questionLimit=practiceDisplayLimit.value===''?'all':practiceDisplayLimit.value};
     const answerCountColumns={correct:COL.correctCount,unsure:COL.questionCount,wrong:COL.wrongCount};
     const getAnswerCountValues=container=>Object.fromEntries([...container.querySelectorAll('[data-answer-count]')].map(row=>{
       const key=row.dataset.answerCount;return [key,{min:row.querySelector('[data-answer-bound="min"]').value,max:row.querySelector('[data-answer-bound="max"]').value,mode:row.querySelector('[data-answer-mode].selected')?.dataset.answerMode||'any'}];
@@ -770,8 +777,8 @@ const COL=Object.freeze({
       return andFilters.every(matches)&&(!orFilters.length||orFilters.some(matches));
     };
     const hasAnswerCountFilters=state=>Object.values(state.filters).some(({min,max,mode})=>mode!=='any'&&(min!==null||max!==null));
-    const savePracticeTextFilters=()=>{try{localStorage.setItem(PRACTICE_TEXT_FILTER_STORAGE_KEY,JSON.stringify({startsWith:wordStartsWith.value,endsWith:wordEndsWith.value,includes:wordIncludes.value,regex:wordRegex.value,answerCounts:getAnswerCountValues(answerCountFilters)}))}catch{}};
-    const restorePracticeTextFilters=()=>{try{const saved=JSON.parse(localStorage.getItem(PRACTICE_TEXT_FILTER_STORAGE_KEY)||'null');if(!saved||typeof saved!=='object')return;wordStartsWith.value=saved.startsWith||'';wordEndsWith.value=saved.endsWith||'';wordIncludes.value=saved.includes||'';wordRegex.value=saved.regex||'';restoreAnswerCountValues(answerCountFilters,saved.answerCounts)}catch{}};
+    const savePracticeTextFilters=()=>{try{localStorage.setItem(PRACTICE_TEXT_FILTER_STORAGE_KEY,JSON.stringify({startsWith:wordStartsWith.value,endsWith:wordEndsWith.value,includes:wordIncludes.value,from:wordFrom.value,regex:wordRegex.value,displayLimit:practiceDisplayLimit.value,answerCounts:getAnswerCountValues(answerCountFilters)}))}catch{}};
+    const restorePracticeTextFilters=()=>{try{const saved=JSON.parse(localStorage.getItem(PRACTICE_TEXT_FILTER_STORAGE_KEY)||'null');if(!saved||typeof saved!=='object')return;wordStartsWith.value=saved.startsWith||'';wordEndsWith.value=saved.endsWith||'';wordIncludes.value=saved.includes||'';wordFrom.value=saved.from||'';wordRegex.value=saved.regex||'';practiceDisplayLimit.value=saved.displayLimit||'';restoreAnswerCountValues(answerCountFilters,saved.answerCounts)}catch{}};
     const fiveDigitCountMarkup=value=>{
       const number=Math.min(99999,Math.max(0,Math.trunc(Number(value)||0)));const digits=String(number);const padding='0'.repeat(5-digits.length);
       return `<span class="count-padding">${padding}</span><span class="count-value">${digits}</span>`;
@@ -796,6 +803,7 @@ const COL=Object.freeze({
       const startsWith=text(wordStartsWith.value).toLowerCase();
       const endsWith=text(wordEndsWith.value).toLowerCase();
       const includes=text(wordIncludes.value).toLowerCase();
+      const from=text(wordFrom.value).toLowerCase();
       const regex=parseWordRegex(wordRegex.value);
       const answerCounts=readAnswerCountFilters(answerCountFilters);
       if(regex===false||!answerCounts.valid)return [];
@@ -805,6 +813,7 @@ const COL=Object.freeze({
         if(startsWith&&!word.startsWith(startsWith))return false;
         if(endsWith&&!word.endsWith(endsWith))return false;
         if(includes&&!word.includes(includes))return false;
+        if(from&&word.localeCompare(from,'en',{sensitivity:'base'})<0)return false;
         if(regex&&!regex.test(text(row[COL.word])))return false;
         if(!matchesAnswerCountFilters(row,answerCounts))return false;
         if(levels.size&&![text(row[COL.sLevel]),text(row[COL.wLevel])].some(value=>levels.has(value)))return false;
@@ -921,8 +930,9 @@ const COL=Object.freeze({
       overallFilterWarning.hidden=!hasEmptyConditions;
       const hasInvalidRegex=!syncWordRegexValidity(wordRegex,wordRegexWarning);
       const hasInvalidAnswerCounts=!readAnswerCountFilters(answerCountFilters).valid;
-      practiceFilterClose.disabled=hasEmptyConditions||hasInvalidRegex||hasInvalidAnswerCounts;
-      practiceFilterClose.setAttribute('aria-disabled',String(hasEmptyConditions||hasInvalidRegex||hasInvalidAnswerCounts));
+      const hasInvalidDisplayLimit=!syncDisplayLimitValidity();
+      practiceFilterClose.disabled=hasEmptyConditions||hasInvalidRegex||hasInvalidAnswerCounts||hasInvalidDisplayLimit;
+      practiceFilterClose.setAttribute('aria-disabled',String(hasEmptyConditions||hasInvalidRegex||hasInvalidAnswerCounts||hasInvalidDisplayLimit));
       practiceButton.disabled=false;
       practiceButton.setAttribute('aria-disabled','false');
     };
@@ -967,16 +977,19 @@ const COL=Object.freeze({
       button.addEventListener('click',()=>setSectionFilters(section,!button.classList.contains('selected')));
     });
     selectAllFilters.addEventListener('click',()=>{resetAnswerCountFilters(answerCountFilters);setAllFilters(!selectAllFilters.classList.contains('selected'))});
-    const practiceTextFilterInputs=[wordStartsWith,wordEndsWith,wordIncludes,wordRegex];
+    const practiceTextFilterInputs=[wordStartsWith,wordEndsWith,wordIncludes,wordFrom,wordRegex];
     const syncWordTextFilterReset=()=>{wordTextFilterReset.disabled=!practiceTextFilterInputs.some(input=>Boolean(text(input.value)));syncWordRegexValidity(wordRegex,wordRegexWarning)};
     practiceTextFilterInputs.forEach(input=>input.addEventListener('input',()=>{syncWordTextFilterReset();syncGlobalControls();refreshQuestionCount()}));
     bindAnswerCountFilters(answerCountFilters,()=>{syncGlobalControls();refreshQuestionCount()});
+    practiceDisplayLimit.addEventListener('input',()=>{syncDisplayLimitValidity();syncGlobalControls()});
+    practiceDisplayLimitAll.addEventListener('click',()=>{practiceDisplayLimit.value='';syncDisplayLimitValidity();syncGlobalControls()});
     wordTextFilterReset.addEventListener('click',()=>{
       practiceTextFilterInputs.forEach(input=>{input.value=''});
       syncWordTextFilterReset();syncGlobalControls();refreshQuestionCount();
     });
     restorePracticeTextFilters();
     syncAnswerCountRows(answerCountFilters);readAnswerCountFilters(answerCountFilters);
+    syncDisplayLimitValidity();
     syncWordTextFilterReset();
     if(restoreFilterSelection(PRACTICE_FILTER_STORAGE_KEY,allFilterChoices)){
       subgroupAllButtons.forEach(button=>syncSubgroupAll(button.closest('.group')));
@@ -1018,6 +1031,7 @@ const COL=Object.freeze({
     });
     setOrder(false);
     practiceButton.dataset.questionLimit='all';
+    applyDisplayLimit();
 
     let practiceRows=[];
     let practiceIndex=0;
@@ -1365,10 +1379,10 @@ const COL=Object.freeze({
       cardSelectAllFilters.classList.toggle('selected',choices.length>0&&choices.every(choice=>choice.classList.contains('selected')));
     };
     const cardFilterChoices=[...cardFilterLevelChoices,...cardFilterPartChoices,...cardFilterUnderstandingChoices,...cardFilterMeaningCountChoices,...cardFilterExampleCountChoices];
-    const cardTextFilterInputs=[cardFilterStartsWith,cardFilterEndsWith,cardFilterIncludes,cardFilterRegex];
+    const cardTextFilterInputs=[cardFilterStartsWith,cardFilterEndsWith,cardFilterIncludes,cardFilterFrom,cardFilterRegex];
     const syncCardTextFilterReset=()=>{cardTextFilterReset.disabled=!cardTextFilterInputs.some(input=>Boolean(text(input.value)));syncWordRegexValidity(cardFilterRegex,cardRegexWarning)};
-    const saveCardTextFilters=()=>{try{localStorage.setItem(CARD_TEXT_FILTER_STORAGE_KEY,JSON.stringify({startsWith:cardFilterStartsWith.value,endsWith:cardFilterEndsWith.value,includes:cardFilterIncludes.value,regex:cardFilterRegex.value,answerCounts:getAnswerCountValues(cardAnswerCountFilters)}))}catch{}};
-    const restoreCardTextFilters=()=>{try{const saved=JSON.parse(localStorage.getItem(CARD_TEXT_FILTER_STORAGE_KEY)||'null');if(!saved||typeof saved!=='object')return;cardFilterStartsWith.value=saved.startsWith||'';cardFilterEndsWith.value=saved.endsWith||'';cardFilterIncludes.value=saved.includes||'';cardFilterRegex.value=saved.regex||'';restoreAnswerCountValues(cardAnswerCountFilters,saved.answerCounts)}catch{}};
+    const saveCardTextFilters=()=>{try{localStorage.setItem(CARD_TEXT_FILTER_STORAGE_KEY,JSON.stringify({startsWith:cardFilterStartsWith.value,endsWith:cardFilterEndsWith.value,includes:cardFilterIncludes.value,from:cardFilterFrom.value,regex:cardFilterRegex.value,answerCounts:getAnswerCountValues(cardAnswerCountFilters)}))}catch{}};
+    const restoreCardTextFilters=()=>{try{const saved=JSON.parse(localStorage.getItem(CARD_TEXT_FILTER_STORAGE_KEY)||'null');if(!saved||typeof saved!=='object')return;cardFilterStartsWith.value=saved.startsWith||'';cardFilterEndsWith.value=saved.endsWith||'';cardFilterIncludes.value=saved.includes||'';cardFilterFrom.value=saved.from||'';cardFilterRegex.value=saved.regex||'';restoreAnswerCountValues(cardAnswerCountFilters,saved.answerCounts)}catch{}};
     const initializeCardWordFilters=()=>{
       if(!restoreFilterSelection(CARD_FILTER_STORAGE_KEY,cardFilterChoices))cardFilterChoices.forEach(choice=>choice.classList.add('selected'));
       restoreCardTextFilters();syncAnswerCountRows(cardAnswerCountFilters);readAnswerCountFilters(cardAnswerCountFilters);syncCardTextFilterReset();
@@ -1447,6 +1461,7 @@ const COL=Object.freeze({
       const startsWith=text(cardFilterStartsWith.value).toLowerCase();
       const endsWith=text(cardFilterEndsWith.value).toLowerCase();
       const includes=text(cardFilterIncludes.value).toLowerCase();
+      const from=text(cardFilterFrom.value).toLowerCase();
       const regex=parseWordRegex(cardFilterRegex.value);
       const answerCounts=readAnswerCountFilters(cardAnswerCountFilters);
       const restrictLevels=selectedLevels.size!==cardFilterLevelChoices.length;
@@ -1471,6 +1486,7 @@ const COL=Object.freeze({
         if(startsWith&&!word.startsWith(startsWith))return;
         if(endsWith&&!word.endsWith(endsWith))return;
         if(includes&&!word.includes(includes))return;
+        if(from&&word.localeCompare(from,'en',{sensitivity:'base'})<0)return;
         if(regex===false||regex&&!regex.test(text(row[COL.word])))return;
         if(restrictLevels&&![text(row[COL.sLevel]),text(row[COL.wLevel])].some(value=>selectedLevels.has(value)))return;
         if(restrictParts&&!selectedParts.has(text(row[COL.pos])))return;
@@ -2439,7 +2455,7 @@ const COL=Object.freeze({
     const openPracticeFilter=()=>{
       if(practiceFilterOpen)return;
       practiceFilterOpen=true;
-      practiceFilterSnapshot={choices:allFilterChoices.map(choice=>choice.classList.contains('selected')),text:practiceTextFilterInputs.map(input=>input.value),answerCounts:getAnswerCountValues(answerCountFilters)};
+      practiceFilterSnapshot={choices:allFilterChoices.map(choice=>choice.classList.contains('selected')),text:practiceTextFilterInputs.map(input=>input.value),answerCounts:getAnswerCountValues(answerCountFilters),displayLimit:practiceDisplayLimit.value};
       if(autoPlaying)stopAutoPlayback();
       practiceFilterFixedSummary.append(filterCardSectionHead);
       practiceFilterSheetBody.append(filterCard);
@@ -2462,6 +2478,7 @@ const COL=Object.freeze({
       if(applyFilters){
         saveFilterSelection(PRACTICE_FILTER_STORAGE_KEY,allFilterChoices);
         savePracticeTextFilters();
+        applyDisplayLimit();
         applyPracticeMethodChange(previousRow);
         setPracticeViewMode(previousViewMode==='card'&&practiceRows.length?'card':'list');
       }
@@ -2472,6 +2489,7 @@ const COL=Object.freeze({
         allFilterChoices.forEach((choice,index)=>choice.classList.toggle('selected',practiceFilterSnapshot.choices[index]));
         practiceTextFilterInputs.forEach((input,index)=>{input.value=practiceFilterSnapshot.text[index]||''});
         restoreAnswerCountValues(answerCountFilters,practiceFilterSnapshot.answerCounts);syncAnswerCountRows(answerCountFilters);readAnswerCountFilters(answerCountFilters);
+        practiceDisplayLimit.value=practiceFilterSnapshot.displayLimit||'';syncDisplayLimitValidity();
         syncWordTextFilterReset();
         subgroupAllButtons.forEach(button=>syncSubgroupAll(button.closest('.group')));
         filterSections.forEach(section=>syncSectionControls(section,false));
