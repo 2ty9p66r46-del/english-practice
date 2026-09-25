@@ -1095,6 +1095,10 @@ const COL=Object.freeze({
     let practiceResultLocks=new WeakMap();
     let practiceResultSaving=false;
     let answerVisible=false;
+    const setPracticeIndex=next=>{
+      practiceResultLocks=new WeakMap();
+      practiceIndex=next;
+    };
     const applyPracticeMethodChange=(preserveRow=null)=>{
       if(practiceScreen.hidden||!practiceStored)return;
       let rows=getMatchingRows(practiceStored.rows||[]);
@@ -1102,7 +1106,7 @@ const COL=Object.freeze({
       const limit=practiceButton.dataset.questionLimit==='all'?rows.length:Number(practiceButton.dataset.questionLimit);
       practiceRows=rows.slice(0,limit);
       const preservedIndex=preserveRow?practiceRows.indexOf(preserveRow):-1;
-      practiceIndex=preservedIndex>=0?preservedIndex:0;
+      setPracticeIndex(preservedIndex>=0?preservedIndex:0);
       renderPracticeQuestion();
       renderPracticeList();
       if(autoPlaying)restartAutoPlayback();
@@ -1326,7 +1330,7 @@ const COL=Object.freeze({
         rowActions.append(menuButton,openButton);
         item.append(copy,rowActions);
         const playFromItem=()=>{
-          practiceIndex=index;
+          setPracticeIndex(index);
           renderPracticeQuestion();
           renderPracticeList();
           autoPlaying?restartAutoPlayback():startAutoPlayback();
@@ -2031,7 +2035,7 @@ const COL=Object.freeze({
       practiceRows=getMatchingRows(practiceStored?.rows||[]);
       const limit=practiceButton.dataset.questionLimit==='all'?practiceRows.length:Number(practiceButton.dataset.questionLimit);
       practiceRows=practiceRows.slice(0,limit);
-      practiceIndex=Math.max(0,Math.min(practiceIndex,practiceRows.length-1));
+      setPracticeIndex(Math.max(0,Math.min(practiceIndex,practiceRows.length-1)));
       renderPracticeList();
       if(practiceRows.length)renderPracticeQuestion();
     };
@@ -2169,7 +2173,7 @@ const COL=Object.freeze({
       const outX=delta>0?-distance:distance;
       resetPracticeDrag();
       await animatePracticeCard([{transform:`translateX(${fromX}px)`,opacity:Math.max(.55,1-Math.abs(fromX)/innerWidth*.55)},{transform:`translateX(${outX}px)`,opacity:.08}],{duration:Math.max(120,210-Math.min(Math.abs(fromX),140)),easing:'cubic-bezier(.4,0,1,1)'});
-      practiceIndex=next;renderPracticeQuestion();
+      setPracticeIndex(next);renderPracticeQuestion();
       await animatePracticeCard([{transform:`translateX(${-outX}px)`,opacity:.08},{transform:'translateX(0)',opacity:1}],{duration:260,easing:'cubic-bezier(.16,.78,.24,1)'});
       resetPracticeDrag();practiceMoving=false;
       if(resumePlayback)restartAutoPlayback();
@@ -2401,13 +2405,13 @@ const COL=Object.freeze({
         }
         if(playbackSettings.repeat==='current')continue;
         if(practiceIndex<practiceRows.length-1){
-          practiceIndex+=1;
+          setPracticeIndex(practiceIndex+1);
           renderPracticeQuestion();
           if(practiceViewMode==='list')renderPracticeList();
           continue;
         }
         if(playbackSettings.repeat==='all'){
-          practiceIndex=0;
+          setPracticeIndex(0);
           renderPracticeQuestion();
           if(practiceViewMode==='list')renderPracticeList();
           continue;
@@ -2463,7 +2467,7 @@ const COL=Object.freeze({
       if(practiceViewTransitioning)return;
       practiceViewTransitioning=true;
       const continuePlayback=autoPlaying;
-      practiceIndex=index;
+      setPracticeIndex(index);
       renderPracticeQuestion();
       setPracticeViewMode('card');
       if(continuePlayback)restartAutoPlayback();
