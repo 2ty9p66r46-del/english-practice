@@ -1095,6 +1095,7 @@ const COL=Object.freeze({
     let practiceResultLocks=new WeakMap();
     let practiceResultSaving=false;
     let answerVisible=false;
+    let answerVisibleRow=null;
     const setPracticeIndex=next=>{
       practiceResultLocks=new WeakMap();
       practiceIndex=next;
@@ -1138,6 +1139,7 @@ const COL=Object.freeze({
         try{await practiceAnswer.animate([{opacity:1},{opacity:0}],{duration:140,easing:'ease-in'}).finished}catch{}
       }
       answerVisible=visible;
+      answerVisibleRow=visible?currentPracticeRow():null;
       practiceReveal.hidden=visible;
       practiceEnglish.hidden=!visible;
       practiceAudio.disabled=!('speechSynthesis' in window);
@@ -1190,9 +1192,10 @@ const COL=Object.freeze({
       formatSingleDigitNumber(row?.[COL.meaningNo]),
       formatSingleDigitNumber(row?.[COL.exampleNo])
     ].join('-');
-    const renderPracticeQuestion=(keepNoteOpen=false,keepAnswerVisible=false)=>{
+    const renderPracticeQuestion=(keepNoteOpen=false,keepAnswerVisible=answerVisible)=>{
       const row=currentPracticeRow();
       if(!row)return;
+      const shouldKeepAnswerVisible=keepAnswerVisible&&answerVisibleRow===row;
       if('speechSynthesis' in window&&!autoPlaying){speechSynthesis.cancel();activeManualSpeech=null}
       clearSentenceSpeaking();
       practiceJapaneseAudio.disabled=!('speechSynthesis' in window);
@@ -1243,7 +1246,7 @@ const COL=Object.freeze({
       syncPracticeRating(row);
       syncPracticeResultCounts(row);
       syncPracticeResultLock(row);
-      setAnswerVisible(keepAnswerVisible);
+      setAnswerVisible(shouldKeepAnswerVisible);
       requestAnimationFrame(fitPracticeCardText);
     };
     const renderPracticeList=()=>{
@@ -2639,6 +2642,7 @@ const COL=Object.freeze({
       practiceStored=stored||{headers:[...EXPECTED_HEADERS],rows:[],vocabularyRows:[],fileName:'未読込',modified:true};
       restoreVocabularyRows(practiceStored);
       practiceIndex=0;
+      setAnswerVisible(false);
       await transitionScreen(()=>{
         practiceScreen.hidden=false;
         mainNav.classList.add('practice-mode');
