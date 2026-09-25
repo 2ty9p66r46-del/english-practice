@@ -731,6 +731,7 @@ const COL=Object.freeze({
     const englishRepeatSetting=document.getElementById('englishRepeatSetting');
     const japaneseRateSetting=document.getElementById('japaneseRateSetting');
     const englishRateSetting=document.getElementById('englishRateSetting');
+    const englishVoiceSelect=document.getElementById('englishVoiceSelect');
     const japanesePauseMenu=document.getElementById('japanesePauseMenu');
     const englishPauseMenu=document.getElementById('englishPauseMenu');
     const englishRepeatMenu=document.getElementById('englishRepeatMenu');
@@ -2205,7 +2206,7 @@ const COL=Object.freeze({
     };
 
     const PLAYBACK_STORAGE_KEY='flovo-playback-settings';
-    const playbackDefaults={language:'both',repeat:'once',japanesePause:1,englishPause:1,englishRepeats:1,japaneseRate:.9,englishRate:.9};
+    const playbackDefaults={language:'both',repeat:'once',japanesePause:1,englishPause:1,englishRepeats:1,japaneseRate:.9,englishRate:.9,englishVoiceURI:''};
     let playbackSettings={...playbackDefaults};
     try{
       const savedPlayback=JSON.parse(localStorage.getItem(PLAYBACK_STORAGE_KEY)||'{}');
@@ -2265,6 +2266,50 @@ const COL=Object.freeze({
     document.addEventListener('pointerdown',acquireScreenWakeLock,{passive:true});
     acquireScreenWakeLock();
     const savePlaybackSettings=()=>{try{localStorage.setItem(PLAYBACK_STORAGE_KEY,JSON.stringify(playbackSettings))}catch{}};
+    const englishVoiceIdentifier=voice=>voice.voiceURI||voice.name+'::'+voice.lang;
+    const availableEnglishVoices=()=>{
+      if(!('speechSynthesis' in window))return [];
+      try{return speechSynthesis.getVoices().filter(voice=>/^en(?:-|$)/i.test(voice.lang||''))}catch{return []}
+    };
+    const refreshEnglishVoiceOptions=()=>{
+      if(!englishVoiceSelect)return;
+      const voices=availableEnglishVoices();
+      const selected=playbackSettings.englishVoiceURI||'';
+      englishVoiceSelect.replaceChildren();
+      const automatic=document.createElement('option');
+      automatic.value='';automatic.textContent='自動（自然音声を優先）';englishVoiceSelect.append(automatic);
+      voices.forEach(voice=>{
+        const option=document.createElement('option');
+        option.value=englishVoiceIdentifier(voice);
+        option.textContent=voice.name+'（'+voice.lang+'）';
+        englishVoiceSelect.append(option);
+      });
+      englishVoiceSelect.value=voices.some(voice=>englishVoiceIdentifier(voice)===selected)?selected:'';
+    };
+    englishVoiceSelect.addEventListener('change',()=>{
+      playbackSettings.englishVoiceURI=englishVoiceSelect.value;
+      savePlaybackSettings();
+      if(autoPlaying)restartAutoPlayback();
+    });
+    refreshEnglishVoiceOptions();
+    if('speechSynthesis' in window)speechSynthesis.addEventListener('voiceschanged',refreshEnglishVoiceOptions);
+    const resolveEnglishVoice=lang=>{
+      const voices=availableEnglishVoices();
+      const locale=String(lang||'en-US').toLowerCase().replace('_','-');
+      const selectedUri=playbackSettings.englishVoiceURI||'';
+      const selected=voices.find(voice=>englishVoiceIdentifier(voice)===selectedUri);
+      if(selected&&String(selected.lang||'').toLowerCase().replace('_','-')===locale)return selected;
+      let candidates=voices.filter(voice=>String(voice.lang||'').toLowerCase().replace('_','-')===locale);
+      if(!candidates.length)candidates=voices.filter(voice=>String(voice.lang||'').toLowerCase().startsWith(locale.split('-')[0]));
+      const score=voice=>{
+        let value=String(voice.lang||'').toLowerCase().replace('_','-')===locale?20:0;
+        if(/natural|neural|enhanced|premium/i.test(voice.name))value+=100;
+        if(/samantha|ava|aria|jenny|guy|google us english/i.test(voice.name))value+=20;
+        if(voice.default)value+=2;
+        return value;
+      };
+      return candidates.sort((a,b)=>score(b)-score(a))[0]||null;
+    };
     const pauseOptions=[0,1,2,3,4,5].map(value=>({value:String(value),label:value===0?'なし':value+'秒'}));
     const repeatOptions=[1,2,3,4,5].map(value=>({value:String(value),label:value+'回'}));
     const rateOptions=Array.from({length:16},(_,index)=>(.5+index*.1).toFixed(1)).map(value=>({value,label:value+'×'}));
@@ -2372,6 +2417,7 @@ const COL=Object.freeze({
       if(!autoPlaying||run!==playbackRun||!('speechSynthesis' in window)){resolve(false);return}
       const utterance=new SpeechSynthesisUtterance(value);
       utterance.lang=lang;
+      utterance.voice=resolveEnglishVoice(lang);
       utterance.rate=Number(lang.startsWith('ja')?playbackSettings.japaneseRate:playbackSettings.englishRate);
       utterance.onstart=()=>setSentenceSpeaking(button,true,false);
       const finish=()=>{
@@ -2796,6 +2842,7 @@ const COL=Object.freeze({
       speechSynthesis.resume();
       const utterance=new SpeechSynthesisUtterance(value);
       utterance.lang=lang;
+      utterance.voice=resolveEnglishVoice(lang);
       utterance.rate=Number(rate);
       utterance.onstart=onStart;
       utterance.onend=utterance.onerror=()=>{
