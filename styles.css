@@ -1659,3 +1659,38 @@ html[data-theme="dark"] .phrase-bulk-destination{border-color:#344153;background
 html[data-theme="dark"] .help-regex-guide{border-color:#344153;color:#9aa8bc}
 html[data-theme="dark"] .help-regex-guide h4{color:#eef4ff}
 html[data-theme="dark"] .help-regex-guide code{background:#273445;color:#dce8f7}
+
+/* Phrase tags */
+#phraseTagChoices{display:flex;flex-wrap:wrap;gap:7px}
+.phrase-tag-filter-choice,.phrase-tag-editor-choice{min-height:34px;padding:6px 11px;border:1px solid #d9e1eb;border-radius:999px;background:#fff;color:#526078;font-size:.68rem;font-weight:800}
+.phrase-tag-filter-choice.selected,.phrase-tag-editor-choice.selected{border-color:#90c5f1;background:#eaf5ff;color:#176db5}
+.phrase-tag-editor{display:grid;gap:9px;padding:12px;border:1px solid #dce3ec;border-radius:13px;background:#f8fafc}
+.phrase-tag-editor-heading{display:flex;align-items:baseline;gap:8px;color:#344054;font-size:.78rem}
+.phrase-tag-editor-heading span,.phrase-tag-editor small{color:#78869a;font-size:.63rem}
+.phrase-tag-editor-choices{display:flex;flex-wrap:wrap;gap:6px}
+.phrase-tag-editor-choice{min-height:31px;padding:5px 10px}
+.phrase-tag-create-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px}
+.phrase-tag-create-row input{min-width:0;height:40px;padding:0 10px;border:1px solid #d6deea;border-radius:10px;background:#fff;color:#26364d;font-size:.75rem}
+.phrase-tag-create-row button{padding:0 11px;border:1px solid #b9d8f5;border-radius:10px;background:#eef7ff;color:var(--blue);font-size:.66rem;font-weight:850}
+.phrase-card-tag-section{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:start;gap:8px;width:100%;margin-top:1px;color:#66758a;font-size:.66rem}
+.phrase-card-tag-section>strong{padding-top:4px}
+.phrase-card-tag-badges{display:flex;flex-wrap:wrap;gap:5px;min-width:0}
+.phrase-card-tag-badge{display:inline-flex;max-width:100%;padding:4px 9px;overflow-wrap:anywhere;border:1px solid #c8def2;border-radius:999px;background:#eef7ff;color:#276caa;font-size:.62rem;font-weight:800;line-height:1.25}
+.phrase-card-no-tags{padding:3px 0;color:#a0a8b4;font-size:.64rem}
+#phraseTagFilterChoices{display:flex;flex-wrap:wrap;gap:7px}
+.phrase-tag-filter[hidden]{display:none!important}
+html[data-theme="dark"] .phrase-tag-filter-choice,html[data-theme="dark"] .phrase-tag-editor-choice{border-color:#405065;background:#202b39;color:#b3c0d1}
+html[data-theme="dark"] .phrase-tag-filter-choice.selected,html[data-theme="dark"] .phrase-tag-editor-choice.selected{border-color:#426b91;background:#15283a;color:#72baff}
+html[data-theme="dark"] .phrase-tag-editor{border-color:#344153;background:#17202c}
+html[data-theme="dark"] .phrase-tag-editor-heading{color:#eef4ff}
+html[data-theme="dark"] .phrase-tag-create-row input{border-color:#405065;background:#121a24;color:#eef4ff}
+html[data-theme="dark"] .phrase-tag-create-row button{border-color:#426b91;background:#15283a;color:#72baff}
+html[data-theme="dark"] .phrase-card-tag-section{color:#aebbd0}
+html[data-theme="dark"] .phrase-card-tag-badge{border-color:#426b91;background:#15283a;color:#72baff}
+.help-regex-guide{display:grid;gap:8px}
+.help-regex-guide h4{margin:7px 0 0;color:#344054;font-size:.76rem}
+.help-regex-guide p{margin:0}
+.help-regex-guide ul{margin:0}
+html[data-theme="dark"] .help-regex-guide h4{color:#eef4ff}
+
+.phrase-tag-filter-help{margin:0 0 9px;color:#7b8798;font-size:.64rem;line-height:1.45}
