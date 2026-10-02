@@ -237,17 +237,18 @@
   const isPhraseBulkMode=()=>moduleMode==='phrase-bank';
   const selectedBulkCount=()=>isPhraseBulkMode()?phraseBulkSelectedIds.size:activeBulkSelectedRows.size;
   const activeSourceForRow=(row,indexHint)=>{let source=activeBulkRowMap.get(row);if(source)return source;const storedIndex=Number.parseInt(row.dataset.practiceRowIndex,10),index=Number.isInteger(indexHint)?indexHint:Number.isInteger(storedIndex)?storedIndex:[...practiceListItems.children].indexOf(row);source=window.flovoPracticeBridge?.getVisibleRows?.()[index];if(source)activeBulkRowMap.set(row,source);return source};
-  const phraseIdForRow=row=>{let id=number(row.dataset.phraseBulkId);if(id)return id;id=phraseFromListRow(row)?.id||0;if(id)row.dataset.phraseBulkId=String(id);return id};
+  const phraseIdForRow=(row,indexHint)=>{let id=number(row.dataset.phraseBulkId);if(id)return id;id=rowPhraseIds.get(activeSourceForRow(row,indexHint))||phraseFromListRow(row)?.id||0;if(id)row.dataset.phraseBulkId=String(id);return id};
+  const bulkRowCount=()=>window.flovoPracticeBridge?.getVisibleRows?.().length??practiceListItems?.getElementsByClassName('practice-list-row').length??0;
   const isBulkRowSelected=(row,index)=>isPhraseBulkMode()?phraseBulkSelectedIds.has(phraseIdForRow(row)):activeBulkSelectedRows.has(activeSourceForRow(row,index));
   const syncBulkRowVisual=(row,index)=>{const selected=isBulkRowSelected(row,index);row.classList.toggle('phrase-bulk-selected',selected);row.setAttribute('aria-selected',String(selected))};
   const animateBulkHeader=active=>{
     clearTimeout(phraseBulkHeaderTimer);bulkHeader.classList.remove('is-entering','is-leaving');
-    if(active){bulkHeader.hidden=false;void bulkHeader.offsetWidth;bulkHeader.classList.add('is-entering');phraseBulkHeaderTimer=setTimeout(()=>bulkHeader.classList.remove('is-entering'),520);return}
+    if(active){bulkHeader.hidden=false;requestAnimationFrame(()=>{if(!phraseBulkSelecting)return;bulkHeader.classList.add('is-entering');phraseBulkHeaderTimer=setTimeout(()=>bulkHeader.classList.remove('is-entering'),520)});return}
     if(bulkHeader.hidden)return;bulkHeader.classList.add('is-leaving');phraseBulkHeaderTimer=setTimeout(()=>{if(!phraseBulkSelecting)bulkHeader.hidden=true;bulkHeader.classList.remove('is-leaving')},460);
   };
   const animateBulkActions=active=>{
     clearTimeout(phraseBulkActionsTimer);bulkActions.classList.remove('is-entering','is-leaving');
-    if(active){bulkActions.hidden=false;void bulkActions.offsetWidth;bulkActions.classList.add('is-entering');phraseBulkActionsTimer=setTimeout(()=>bulkActions.classList.remove('is-entering'),500);return}
+    if(active){bulkActions.hidden=false;requestAnimationFrame(()=>{if(!phraseBulkSelecting)return;bulkActions.classList.add('is-entering');phraseBulkActionsTimer=setTimeout(()=>bulkActions.classList.remove('is-entering'),500)});return}
     if(bulkActions.hidden)return;bulkActions.classList.add('is-leaving');phraseBulkActionsTimer=setTimeout(()=>{if(!phraseBulkSelecting)bulkActions.hidden=true;bulkActions.classList.remove('is-leaving')},400);
   };
   const updateBulkUi=(syncRows=false)=>{
@@ -255,7 +256,7 @@
     practiceList?.classList.toggle('phrase-bulk-selecting',phraseBulkSelecting);
     bulkSelectButton.hidden=phraseBulkSelecting;
     bulkHeader.querySelector('.phrase-bulk-count').textContent=`${count}件選択`;
-    const rowCount=practiceListItems?.getElementsByClassName('practice-list-row').length||0,allSelected=Boolean(rowCount)&&count===rowCount;
+    const rowCount=bulkRowCount(),allSelected=Boolean(rowCount)&&count===rowCount;
     const allButton=bulkHeader.querySelector('.phrase-bulk-all');allButton.textContent=allSelected?'すべて解除':'すべてを選択';allButton.disabled=!rowCount;
     bulkActions.querySelectorAll('button').forEach(button=>button.disabled=!count);
     if(syncRows)visibleBulkRows().forEach(syncBulkRowVisual);

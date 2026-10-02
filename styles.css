@@ -1557,7 +1557,7 @@ body[data-practice-module="phrase-bank"] #practiceListPlaceholder.phrase-bulk-se
 body[data-practice-module="active-vocabulary"] #practiceListPlaceholder.phrase-bulk-selecting #practiceList .practice-list-row::before{opacity:1;transform:translateY(-50%) scale(1)}
 .practice-list-placeholder.phrase-bulk-selecting .practice-list-row.phrase-bulk-selected::before{border-color:var(--blue);background:var(--blue);content:'✓'}
 .practice-list-placeholder.phrase-bulk-selecting .practice-list-row.phrase-bulk-selected{background:#e9f4ff}
-.phrase-bulk-actions{position:absolute;z-index:8;right:10px;bottom:10px;left:10px;display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:7px;border:1px solid #d9e0e9;border-radius:18px;background:#fffffff2;box-shadow:0 8px 28px #1e293b26;transform:none!important;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.phrase-bulk-actions{position:absolute;z-index:8;right:10px;bottom:0;left:10px;display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:7px;border:1px solid #d9e0e9;border-radius:18px 18px 0 0;background:#fff;box-shadow:0 8px 28px #1e293b26;transform:none!important;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
 .phrase-bulk-actions.is-entering{animation:phrase-bulk-actions-fade-in-v2 460ms ease both;transform:none!important}
 .phrase-bulk-actions.is-leaving{animation:phrase-bulk-actions-fade-out-v2 360ms ease both;transform:none!important;pointer-events:none}
 @keyframes phrase-bulk-actions-fade-in-v2{0%{opacity:0;transform:none}100%{opacity:1;transform:none}}
@@ -1580,6 +1580,6 @@ html[data-theme="dark"] .phrase-bulk-header{background:#101722}html[data-theme="
 html[data-theme="dark"] .practice-list-placeholder.phrase-bulk-selecting .practice-list-row::before{border-color:#718096;background:#192330}
 html[data-theme="dark"] .practice-list-placeholder.phrase-bulk-selecting .practice-list-row.phrase-bulk-selected::before{border-color:#4da7f7;background:#238de8}
 html[data-theme="dark"] .practice-list-placeholder.phrase-bulk-selecting .practice-list-row.phrase-bulk-selected{background:#173b5c}
-html[data-theme="dark"] .phrase-bulk-actions{border-color:#3c4a5c;background:#151e2aeb;box-shadow:0 8px 28px #0008}
+html[data-theme="dark"] .phrase-bulk-actions{border-color:#3c4a5c;background:#151e2a;box-shadow:0 8px 28px #0008}
 html[data-theme="dark"] .phrase-bulk-actions button{background:#173653;color:#72baff}html[data-theme="dark"] .phrase-bulk-actions button:last-child{background:#3a2027;color:#ff8997}html[data-theme="dark"] .phrase-bulk-actions button:disabled{background:#252e3a;color:#697789}
 html[data-theme="dark"] .phrase-bulk-destination{border-color:#344153;background:#17202c;color:#eef4ff}
