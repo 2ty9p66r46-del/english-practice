@@ -1,6 +1,3 @@
-Warning: truncated output (original token count: 38814)
-Total output lines: 1503
-
 /* FloVo shared UI foundation — reuse these tokens and component classes on every screen. */
     :root{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue","Noto Sans JP",sans-serif;color:#111827;background:#f5f5fa;font-synthesis:none;--blue:#087cff;--ink:#111827;--muted:#6f7b8e;--soft:#edeef3;--card:#fff;--radius-pill:999px;--action-border-width:3px;--action-border-color:#064faa;--action-top:#78bfff;--action-mid:#2e91ed;--action-bottom:#176fc2}
     *{box-sizing:border-box}
@@ -556,7 +553,445 @@ Total output lines: 1503
 .practice-nav-controls .tab{font-size:.7rem;line-height:1}
 .practice-nav-controls .tab>svg,
 .practice-nav-controls .tab>.practice-language-mark{flex:0 0 25px;width:25px;height:25px}
-.practice-nav-controls .tab>span:last-child:not(.visually-hidden){display:…8814 tokens truncated…nd:#fff;box-shadow:0 2px 8px #26354a14;text-align:center}
+.practice-nav-controls .tab>span:last-child:not(.visually-hidden){display:flex;height:.7rem;align-items:center;justify-content:center;line-height:.7rem}
+.nav.practice-mode .nav-home>span:last-child{display:flex;height:.7rem;align-items:center;justify-content:center;line-height:.7rem}
+
+
+/* Enlarge the Japanese audio-mode mark without moving the tab title. */
+.practice-nav-controls .tab>.practice-language-mark{width:46px;max-width:100%;font-size:1rem;font-weight:950;letter-spacing:-.11em}
+
+
+/* Question method belongs to the practice settings sheet, not the Home screen. */
+.practice-settings-method{margin-bottom:8px;padding:0 0 14px;border-bottom:1.5px solid #d8dee8}
+.practice-settings-method h3{margin:0 0 9px;color:#344054;font-size:.82rem}
+.practice-settings-method .practice-options{grid-template-columns:minmax(0,1fr) 88px}
+.practice-settings-method .practice-control{padding:7px 8px 8px}
+
+/* Home appearance settings and dark theme. */
+.home-settings-overlay{position:absolute;z-index:140;inset:0;display:flex;align-items:flex-end;padding-top:env(safe-area-inset-top);background:#11182770;backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+.home-settings-overlay[hidden]{display:none}
+.home-settings-sheet{width:100%;padding:18px 20px calc(24px + env(safe-area-inset-bottom));border-radius:24px 24px 0 0;background:#fff;box-shadow:0 -14px 36px #1118272e}
+.home-settings-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.home-settings-head h2{margin:0;font-size:1.15rem}
+.home-settings-head button{display:grid;width:36px;height:36px;place-items:center;border:1px solid #d9dee7;border-radius:50%;background:#f4f6f9;color:#526078;font-size:1.25rem;line-height:1}
+.home-setting-section{padding:16px;border:1px solid #dce2eb;border-radius:16px;background:#f8f9fc}
+.home-setting-section h3{margin:0;color:#344054;font-size:.9rem}
+.home-setting-section p{margin:7px 0 14px;color:#6f7b8e;font-size:.72rem;line-height:1.5}
+.theme-options{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.theme-options button{min-height:44px;border:1px solid #d8dee8;border-radius:12px;background:#fff;color:#59667b;font-size:.78rem;font-weight:850}
+.theme-options button.selected{border:3px solid var(--action-border-color);background:linear-gradient(180deg,var(--action-top),var(--action-bottom));color:#fff;box-shadow:0 4px 10px #087cff30}
+
+html[data-theme="dark"]{color-scheme:dark;--ink:#eef4ff;--muted:#9aa8bc;--soft:#283241;--card:#1b2431;background:#0d121b}
+html[data-theme="dark"] body,
+html[data-theme="dark"] .shell,
+html[data-theme="dark"] .practice-screen{background:#0d121b;color:#eef4ff}
+html[data-theme="dark"] .topbar,
+html[data-theme="dark"] .practice-screen-header{background:#111722;border-color:#2b3544}
+html[data-theme="dark"] .card,
+html[data-theme="dark"] .practice-exercise-card,
+html[data-theme="dark"] .practice-rating-panel,
+html[data-theme="dark"] .practice-meta-panel,
+html[data-theme="dark"] .home-module-card{background:#1b2431;box-shadow:0 9px 28px #00000038}
+html[data-theme="dark"] .nav,
+html[data-theme="dark"] .nav-home,
+html[data-theme="dark"] .tab{background:#151d28;border-color:#2d3848}
+html[data-theme="dark"] .tab{color:#8f9bad}
+html[data-theme="dark"] .tab.active,
+html[data-theme="dark"] .nav-reload:active{color:#55a9ff}
+html[data-theme="dark"] .file-state,
+html[data-theme="dark"] .practice-japanese,
+html[data-theme="dark"] .practice-answer,
+html[data-theme="dark"] .practice-meta-id-row span,
+html[data-theme="dark"] .practice-meta-top span,
+html[data-theme="dark"] .home-stat-panel,
+html[data-theme="dark"] .home-stat-empty{background:#222d3b;color:#a9b5c6}
+html[data-theme="dark"] .practice-english,
+html[data-theme="dark"] .practice-japanese{color:#eef4ff}
+html[data-theme="dark"] .practice-meaning,
+html[data-theme="dark"] .practice-number,
+html[data-theme="dark"] .practice-language-label,
+html[data-theme="dark"] .practice-panel-label,
+html[data-theme="dark"] .practice-result-choice small,
+html[data-theme="dark"] .group-title,
+html[data-theme="dark"] .section-head h2,
+html[data-theme="dark"] .practice-list-header,
+html[data-theme="dark"] .practice-list-item strong{color:#dce6f5}
+html[data-theme="dark"] .practice-progress,
+html[data-theme="dark"] .practice-note,
+html[data-theme="dark"] .practice-brand small,
+html[data-theme="dark"] .filter-warning{color:#9aa8bc;border-color:#354153}
+html[data-theme="dark"] .practice-info-primary,
+html[data-theme="dark"] .practice-note-row,
+html[data-theme="dark"] .practice-rating-panel,
+html[data-theme="dark"] .filter-section,
+html[data-theme="dark"] .filter-section .group + .group,
+html[data-theme="dark"] .filter-section>.filter-warning + .group,
+html[data-theme="dark"] .level-filter-row+.level-filter-row{border-color:#354153}
+html[data-theme="dark"] .practice-info-divider,
+html[data-theme="dark"] .practice-language-divider{background:#354153}
+html[data-theme="dark"] .practice-control,
+html[data-theme="dark"] .choice,
+html[data-theme="dark"] .all,
+html[data-theme="dark"] .bulk-filter-button,
+html[data-theme="dark"] .section-filter-button,
+html[data-theme="dark"] .practice-rating-button,
+html[data-theme="dark"] .practice-result-button{border-color:#465264;background:linear-gradient(#303b4a,#252f3d);color:#aeb9c8;box-shadow:inset 0 1px 0 #ffffff12}
+html[data-theme="dark"] .practice-result-button.result-correct{color:#55a9ff}
+html[data-theme="dark"] .practice-result-button.result-unsure{color:#f0c84e}
+html[data-theme="dark"] .practice-result-button.result-wrong{color:#ff7282}
+html[data-theme="dark"] .practice-result-button.is-result-locked.is-result-selected{box-shadow:inset 0 1px 0 #ffffff18,0 0 0 3px color-mix(in srgb,currentColor 32%,transparent),0 3px 8px #0006}
+html[data-theme="dark"] .word-text-filter-fields input,
+html[data-theme="dark"] .answer-count-filter-row input,
+html[data-theme="dark"] .practice-display-limit-control input,
+html[data-theme="dark"] input,
+html[data-theme="dark"] textarea,
+html[data-theme="dark"] select{border-color:#465264;background:#111923;color:#eef4ff}
+html[data-theme="dark"] input::placeholder,
+html[data-theme="dark"] textarea::placeholder{color:#758398}
+html[data-theme="dark"] .practice-copy-button,
+html[data-theme="dark"] .practice-edit-button,
+html[data-theme="dark"] .practice-audio,
+html[data-theme="dark"] .practice-result-edit,
+html[data-theme="dark"] .practice-nav-button{border-color:#315d86;background:#17293b;color:#55a9ff;box-shadow:none}
+html[data-theme="dark"] .answer-count-mode{border-color:#465264;background:linear-gradient(#303b4a,#252f3d);color:#aeb9c8}
+html[data-theme="dark"] .answer-count-mode.selected{border-color:var(--solid-line);background:linear-gradient(180deg,var(--solid-hi) 0%,var(--solid) 44%,var(--solid-lo) 100%);color:#fff;box-shadow:inset 0 1px 0 #ffffffb8,inset 0 -2px 0 #0000002e,0 0 0 2px #ffffff2e,0 4px 11px var(--solid-shadow)}
+html[data-theme="dark"] .practice-display-limit-section{border-color:#354153}
+html[data-theme="dark"] .practice-audio:disabled{border-color:#3a4555;background:#252e3a;color:#69778a}
+html[data-theme="dark"] .practice-meta-chip{box-shadow:inset 0 1px 0 #ffffff18}
+html[data-theme="dark"] .help-sheet,
+html[data-theme="dark"] .practice-settings-sheet,
+html[data-theme="dark"] .practice-filter-sheet,
+html[data-theme="dark"] .card-actions-sheet,
+html[data-theme="dark"] .card-editor-sheet,
+html[data-theme="dark"] .result-editor-sheet,
+html[data-theme="dark"] .sentence-editor-sheet,
+html[data-theme="dark"] .learning-reset-dialog,
+html[data-theme="dark"] .home-settings-sheet{background:#18212d;color:#eef4ff;box-shadow:0 -14px 36px #0008}
+html[data-theme="dark"] .help-version-card,
+html[data-theme="dark"] .home-setting-section,
+html[data-theme="dark"] .card-editor-confirm-panel{border-color:#354153;background:#202b39}
+html[data-theme="dark"] .help-menu-item,
+html[data-theme="dark"] .help-back-button,
+html[data-theme="dark"] .theme-options button,
+html[data-theme="dark"] .home-settings-head button,
+html[data-theme="dark"] .help-close{border-color:#3b4758;background:#222d3b;color:#c5d0df}
+html[data-theme="dark"] .theme-options button.selected{border-color:var(--action-border-color);background:linear-gradient(180deg,var(--action-top),var(--action-bottom));color:#fff}
+html[data-theme="dark"] .home-setting-section h3,
+html[data-theme="dark"] .help-version-row dd,
+html[data-theme="dark"] .help-version-title,
+html[data-theme="dark"] .practice-settings-head h2,
+html[data-theme="dark"] .practice-setting-row select,
+html[data-theme="dark"] .card-editor-head h2{color:#eef4ff}
+html[data-theme="dark"] .home-setting-section p,
+html[data-theme="dark"] .help-usage-list,
+html[data-theme="dark"] .help-change-list,
+html[data-theme="dark"] .help-note,
+html[data-theme="dark"] .help-version-row dt{color:#9aa8bc}
+html[data-theme="dark"] .practice-list-item,
+html[data-theme="dark"] .card-word-result,
+html[data-theme="dark"] .card-meaning-choice,
+html[data-theme="dark"] .card-example-page{border-color:#354153;background:#1b2431;color:#eef4ff}
+html[data-theme="dark"] .segmented{border-color:#354153;background:#101721}
+html[data-theme="dark"] .segment{color:#9aa8bc}
+html[data-theme="dark"] .segment.active{background:#263343;color:#55a9ff;box-shadow:none}
+html[data-theme="dark"] .screen-fade{background:#0d121b}
+@media (min-width:700px){html[data-theme="dark"] body{background:#090d13}html[data-theme="dark"] .shell{box-shadow:0 0 50px #0009}}
+.practice-settings-method .question-menu{z-index:170}
+
+
+/* Practice order is a bottom-tab toggle; only question count remains in Settings. */
+.practice-question-setting>.question-picker{flex:0 0 104px;padding:0;border:0;background:transparent;box-shadow:none}
+.practice-question-setting .question-menu{z-index:170}
+.practice-order-icon>g{display:none}
+.practice-order-icon .order-number-mark{display:block}
+#practiceOrderTab.random .order-number-mark{display:none}
+#practiceOrderTab.random .order-random-mark{display:block}
+.practice-order-icon text{fill:currentColor;stroke:none;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;font-size:5px;font-weight:850;text-anchor:middle}
+
+
+/* Home practice tab: a learner speaking English. */
+.practice-speaker-icon text{fill:currentColor;stroke:none;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;font-size:4.2px;font-weight:900;text-anchor:middle}
+
+
+/* All individual Home filter choices use the same capsule silhouette as Select All. */
+.filter-section .choice{border-radius:var(--radius-pill)}
+
+
+/* Practice navigation mirrors Home: fixed Home tab plus a horizontal 78px tab rail. */
+.nav.practice-mode .practice-nav-controls{display:flex;flex:1 1 auto;min-width:0;overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;touch-action:pan-x}
+.nav.practice-mode .practice-nav-controls::-webkit-scrollbar{display:none}
+.nav.practice-mode .practice-nav-controls .tab{flex:0 0 78px;min-width:78px;width:78px;padding:0;font-size:.7rem}
+.nav.practice-mode .nav-home{position:relative;z-index:2;flex:0 0 88px;width:88px;background:#fff;box-shadow:8px 0 18px #26354a0d}
+
+
+/* A larger, unmistakable person-and-speech-bubble icon for Home practice. */
+#practiceTab .practice-speaker-icon{width:29px;height:29px;stroke-width:2;overflow:visible}
+
+
+/* Every available bottom-nav action uses the active blue on both screens. */
+.nav .nav-scroll .tab:not(:disabled),
+.nav .practice-nav-controls .tab:not(:disabled){color:var(--blue)}
+.nav .practice-nav-controls .tab.is-stopping{color:#d52b3f}
+.nav .tab:disabled{color:#c5cad3;opacity:.55}
+
+
+/* Make the audio-mode mark more prominent while preserving the tab geometry. */
+.practice-nav-controls .tab>.practice-language-mark{width:58px;max-width:100%;font-size:1.2rem;font-weight:950;line-height:1;letter-spacing:-.12em}
+
+
+/* Audio language mark occupies roughly 80% of the icon area. */
+.practice-nav-controls .tab>.practice-language-mark{width:64px;max-width:100%;font-size:1.35rem;font-weight:950;line-height:1;letter-spacing:-.12em}
+
+
+/* Make the single-question repeat badge readable at tab size. */
+.practice-nav-controls .repeat-current-mark circle{stroke-width:1.35}
+.practice-nav-controls .repeat-current-mark text{font-size:7.5px;font-weight:950}
+
+
+/* Force a clearly readable language glyph at approximately icon scale. */
+.nav.practice-mode .practice-nav-controls .tab>.practice-language-mark{width:72px;max-width:100%;height:25px;font-size:1.65rem!important;font-weight:950;line-height:25px;letter-spacing:-.14em}
+
+/* Audio language mark uses one consistent, unclipped horizontal label. */
+.nav.practice-mode .practice-nav-controls .tab>.practice-language-mark{position:static;width:62px;max-width:100%;height:25px;background:none;font-size:1.15rem!important;font-weight:950;line-height:25px;letter-spacing:-.08em;white-space:nowrap}
+
+
+/* Definitive override: the legacy 42px ID rule must not clip 日・英. */
+#languageModeIcon.practice-language-mark{box-sizing:border-box;width:66px!important;max-width:66px!important;height:25px!important;overflow:visible!important;font-size:1.15rem!important;line-height:25px!important;letter-spacing:-.08em!important;white-space:nowrap!important}
+
+
+/* Bottom-tab icon geometry is identical on Home and Practice. */
+.nav .tab svg,
+.nav #practiceTab .practice-speaker-icon,
+.nav.practice-mode .practice-nav-controls .practice-control-icon{width:25px!important;height:25px!important}
+#languageModeIcon.practice-language-mark{box-sizing:border-box;display:grid;flex:0 0 25px!important;width:25px!important;max-width:25px!important;height:25px!important;place-items:center;overflow:visible!important;background:none!important;font-size:1.15rem!important;font-weight:950;line-height:25px!important;letter-spacing:0!important;white-space:nowrap!important;transform:none}
+#languageModeIcon.practice-language-mark[data-mode="both"]{font-size:.72rem!important;letter-spacing:-.12em!important;transform:scaleX(.78)}
+
+
+/* Refine mode-specific tab glyphs: smaller single-language text and clearer sequence order. */
+#languageModeIcon.practice-language-mark:not([data-mode="both"]){font-size:.98rem!important}
+.practice-order-icon .order-number-mark text{font-size:6.4px;font-weight:950}
+
+
+/* Increase the 1-2-3 sequence numerals without changing icon geometry. */
+.practice-order-icon .order-number-mark text{font-size:7.8px;font-weight:950}
+
+
+/* Practice display-mode switch and compact question list. */
+.practice-view-mode-icon>g{display:none}
+#practiceViewModeTab.card-mode .view-card-mark,
+#practiceViewModeTab.list-mode .view-list-mark{display:block}
+.practice-list-placeholder{display:flex;flex:1 1 520px;min-height:510px;flex-direction:column;overflow:hidden;border-radius:23px;background:#fff;color:#344054;box-shadow:0 1px 1px #1822350d,0 9px 25px #27344d0a}
+.practice-list-header{display:flex;min-height:50px;align-items:center;justify-content:space-between;padding:0 18px;border-bottom:1.5px solid #cfd5df}
+.practice-list-header strong{color:#111827;font-size:.9rem;font-weight:900}
+.practice-list-header span{color:#788499;font-size:.68rem;font-weight:850;font-variant-numeric:tabular-nums}
+.practice-list-items{display:flex;flex-direction:column}
+.practice-list-row{display:grid;width:100%;min-height:82px;grid-template-columns:minmax(0,1fr) 38px 18px;align-items:center;gap:11px;padding:12px 15px;border:0;border-bottom:1.5px solid #d8dee8;background:#fff;color:#111827;text-align:left;-webkit-tap-highlight-color:transparent}
+.practice-list-row:last-child{border-bottom:0}
+.practice-list-row:active{background:#f2f6fc}
+.practice-list-row[aria-current="true"]{background:linear-gradient(90deg,#eef6ff 0%,#fff 72%)}
+.practice-list-copy{display:grid;min-width:0;gap:6px}
+.practice-list-title{display:flex;min-width:0;align-items:baseline;gap:7px;line-height:1.1}
+.practice-list-title b{flex:0 0 auto;color:#526078;font-size:.69rem;font-weight:900;font-variant-numeric:tabular-nums}
+.practice-list-title>span{color:#a3aaba;font-size:.67rem}
+.practice-list-title strong{min-width:0;overflow:hidden;color:#111827;font-size:.93rem;font-weight:850;text-overflow:ellipsis;white-space:nowrap}
+.practice-list-japanese{display:-webkit-box;min-width:0;overflow:hidden;color:#7b8495;font-size:.68rem;font-weight:700;line-height:1.35;-webkit-box-orient:vertical;-webkit-line-clamp:2}
+.practice-list-rating{display:grid;width:32px;height:32px;place-items:center;border:2px solid var(--solid-line);border-radius:50%;background:linear-gradient(180deg,var(--solid-hi) 0%,var(--solid) 52%,var(--solid-lo) 100%);color:#fff;font-size:.61rem;font-weight:900;font-variant-numeric:tabular-nums;text-shadow:0 1px 1px #00000045;box-shadow:inset 0 1px 0 #ffffffaa,inset 0 -1px 0 #0000001f,0 2px 5px var(--solid-shadow)}
+.practice-list-chevron{width:18px;height:18px;fill:none;stroke:#8c95a5;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.practice-exercise-card[hidden],
+.practice-list-placeholder[hidden]{display:none!important}
+
+
+/* Card/list selection belongs in the practice header; question movement remains swipe-based. */
+.practice-screen-header{grid-template-columns:78px minmax(0,1fr) 78px}
+.practice-header-view-switch{display:grid;width:74px;height:36px;grid-template-columns:1fr 1fr;align-items:center;justify-self:start;padding:3px;border:1px solid #d8dee8;border-radius:13px;background:#e9edf3;box-shadow:inset 0 1px 2px #26354a12}
+.practice-header-view-button{display:grid;width:34px;height:30px;place-items:center;padding:0;border:0;border-radius:10px;background:transparent;color:#7f8999}
+.practice-header-view-button svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.practice-header-view-button.active{background:linear-gradient(180deg,#78bfff 0%,#2e91ed 52%,#176fc2 100%);color:#fff;box-shadow:inset 0 1px 0 #ffffff99,inset 0 -1px 0 #0000001f,0 2px 5px #064faa40}
+.practice-header-view-button:active{transform:translateY(1px)}
+.practice-header-view-spacer{display:block;width:78px;height:1px}
+
+
+/* List-first practice flow: list scrolls with the page, arrow opens a card, card arrow returns. */
+.practice-screen-header{grid-template-columns:44px minmax(0,1fr) 44px}
+.practice-header-view-switch{display:none}
+.practice-back-to-list{display:grid;width:38px;height:38px;place-items:center;justify-self:start;padding:0;border:1px solid #d8dee8;border-radius:50%;background:#fff;color:#526078;box-shadow:0 3px 10px #26354a12}
+.practice-back-to-list[hidden]{display:grid!important;visibility:hidden;pointer-events:none}
+.practice-back-to-list svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.practice-back-to-list:active{transform:translateX(-1px)}
+.practice-header-view-spacer{width:44px}
+.practice-list-placeholder{flex:0 0 auto;min-height:0;overflow:visible}
+.practice-list-row{grid-template-columns:minmax(0,1fr) 82px}
+.practice-list-row:active{background:#fff}
+.practice-list-open{display:grid;width:38px;height:38px;place-items:center;padding:0;border:0;border-radius:50%;background:transparent;color:#8c95a5}
+.practice-list-open:active{background:#edf3fb;color:var(--blue)}
+.practice-list-open .practice-list-chevron{display:block}
+.practice-list-rating{display:none}
+
+
+/* List row starts playback; only the trailing arrow opens the card. */
+.practice-list-row{cursor:pointer}
+.practice-list-row:focus-visible{outline:3px solid #8fc1f5;outline-offset:-3px}
+.practice-list-row[aria-current="true"]{background:linear-gradient(90deg,#e8f3ff 0%,#fff 78%)}
+.practice-list-row[aria-current="true"] .practice-list-title strong{color:var(--blue)}
+
+
+/* Reload now lives in the Home bottom navigation. */
+.match-summary{justify-content:flex-end}
+#reloadButton.loading svg{animation:reloadSpin .8s linear infinite}
+
+/* Card detail enters from the right and returns in the opposite direction. */
+.practice-exercise-card{will-change:transform,opacity}
+
+
+/* The fixed left navigation slot is Reload on Home and Home while practicing. */
+.nav-reload{position:relative;z-index:2;display:flex;flex:0 0 88px;width:88px;background:#fff;color:var(--blue);box-shadow:8px 0 18px #26354a0d}
+.nav:not(.practice-mode) .nav-home{display:none}
+.nav.practice-mode .nav-reload{display:none}
+.nav.practice-mode .nav-home{display:flex}
+.nav-reload.loading svg{animation:reloadSpin .8s linear infinite}
+
+
+/* Practice header filter shortcut mirrors the back control without shifting the centered logo. */
+.practice-filter-button{display:grid;width:38px;height:38px;place-items:center;justify-self:end;padding:0;border:1px solid #d8dee8;border-radius:50%;background:#fff;color:#526078;box-shadow:0 3px 10px #26354a12}
+.practice-filter-button svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.practice-filter-button:active{transform:translateY(1px)}
+
+
+/* Filter control uses the same visual system as the Home template action. */
+.practice-screen-header{grid-template-columns:58px minmax(0,1fr) 58px}
+.practice-filter-button{display:flex;width:53px;height:50px;flex-direction:column;align-items:center;justify-content:center;gap:2px;justify-self:end;padding:0;border:1px solid #dce2ec;border-radius:14px;background:#fff;color:#526078;box-shadow:0 3px 10px #26354a0b;font-size:.56rem;font-weight:800}
+.practice-filter-button svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
+.practice-filter-button:active{transform:scale(.96)}
+
+
+/* Practice filters open as a bottom sheet without leaving the practice screen. */
+.practice-filter-overlay{position:absolute;z-index:170;inset:0;display:flex;align-items:flex-end;background:#11182700;transition:background-color 320ms ease}
+.practice-filter-overlay[hidden]{display:none!important}
+.practice-filter-overlay.open{background:#11182773}
+.practice-filter-sheet{display:flex;width:100%;height:min(90%,760px);flex-direction:column;border-radius:24px 24px 0 0;background:#f4f5f9;box-shadow:0 -18px 45px #1118272e;transform:translateY(104%);transition:transform 340ms cubic-bezier(.16,.82,.24,1)}
+.practice-filter-overlay.open .practice-filter-sheet{transform:translateY(0)}
+.practice-filter-sheet-head{position:relative;display:grid;min-height:58px;grid-template-columns:88px 1fr 88px;align-items:center;padding:4px 10px;border-bottom:1px solid #dfe3ea;border-radius:24px 24px 0 0;background:#fff}
+.practice-filter-handle{position:absolute;z-index:3;top:0;left:50%;width:72px;height:28px;transform:translateX(-50%);cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+.practice-filter-handle::after{position:absolute;top:6px;left:50%;width:42px;height:5px;border-radius:999px;background:#c6ccd6;content:"";transform:translateX(-50%);transition:width 140ms ease,background-color 140ms ease}
+.practice-filter-handle.dragging{cursor:grabbing}
+.practice-filter-handle.dragging::after{width:48px;background:#9da7b6}
+.practice-filter-sheet-head h2{margin:0;color:#182230;font-size:1rem;text-align:center}
+.practice-filter-sheet-head button{height:38px;padding:0 8px;border:0;background:transparent;color:var(--blue);font-size:.8rem;font-weight:800;text-align:right}
+.practice-filter-sheet-head button:first-of-type{text-align:left}
+.practice-filter-sheet-head button:disabled{color:#b7bec9;opacity:.72;pointer-events:none}
+.practice-filter-sheet-body{min-height:0;overflow-y:auto;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch;padding:18px 16px calc(28px + env(safe-area-inset-bottom))}
+.practice-filter-sheet-body>.card{padding:0;border-radius:0;background:transparent;box-shadow:none}
+.practice-filter-fixed-summary{display:block;flex:0 0 auto;padding:18px 16px 14px;background:#f4f5f9;box-shadow:0 6px 12px #26354a0a}.practice-filter-fixed-summary:empty{display:none}.practice-filter-fixed-summary>.section-head{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px;margin:0}.practice-filter-fixed-summary>.section-head>h2{display:none}
+.practice-filter-sheet-body>#filterCard .editor-only-filter{display:none}
+.card-word-filter-panel .practice-only-filter{display:none}
+.practice-filter-fixed-summary .filter-result-counts{display:grid;min-width:0;justify-self:center;justify-content:center;gap:5px;margin:0}.practice-filter-fixed-summary .filter-result-counts>span{display:grid;grid-template-columns:48px minmax(0,1fr);justify-content:center;gap:9px;align-items:baseline}.practice-filter-fixed-summary .filter-result-counts b{font-size:.72rem;line-height:1.1;text-align:right}.practice-filter-fixed-summary .filter-result-counts strong{min-width:0;justify-content:flex-start;font-size:.86rem;line-height:1.15}
+
+
+/* Home no longer shows filters; the same card exists only inside the practice filter sheet. */
+#filterCard{display:none}
+.practice-filter-sheet-body>#filterCard{display:block}
+
+/* Matching counts occupy the practice-list header's upper-left slot. */
+.practice-screen-header{grid-template-columns:88px minmax(0,1fr) 88px}
+.practice-header-left{position:relative;display:grid;width:88px;height:50px;align-items:center;justify-items:start}
+.practice-header-counts{display:grid;width:88px;gap:3px;color:#65728a;font-variant-numeric:tabular-nums}
+.practice-header-counts[hidden]{display:none!important}
+.practice-header-counts>span{display:grid;grid-template-columns:46px 5ch;align-items:baseline;column-gap:3px;white-space:nowrap}
+.practice-header-counts b{font-size:.48rem;font-weight:800}
+.practice-header-counts strong{display:flex;width:5ch;justify-content:flex-end;color:#344054;font-size:.58rem;font-weight:900}
+.practice-header-counts .count-padding{color:#c7ccd5}
+.practice-header-counts .count-value{color:#344054}
+.practice-header-left .practice-back-to-list{position:absolute;left:0;top:6px}
+
+
+/* Practice header is intentionally unbranded: counts/back left, filter right. */
+.practice-header-left{grid-column:1}
+.practice-filter-button{grid-column:3}
+
+
+/* Home is a product launcher: one active module and two clearly inactive modules. */
+.home-brand-row{justify-content:center}
+.home-brand-row .brand-lockup{align-items:center}
+.home-modules{display:flex;flex:1 1 auto;min-height:0;gap:14px;overflow-x:auto;overflow-y:hidden;padding:0 14px 4px;scroll-snap-type:x mandatory;scroll-padding-inline:14px;scrollbar-width:none;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
+.home-modules::-webkit-scrollbar{display:none}
+.home-module-card{position:relative;flex:0 0 100%;height:100%;min-height:0;overflow:hidden;border:1px solid #dfe5ef;border-radius:23px;background:#fff;box-shadow:0 1px 1px #1822350d,0 9px 25px #27344d0a;scroll-snap-align:start;scroll-snap-stop:always}
+.active-vocab-card{padding:18px;background:linear-gradient(145deg,#fff 0%,#f7fbff 62%,#edf6ff 100%);border-color:#d2e4f8}
+.active-vocab-card::after{position:absolute;top:0;right:0;width:115px;height:115px;border-radius:0 0 0 100%;background:radial-gradient(circle at 100% 0,#55adff24 0%,#55adff00 68%);content:"";pointer-events:none}
+.home-module-head{position:relative;z-index:1;display:grid;grid-template-columns:48px minmax(0,1fr) auto;align-items:center;gap:11px}
+.home-module-icon{display:grid;width:44px;height:44px;place-items:center;border:1px solid #dce2eb;border-radius:14px;background:linear-gradient(180deg,#f7f8fa,#e8ebf0);color:#8b94a3;box-shadow:inset 0 1px 0 #fff}
+.home-module-icon.active{width:48px;height:48px;border:2px solid #075bb8;background:linear-gradient(180deg,#78bfff 0%,#2e91ed 52%,#176fc2 100%);color:#fff;box-shadow:inset 0 1px 0 #ffffff99,inset 0 -2px 0 #00000020,0 4px 10px #064faa35}
+.home-module-icon svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.home-module-title{display:grid;min-width:0;gap:2px}
+.home-module-title small{color:#7b879a;font-size:.48rem;font-weight:850;letter-spacing:.12em}
+.home-module-title strong{color:#111827;font-size:1rem;font-weight:900;line-height:1.15}
+.home-module-status{justify-self:end;padding:4px 8px;border:1px solid #d8dde5;border-radius:999px;background:#eef0f4;color:#8a92a0;font-size:.53rem;font-weight:850;white-space:nowrap}
+.home-module-status.available{border-color:#9bc9f7;background:#e7f3ff;color:#0876ee}
+.home-excel-actions{position:relative;z-index:1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:16px}
+.home-excel-actions .header-action{width:100%;height:60px;border-radius:15px;background:#fff;font-size:.65rem}
+.home-excel-actions .header-action svg{width:24px;height:24px}
+.home-practice-button{position:relative;z-index:1;display:grid;width:100%;min-height:64px;grid-template-columns:38px minmax(0,1fr) 24px;align-items:center;gap:10px;margin-top:10px;padding:8px 14px;border:3px solid #075bb8;border-radius:17px;background:linear-gradient(180deg,#66b7ff 0%,#1786ef 48%,#0766c8 100%);color:#fff;text-align:left;box-shadow:inset 0 1px 0 #ffffffa8,inset 0 -2px 0 #003e842e,0 6px 14px #075bb833}
+.home-practice-button:active{transform:translateY(1px);box-shadow:inset 0 1px 0 #ffffff80,inset 0 -2px 0 #003e842e,0 3px 8px #075bb82c}
+.home-practice-button:disabled{border-color:#c4cad3;background:linear-gradient(#e9ebef,#d8dce3);color:#8c95a3;box-shadow:inset 0 1px 0 #fff}
+.home-practice-button>span{display:grid;gap:1px}
+.home-practice-button strong{font-size:.9rem;font-weight:900}
+.home-practice-button small{font-size:.53rem;font-weight:750;opacity:.86}
+.home-practice-person{width:34px;height:34px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.home-practice-arrow{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.home-module-card.coming{display:flex;min-height:0;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:28px;background:linear-gradient(145deg,#f9fafb,#eef0f4);filter:saturate(.35);text-align:center}
+.home-module-card.coming .home-module-icon{width:78px;height:78px;border-radius:24px}
+.home-module-card.coming .home-module-icon svg{width:39px;height:39px}
+.home-module-card.coming>strong{color:#667085;font-size:1.25rem;font-weight:900;line-height:1.4}
+.home-module-card.coming .home-module-status{justify-self:auto;margin:0;padding:6px 12px;font-size:.62rem}
+.home-carousel-dots{display:flex;flex:0 0 26px;align-items:center;justify-content:center;gap:7px}
+.home-carousel-dots button{width:7px;height:7px;padding:0;border:0;border-radius:999px;background:#c5ccd7;transition:width .2s ease,background-color .2s ease}
+.home-carousel-dots button.active{width:22px;background:var(--blue)}
+body[data-page="home"] .scroll{overflow-y:hidden;padding:14px 0 8px}
+body[data-page="home"] .stack{display:flex;height:100%;min-height:0;flex-direction:column;gap:0}
+body[data-page="home"] .bottom-space{display:none}
+.active-vocab-card{display:flex;flex-direction:column;padding:24px}
+.active-vocab-card .home-excel-actions{margin:0}
+.active-vocab-card .home-practice-button{margin-top:auto}
+
+
+/* Active Vocabulary card summary: tab-scale icon, stable counts and source filename. */
+.active-vocab-card .home-module-head{grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:14px;padding-bottom:14px;border-bottom:1px solid #d5e2ef}
+.active-vocab-card .home-module-identity{display:grid;min-width:0;justify-items:start;gap:6px}
+.active-vocab-card .home-module-icon.active{width:50px;height:50px;border:0;border-radius:0;background:transparent;color:var(--blue);box-shadow:none}
+.active-vocab-card .home-module-icon.active svg{width:46px;height:46px;stroke-width:1.8}
+.active-vocab-card .home-module-title{gap:1px}
+.home-card-counts{position:relative;z-index:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px}
+.home-card-counts>span{display:flex;min-height:42px;align-items:center;justify-content:center;gap:8px;border:1px solid #dce3ed;border-radius:14px;background:#fff;color:#526078;box-shadow:inset 0 1px 0 #fff,0 2px 7px #26354a0b}
+.home-card-counts small{font-size:.6rem;font-weight:800}
+.home-card-counts strong{display:flex;width:5ch;justify-content:flex-end;font-size:.72rem;font-weight:900;font-variant-numeric:tabular-nums}
+.home-card-counts .count-padding{color:#c7ccd5}
+.home-card-counts .count-value{color:#344054}
+.active-vocab-card .home-practice-button{grid-template-columns:minmax(0,1fr);place-items:center;text-align:center}
+.active-vocab-card .home-practice-button>span{justify-items:center}
+.home-import-file{position:relative;z-index:1;display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:8px;margin:8px 3px 0;color:#7b879a;font-size:.52rem;font-weight:750}
+.home-import-file span{white-space:nowrap}
+.home-import-file strong{min-width:0;overflow:hidden;color:#526078;font-weight:800;text-align:right;text-overflow:ellipsis;white-space:nowrap}
+
+
+/* Compact Excel actions align with the bottom-tab icon scale. */
+.active-vocab-card .home-data-menu{display:grid;justify-items:center;gap:5px}
+.active-vocab-card .home-data-label{color:#65728a;font-size:.6rem;font-weight:850;line-height:1;letter-spacing:.06em}
+.active-vocab-card .home-excel-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin:0;padding:0;border:0;background:transparent}
+.active-vocab-card .home-excel-actions .header-action{width:50px;height:50px;flex:0 0 50px;padding:0;border:1px solid #dce2ec;border-radius:14px;background:#fff;box-shadow:0 3px 10px #26354a0b;color:#526078;gap:2px}
+.active-vocab-card .home-excel-actions .header-action svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.active-vocab-card .home-excel-actions .header-action span{font-size:.52rem;font-weight:800;line-height:1;letter-spacing:.04em}
+.active-vocab-card .home-excel-actions .import-action{position:relative;overflow:hidden;cursor:pointer;user-select:none;-webkit-user-select:none}
+.active-vocab-card .home-excel-actions .import-action:active{transform:scale(.96)}
+.active-vocab-card .home-excel-actions .import-action.disabled{pointer-events:none;opacity:.55}
+.home-learning-stats{position:relative;z-index:1;display:grid;gap:8px;margin-top:12px}
+.home-stat-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));padding:3px;border-radius:12px;background:#e8edf4}
+.home-stat-tabs button{min-height:30px;padding:0 5px;border:0;border-radius:9px;background:transparent;color:#758197;font-size:.59rem;font-weight:850}
+.home-stat-tabs button.active{background:#fff;color:var(--blue);box-shadow:0 2px 7px #26354a17}
+.home-stat-panels{min-height:150px}
+.home-stat-panel[hidden]{display:none!important}
+.home-understanding-panel,.home-answer-panel,.home-word-panel{min-height:150px;border:1px solid #dce4ee;border-radius:18px;background:#ffffffd9;box-shadow:inset 0 1px 0 #fff,0 3px 10px #26354a0a}
+.home-understanding-panel{display:grid;grid-template-columns:112px minmax(0,1fr);align-items:center;gap:14px;padding:12px 14px}
+.home-understanding-donut{display:grid;width:108px;height:108px;place-items:center;border-radius:50%;background:#e9edf3;box-shadow:inset 0 0 0 1px #ffffff80;transition:background .3s ease}
+.home-understanding-center{display:grid;width:72px;height:72px;place-content:center;border-radius:50%;background:#fff;box-shadow:0 2px 8px #26354a14;text-align:center}
 .home-understanding-center strong{color:#253247;font-size:1.25rem;font-weight:950;line-height:1;font-variant-numeric:tabular-nums}
 .home-understanding-center span{margin-top:4px;color:#738096;font-size:.54rem;font-weight:850}
 .home-understanding-legend{display:grid;gap:6px}
