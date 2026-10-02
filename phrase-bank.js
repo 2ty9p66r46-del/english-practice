@@ -236,7 +236,10 @@
   const visibleBulkRows=()=>[...(practiceListItems?.querySelectorAll('.practice-list-row')||[])];
   const isPhraseBulkMode=()=>moduleMode==='phrase-bank';
   const selectedBulkCount=()=>isPhraseBulkMode()?phraseBulkSelectedIds.size:activeBulkSelectedRows.size;
-  const isBulkRowSelected=row=>isPhraseBulkMode()?phraseBulkSelectedIds.has(number(row.dataset.phraseBulkId)):activeBulkSelectedRows.has(activeBulkRowMap.get(row));
+  const activeSourceForRow=(row,indexHint)=>{let source=activeBulkRowMap.get(row);if(source)return source;const storedIndex=Number.parseInt(row.dataset.practiceRowIndex,10),index=Number.isInteger(indexHint)?indexHint:Number.isInteger(storedIndex)?storedIndex:[...practiceListItems.children].indexOf(row);source=window.flovoPracticeBridge?.getVisibleRows?.()[index];if(source)activeBulkRowMap.set(row,source);return source};
+  const phraseIdForRow=row=>{let id=number(row.dataset.phraseBulkId);if(id)return id;id=phraseFromListRow(row)?.id||0;if(id)row.dataset.phraseBulkId=String(id);return id};
+  const isBulkRowSelected=(row,index)=>isPhraseBulkMode()?phraseBulkSelectedIds.has(phraseIdForRow(row)):activeBulkSelectedRows.has(activeSourceForRow(row,index));
+  const syncBulkRowVisual=(row,index)=>{const selected=isBulkRowSelected(row,index);row.classList.toggle('phrase-bulk-selected',selected);row.setAttribute('aria-selected',String(selected))};
   const animateBulkHeader=active=>{
     clearTimeout(phraseBulkHeaderTimer);bulkHeader.classList.remove('is-entering','is-leaving');
     if(active){bulkHeader.hidden=false;void bulkHeader.offsetWidth;bulkHeader.classList.add('is-entering');phraseBulkHeaderTimer=setTimeout(()=>bulkHeader.classList.remove('is-entering'),520);return}
@@ -247,22 +250,21 @@
     if(active){bulkActions.hidden=false;void bulkActions.offsetWidth;bulkActions.classList.add('is-entering');phraseBulkActionsTimer=setTimeout(()=>bulkActions.classList.remove('is-entering'),500);return}
     if(bulkActions.hidden)return;bulkActions.classList.add('is-leaving');phraseBulkActionsTimer=setTimeout(()=>{if(!phraseBulkSelecting)bulkActions.hidden=true;bulkActions.classList.remove('is-leaving')},400);
   };
-  const updateBulkUi=()=>{
+  const updateBulkUi=(syncRows=false)=>{
     const count=selectedBulkCount();
     practiceList?.classList.toggle('phrase-bulk-selecting',phraseBulkSelecting);
     bulkSelectButton.hidden=phraseBulkSelecting;
     bulkHeader.querySelector('.phrase-bulk-count').textContent=`${count}件選択`;
-    const rows=visibleBulkRows(),allSelected=Boolean(rows.length)&&rows.every(isBulkRowSelected);
-    const allButton=bulkHeader.querySelector('.phrase-bulk-all');allButton.textContent=allSelected?'すべて解除':'すべてを選択';allButton.disabled=!rows.length;
+    const rowCount=practiceListItems?.getElementsByClassName('practice-list-row').length||0,allSelected=Boolean(rowCount)&&count===rowCount;
+    const allButton=bulkHeader.querySelector('.phrase-bulk-all');allButton.textContent=allSelected?'すべて解除':'すべてを選択';allButton.disabled=!rowCount;
     bulkActions.querySelectorAll('button').forEach(button=>button.disabled=!count);
-    rows.forEach(row=>{const selected=isBulkRowSelected(row),check=row.querySelector('.phrase-bulk-check');row.classList.toggle('phrase-bulk-selected',selected);row.setAttribute('aria-selected',String(selected));if(check){check.classList.toggle('selected',selected);check.textContent=selected?'✓':''}});
+    if(syncRows)visibleBulkRows().forEach(syncBulkRowVisual);
   };
   const decorateBulkRows=()=>{
-    activeBulkRowMap=new WeakMap();const activeRows=window.flovoPracticeBridge?.getVisibleRows?.()||[];
-    visibleBulkRows().forEach((row,index)=>{if(isPhraseBulkMode()){const phrase=phraseFromListRow(row);if(!phrase)return;row.dataset.phraseBulkId=String(phrase.id)}else if(activeRows[index])activeBulkRowMap.set(row,activeRows[index]);let check=row.querySelector('.phrase-bulk-check');if(!check){check=document.createElement('span');check.className='phrase-bulk-check';check.setAttribute('aria-hidden','true');row.prepend(check)}});updateBulkUi();
+    activeBulkRowMap=new WeakMap();updateBulkUi(phraseBulkSelecting);
   };
-  const setBulkSelecting=active=>{phraseBulkSelecting=Boolean(active);phraseBulkSelectedIds.clear();activeBulkSelectedRows.clear();if(!active)bulkMove.hidden=true;animateBulkHeader(phraseBulkSelecting);animateBulkActions(phraseBulkSelecting);decorateBulkRows()};
-  const toggleBulkRow=row=>{if(isPhraseBulkMode()){const id=number(row.dataset.phraseBulkId);if(!id)return;if(phraseBulkSelectedIds.has(id))phraseBulkSelectedIds.delete(id);else phraseBulkSelectedIds.add(id)}else{const source=activeBulkRowMap.get(row);if(!source)return;if(activeBulkSelectedRows.has(source))activeBulkSelectedRows.delete(source);else activeBulkSelectedRows.add(source)}updateBulkUi()};
+  const setBulkSelecting=active=>{if(!active)practiceListItems?.querySelectorAll('.phrase-bulk-selected').forEach(row=>{row.classList.remove('phrase-bulk-selected');row.removeAttribute('aria-selected')});phraseBulkSelecting=Boolean(active);phraseBulkSelectedIds.clear();activeBulkSelectedRows.clear();activeBulkRowMap=new WeakMap();if(!active)bulkMove.hidden=true;animateBulkHeader(phraseBulkSelecting);animateBulkActions(phraseBulkSelecting);updateBulkUi(false)};
+  const toggleBulkRow=row=>{if(isPhraseBulkMode()){const id=phraseIdForRow(row);if(!id)return;if(phraseBulkSelectedIds.has(id))phraseBulkSelectedIds.delete(id);else phraseBulkSelectedIds.add(id)}else{const source=activeSourceForRow(row);if(!source)return;if(activeBulkSelectedRows.has(source))activeBulkSelectedRows.delete(source);else activeBulkSelectedRows.add(source)}syncBulkRowVisual(row);updateBulkUi(false)};
   const renderBulkDestinations=()=>{
     phraseBulkMoveCategoryId=null;bulkMove.querySelector('.phrase-bulk-move-summary').textContent=`選択した${phraseBulkSelectedIds.size}件を移動します。`;
     const container=bulkMove.querySelector('.phrase-bulk-destinations');container.replaceChildren();
@@ -275,7 +277,7 @@
   const deleteBulkPhrases=async()=>{const count=selectedBulkCount();if(!count)return;if(!isPhraseBulkMode()){if(!confirm(`選択した例文 ${count}件を削除しますか？\n\n単語データは削除されません。`))return;await window.flovoPracticeBridge?.deleteRows?.([...activeBulkSelectedRows]);setBulkSelecting(false);return}if(!confirm(`選択したフレーズ ${count}件を削除しますか？`))return;data.phrases=data.phrases.filter(phrase=>!phraseBulkSelectedIds.has(phrase.id));await writeStore();refreshPhraseHome();setBulkSelecting(false);await refreshLivePractice({view:'list'});window.flovoPracticeBridge?.refreshFilterCount?.()};
   bulkSelectButton.addEventListener('click',()=>setBulkSelecting(true));
   bulkHeader.querySelector('.phrase-bulk-cancel').addEventListener('click',()=>setBulkSelecting(false));
-  bulkHeader.querySelector('.phrase-bulk-all').addEventListener('click',()=>{const rows=visibleBulkRows(),allSelected=Boolean(rows.length)&&rows.every(isBulkRowSelected);rows.forEach(row=>{if(isPhraseBulkMode()){const id=number(row.dataset.phraseBulkId);if(id){if(allSelected)phraseBulkSelectedIds.delete(id);else phraseBulkSelectedIds.add(id)}}else{const source=activeBulkRowMap.get(row);if(source){if(allSelected)activeBulkSelectedRows.delete(source);else activeBulkSelectedRows.add(source)}}});updateBulkUi()});
+  bulkHeader.querySelector('.phrase-bulk-all').addEventListener('click',()=>{const rows=visibleBulkRows(),allSelected=Boolean(rows.length)&&selectedBulkCount()===rows.length,activeRows=isPhraseBulkMode()?[]:(window.flovoPracticeBridge?.getVisibleRows?.()||[]);rows.forEach((row,index)=>{if(isPhraseBulkMode()){const id=phraseIdForRow(row);if(id){if(allSelected)phraseBulkSelectedIds.delete(id);else phraseBulkSelectedIds.add(id)}}else{const source=activeRows[index];if(source){activeBulkRowMap.set(row,source);if(allSelected)activeBulkSelectedRows.delete(source);else activeBulkSelectedRows.add(source)}}syncBulkRowVisual(row,index)});updateBulkUi(false)});
   bulkActions.querySelector('.phrase-bulk-move').addEventListener('click',openBulkMove);
   bulkActions.querySelector('.phrase-bulk-delete').addEventListener('click',()=>deleteBulkPhrases().catch(()=>alert(isPhraseBulkMode()?'フレーズを削除できませんでした。':'例文を削除できませんでした。')));
   bulkMove.querySelector('.phrase-bulk-move-cancel').addEventListener('click',closeBulkMove);bulkMove.querySelector('.phrase-bulk-move-save').addEventListener('click',()=>moveBulkPhrases().catch(()=>alert('フレーズを移動できませんでした。')));bulkMove.addEventListener('click',event=>{if(event.target===bulkMove)closeBulkMove()});

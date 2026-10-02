@@ -1267,6 +1267,7 @@ const COL=Object.freeze({
       practiceRows.forEach((row,index)=>{
         const item=document.createElement('div');
         item.className='practice-list-row';
+        item.dataset.practiceRowIndex=String(index);
         item.tabIndex=0;
         item.setAttribute('role','button');
         item.setAttribute('aria-label',`${index+1}問目 ${text(row[COL.word])||'単語未登録'}から再生`);
