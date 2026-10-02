@@ -1565,9 +1565,10 @@ body[data-practice-module="active-vocabulary"] #practiceListPlaceholder.phrase-b
 @media(prefers-reduced-motion:reduce){.phrase-bulk-actions.is-entering,.phrase-bulk-actions.is-leaving{animation-duration:1ms}}
 .phrase-bulk-actions button{display:flex;min-height:54px;align-items:center;justify-content:center;gap:7px;border:0;border-radius:13px;background:#edf6ff;color:var(--blue);font-size:.72rem;font-weight:850}
 .phrase-bulk-actions button:last-child{background:#fff0f2;color:#d53549}
+.phrase-bulk-actions .phrase-bulk-move,.phrase-bulk-actions .phrase-bulk-delete{width:54px;min-width:54px;padding:0;border-radius:50%;justify-self:end}
 .phrase-bulk-actions button:disabled{background:#f0f2f5;color:#aeb5c0}
 .phrase-bulk-actions svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
-body[data-practice-module="active-vocabulary"] .phrase-bulk-actions{grid-template-columns:1fr}
+body[data-practice-module="active-vocabulary"] .phrase-bulk-actions{grid-template-columns:1fr;justify-items:end}
 body[data-practice-module="active-vocabulary"] .phrase-bulk-actions .phrase-bulk-move{display:none!important}
 .phrase-bulk-move-sheet{display:flex;max-height:82dvh;flex-direction:column;overflow:hidden}
 .phrase-bulk-move-sheet .phrase-data-head,.phrase-bulk-move-sheet .phrase-category-help{flex:0 0 auto}
