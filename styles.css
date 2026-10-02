@@ -1735,3 +1735,6 @@ body[data-practice-module="phrase-bank"] .phrase-card-tag-section>strong{padding
 /* Keep the main bottom cards aligned with the boundary below the list controls. */
 .help-sheet,.practice-filter-sheet,.card-editor-sheet,.phrase-data-sheet,.sentence-editor-sheet,.result-editor-sheet{height:92dvh;max-height:92dvh}
 .practice-filter-sheet,.card-editor-sheet{height:92dvh;max-height:92dvh}
+/* Phrase-bank card metadata uses separate vertical category and tag sections. */
+body[data-practice-module="phrase-bank"] .practice-word-stack{flex-direction:column!important;align-items:flex-start!important;gap:7px}
+body[data-practice-module="phrase-bank"] .phrase-card-tag-section{display:flex;flex-direction:column;align-items:flex-start;gap:3px;width:100%}
