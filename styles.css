@@ -1714,3 +1714,7 @@ html[data-theme="dark"] .phrase-tag-manager-add input{border-color:#405065;backg
 html[data-theme="dark"] .phrase-tag-manager-add button{border-color:#426b91;background:#15283a;color:#72baff}
 html[data-theme="dark"] .phrase-tag-manager-row{border-color:#344153;background:#17202c}
 html[data-theme="dark"] .phrase-tag-manager-row button{border-color:#70414a;background:#3a2027;color:#ff8997}
+
+/* Stack phrase category and tag metadata vertically. */
+body[data-practice-module="phrase-bank"] .phrase-card-tag-section{display:flex;flex-direction:column;align-items:flex-start;gap:4px}
+body[data-practice-module="phrase-bank"] .phrase-card-tag-section>strong{padding-top:0}
