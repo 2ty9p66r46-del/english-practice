@@ -1743,3 +1743,14 @@ body[data-practice-module="phrase-bank"] .practice-detail-grid{height:121px;grid
 body[data-practice-module="phrase-bank"] .practice-word-heading{grid-row:1}
 body[data-practice-module="phrase-bank"] .practice-word-stack{grid-row:2;min-height:0;align-self:stretch}
 body[data-practice-module="phrase-bank"] #practiceWord{height:auto!important;min-height:0;flex:0 0 auto}
+/* Tag manager rows mirror category management: edit, reorder, and remove. */
+.phrase-tag-manager-row{grid-template-columns:minmax(0,1fr) 32px 42px 28px 28px 48px}
+.phrase-tag-manager-row input{box-sizing:border-box;width:100%;min-width:0;height:36px;padding:0 8px;border:1px solid #d7dee8;border-radius:9px;background:#fff;color:#182230;font-size:.72rem;font-weight:700;outline:none}
+.phrase-tag-manager-row input:focus{border-color:#5aa8ef;box-shadow:0 0 0 3px #3b9cf023}
+.phrase-tag-manager-row button{min-width:0;min-height:34px;padding:0 4px;border:1px solid #c9d7e7;border-radius:9px;background:#fff;color:var(--blue);font-size:.62rem;font-weight:850}
+.phrase-tag-manager-row button:disabled{color:#9aa3b1;opacity:.55;pointer-events:none}
+.phrase-tag-manager-row button:last-child{border-color:#efc2c7;background:#fff3f4;color:#bf3443}
+html[data-theme="dark"] .phrase-tag-manager-row input{border-color:#405065;background:#121a24;color:#eef4ff}
+html[data-theme="dark"] .phrase-tag-manager-row button:not(:last-child){border-color:#426b91;background:#15283a;color:#72baff}
+html[data-theme="dark"] .phrase-tag-manager-row button:last-child{border-color:#70414a;background:#3a2027;color:#ff8997}
+@media(max-width:430px){.phrase-tag-manager-row{grid-template-columns:minmax(0,1fr) 29px 38px 27px 27px 42px;gap:3px;padding:5px}.phrase-tag-manager-row input{height:34px;padding:0 6px;font-size:.65rem}.phrase-tag-manager-row button{padding:0 2px;font-size:.56rem}}
