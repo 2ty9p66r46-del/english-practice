@@ -1506,7 +1506,7 @@ html[data-theme="dark"] body[data-practice-module="phrase-bank"] #practiceWord{b
 .phrase-data-error{margin:0;color:#d92d45;font-size:.68rem;font-weight:750}
 .phrase-data-success{margin:0;color:#16834a;font-size:.7rem;font-weight:850;text-align:center}
 html[data-theme="dark"] .phrase-data-success{color:#6ed39b}
-.phrase-added-toast{position:fixed;z-index:600;right:16px;bottom:calc(20px + env(safe-area-inset-bottom));left:16px;width:max-content;max-width:calc(100vw - 48px);margin:0 auto;padding:12px 20px;border:1px solid #0876ee;border-radius:999px;background:#0876ee;color:#fff;box-shadow:0 8px 24px #11182735;font-size:.78rem;font-weight:850;text-align:center;opacity:0;transform:translateY(8px);transition:opacity 240ms ease,transform 240ms ease;pointer-events:none}
+.phrase-added-toast{position:fixed;z-index:600;right:16px;bottom:calc(20px + env(safe-area-inset-bottom));left:16px;width:max-content;max-width:calc(100vw - 48px);margin:0 auto;padding:12px 20px;border:1px solid #ffffff55;border-radius:999px;background:rgba(8,118,238,.68);color:#fff;box-shadow:0 6px 18px #11182724;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);font-size:.78rem;font-weight:850;text-align:center;opacity:0;transform:translateY(8px);transition:opacity 240ms ease,transform 240ms ease;pointer-events:none}
 .phrase-added-toast[hidden]{display:none}
 .phrase-added-toast.is-visible{opacity:1;transform:translateY(0)}
 @media(prefers-reduced-motion:reduce){.phrase-added-toast{transition-duration:1ms}}
