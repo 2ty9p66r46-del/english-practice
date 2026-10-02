@@ -15,7 +15,6 @@
   <title>FloVo</title>
   <script src="./xlsx.full.min.js"></script>
   <link rel="stylesheet" href="./styles.css">
-  <link rel="stylesheet" href="./phrase-bank.css">
 </head>
 <body data-page="home">
   <div class="shell">
@@ -87,20 +86,7 @@
             <strong>ロジカル<br>フレームワーク</strong>
             <span class="home-module-status">準備中</span>
           </article>
-          <article class="home-module-card phrase-bank-home-card">
-            <header class="home-module-head">
-              <div class="home-module-identity">
-                <span class="home-module-icon active" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 5h14v11H9l-4 3z"/><path d="M9 9h6M9 12h4"/></svg></span>
-                <span class="home-module-title"><strong>マイフレーズバンク</strong><small>MY PHRASE BANK</small></span>
-              </div>
-              <span class="home-module-status available">試作版</span>
-            </header>
-            <section class="phrase-home-summary" aria-label="マイフレーズバンク登録状況">
-              <div><span>フレーズ</span><strong id="phraseHomeCount">0</strong><small>件</small></div>
-              <div><span>場面</span><strong id="phraseHomeSceneCount">0</strong><small>個</small></div>
-            </section>
-            <button class="home-practice-button" id="phraseBankOpen" type="button"><span><strong>開く</strong></span></button>
-          </article>
+          <article class="home-module-card active-vocab-card" id="phraseBankMount" aria-label="マイフレーズバンク"></article>
         </section>
         <div class="home-carousel-dots" aria-label="ホームカードを選択">
           <button class="active" type="button" aria-label="アクティブボキャビル" aria-current="true"></button>
@@ -260,7 +246,7 @@
         </article>
         <section class="practice-list-placeholder" id="practiceListPlaceholder" aria-label="例文一覧" hidden>
           <header class="practice-list-header">
-            <strong>例文一覧</strong>
+            <strong id="practiceListTitle">例文一覧</strong>
             <div class="practice-header-counts" id="practiceHeaderCounts" aria-live="polite">
               <span><b>単語数</b><strong id="wordCount">0</strong></span>
               <span><b>例文数</b><strong id="exampleCount">0</strong></span>
@@ -363,7 +349,7 @@
           <h3 class="help-version-title">バージョン情報</h3>
           <dl class="help-version-list">
             <div class="help-version-row"><dt>アプリ</dt><dd>FloVo v1.0.0</dd></div>
-            <div class="help-version-row"><dt>ビルド</dt><dd>507</dd></div>
+            <div class="help-version-row"><dt>ビルド</dt><dd>508</dd></div>
             <div class="help-version-row"><dt>データ形式</dt><dd>v1.0</dd></div>
             <div class="help-version-row"><dt>更新日</dt><dd>2026.10.02</dd></div>
           </dl>
