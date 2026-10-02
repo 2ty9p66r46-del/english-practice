@@ -1547,9 +1547,9 @@ body[data-practice-module="phrase-bank"] .practice-list-header>#practiceListTitl
 body[data-practice-module="phrase-bank"] #practiceList .practice-list-row{grid-template-columns:0 minmax(0,1fr) 53px;column-gap:0;transition:grid-template-columns 480ms cubic-bezier(.2,.8,.2,1),background-color 300ms ease}
 body[data-practice-module="phrase-bank"] #practiceList .practice-list-actions{box-sizing:border-box;min-width:0;overflow:hidden;padding-left:11px;opacity:1;transition:opacity 220ms ease}
 .practice-list-row .phrase-bulk-check{display:grid;box-sizing:border-box;width:24px;height:24px;place-items:center;overflow:hidden;border:2px solid #a1aab8;border-radius:50%;background:#fff;color:#fff;font-size:.8rem;font-weight:950;line-height:1;opacity:0;transform:scale(.72);transition:opacity 300ms ease,transform 480ms cubic-bezier(.2,.8,.2,1);pointer-events:none}
-.practice-list-placeholder.phrase-bulk-selecting .practice-list-row{grid-template-columns:34px minmax(0,1fr) 0;cursor:pointer}
-.practice-list-placeholder.phrase-bulk-selecting .practice-list-actions{padding-left:0;opacity:0;pointer-events:none}
-.practice-list-placeholder.phrase-bulk-selecting .phrase-bulk-check{opacity:1;transform:scale(1)}
+body[data-practice-module="phrase-bank"] #practiceListPlaceholder.phrase-bulk-selecting #practiceList .practice-list-row{grid-template-columns:34px minmax(0,1fr) 0;cursor:pointer}
+body[data-practice-module="phrase-bank"] #practiceListPlaceholder.phrase-bulk-selecting #practiceList .practice-list-actions{padding-left:0;opacity:0;pointer-events:none}
+body[data-practice-module="phrase-bank"] #practiceListPlaceholder.phrase-bulk-selecting #practiceList .phrase-bulk-check{opacity:1;transform:scale(1)}
 .practice-list-placeholder.phrase-bulk-selecting .phrase-bulk-check.selected{border-color:var(--blue);background:var(--blue)}
 .practice-list-placeholder.phrase-bulk-selecting .practice-list-row.phrase-bulk-selected{background:#e9f4ff}
 .phrase-bulk-actions{position:absolute;z-index:8;right:10px;bottom:10px;left:10px;display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:7px;border:1px solid #d9e0e9;border-radius:18px;background:#fffffff2;box-shadow:0 8px 28px #1e293b26;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
