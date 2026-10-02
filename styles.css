@@ -1542,7 +1542,7 @@ body[data-practice-module="phrase-bank"] .practice-list-header>#practiceListTitl
 @keyframes phrase-bulk-header-in{from{opacity:.35;transform:translateX(100%)}to{opacity:1;transform:translateX(0)}}
 @keyframes phrase-bulk-header-out{from{opacity:1;transform:translateX(0)}to{opacity:.25;transform:translateX(100%)}}
 @media(prefers-reduced-motion:reduce){.phrase-bulk-header.is-entering,.phrase-bulk-header.is-leaving{animation-duration:1ms}}
-.practice-list-placeholder.phrase-bulk-selecting{position:relative}
+body[data-practice-module="phrase-bank"] #practiceListPlaceholder{position:relative}
 .practice-list-placeholder.phrase-bulk-selecting .practice-list-items{padding-bottom:82px}
 body[data-practice-module="phrase-bank"] #practiceList .practice-list-row{grid-template-columns:0 minmax(0,1fr) 53px;column-gap:0;transition:grid-template-columns 480ms cubic-bezier(.2,.8,.2,1),background-color 300ms ease}
 body[data-practice-module="phrase-bank"] #practiceList .practice-list-actions{box-sizing:border-box;min-width:0;overflow:hidden;padding-left:11px;opacity:1;transition:opacity 220ms ease}
