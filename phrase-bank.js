@@ -236,8 +236,8 @@
   const visibleBulkRows=()=>[...(practiceListItems?.querySelectorAll('.practice-list-row')||[])];
   const animateBulkHeader=active=>{
     clearTimeout(phraseBulkHeaderTimer);bulkHeader.classList.remove('is-entering','is-leaving');
-    if(active){bulkHeader.hidden=false;void bulkHeader.offsetWidth;bulkHeader.classList.add('is-entering');phraseBulkHeaderTimer=setTimeout(()=>bulkHeader.classList.remove('is-entering'),300);return}
-    if(bulkHeader.hidden)return;bulkHeader.classList.add('is-leaving');phraseBulkHeaderTimer=setTimeout(()=>{if(!phraseBulkSelecting)bulkHeader.hidden=true;bulkHeader.classList.remove('is-leaving')},240);
+    if(active){bulkHeader.hidden=false;void bulkHeader.offsetWidth;bulkHeader.classList.add('is-entering');phraseBulkHeaderTimer=setTimeout(()=>bulkHeader.classList.remove('is-entering'),520);return}
+    if(bulkHeader.hidden)return;bulkHeader.classList.add('is-leaving');phraseBulkHeaderTimer=setTimeout(()=>{if(!phraseBulkSelecting)bulkHeader.hidden=true;bulkHeader.classList.remove('is-leaving')},460);
   };
   const updateBulkUi=()=>{
     const count=phraseBulkSelectedIds.size;
