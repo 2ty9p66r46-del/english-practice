@@ -2712,7 +2712,7 @@ const COL=Object.freeze({
       else if(practiceViewMode==='card')renderPracticeQuestion();
       renderPracticeList();
     };
-    window.flovoPracticeBridge={refresh:refreshExternalPractice,refreshFilterCount:refreshQuestionCount,showCountMode:renderPracticeCountState,getVisibleRows:()=>practiceRows,deleteRows:deleteCardRows};
+    window.flovoPracticeBridge={refresh:refreshExternalPractice,refreshFilterCount:refreshQuestionCount,showCountMode:renderPracticeCountState,getVisibleRows:()=>practiceRows,deleteRows:deleteCardRows,enableBottomSheetGrab};
     const closePractice=async()=>{
       if(screenTransitionBusy)return;
       if(practiceFilterOpen)await cancelPracticeFilter();

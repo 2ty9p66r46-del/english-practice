@@ -1477,9 +1477,12 @@ body[data-practice-module="phrase-bank"] #practiceWord{display:block;box-sizing:
 html[data-theme="dark"] body[data-practice-module="phrase-bank"] #practiceWord{background:#263548;color:#d5dfec}
 
 /* My Phrase Bank data and category sheets. */
-.phrase-data-overlay{position:absolute;z-index:360;inset:0;display:flex;align-items:flex-end;background:#11182773;backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
+.phrase-data-overlay{position:absolute;z-index:360;inset:0;display:flex;align-items:flex-end;background:#11182700;backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);transition:background-color 320ms ease}
 .phrase-data-overlay[hidden]{display:none}
 .phrase-data-sheet{box-sizing:border-box;width:100%;max-height:92dvh;overflow-y:auto;padding:14px 16px calc(20px + env(safe-area-inset-bottom));border-radius:24px 24px 0 0;background:#fff;box-shadow:0 -16px 38px #11182735;-webkit-overflow-scrolling:touch}
+#phraseDataOverlay .phrase-data-sheet,#phraseCategoryOverlay .phrase-data-sheet{transform:translateY(104%);transition:transform 340ms cubic-bezier(.16,.82,.24,1)}
+#phraseDataOverlay.open,#phraseCategoryOverlay.open{background:#11182773}
+#phraseDataOverlay.open .phrase-data-sheet,#phraseCategoryOverlay.open .phrase-data-sheet{transform:translateY(0)}
 .phrase-data-head{position:sticky;z-index:2;top:-14px;display:grid;grid-template-columns:76px minmax(0,1fr) 76px;align-items:center;gap:6px;margin:-14px -16px 14px;padding:14px 16px 10px;border-bottom:1px solid #e6eaf0;background:#fff}
 .phrase-data-head h2{margin:0;color:#182230;text-align:center;font-size:1rem}
 .phrase-data-head button{min-height:36px;padding:0 8px;border:0;border-radius:11px;background:transparent;color:var(--blue);font-size:.72rem;font-weight:850}
@@ -1499,6 +1502,8 @@ html[data-theme="dark"] body[data-practice-module="phrase-bank"] #practiceWord{b
 .phrase-category-choice input{width:18px;height:18px;margin:0;accent-color:var(--blue)}
 .phrase-category-empty{margin:0;padding:18px;color:#8793a5;text-align:center;font-size:.7rem}
 .phrase-data-error{margin:0;color:#d92d45;font-size:.68rem;font-weight:750}
+.phrase-data-success{margin:0;color:#16834a;font-size:.7rem;font-weight:850;text-align:center}
+html[data-theme="dark"] .phrase-data-success{color:#6ed39b}
 .phrase-data-delete{min-height:42px;border:1px solid #efb2b9;border-radius:12px;background:#fff4f5;color:#c93645;font-size:.72rem;font-weight:850}
 .phrase-root-add{display:grid;grid-template-columns:minmax(0,1fr) 64px;gap:7px;margin-bottom:8px}
 .phrase-root-add input,.phrase-category-manager-row input{min-width:0;height:38px;padding:0 10px;border:1px solid #d7dee8;border-radius:10px;background:#fff;color:#182230;font-size:.76rem;font-weight:700;outline:none}
