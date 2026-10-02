@@ -2711,6 +2711,7 @@ const COL=Object.freeze({
       if(options.view==='list'||!practiceRows.length)setPracticeViewMode('list');
       else if(practiceViewMode==='card')renderPracticeQuestion();
       renderPracticeList();
+      await refreshQuestionCount();
     };
     window.flovoPracticeBridge={refresh:refreshExternalPractice,refreshFilterCount:refreshQuestionCount,showCountMode:renderPracticeCountState,getVisibleRows:()=>practiceRows,deleteRows:deleteCardRows,enableBottomSheetGrab};
     const closePractice=async()=>{
