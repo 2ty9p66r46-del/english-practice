@@ -15,6 +15,7 @@
   <title>FloVo</title>
   <script src="./xlsx.full.min.js"></script>
   <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./phrase-bank.css">
 </head>
 <body data-page="home">
   <div class="shell">
@@ -86,10 +87,10 @@
             <strong>ロジカル<br>フレームワーク</strong>
             <span class="home-module-status">準備中</span>
           </article>
-          <article class="home-module-card coming" aria-disabled="true">
+          <article class="home-module-card coming phrase-bank-home-card" id="phraseBankOpen" role="button" tabindex="0" aria-label="マイフレーズバンクを開く">
             <span class="home-module-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 5h14v11H9l-4 3z"/><path d="M9 9h6M9 12h4"/></svg></span>
             <strong>マイフレーズ<br>バンク</strong>
-            <span class="home-module-status">準備中</span>
+            <span class="home-module-status available">試作版</span>
           </article>
         </section>
         <div class="home-carousel-dots" aria-label="ホームカードを選択">
@@ -353,9 +354,9 @@
           <h3 class="help-version-title">バージョン情報</h3>
           <dl class="help-version-list">
             <div class="help-version-row"><dt>アプリ</dt><dd>FloVo v1.0.0</dd></div>
-            <div class="help-version-row"><dt>ビルド</dt><dd>503</dd></div>
+            <div class="help-version-row"><dt>ビルド</dt><dd>506</dd></div>
             <div class="help-version-row"><dt>データ形式</dt><dd>v1.0</dd></div>
-            <div class="help-version-row"><dt>更新日</dt><dd>2026.09.24</dd></div>
+            <div class="help-version-row"><dt>更新日</dt><dd>2026.10.02</dd></div>
           </dl>
           <button class="help-back-button" type="button" data-help-back>メニューへ戻る</button>
         </div>
@@ -375,5 +376,6 @@
   </div>
   <div class="screen-fade" id="screenFade" aria-hidden="true"></div>
   <script src="./app.js"></script>
+  <script src="./phrase-bank.js"></script>
 </body>
 </html>
