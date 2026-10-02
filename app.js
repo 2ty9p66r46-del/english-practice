@@ -131,7 +131,8 @@ const COL=Object.freeze({
       drainImportedDataSaves();
     });
     const activePracticeAdapter=()=>window.flovoPracticeAdapter?.active?window.flovoPracticeAdapter:null;
-    const getPracticeSourceData=()=>activePracticeAdapter()?.getData?.()||getImportedData();
+    const getPracticeSourceDataFor=adapter=>adapter?.getData?.()||getImportedData();
+    const getPracticeSourceData=()=>getPracticeSourceDataFor(activePracticeAdapter());
     const savePracticeSourceData=stored=>activePracticeAdapter()?.saveData?.(stored)||saveImportedData(stored);
     const loadImportedData=async()=>{
       const database=await openDatabase();
@@ -833,8 +834,8 @@ const COL=Object.freeze({
       });
       return result;
     };
-    const getMatchingRows=rows=>{
-      const externalPractice=Boolean(activePracticeAdapter());
+    const getMatchingRows=(rows,adapter=activePracticeAdapter())=>{
+      const externalPractice=Boolean(adapter);
       const parts=selectedValues(partChoices);
       const understandings=selectedValues(understandingChoices);
       const startsWith=text(wordStartsWith.value).toLowerCase();
@@ -857,14 +858,26 @@ const COL=Object.freeze({
         if(!externalPractice&&parts.size&&!parts.has(text(row[COL.pos])))return false;
         const understanding=text(row[COL.understanding])||'未登録';
         if(understandings.size&&!understandings.has(understanding))return false;
-        if(externalPractice&&activePracticeAdapter()?.matchesRow&&!activePracticeAdapter().matchesRow(row))return false;
+        if(externalPractice&&adapter?.matchesRow&&!adapter.matchesRow(row))return false;
         return true;
       }).sort(compareDataRows);
     };
+    const practiceCountStates=new Map();
+    const currentPracticeCountMode=()=>activePracticeAdapter()?'phrase-bank':'active-vocabulary';
+    const renderPracticeCountState=mode=>{
+      const state=practiceCountStates.get(mode);if(!state)return;
+      practiceButton.dataset.questionCount=String(state.displayedExampleCount);
+      practiceButton.dataset.pairCount=String(state.matchingPairCount);
+      renderCountFraction(wordCount,state.matchingPairCount,state.totalPairCount);
+      renderCountFraction(exampleCount,state.displayedExampleCount,state.totalExampleCount);
+      renderCountFraction(filterWordCount,state.matchingPairCount,state.totalPairCount);
+      renderCountFraction(filterExampleCount,state.displayedExampleCount,state.totalExampleCount);
+    };
     const refreshQuestionCount=async()=>{
-      const stored=await getPracticeSourceData();
+      const adapter=activePracticeAdapter(),mode=adapter?'phrase-bank':'active-vocabulary';
+      const stored=await getPracticeSourceDataFor(adapter);
       const sourceRows=stored?.rows||[];
-      const matchingRows=getMatchingRows(sourceRows);
+      const matchingRows=getMatchingRows(sourceRows,adapter);
       const allExampleRows=sourceRows.filter(row=>text(row[COL.japanese])&&text(row[COL.english]));
       const displayLimitValue=practiceDisplayLimit.value;
       const displayedExampleCount=displayLimitValue!==''&&Number.isInteger(Number(displayLimitValue))&&Number(displayLimitValue)>=1
@@ -874,12 +887,10 @@ const COL=Object.freeze({
       const totalPairCount=new Set(allExampleRows.map(row=>text(row[COL.wordNo])||text(row[COL.word]).toLowerCase())).size;
       const wordKey=row=>text(row[COL.wordNo])||text(row[COL.word]).toLowerCase();
       const totalWordKeys=new Set(sourceRows.map(wordKey).filter(Boolean));
-      practiceButton.dataset.questionCount=String(displayedExampleCount);
-      practiceButton.dataset.pairCount=String(matchingPairCount);
-      renderCountFraction(wordCount,matchingPairCount,totalPairCount);
-      renderCountFraction(exampleCount,displayedExampleCount,allExampleRows.length);
-      renderCountFraction(filterWordCount,matchingPairCount,totalPairCount);
-      renderCountFraction(filterExampleCount,displayedExampleCount,allExampleRows.length);
+      practiceCountStates.set(mode,{matchingPairCount,totalPairCount,displayedExampleCount,totalExampleCount:allExampleRows.length});
+      if(currentPracticeCountMode()!==mode)return;
+      renderPracticeCountState(mode);
+      if(mode==='phrase-bank')return;
       const understandingCounts={mastered:0,steady:0,learning:0,new:0};
       allExampleRows.forEach(row=>{
         const value=text(row[COL.understanding]);
@@ -2700,7 +2711,7 @@ const COL=Object.freeze({
       else if(practiceViewMode==='card')renderPracticeQuestion();
       renderPracticeList();
     };
-    window.flovoPracticeBridge={refresh:refreshExternalPractice,refreshFilterCount:refreshQuestionCount,getVisibleRows:()=>practiceRows,deleteRows:deleteCardRows};
+    window.flovoPracticeBridge={refresh:refreshExternalPractice,refreshFilterCount:refreshQuestionCount,showCountMode:renderPracticeCountState,getVisibleRows:()=>practiceRows,deleteRows:deleteCardRows};
     const closePractice=async()=>{
       if(screenTransitionBusy)return;
       if(practiceFilterOpen)await cancelPracticeFilter();

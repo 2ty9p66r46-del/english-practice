@@ -154,7 +154,7 @@
   phraseTabs.forEach(button=>button.addEventListener('click',()=>{phraseTabs.forEach(tab=>{const active=tab===button;tab.classList.toggle('active',active);tab.setAttribute('aria-selected',String(active))});phrasePanels.forEach(panel=>{panel.hidden=panel.id!==panelByStat[button.dataset.homeStat]})}));
 
   const applyModuleLabels=()=>{
-    const phrase=moduleMode==='phrase-bank';document.body.dataset.practiceModule=phrase?'phrase-bank':'active-vocabulary';
+    const phrase=moduleMode==='phrase-bank';document.body.dataset.practiceModule=phrase?'phrase-bank':'active-vocabulary';window.flovoPracticeBridge?.showCountMode?.(phrase?'phrase-bank':'active-vocabulary');
     if(!phrase&&phraseBulkSelecting){phraseBulkSelecting=false;phraseBulkSelectedIds.clear();bulkMove.hidden=true}
     if(typeof bulkSelectButton!=='undefined'){bulkSelectButton.hidden=phraseBulkSelecting;bulkSelectButton.setAttribute('aria-label',phrase?'フレーズを一括選択':'例文を一括選択');if(!phrase&&practiceScreen.hidden){clearTimeout(phraseBulkHeaderTimer);clearTimeout(phraseBulkActionsTimer);bulkHeader.hidden=true;bulkHeader.classList.remove('is-entering','is-leaving');bulkActions.hidden=true;bulkActions.classList.remove('is-entering','is-leaving')}practiceList?.classList.toggle('phrase-bulk-selecting',phraseBulkSelecting)}
     phraseHierarchyFilter.hidden=!phrase;if(wordFromField)wordFromField.hidden=phrase;if(wordTextFilterTitle)wordTextFilterTitle.textContent=phrase?'カテゴリ文字列条件':'単語文字列条件';if(otherFilterBadge)otherFilterBadge.textContent=phrase?'条件4':'条件5';

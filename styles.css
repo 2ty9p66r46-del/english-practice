@@ -1039,6 +1039,7 @@ body[data-page="home"] .bottom-space{display:none}
 .practice-list-header .practice-header-counts .count-separator{padding:0 .4ch;color:#98a2b3}
 .practice-list-header .practice-header-counts .count-current,.practice-list-header .practice-header-counts .count-total{display:inline-flex}
 .practice-list-header .practice-header-counts .count-total .count-padding,.practice-list-header .practice-header-counts .count-total .count-value{color:#98a2b3}
+body[data-practice-module="phrase-bank"] .practice-header-counts>span:first-child,body[data-practice-module="phrase-bank"] .filter-result-counts>span:first-child{display:none}
 
 
 /* Home and Play stay fixed; the remaining practice controls scroll horizontally. */
@@ -1565,7 +1566,9 @@ body[data-practice-module="active-vocabulary"] #practiceListPlaceholder.phrase-b
 @media(prefers-reduced-motion:reduce){.phrase-bulk-actions.is-entering,.phrase-bulk-actions.is-leaving{animation-duration:1ms}}
 .phrase-bulk-actions button{display:flex;min-height:54px;align-items:center;justify-content:center;gap:7px;border:1px solid #d9e0e9;border-radius:13px;background:#edf6ff;color:var(--blue);box-shadow:0 6px 20px #1e293b2b;font-size:.72rem;font-weight:850;pointer-events:auto}
 .phrase-bulk-actions button:last-child{background:#fff0f2;color:#d53549}
-.phrase-bulk-actions .phrase-bulk-move,.phrase-bulk-actions .phrase-bulk-delete{width:54px;min-width:54px;padding:0;border-radius:50%;justify-self:end}
+.phrase-bulk-actions .phrase-bulk-move,.phrase-bulk-actions .phrase-bulk-delete{width:54px;min-width:54px;padding:0;border-radius:50%}
+.phrase-bulk-actions .phrase-bulk-move{justify-self:start}
+.phrase-bulk-actions .phrase-bulk-delete{justify-self:end}
 .phrase-bulk-actions button:disabled{background:#f0f2f5;color:#aeb5c0}
 .phrase-bulk-actions svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 body[data-practice-module="active-vocabulary"] .phrase-bulk-actions{grid-template-columns:1fr;justify-items:end}
