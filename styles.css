@@ -1732,3 +1732,6 @@ body[data-practice-module="phrase-bank"] .practice-header-actions{gap:1px}
 /* Practice card metadata: stack the phrase category and tag label/value pairs. */
 body[data-practice-module="phrase-bank"] .phrase-card-tag-section{grid-template-columns:minmax(0,1fr);gap:3px}
 body[data-practice-module="phrase-bank"] .phrase-card-tag-section>strong{padding-top:0}
+/* Keep the main bottom cards aligned with the boundary below the list controls. */
+.help-sheet,.practice-filter-sheet,.card-editor-sheet,.phrase-data-sheet,.sentence-editor-sheet,.result-editor-sheet{height:92dvh;max-height:92dvh}
+.practice-filter-sheet,.card-editor-sheet{height:92dvh;max-height:92dvh}
