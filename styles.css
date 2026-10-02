@@ -1,5 +1,5 @@
-Warning: truncated output (original token count: 37442)
-Total output lines: 1459
+Warning: truncated output (original token count: 38814)
+Total output lines: 1503
 
 /* FloVo shared UI foundation — reuse these tokens and component classes on every screen. */
     :root{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue","Noto Sans JP",sans-serif;color:#111827;background:#f5f5fa;font-synthesis:none;--blue:#087cff;--ink:#111827;--muted:#6f7b8e;--soft:#edeef3;--card:#fff;--radius-pill:999px;--action-border-width:3px;--action-border-color:#064faa;--action-top:#78bfff;--action-mid:#2e91ed;--action-bottom:#176fc2}
@@ -324,7 +324,422 @@ Total output lines: 1459
 .practice-info-primary .practice-progress{display:block;width:auto;align-self:center;justify-self:start;margin:0;padding:0;border:0;font-size:.72rem;text-align:left;white-space:nowrap}
 .practice-word-line{display:flex;min-width:0;align-items:center;gap:8px}
 .practice-word-line .practice-number{flex:0 0 auto}
-.practice-word-line .practice-keyword{min-width:0;flex:1 1 au…17442 tokens truncated…m}
+.practice-word-line .practice-keyword{min-width:0;flex:1 1 auto}
+.practice-keyword,.practice-meaning{color:#0876ee;font-size:1.3rem;font-weight:700}
+
+/* No and keyword stack vertically; the keyword is centered in its column. */
+.practice-word-line{display:none}
+.practice-word-stack{display:grid;min-width:0;grid-template-rows:auto auto;align-items:start;gap:7px}
+.practice-word-stack .practice-number{justify-self:start;padding:4px 8px;border-radius:var(--radius-pill);background:#111827;color:#fff;box-shadow:inset 0 1px 0 #ffffff29,0 2px 5px #11182724}
+.practice-word-stack .practice-keyword{width:100%;min-width:0;justify-self:center;text-align:center}
+
+/* Meaning remains blue but is 80% of the keyword size. */
+.practice-meaning{font-size:1.04rem}
+
+/* Meaning uses black text; notes wrap to at most two lines. */
+.practice-meaning{color:#111827}
+.practice-note{display:-webkit-box;white-space:normal;text-overflow:clip;overflow:hidden;overflow-wrap:anywhere;-webkit-box-orient:vertical;-webkit-line-clamp:2}
+
+/* Example sentences match the meaning size, stay bold, and reserve four lines. */
+.practice-japanese,.practice-english{display:-webkit-box;width:100%;height:6.04rem;min-height:6.04rem;max-height:6.04rem;margin:0;color:#111827;font-size:1.04rem;font-weight:800;line-height:1.45;letter-spacing:0;overflow:hidden;overflow-wrap:anywhere;-webkit-box-orient:vertical;-webkit-line-clamp:4}
+.practice-english[hidden]{display:none}
+
+/* Optical alignment: sentence glyph size and line height match the meaning. */
+.practice-japanese,.practice-english{height:5.41rem;min-height:5.41rem;max-height:5.41rem;font-size:1.04rem;line-height:1.3}
+
+/* Compact round rating controls beside the English heading. */
+.practice-rating-inline{display:flex;grid-template-columns:none;align-items:center;gap:4px;margin-left:auto}
+.practice-rating-inline .practice-rating-button{width:29px;height:29px;min-width:29px;padding:0;border-width:2px;border-radius:50%;font-size:.46rem;line-height:1}
+.practice-rating-inline .practice-rating-button.selected{border-width:2px}
+
+/* Center the No chip above the centered keyword. */
+.practice-word-stack .practice-number{justify-self:center}
+.tab:disabled{color:#c5cad3;opacity:.55;pointer-events:none}
+
+/* The home quick card is now a settings-only question method card. */
+.method-head{margin-bottom:10px}
+
+/* Practice mode exposes only the Home tab. */
+.nav.practice-mode .nav-scroll{display:none}
+.nav.practice-mode .nav-home{flex:1 1 auto;color:var(--blue);box-shadow:none}
+
+/* Keep Home in its normal fixed left position during practice. */
+.nav.practice-mode .nav-home{flex:0 0 88px;box-shadow:8px 0 18px #26354a0d}
+
+/* Practice-only playback tabs and audio settings sheet. */
+.practice-nav-controls{display:none;flex:1 1 auto;min-width:0}
+.nav.practice-mode .practice-nav-controls{display:flex}
+.practice-nav-controls .tab{min-width:0;flex:1 1 0;padding:0 2px;font-size:.62rem}
+.practice-nav-controls .tab.active{color:var(--blue)}
+.practice-nav-controls .tab.is-stopping{color:#d52b3f}
+.practice-tab-glyph{display:grid;width:27px;height:25px;place-items:center;border:2px solid currentColor;border-radius:7px;font-size:.58rem;font-weight:900;line-height:1}
+.practice-settings-overlay{position:absolute;z-index:130;inset:0;display:flex;align-items:flex-end;padding:16px 14px calc(88px + env(safe-area-inset-bottom));background:#11182766;backdrop-filter:blur(3px)}
+.practice-settings-overlay[hidden]{display:none}
+.practice-settings-sheet{width:100%;padding:18px;border-radius:22px;background:#fff;box-shadow:0 18px 45px #11182735}
+.practice-settings-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.practice-settings-head h2{margin:0;color:#111827;font-size:1.05rem}
+.practice-settings-head button{display:grid;width:34px;height:34px;place-items:center;border:0;border-radius:50%;background:#edf0f5;color:#526078;font-size:1.3rem}
+.practice-setting-row{display:flex;min-height:52px;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid #e3e7ee;color:#344054;font-size:.78rem;font-weight:800}
+.practice-setting-row select{min-width:92px;padding:8px 10px;border:1px solid #d6dce6;border-radius:10px;background:#f7f8fb;color:#111827;font:inherit}
+.practice-setting-row select#englishVoiceSelect{width:min(58vw,250px);max-width:58vw}
+.practice-learning-reset{width:100%;height:46px;margin-top:14px;border:1px solid #e0a1aa;border-radius:13px;background:#fff5f6;color:#bd3042;font-size:.78rem;font-weight:850}
+.practice-learning-reset:active{transform:scale(.985)}
+.learning-reset-overlay{position:absolute;z-index:280;inset:0;display:grid;place-items:center;padding:22px;background:#11182773}.learning-reset-overlay[hidden]{display:none!important}
+.learning-reset-dialog{width:min(100%,360px);padding:20px;border-radius:18px;background:#fff;box-shadow:0 18px 50px #11182740}.learning-reset-dialog h2{margin:0 0 12px;color:#182230;font-size:1rem;text-align:center}.learning-reset-dialog p{margin:0;color:#344054;font-size:.82rem;font-weight:700;line-height:1.6;text-align:center}.learning-reset-dialog>div{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:18px}.learning-reset-dialog button{height:44px;border:1px solid #cfd7e2;border-radius:12px;background:#fff;color:#526078;font-size:.78rem;font-weight:850}.learning-reset-dialog button.danger{border-color:#dc8994;background:#fff5f6;color:#bd3042}.learning-reset-dialog button:disabled{opacity:.5}
+.practice-speed-row{display:grid;grid-template-columns:1fr;gap:8px;padding-top:10px}
+.practice-speed-row span{display:flex;justify-content:space-between}
+.practice-speed-row input{width:100%;accent-color:var(--blue)}
+
+.practice-play-icon{display:grid;width:29px;height:25px;place-items:center;font-size:1.05rem;line-height:1}
+#languageModeIcon{width:39px;font-size:.5rem;letter-spacing:-.02em}
+
+/* App-native playback and repeat icons. */
+.visually-hidden{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+.practice-play-svg{width:29px!important;height:29px!important;fill:currentColor!important;stroke:none!important;filter:drop-shadow(0 2px 3px #087cff2b)}
+.practice-play-svg .pause-mark{display:none}
+#autoPlayTab.is-playing .practice-play-svg .play-mark{display:none}
+#autoPlayTab.is-playing .practice-play-svg .pause-mark{display:block}
+#languageModeIcon{box-sizing:border-box;width:42px;max-width:calc(100% - 8px);height:28px;overflow:hidden;font-size:.48rem;letter-spacing:-.03em;white-space:nowrap}
+.repeat-mode-icon{width:31px!important;height:29px!important;fill:none!important;stroke:currentColor!important;stroke-width:2.3!important;stroke-linecap:round!important;stroke-linejoin:round!important}
+.repeat-mode-icon>g{display:none}
+#repeatModeTab.repeat-current .repeat-current-mark,#repeatModeTab.repeat-all .repeat-all-mark,#repeatModeTab.repeat-once .repeat-once-mark{display:block}
+.repeat-current-mark circle{fill:var(--blue);stroke:#fff;stroke-width:1.5}
+.repeat-current-mark text{fill:#fff;stroke:none;font-size:7px;font-weight:900;text-anchor:middle}
+
+/* Audio controls align to the right edge of their respective areas. */
+.practice-pronunciation-audio svg{margin-left:auto}
+.practice-language{position:relative}
+.practice-language .practice-audio{position:absolute;right:4px;bottom:8px;z-index:2}
+.practice-japanese,.practice-english{box-sizing:border-box;padding-right:34px}
+
+/* Text itself is now the audio control; speaker glyphs are removed. */
+.practice-language .practice-audio{position:static}
+.practice-language-audio{margin:0;padding:0;border:0;background:transparent;color:var(--blue);font:inherit;font-size:.69rem;font-weight:850;letter-spacing:.04em}
+.practice-language-audio:disabled{color:#abb2bd}
+.practice-language-audio.speaking{text-shadow:0 0 8px #087cff55}
+.practice-japanese,.practice-english{padding-right:0}
+.practice-pronunciation-audio{cursor:pointer}
+
+/* Word section heading follows the Japanese / English heading treatment. */
+.practice-word-section-heading{height:34px;padding:0 4px}
+
+/* Practice meta order: progress, divider, then No left and rank chips right. */
+.practice-question-meta>.practice-progress{display:block;width:100%;margin:0;padding:1px 0 8px;border:0;border-bottom:1.5px solid #cfd5df;color:#65728a;font-size:.72rem;font-weight:900;text-align:center}
+.practice-info-primary{display:grid;height:38px;grid-template-columns:minmax(0,1fr) auto;align-items:center;margin:0 -4px;padding:0 4px;border-bottom:0}
+.practice-info-primary .practice-number{justify-self:start;align-self:center;padding:4px 8px;border-radius:var(--radius-pill);background:#111827;color:#fff}
+.practice-info-primary .practice-top-chips{justify-self:end;align-self:center;margin-left:0}
+.practice-word-stack{display:flex;min-width:0;align-items:center;justify-content:center}
+.practice-word-title{display:block;width:100%;grid-column:1/-1;align-self:end;color:var(--blue);font-size:.69rem;font-weight:850;line-height:1;letter-spacing:.04em}
+.practice-word-stack .practice-keyword{display:block;width:100%}
+
+/* A compact stop control appears beside the active sentence language only. */
+.practice-inline-stop{display:grid;width:24px;height:24px;place-items:center;padding:0;border:1.5px solid #9fc9ff;border-radius:7px;background:#eef6ff;color:var(--blue);box-shadow:inset 0 1px 0 #fff,0 2px 5px #087cff18}
+.practice-inline-stop[hidden]{display:none}
+.practice-inline-stop svg{width:14px;height:14px;fill:currentColor;stroke:none}
+
+/* Stop is intentionally red to distinguish it from blue playback actions. */
+.practice-inline-stop{border-color:#e49aa4;background:linear-gradient(180deg,#fff2f4 0%,#ffdce1 100%);color:#bd2437;box-shadow:inset 0 1px 0 #fff,0 2px 6px #bd243724}
+.practice-inline-stop:active{background:#ffcbd3;transform:scale(.96)}
+
+/* Stop control: solid red circle with a white square glyph. */
+.practice-inline-stop{width:26px;height:26px;border:2px solid #981b2b;border-radius:50%;background:linear-gradient(180deg,#ee5366 0%,#c32238 58%,#a91529 100%);color:#fff;box-shadow:inset 0 1px 0 #ffffff75,inset 0 -2px 0 #720d1d55,0 3px 7px #bd243738}
+.practice-inline-stop:active{background:#a91529;transform:scale(.94)}
+.practice-inline-stop svg{width:13px;height:13px;fill:#fff}
+
+/* Stop button exactly follows the S1 badge size and red solid theme. */
+.practice-inline-stop{width:24px;height:24px;min-width:24px;min-height:24px;border:2px solid #8e1928;border-radius:50%;background:linear-gradient(180deg,#f19aa3 0%,#e36270 52%,#bd3a49 100%);color:#fff;box-shadow:inset 0 1px 0 #ffffffb8,inset 0 -1px 0 #00000020,0 2px 4px #8e19284d}
+.practice-inline-stop:active{background:linear-gradient(180deg,#e36270 0%,#bd3a49 100%);transform:scale(.94)}
+.practice-inline-stop svg{width:11px;height:11px;fill:#fff}
+
+/* ACTIVE VOCABULARY lockup: A and V echo the FloVo cyan/violet flow. */
+.brand-subtitle,.practice-brand small{color:#53627b}
+.subtitle-accent{font-weight:950;text-shadow:0 1px 4px currentColor}
+.subtitle-accent-a{color:#00aeea}
+.subtitle-accent-v{color:#654cff}
+
+
+/* Subtitle accents color the glyphs only, without glow or background. */
+.subtitle-accent{text-shadow:none;background:transparent;box-shadow:none}
+
+
+/* A and V share the same cyan subtitle accent. */
+.subtitle-accent-v{color:#00aeea}
+
+/* Label the inline rating controls without changing their layout position. */
+.practice-rating-inline{position:relative}
+.practice-rating-inline::before{content:"理解度";position:absolute;left:0;right:0;top:-10px;color:#7b8596;font-size:.43rem;font-weight:850;line-height:1;text-align:center;letter-spacing:.06em;pointer-events:none}
+
+/* Rating label sits to the left while the buttons retain their exact position. */
+.practice-rating-inline::before{left:-44px;right:auto;top:50%;width:40px;transform:translateY(-50%);font-size:.5rem;white-space:nowrap}
+
+/* No and part-of-speech badges share the S1 badge's 24px height and 2px frame. */
+.practice-top-chips>.practice-meta-chip,.practice-number-part>.practice-meta-chip,.practice-card-badges>.practice-meta-chip,.practice-meaning-heading>.practice-meta-chip{box-sizing:border-box;height:24px;min-height:24px;padding:0 8px;border:2px solid var(--solid-line,var(--line,#cfd5df));background:linear-gradient(180deg,var(--solid-hi,#f7f9fc) 0%,var(--solid,#e9edf3) 52%,var(--solid-lo,#d4dae4) 100%);color:#fff;font-size:.56rem;text-shadow:0 1px 1px #00000045;box-shadow:inset 0 1px 0 #ffffffb8,inset 0 -1px 0 #00000020,0 2px 4px var(--solid-shadow,#26354a22)}
+.practice-info-primary .practice-number{box-sizing:border-box;height:24px;min-height:24px;padding:0 8px;border:2px solid #111827;display:inline-flex;align-items:center;font-size:.58rem}
+
+/* Card identifier order: word number, part of speech, meaning-example. */
+.practice-info-primary{height:38px}
+.practice-info-primary .practice-number-part{display:flex;min-width:0;align-items:center;gap:6px;justify-self:start}
+.practice-info-primary .practice-number{display:inline-flex;box-sizing:border-box;height:24px;min-height:24px;align-items:center;padding:0 8px;border:2px solid #111827;border-radius:var(--radius-pill);background:#111827;color:#fff;box-shadow:inset 0 1px 0 #ffffff29,0 2px 5px #11182724;font-size:.58rem;font-weight:900;font-variant-numeric:tabular-nums;line-height:1;letter-spacing:.03em;white-space:nowrap}
+.practice-info-primary .practice-number-part>.practice-meta-chip{flex:0 0 auto}
+.practice-info-primary>.practice-level-chips{justify-self:end}
+
+/* Keep all identifiers together in the card's top row. */
+.practice-info-primary .practice-card-badges{display:flex;min-width:0;align-items:center;gap:6px;justify-self:start}
+.practice-meaning-column{display:block;min-width:0}
+
+/* Slightly favor English to offset the card's bottom padding and controls. */
+.practice-exercise-card{grid-template-rows:max-content minmax(0,.92fr) minmax(0,1fr)}
+.practice-japanese-block,.practice-english-block{box-sizing:border-box;width:100%;height:100%;min-height:0}
+
+/* Every practice-card section keeps a stable area; long text is fitted by JavaScript. */
+.practice-exercise-card{position:relative;min-height:470px;grid-template-rows:187px minmax(0,1fr) minmax(0,1fr) 54px;row-gap:5px}
+.practice-question-meta{display:grid;height:187px;grid-template-rows:28px 38px 121px;overflow:hidden}
+.practice-question-meta>.practice-progress{height:28px;box-sizing:border-box}
+.practice-info-primary{height:38px}
+.practice-detail-grid{height:121px;min-height:0;grid-template-rows:17px 44px 60px;row-gap:0;margin-top:0;padding-top:0}
+.practice-word-title{grid-row:1}
+.practice-word-stack,.practice-info-divider,.practice-pronunciation-stack{grid-row:2;min-height:0}
+.practice-word-stack .practice-keyword{height:100%;min-height:0;overflow:hidden}
+.practice-meaning-column{grid-row:3;height:60px;min-height:0;overflow:hidden}
+.practice-meaning{display:block;width:100%;height:100%;min-height:0;overflow:hidden}
+.practice-note{min-height:0;overflow-x:hidden;overflow-y:auto;white-space:pre-wrap;text-overflow:clip;overflow-wrap:anywhere;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.practice-language{overflow:hidden}
+.practice-japanese,.practice-english{display:block!important;width:100%;height:100%;min-height:0;max-height:none;margin:0;overflow-x:hidden;overflow-y:auto;overflow-wrap:anywhere;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.practice-english[hidden]{display:none!important}
+.practice-answer{height:100%;min-height:0;overflow:hidden}
+.practice-english:not([hidden]){display:block!important;height:100%;margin:0}
+
+/* Inline rating buttons exactly match the 24px S1 badge. */
+.practice-rating-inline .practice-rating-button{box-sizing:border-box;width:24px;height:24px;min-width:24px;min-height:24px;border-width:2px;font-size:.4rem}
+.practice-rating-inline .practice-rating-button.selected{border-width:2px}
+
+
+/* Rating controls are intentionally larger than metadata badges for easier tapping. */
+.practice-rating-inline .practice-rating-button{box-sizing:border-box;width:32px;height:32px;min-width:32px;min-height:32px;padding:0;border-width:2px;font-size:.5rem;line-height:1}
+.practice-rating-inline .practice-rating-button.selected{border-width:2px}
+
+
+/* Practice settings use the same blue trigger and vertical picker as question count. */
+.practice-setting-row{position:relative;overflow:visible}
+.practice-setting-row>span{min-width:0;padding-right:10px}
+.practice-setting-picker{position:relative;flex:0 0 104px}
+.practice-setting-trigger{display:flex;width:104px;height:38px;align-items:center;justify-content:center;gap:5px;padding:0 9px;border:var(--action-border-width) solid var(--action-border-color);border-radius:var(--radius-pill);background:linear-gradient(180deg,var(--action-top) 0%,var(--action-mid) 46%,var(--action-bottom) 100%);color:#fff;box-shadow:inset 0 1px 0 #ffffff9c,0 4px 10px #087cff30;font-size:.75rem;font-weight:850;white-space:nowrap}
+.practice-setting-trigger:active{transform:scale(.97)}
+.practice-setting-trigger.setting-cycle{box-shadow:inset 0 1px 0 #ffffff9c,0 4px 10px #087cff30}
+.practice-setting-value{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.practice-setting-chevron{flex:0 0 auto;color:#dcecff;font-size:.72rem;transform:translateY(-1px)}
+.practice-setting-menu{position:absolute;z-index:150;top:calc(100% + 6px);right:0;width:104px;max-height:240px;overflow-y:auto;padding:5px;border:1px solid #ffffff24;border-radius:16px;background:#50535af5;box-shadow:0 12px 30px #18223542;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.practice-setting-menu.open-up{top:auto;bottom:calc(100% + 6px)}
+.practice-setting-menu[hidden]{display:none}
+.practice-setting-menu::-webkit-scrollbar{display:none}
+.practice-setting-option{display:block;width:100%;height:42px;padding:0 4px;border:0;border-radius:11px;background:transparent;color:#fff;font-size:.86rem;font-weight:650;text-align:center;white-space:nowrap}
+.practice-setting-option.selected{background:linear-gradient(135deg,#1686ff,#0a6be8);box-shadow:0 2px 7px #087cff40;font-weight:850}
+.practice-setting-option:active{background:#ffffff2e}
+
+
+/* Practice tab icons share the Home tab's clean outline language. */
+.practice-nav-controls .practice-control-icon{box-sizing:border-box;width:25px!important;height:25px!important;fill:none!important;stroke:currentColor!important;stroke-width:2.2!important;stroke-linecap:round!important;stroke-linejoin:round!important;filter:none!important;overflow:visible}
+.practice-nav-controls .practice-play-svg .play-mark{fill:none!important;stroke:currentColor!important}
+.practice-nav-controls .practice-play-svg .pause-mark{fill:none!important;stroke:currentColor!important}
+.practice-language-svg rect{fill:none;stroke:currentColor}
+.practice-language-svg #languageModeIcon{width:auto;height:auto;fill:currentColor;stroke:none;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;font-size:4.6px;font-weight:900;letter-spacing:-.18px;text-anchor:middle;white-space:normal}
+.practice-nav-controls .repeat-mode-icon{width:25px!important;height:25px!important;stroke-width:2.2!important}
+.practice-nav-controls .repeat-current-mark circle{fill:currentColor;stroke:#fff;stroke-width:1.2}
+.practice-nav-controls .repeat-current-mark text{fill:#fff;stroke:none;font-size:5px;font-weight:900;text-anchor:middle}
+
+
+/* Language tab: unframed Japanese marks with a visible Audio label. */
+.practice-nav-controls .practice-language-mark{display:grid;width:25px;height:25px;place-items:center;border:0;background:transparent;color:currentColor;font-size:.78rem;font-weight:900;line-height:1;letter-spacing:-.08em;white-space:nowrap}
+
+
+/* Keep every practice-tab title on the same baseline as the fixed Home tab. */
+.practice-nav-controls .tab{font-size:.7rem;line-height:1}
+.practice-nav-controls .tab>svg,
+.practice-nav-controls .tab>.practice-language-mark{flex:0 0 25px;width:25px;height:25px}
+.practice-nav-controls .tab>span:last-child:not(.visually-hidden){display:…8814 tokens truncated…nd:#fff;box-shadow:0 2px 8px #26354a14;text-align:center}
+.home-understanding-center strong{color:#253247;font-size:1.25rem;font-weight:950;line-height:1;font-variant-numeric:tabular-nums}
+.home-understanding-center span{margin-top:4px;color:#738096;font-size:.54rem;font-weight:850}
+.home-understanding-legend{display:grid;gap:6px}
+.home-understanding-legend>div{display:grid;grid-template-columns:8px minmax(0,1fr) 3ch auto;align-items:center;gap:5px;color:#667287;font-size:.57rem}
+.home-understanding-legend i,.home-answer-legend i{display:block;width:8px;height:8px;border-radius:50%}
+.home-understanding-legend span{font-weight:800}
+.home-understanding-legend strong{color:#344054;font-size:.62rem;font-weight:900;text-align:right;font-variant-numeric:tabular-nums}
+.home-understanding-legend small{color:#929baa;font-size:.47rem;font-weight:750;white-space:nowrap}
+.home-understanding-legend .mastered{background:#35b972}.home-understanding-legend .steady{background:#efd044}.home-understanding-legend .learning{background:#ef9b3a}.home-understanding-legend .new{background:#df5b69}
+.home-answer-panel{display:grid;grid-template-columns:112px minmax(0,1fr);align-items:center;gap:14px;padding:12px 14px}
+.home-answer-donut{display:grid;width:108px;height:108px;place-items:center;border-radius:50%;background:#e9edf3;transition:background .3s ease}
+.home-answer-donut>div{display:grid;width:72px;height:72px;place-content:center;border-radius:50%;background:#fff;box-shadow:0 2px 8px #26354a14;text-align:center}
+.home-answer-donut strong{color:#253247;font-size:1.2rem;font-weight:950;line-height:1;font-variant-numeric:tabular-nums}.home-answer-donut span{margin-top:4px;color:#738096;font-size:.54rem;font-weight:850}
+.home-answer-summary{display:grid;gap:12px}.home-answer-summary>strong{color:#65728a;font-size:.62rem;font-weight:850}
+.home-answer-bar{display:flex;height:10px;overflow:hidden;border-radius:999px;background:#e9edf3}
+.home-answer-bar i{display:block;width:0;height:100%;transition:width .3s ease}.home-answer-bar .correct{background:#35b972}.home-answer-bar .wrong{background:#df5b69}.home-answer-bar .unsure{background:#9a75d3}
+.home-answer-legend{display:grid;gap:7px;color:#65728a;font-size:.56rem;font-weight:800}
+.home-answer-legend span{display:flex;align-items:center;gap:4px}.home-answer-legend strong{color:#344054;font-size:.59rem;font-weight:900;font-variant-numeric:tabular-nums}
+.home-answer-legend .correct{background:#35b972}.home-answer-legend .wrong{background:#df5b69}.home-answer-legend .unsure{background:#9a75d3}
+.home-word-panel{display:grid;align-content:start;gap:8px;padding:11px 13px}
+.home-word-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.home-word-summary>div{display:flex;min-height:32px;align-items:baseline;justify-content:center;gap:6px;border-radius:10px;background:#f1f5fa;color:#65728a}
+.home-word-summary span{font-size:.55rem;font-weight:850}.home-word-summary strong{color:#26354a;font-size:.83rem;font-weight:950;font-variant-numeric:tabular-nums}
+.home-word-progress{height:6px;overflow:hidden;border-radius:999px;background:#e3e8ef}.home-word-progress i{display:block;width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,#2f94ef,#35b972);transition:width .3s ease}
+.home-word-breakdown{display:grid;grid-template-columns:1fr 1.15fr;gap:12px}.home-word-breakdown h3{margin:0 0 5px;color:#65728a;font-size:.53rem;font-weight:850}
+.home-level-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}.home-level-stats span{display:grid;place-items:center;padding:4px 2px;border-radius:7px;background:#f1f5fa;color:#68758b;font-size:.48rem;font-weight:850}.home-level-stats strong{color:#344054;font-size:.56rem;font-variant-numeric:tabular-nums}
+.home-pos-stats{display:grid;max-height:76px;gap:3px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none}.home-pos-stats::-webkit-scrollbar{display:none}.home-pos-row{display:grid;grid-template-columns:minmax(0,1fr) 42px 3ch;align-items:center;gap:4px;color:#68758b;font-size:.47rem;font-weight:800}.home-pos-row>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.home-pos-track{height:5px;overflow:hidden;border-radius:999px;background:#e5eaf1}.home-pos-track i{display:block;height:100%;border-radius:inherit;background:#55a8ef}.home-pos-row strong{color:#344054;font-size:.5rem;text-align:right;font-variant-numeric:tabular-nums}
+.active-vocab-card .home-practice-button{min-height:58px}
+.active-vocab-card .home-practice-button>span{gap:0}
+
+
+/* Count summary and practice action share one consistent control height. */
+.active-vocab-card .home-card-counts>span{min-height:58px;height:58px}
+
+
+/* Problem-list header owns the filtered word and question totals. */
+.practice-list-header{min-height:62px}
+.practice-list-header .practice-header-counts{display:grid;width:158px;height:auto;gap:3px;justify-items:end}
+.practice-list-header .practice-header-counts[hidden]{display:none!important}
+.practice-list-header .practice-header-counts>span{display:grid;width:100%;grid-template-columns:45px minmax(0,1fr);align-items:baseline;justify-content:end;column-gap:9px;white-space:nowrap}
+.practice-list-header .practice-header-counts b{color:#65728a;font-size:.5rem;font-weight:800;text-align:right}
+.practice-list-header .practice-header-counts strong{display:flex;min-width:12ch;justify-content:flex-end;color:#344054;font-size:.6rem;font-weight:900;font-variant-numeric:tabular-nums}
+.practice-list-header .practice-header-counts .count-padding{color:#c7ccd5}
+.practice-list-header .practice-header-counts .count-value{color:#344054}
+.practice-list-header .practice-header-counts .count-separator{padding:0 .4ch;color:#98a2b3}
+.practice-list-header .practice-header-counts .count-current,.practice-list-header .practice-header-counts .count-total{display:inline-flex}
+.practice-list-header .practice-header-counts .count-total .count-padding,.practice-list-header .practice-header-counts .count-total .count-value{color:#98a2b3}
+
+
+/* Home and Play stay fixed; the remaining practice controls scroll horizontally. */
+.practice-play-fixed{display:none}
+.nav.practice-mode .practice-play-fixed{position:relative;z-index:2;display:flex;flex:0 0 78px;min-width:78px;width:78px;padding:0;background:#fff;color:var(--blue);box-shadow:8px 0 18px #26354a0d}
+.nav.practice-mode .practice-play-fixed.is-stopping{color:#d52b3f}
+.nav.practice-mode .practice-play-fixed svg{width:25px!important;height:25px!important}
+
+/* Tablet navigation uses the available width instead of clipping a phone-sized rail. */
+@media (min-width:700px){
+  .nav.practice-mode .practice-nav-controls{overflow-x:hidden}
+  .nav.practice-mode .practice-nav-controls .tab{flex:1 1 0;min-width:0;width:auto}
+}
+
+
+/* Practice controls inherit the Home screen's button palette and surface treatment. */
+.practice-screen{
+  --practice-button-blue:var(--blue);
+  --practice-button-ink:#526078;
+  --practice-button-border:#dce2ec;
+  --practice-button-surface:#fff;
+  --practice-button-shadow:0 3px 10px #26354a0b;
+}
+.practice-filter-button,
+.practice-back-to-list,
+.practice-list-open{
+  border-color:var(--practice-button-border);
+  background:var(--practice-button-surface);
+  color:var(--practice-button-ink);
+  box-shadow:var(--practice-button-shadow);
+}
+.practice-filter-button:active,
+.practice-back-to-list:active,
+.practice-list-open:active{
+  background:#f5f8fc;
+  color:var(--practice-button-blue);
+}
+.practice-language-label,
+.practice-pronunciation-audio{
+  color:var(--practice-button-blue);
+}
+.practice-setting-trigger{
+  border-color:var(--action-border-color);
+  background:linear-gradient(180deg,var(--action-top) 0%,var(--action-mid) 46%,var(--action-bottom) 100%);
+  color:#fff;
+  box-shadow:inset 0 1px 0 #ffffff9c,inset 0 -2px 0 #003d8f4d,0 5px 12px #087cff3d;
+}
+.nav.practice-mode .nav-home,
+.nav.practice-mode .practice-play-fixed,
+.nav.practice-mode .practice-nav-controls .tab:not(:disabled){
+  color:var(--blue);
+}
+
+
+/* Compact, touch-scroll wheel pickers for every Practice setting. */
+.practice-setting-picker{flex:0 0 84px}
+.practice-setting-trigger{width:84px;padding:0 6px}
+.practice-question-setting .question-picker{width:84px;flex:0 0 84px}
+.practice-setting-menu,
+.practice-question-setting .question-menu{
+  width:84px;
+  height:174px;
+  max-height:174px;
+  overflow-y:auto;
+  padding:66px 5px;
+  scroll-snap-type:y mandatory;
+  scroll-padding-block:66px;
+  overscroll-behavior-y:contain;
+  touch-action:pan-y;
+  background:linear-gradient(to bottom,#50535af5 0 37%,#656971fa 37% 63%,#50535af5 63% 100%);
+}
+.practice-setting-option,
+.practice-question-setting .question-option{
+  height:42px;
+  scroll-snap-align:center;
+  scroll-snap-stop:always;
+}
+.practice-setting-option.selected,
+.practice-question-setting .question-option.selected{
+  background:linear-gradient(180deg,var(--action-top) 0%,var(--action-mid) 48%,var(--action-bottom) 100%);
+  box-shadow:inset 0 1px 0 #ffffff80,0 2px 7px #087cff40;
+}
+
+
+/* Filtering belongs to list view; disable it while a card is open. */
+.practice-filter-button:disabled{border-color:#e2e5eb;background:#f0f2f5;color:#b1b8c4;box-shadow:none;opacity:.7;pointer-events:none}
+
+
+/* Fixed Play tab keeps the same visible play/pause artwork as scrollable controls. */
+.nav.practice-mode .practice-play-fixed .practice-control-icon{fill:none!important;stroke:currentColor!important;stroke-width:2.2!important;stroke-linecap:round!important;stroke-linejoin:round!important;overflow:visible}
+.nav.practice-mode .practice-play-fixed .practice-play-svg .play-mark,
+.nav.practice-mode .practice-play-fixed .practice-play-svg .pause-mark{fill:none!important;stroke:currentColor!important}
+.nav.practice-mode .practice-play-fixed.is-playing .practice-play-svg .play-mark{display:none}
+.nav.practice-mode .practice-play-fixed.is-playing .practice-play-svg .pause-mark{display:block}
+
+
+/* Keep the Problem List section fixed; only its rows scroll. */
+.practice-list-placeholder{flex:1 1 auto;min-height:0;overflow:hidden}
+.practice-list-header{position:relative;z-index:5;flex:0 0 62px;background:#fff;box-shadow:0 5px 12px #26354a0a}
+.practice-list-items{min-height:0;flex:1 1 auto;overflow-y:auto;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.practice-list-items::-webkit-scrollbar{display:none}
+
+/* Card maintenance: compact list controls and native-feeling bottom sheets. */
+.practice-list-head-actions{display:flex;align-items:center;gap:10px}
+.practice-card-add{display:flex;width:53px;height:50px;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:0;border:1px solid #dce2ec;border-radius:14px;background:#fff;color:#526078;box-shadow:0 3px 10px #26354a0b;font-size:.56rem;font-weight:800;white-space:nowrap}
+.practice-card-add svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.practice-card-add:active{transform:scale(.95)}
+.practice-list-row{grid-template-columns:minmax(0,1fr) 42px}
+.practice-list-actions{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.practice-list-row{min-height:104px;padding:10px 12px}
+.practice-list-copy{display:grid;min-width:0;gap:7px}
+.practice-list-card-badges{display:flex;min-width:0;align-items:center;gap:6px}
+.practice-list-levels{display:flex;min-width:0;align-items:center;gap:5px;margin-left:auto}
+.practice-list-word-no{display:inline-flex;box-sizing:border-box;height:21px;min-height:21px;align-items:center;padding:0 7px;border:2px solid #111827;border-radius:var(--radius-pill);background:#111827;color:#fff;box-shadow:inset 0 1px 0 #ffffff29,0 2px 5px #11182724;font-size:.52rem;font-weight:900;font-variant-numeric:tabular-nums;line-height:1;letter-spacing:.03em;white-space:nowrap}
+.practice-list-card-badges>.practice-meta-chip{box-sizing:border-box;height:21px;min-height:21px;padding:0 7px;border-width:2px;font-size:.52rem;line-height:1}
+.practice-list-card-badges>.practice-meta-chip.is-transparent{border-color:#111827;background:#fff;color:#111827;text-shadow:none;box-shadow:none}
+.practice-list-card-badges>.practice-meta-chip.meaning-count-badge{background:#fff;text-shadow:none;box-shadow:none}
+.practice-list-card-badges>.practice-meta-chip.meaning-count-badge.has-meanings{border-color:#111827;color:#111827}
+.practice-list-card-badges>.practice-meta-chip.meaning-count-badge.has-no-meanings{border-color:#aeb6c3;color:#8a94a5}
+.practice-list-card-badges .practice-list-levels>.practice-meta-chip{width:21px;min-width:21px;height:21px;min-height:21px;padding:0;font-size:.44rem}
+.practice-list-summary{display:grid;min-width:0;grid-template-columns:repeat(2,minmax(0,1fr));align-items:center;gap:12px}
+.practice-list-sentences{display:grid;min-width:0;grid-template-columns:minmax(0,1fr);gap:4px}
+.practice-list-word{min-width:0;overflow:hidden;color:#111827;font-size:.98rem;font-weight:900;text-overflow:ellipsis;white-space:nowrap}
+.practice-list-meaning{min-width:0;overflow:hidden;color:#111827;font-size:.78rem;font-weight:800;text-overflow:ellipsis;white-space:nowrap}
+.practice-list-word,.practice-list-meaning{text-align:left}
+.practice-list-japanese,.practice-list-english{display:block;min-width:0;overflow:hidden;font-size:.66rem;font-weight:700;line-height:1.25;text-overflow:ellipsis;white-space:nowrap}
+.practice-list-japanese,.practice-list-english{color:#6b7280}
+.practice-list-row[aria-current="true"] .practice-list-word{color:var(--blue)}
+.practice-list-word,.practice-list-meaning,.practice-list-japanese,.practice-list-english{font-size:.7rem;line-height:1.25}
+.practice-list-row .practice-list-word,.practice-list-row .practice-list-meaning{font-size:.8rem}
+.practice-list-row[aria-current="true"]{background:linear-gradient(90deg,#c7e2ff 0%,#e4f1ff 100%)}
+.practice-list-row[aria-current="true"] .practice-list-open{border-color:transparent;background:transparent;box-shadow:none}
+.practice-info-primary .practice-number{height:21px;min-height:21px;padding:0 7px;font-size:.52rem}
+.practice-info-primary .practice-card-badges>.practice-meta-chip{height:21px;min-height:21px;padding:0 7px;font-size:.52rem}
+.practice-info-primary .practice-card-badges>.practice-meta-chip.is-black-transparent{border-color:#111827;background:#fff;color:#111827;text-shadow:none;box-shadow:none}
+.practice-info-primary>.practice-level-chips .practice-meta-chip{width:21px;min-width:21px;height:21px;min-height:21px;padding:0;font-size:.44rem}
 .practice-meaning{display:flex;align-items:center}
 .practice-note{display:block;white-space:pre-wrap}
 .practice-japanese,.practice-english{white-space:pre-wrap}
@@ -603,7 +1018,51 @@ body[data-practice-module="phrase-bank"] #practiceList .practice-list-levels{dis
 body[data-practice-module="phrase-bank"] #practiceFilterOverlay [data-filter-section="word"],
 body[data-practice-module="phrase-bank"] #practiceFilterOverlay [data-filter-section="part"]{display:none!important}
 body[data-practice-module="phrase-bank"] .practice-info-primary>#practiceNoteButton{margin-left:auto}
-body[data-practice-module="phrase-bank"] .practice-word-stack,
 body[data-practice-module="phrase-bank"] #practiceWordCopy,
 body[data-practice-module="phrase-bank"] .practice-meaning-column{display:none!important}
+body[data-practice-module="phrase-bank"] #practiceMeaningExampleNumber,
+body[data-practice-module="phrase-bank"] #practiceList .practice-list-meaning{display:none!important}
 body[data-practice-module="phrase-bank"] .practice-word-heading{min-height:0}
+body[data-practice-module="phrase-bank"] .practice-word-stack{display:grid!important;min-height:34px;align-items:center}
+body[data-practice-module="phrase-bank"] #practiceWord{font-size:.9rem!important;line-height:1.35;white-space:normal;overflow-wrap:anywhere}
+
+/* My Phrase Bank data and category sheets. */
+.phrase-data-overlay{position:absolute;z-index:360;inset:0;display:flex;align-items:flex-end;background:#11182773;backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
+.phrase-data-overlay[hidden]{display:none}
+.phrase-data-sheet{box-sizing:border-box;width:100%;max-height:92dvh;overflow-y:auto;padding:14px 16px calc(20px + env(safe-area-inset-bottom));border-radius:24px 24px 0 0;background:#fff;box-shadow:0 -16px 38px #11182735;-webkit-overflow-scrolling:touch}
+.phrase-data-head{position:sticky;z-index:2;top:-14px;display:grid;grid-template-columns:76px minmax(0,1fr) 76px;align-items:center;gap:6px;margin:-14px -16px 14px;padding:14px 16px 10px;border-bottom:1px solid #e6eaf0;background:#fff}
+.phrase-data-head h2{margin:0;color:#182230;text-align:center;font-size:1rem}
+.phrase-data-head button{min-height:36px;padding:0 8px;border:0;border-radius:11px;background:transparent;color:var(--blue);font-size:.72rem;font-weight:850}
+.phrase-data-head button:nth-last-child(1){background:var(--blue);color:#fff}
+.phrase-category-sheet .phrase-data-head button:nth-last-child(1){background:transparent}
+.phrase-data-body{display:grid;gap:13px}
+.phrase-data-body>label{display:grid;gap:6px;color:#526078;font-size:.72rem;font-weight:850}
+.phrase-data-body>label b{color:#d92d45}
+.phrase-data-body textarea{box-sizing:border-box;width:100%;padding:11px 12px;border:1px solid #d7dee8;border-radius:13px;background:#fff;color:#182230;font:inherit;font-size:.86rem;font-weight:650;line-height:1.5;outline:none;resize:vertical}
+.phrase-data-body textarea:focus,.phrase-root-add input:focus,.phrase-category-manager-row input:focus{border-color:#5aa8ef;box-shadow:0 0 0 3px #3b9cf023}
+.phrase-category-field{display:grid;gap:8px;padding:11px;border:1px solid #dfe5ed;border-radius:15px;background:#f8fafc}
+.phrase-category-field>div:first-child{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#526078;font-size:.72rem}
+.phrase-category-field>div:first-child button{min-height:32px;padding:0 10px;border:1px solid #9bc9f7;border-radius:10px;background:#eef7ff;color:var(--blue);font-size:.66rem;font-weight:850}
+.phrase-category-field>p,.phrase-category-help{margin:0;color:#7b8798;font-size:.63rem;line-height:1.45}
+#phraseCategoryChoices{display:grid;gap:5px}
+.phrase-category-choice{display:grid;grid-template-columns:23px 23px minmax(0,1fr);align-items:center;gap:6px;min-height:34px;padding:3px 8px 3px calc(8px + var(--depth)*18px);border-radius:10px;background:#fff;color:#26364d;font-size:.74rem;font-weight:750}
+.phrase-category-choice input{width:18px;height:18px;margin:0;accent-color:var(--blue)}
+.phrase-category-empty{margin:0;padding:18px;color:#8793a5;text-align:center;font-size:.7rem}
+.phrase-data-error{margin:0;color:#d92d45;font-size:.68rem;font-weight:750}
+.phrase-data-delete{min-height:42px;border:1px solid #efb2b9;border-radius:12px;background:#fff4f5;color:#c93645;font-size:.72rem;font-weight:850}
+.phrase-root-add{display:grid;grid-template-columns:minmax(0,1fr) 64px;gap:7px;margin-bottom:8px}
+.phrase-root-add input,.phrase-category-manager-row input{min-width:0;height:38px;padding:0 10px;border:1px solid #d7dee8;border-radius:10px;background:#fff;color:#182230;font-size:.76rem;font-weight:700;outline:none}
+.phrase-root-add button{border:1px solid #9bc9f7;border-radius:10px;background:#eef7ff;color:var(--blue);font-size:.68rem;font-weight:850}
+.phrase-category-help{margin-bottom:10px}
+.phrase-category-manager{display:grid;gap:7px}
+.phrase-category-manager-row{display:grid;grid-template-columns:34px minmax(72px,1fr) auto 32px 32px auto;align-items:center;gap:5px;padding:7px 7px 7px calc(7px + var(--depth)*14px);border:1px solid #e0e5ec;border-radius:12px;background:#f8f9fb}
+.phrase-category-manager-row>b{color:#68758a;font-size:.61rem;text-align:center}
+.phrase-category-manager-row button{height:32px;padding:0 7px;border:1px solid #c9d7e7;border-radius:9px;background:#fff;color:var(--blue);font-size:.62rem;font-weight:850}
+.phrase-category-manager-row button:last-child{border-color:#efc2c7;color:#c93645}
+html[data-theme="dark"] .phrase-data-sheet,html[data-theme="dark"] .phrase-data-head{border-color:#344153;background:#1b2431}
+html[data-theme="dark"] .phrase-data-head h2{color:#eef4ff}
+html[data-theme="dark"] .phrase-data-body>label,html[data-theme="dark"] .phrase-category-field>div:first-child{color:#b3c0d1}
+html[data-theme="dark"] .phrase-data-body textarea,html[data-theme="dark"] .phrase-root-add input,html[data-theme="dark"] .phrase-category-manager-row input{border-color:#405065;background:#121a24;color:#eef4ff}
+html[data-theme="dark"] .phrase-category-field,html[data-theme="dark"] .phrase-category-manager-row{border-color:#344153;background:#17202c}
+html[data-theme="dark"] .phrase-category-choice{background:#202b39;color:#eef4ff}
+@media(max-width:430px){.phrase-category-manager-row{grid-template-columns:31px minmax(64px,1fr) 42px 30px 30px 42px;gap:3px;padding-left:calc(5px + var(--depth)*9px)}.phrase-category-manager-row button{padding:0 3px;font-size:.56rem}}
