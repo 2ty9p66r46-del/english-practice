@@ -50,7 +50,7 @@
   try{phraseFilterCategoryIds=new Set(JSON.parse(localStorage.getItem('phraseCategoryFilterV1')||'[]').map(number).filter(Boolean))}catch{}
 
   const phraseHierarchyFilter=document.createElement('div');phraseHierarchyFilter.className='filter-section phrase-hierarchy-filter';phraseHierarchyFilter.dataset.filterSection='phrase-category';phraseHierarchyFilter.hidden=true;
-  phraseHierarchyFilter.innerHTML='<div class="filter-section-head"><h3><span class="condition-badge">条件3</span><span>階層</span></h3><div class="filter-section-actions"><button class="section-filter-button select" id="phraseHierarchyFilterAction" type="button">すべて選択</button></div></div><p class="phrase-hierarchy-filter-help">任意の階層を複数選択できます。親を選ぶと配下も対象になります。</p><div id="phraseHierarchyFilterChoices"></div>';
+  phraseHierarchyFilter.innerHTML='<div class="filter-section-head"><h3><span class="condition-badge">条件3</span><span>階層</span></h3><div class="filter-section-actions"><button class="section-filter-button select" id="phraseHierarchyFilterAction" type="button">すべて選択</button></div></div><p class="phrase-hierarchy-filter-help">任意の階層を複数選択できます。選択した各階層の直下だけを表示します。</p><div id="phraseHierarchyFilterChoices"></div>';
   wordTextFilterSection?.after(phraseHierarchyFilter);
 
   const openDatabase=()=>new Promise((resolve,reject)=>{const request=indexedDB.open('flovo-data',1);request.onupgradeneeded=()=>{if(!request.result.objectStoreNames.contains('app'))request.result.createObjectStore('app')};request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error)});
