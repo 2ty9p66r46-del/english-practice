@@ -44,7 +44,7 @@
   const PHRASE_HEADERS=['フレーズID','例文番号','主カテゴリ','追加カテゴリ','日本語文','英文','補足','理解度','◯回数','×回数','△回数','タグ'];
   const CATEGORY_HEADERS=['カテゴリパス','表示順'];
   let data={version:2,nextPhraseId:1,nextCategoryId:1,categories:[],phrases:[],tags:[],fileName:'未読込'};
-  let loaded=false,moduleMode='active-vocabulary',launchingPhrase=false,editorPhraseId=null,editorCategoryIds=new Set(),editorPrimaryId=null,categoryDraftParentId=undefined,phraseSaveMessageTimer=null,rowPhraseIds=new WeakMap(),phraseFilterCategoryIds=new Set(),phraseBulkSelecting=false,phraseBulkSelectedIds=new Set(),activeBulkSelectedRows=new Set(),activeBulkRowMap=new WeakMap(),phraseBulkMoveCategoryId=null,phraseBulkHeaderTimer=null,phraseBulkActionsTimer=null,editorTagNames=new Set(),phraseFilterTagNames=new Set();
+  let loaded=false,loadDataPromise=null,moduleMode='active-vocabulary',launchingPhrase=false,editorPhraseId=null,editorCategoryIds=new Set(),editorPrimaryId=null,categoryDraftParentId=undefined,phraseSaveMessageTimer=null,rowPhraseIds=new WeakMap(),rowPhraseObjects=new WeakMap(),phraseFilterCategoryIds=new Set(),phraseBulkSelecting=false,phraseBulkSelectedIds=new Set(),activeBulkSelectedRows=new Set(),activeBulkRowMap=new WeakMap(),phraseBulkMoveCategoryId=null,phraseBulkHeaderTimer=null,phraseBulkActionsTimer=null,editorTagNames=new Set(),phraseFilterTagNames=new Set();
   const normalize=value=>String(value??'').trim();
   const number=value=>Math.max(0,Number.parseInt(value,10)||0);
   try{phraseFilterCategoryIds=new Set(JSON.parse(localStorage.getItem('phraseCategoryFilterV1')||'[]').map(number).filter(Boolean))}catch{}
@@ -65,8 +65,10 @@
     legacy.phrases.forEach((phrase,index)=>{const categoryIds=(phrase.scenes||[]).map(name=>categoryByName.get(normalize(name))).filter(Boolean),id=number(phrase.id)||migrated.nextPhraseId++;migrated.nextPhraseId=Math.max(migrated.nextPhraseId,id+1);migrated.phrases.push({id,primaryCategoryId:categoryIds[0]||null,categoryIds,japanese:normalize(phrase.japanese),english:normalize(phrase.english),note:normalize(phrase.note),understanding:normalize(phrase.understanding),correct:number(phrase.correct),wrong:number(phrase.wrong),unsure:number(phrase.unsure),order:index+1})});
     return migrated;
   };
-  const loadData=async()=>{
-    if(loaded)return;
+  const loadData=()=>{
+    if(loaded)return Promise.resolve();
+    if(loadDataPromise)return loadDataPromise;
+    loadDataPromise=(async()=>{
     let saved=await readStore(STORE_KEY);if(!saved)saved=migrateLegacy(await readStore(LEGACY_STORE_KEY));
     if(saved&&Array.isArray(saved.categories)&&Array.isArray(saved.phrases))data=saved;
     data.version=2;data.fileName=data.fileName||'未読込';data.tags=Array.isArray(data.tags)?data.tags:[];
@@ -78,7 +80,9 @@
     data.phrases.forEach(item=>{item.tags=(item.tags||[]).map(tag=>data.tags.find(known=>known.toLocaleLowerCase('ja')===tag.toLocaleLowerCase('ja'))||tag)});
     const uncategorized=ensureUncategorizedCategory();
     data.phrases.forEach(item=>{if(!categoryById(item.primaryCategoryId)){item.primaryCategoryId=uncategorized.id;item.categoryIds=[uncategorized.id]}});
-    loaded=true;await writeStore();refreshPhraseHome();renderPhraseHierarchyFilter();
+    await writeStore();loaded=true;refreshPhraseHome();renderPhraseHierarchyFilter();
+      })().catch(error=>{loadDataPromise=null;throw error});
+    return loadDataPromise;
   };
   const categoryById=id=>data.categories.find(item=>item.id===Number(id));
   const childrenOf=parentId=>data.categories.filter(item=>(item.parentId??null)===(parentId??null)).sort((a,b)=>a.order-b.order||a.id-b.id);
@@ -150,19 +154,19 @@
     renderPhraseTagFilter();window.flovoPracticeBridge?.refreshFilterCount?.();
   });
   const phraseMatchesFilter=row=>{
-    const phrase=data.phrases.find(item=>item.id===rowPhraseIds.get(row))||phraseByNumber(row?.[0]);if(!phrase)return false;
+    const phrase=rowPhraseObjects.get(row)||phraseByNumber(row?.[0]);if(!phrase)return false;
     if(phraseFilterCategoryIds.size&&!categoryPathNodes(phrase.primaryCategoryId).some(node=>phraseFilterCategoryIds.has(node.id)))return false;
     if(phraseFilterTagNames.size&&!phrase.tags?.some(tag=>[...phraseFilterTagNames].some(selected=>selected.toLocaleLowerCase('ja')===tag.toLocaleLowerCase('ja'))))return false;
     return true;
   };
   phraseHierarchyFilter.querySelector('#phraseHierarchyFilterAction').addEventListener('click',()=>{if(phraseFilterCategoryIds.size)phraseFilterCategoryIds.clear();else flattenCategories().forEach(({item})=>phraseFilterCategoryIds.add(item.id));renderPhraseHierarchyFilter();window.flovoPracticeBridge?.refreshFilterCount?.()});
   const toStoredData=()=>{
-    rowPhraseIds=new WeakMap();
-    const rows=data.phrases.slice().sort((a,b)=>phraseNumber(a).localeCompare(phraseNumber(b),'ja',{numeric:true})).map(phrase=>{const row=[phraseNumber(phrase),categoryPath(phrase.primaryCategoryId),'','','','','','','','','','',phrase.japanese,phrase.english,phrase.note,phrase.understanding,phrase.correct,phrase.wrong,phrase.unsure];rowPhraseIds.set(row,phrase.id);return row});
+    rowPhraseIds=new WeakMap();rowPhraseObjects=new WeakMap();
+    const rows=data.phrases.slice().sort((a,b)=>phraseNumber(a).localeCompare(phraseNumber(b),'ja',{numeric:true})).map(phrase=>{const row=[phraseNumber(phrase),categoryPath(phrase.primaryCategoryId),'','','','','','','','','','',phrase.japanese,phrase.english,phrase.note,phrase.understanding,phrase.correct,phrase.wrong,phrase.unsure];rowPhraseIds.set(row,phrase.id);rowPhraseObjects.set(row,phrase);return row});
     return {headers:[],rows,vocabularyRows:rows,fileName:data.fileName,modified:true,phraseBank:true};
   };
-  const saveStoredData=async stored=>{(stored?.rows||[]).forEach(row=>{const phrase=data.phrases.find(item=>item.id===rowPhraseIds.get(row));if(!phrase)return;phrase.japanese=normalize(row[12]);phrase.english=normalize(row[13]);phrase.note=normalize(row[14]);phrase.understanding=normalize(row[15]);phrase.correct=number(row[16]);phrase.wrong=number(row[17]);phrase.unsure=number(row[18])});await writeStore();refreshPhraseHome()};
-  window.flovoPracticeAdapter={active:false,getData:async()=>{await loadData();return toStoredData()},saveData:saveStoredData,matchesRow:phraseMatchesFilter,getTextTargets:row=>{const item=data.phrases.find(candidate=>candidate.id===rowPhraseIds.get(row))||phraseByNumber(row?.[0]);return item?[item.english]:[]},getFilterSnapshot:()=>({categoryIds:[...phraseFilterCategoryIds],tags:[...phraseFilterTagNames]}),restoreFilterSnapshot:snapshot=>{phraseFilterCategoryIds=new Set(Array.isArray(snapshot)?snapshot:(snapshot?.categoryIds||[]));phraseFilterTagNames=new Set(Array.isArray(snapshot)?[]:(snapshot?.tags||[]));renderPhraseHierarchyFilter();renderPhraseTagFilter()},resetFilter:()=>{phraseFilterCategoryIds.clear();phraseFilterTagNames.clear();renderPhraseHierarchyFilter();renderPhraseTagFilter()},commitFilter:()=>{try{localStorage.setItem('phraseCategoryFilterV1',JSON.stringify([...phraseFilterCategoryIds]));localStorage.setItem('phraseTagFilterV1',JSON.stringify([...phraseFilterTagNames]))}catch{}},renderPracticeCardMetadata:row=>{const section=document.getElementById('phraseCardTagSection'),container=document.getElementById('phraseCardTagBadges');if(!section||!container)return;section.hidden=moduleMode!=='phrase-bank';container.replaceChildren();const phrase=data.phrases.find(item=>item.id===rowPhraseIds.get(row))||phraseByNumber(row?.[0]);if(!phrase||!phrase.tags?.length){const empty=document.createElement('span');empty.className='phrase-card-no-tags';empty.textContent='タグなし';container.append(empty);return}phrase.tags.forEach(tag=>{const badge=document.createElement('span');badge.className='phrase-card-tag-badge';badge.textContent=tag;container.append(badge)})}};
+  const saveStoredData=async stored=>{(stored?.rows||[]).forEach(row=>{const phrase=rowPhraseObjects.get(row);if(!phrase)return;phrase.japanese=normalize(row[12]);phrase.english=normalize(row[13]);phrase.note=normalize(row[14]);phrase.understanding=normalize(row[15]);phrase.correct=number(row[16]);phrase.wrong=number(row[17]);phrase.unsure=number(row[18])});await writeStore();refreshPhraseHome()};
+  window.flovoPracticeAdapter={active:false,getData:async()=>{await loadData();return toStoredData()},saveData:saveStoredData,matchesRow:phraseMatchesFilter,getTextTargets:row=>{const item=rowPhraseObjects.get(row)||phraseByNumber(row?.[0]);return item?[item.english]:[]},getFilterSnapshot:()=>({categoryIds:[...phraseFilterCategoryIds],tags:[...phraseFilterTagNames]}),restoreFilterSnapshot:snapshot=>{phraseFilterCategoryIds=new Set(Array.isArray(snapshot)?snapshot:(snapshot?.categoryIds||[]));phraseFilterTagNames=new Set(Array.isArray(snapshot)?[]:(snapshot?.tags||[]));renderPhraseHierarchyFilter();renderPhraseTagFilter()},resetFilter:()=>{phraseFilterCategoryIds.clear();phraseFilterTagNames.clear();renderPhraseHierarchyFilter();renderPhraseTagFilter()},commitFilter:()=>{try{localStorage.setItem('phraseCategoryFilterV1',JSON.stringify([...phraseFilterCategoryIds]));localStorage.setItem('phraseTagFilterV1',JSON.stringify([...phraseFilterTagNames]))}catch{}},renderPracticeCardMetadata:row=>{const section=document.getElementById('phraseCardTagSection'),container=document.getElementById('phraseCardTagBadges');if(!section||!container)return;section.hidden=moduleMode!=='phrase-bank';container.replaceChildren();const phrase=rowPhraseObjects.get(row)||phraseByNumber(row?.[0]);if(!phrase||!phrase.tags?.length){const empty=document.createElement('span');empty.className='phrase-card-no-tags';empty.textContent='タグなし';container.append(empty);return}phrase.tags.forEach(tag=>{const badge=document.createElement('span');badge.className='phrase-card-tag-badge';badge.textContent=tag;container.append(badge)})}};
 
   const setText=(original,value)=>{const element=document.getElementById(idMap.get(original));if(element)element.textContent=String(value)};
   const refreshPhraseHome=()=>{
