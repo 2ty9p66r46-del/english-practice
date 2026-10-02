@@ -1649,3 +1649,13 @@ html[data-theme="dark"] .practice-list-placeholder.phrase-bulk-selecting .practi
 html[data-theme="dark"] .phrase-bulk-actions{background:transparent;box-shadow:none}
 html[data-theme="dark"] .phrase-bulk-actions button{background:#173653;color:#72baff}html[data-theme="dark"] .phrase-bulk-actions button:last-child{background:#3a2027;color:#ff8997}html[data-theme="dark"] .phrase-bulk-actions button:disabled{background:#252e3a;color:#697789}
 html[data-theme="dark"] .phrase-bulk-destination{border-color:#344153;background:#17202c;color:#eef4ff}
+
+/* Regex help guide */
+.help-regex-guide{margin-top:18px;padding-top:14px;border-top:1px solid #e1e5eb;color:#526078;font-size:.72rem;line-height:1.6}
+.help-regex-guide h4{margin:0 0 7px;color:#344054;font-size:.78rem}
+.help-regex-guide p{margin:0 0 8px}
+.help-regex-guide ul{display:grid;gap:6px;margin:0;padding-left:1.2rem}
+.help-regex-guide code{padding:1px 4px;border-radius:5px;background:#eef2f7;color:#344054;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.68rem}
+html[data-theme="dark"] .help-regex-guide{border-color:#344153;color:#9aa8bc}
+html[data-theme="dark"] .help-regex-guide h4{color:#eef4ff}
+html[data-theme="dark"] .help-regex-guide code{background:#273445;color:#dce8f7}
