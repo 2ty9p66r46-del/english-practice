@@ -19,6 +19,8 @@ const COL=Object.freeze({
     const helpMenu=document.getElementById('helpMenu');
     const helpVersionButton=document.getElementById('helpVersionButton');
     const helpUsageButton=document.getElementById('helpUsageButton');
+    const helpRegexButton=document.getElementById('helpRegexButton');
+    const helpRegexPanel=document.getElementById('helpRegexPanel');
     const helpVersionPanel=document.getElementById('helpVersionPanel');
     const helpUsagePanel=document.getElementById('helpUsagePanel');
     const homeSettingsButton=document.getElementById('homeSettingsButton');
@@ -1076,8 +1078,8 @@ const COL=Object.freeze({
       helpButton.classList.remove('active');
       helpButton.focus({preventScroll:true});
     };
-    const showHelpMenu=()=>{helpMenu.hidden=false;helpVersionPanel.hidden=true;helpUsagePanel.hidden=true};
-    const showHelpPanel=panel=>{helpMenu.hidden=true;helpVersionPanel.hidden=panel!==helpVersionPanel;helpUsagePanel.hidden=panel!==helpUsagePanel};
+    const showHelpMenu=()=>{helpMenu.hidden=false;document.querySelectorAll('#helpOverlay .help-panel').forEach(panel=>panel.hidden=true)};
+    const showHelpPanel=panel=>{helpMenu.hidden=true;document.querySelectorAll('#helpOverlay .help-panel').forEach(item=>item.hidden=item!==panel)};
     helpButton.addEventListener('click',()=>{
       showHelpMenu();
       helpOverlay.hidden=false;
@@ -1086,6 +1088,7 @@ const COL=Object.freeze({
     });
     helpVersionButton.addEventListener('click',()=>showHelpPanel(helpVersionPanel));
     helpUsageButton.addEventListener('click',()=>showHelpPanel(helpUsagePanel));
+    helpRegexButton.addEventListener('click',()=>showHelpPanel(helpRegexPanel));
     document.querySelectorAll('[data-help-back]').forEach(button=>button.addEventListener('click',showHelpMenu));
     helpClose.addEventListener('click',closeHelp);
     helpOverlay.addEventListener('click',event=>{if(event.target===helpOverlay)closeHelp();});
@@ -1267,6 +1270,7 @@ const COL=Object.freeze({
       syncPracticeResultCounts(row);
       syncPracticeResultLock(row);
       setAnswerVisible(shouldKeepAnswerVisible);
+      window.flovoPracticeAdapter?.renderPracticeCardMetadata?.(row);
       requestAnimationFrame(fitPracticeCardText);
     };
     const renderPracticeList=()=>{
