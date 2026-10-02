@@ -87,10 +87,19 @@
             <strong>ロジカル<br>フレームワーク</strong>
             <span class="home-module-status">準備中</span>
           </article>
-          <article class="home-module-card coming phrase-bank-home-card" id="phraseBankOpen" role="button" tabindex="0" aria-label="マイフレーズバンクを開く">
-            <span class="home-module-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 5h14v11H9l-4 3z"/><path d="M9 9h6M9 12h4"/></svg></span>
-            <strong>マイフレーズ<br>バンク</strong>
-            <span class="home-module-status available">試作版</span>
+          <article class="home-module-card phrase-bank-home-card">
+            <header class="home-module-head">
+              <div class="home-module-identity">
+                <span class="home-module-icon active" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 5h14v11H9l-4 3z"/><path d="M9 9h6M9 12h4"/></svg></span>
+                <span class="home-module-title"><strong>マイフレーズバンク</strong><small>MY PHRASE BANK</small></span>
+              </div>
+              <span class="home-module-status available">試作版</span>
+            </header>
+            <section class="phrase-home-summary" aria-label="マイフレーズバンク登録状況">
+              <div><span>フレーズ</span><strong id="phraseHomeCount">0</strong><small>件</small></div>
+              <div><span>場面</span><strong id="phraseHomeSceneCount">0</strong><small>個</small></div>
+            </section>
+            <button class="home-practice-button" id="phraseBankOpen" type="button"><span><strong>開く</strong></span></button>
           </article>
         </section>
         <div class="home-carousel-dots" aria-label="ホームカードを選択">
@@ -354,7 +363,7 @@
           <h3 class="help-version-title">バージョン情報</h3>
           <dl class="help-version-list">
             <div class="help-version-row"><dt>アプリ</dt><dd>FloVo v1.0.0</dd></div>
-            <div class="help-version-row"><dt>ビルド</dt><dd>506</dd></div>
+            <div class="help-version-row"><dt>ビルド</dt><dd>507</dd></div>
             <div class="help-version-row"><dt>データ形式</dt><dd>v1.0</dd></div>
             <div class="help-version-row"><dt>更新日</dt><dd>2026.10.02</dd></div>
           </dl>
