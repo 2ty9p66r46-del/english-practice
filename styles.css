@@ -1738,3 +1738,8 @@ body[data-practice-module="phrase-bank"] .phrase-card-tag-section>strong{padding
 /* Phrase-bank card metadata uses separate vertical category and tag sections. */
 body[data-practice-module="phrase-bank"] .practice-word-stack{flex-direction:column!important;align-items:flex-start!important;gap:7px}
 body[data-practice-module="phrase-bank"] .phrase-card-tag-section{display:flex;flex-direction:column;align-items:flex-start;gap:3px;width:100%}
+/* Give the category heading its own row, then stack its value and tag section below it. */
+body[data-practice-module="phrase-bank"] .practice-detail-grid{height:121px;grid-template-rows:17px minmax(0,1fr);row-gap:0}
+body[data-practice-module="phrase-bank"] .practice-word-heading{grid-row:1}
+body[data-practice-module="phrase-bank"] .practice-word-stack{grid-row:2;min-height:0;align-self:stretch}
+body[data-practice-module="phrase-bank"] #practiceWord{height:auto!important;min-height:0;flex:0 0 auto}
