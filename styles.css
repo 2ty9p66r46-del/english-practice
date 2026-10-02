@@ -1524,7 +1524,8 @@ html[data-theme="dark"] .phrase-category-add-root{border-color:#426b91;backgroun
 @media(max-width:430px){.phrase-category-manager-row.phrase-category-draft{grid-template-columns:31px minmax(64px,1fr) 43px 43px}}
 
 /* My Phrase Bank list bulk actions. */
-body[data-practice-module="phrase-bank"] .practice-screen-header,body[data-practice-module="active-vocabulary"] .practice-screen-header{position:relative;overflow:hidden;grid-template-columns:44px minmax(0,1fr) 173px}
+body[data-practice-module="phrase-bank"] .practice-screen-header{position:relative;overflow:hidden;grid-template-columns:44px minmax(0,1fr) 233px}
+body[data-practice-module="active-vocabulary"] .practice-screen-header{position:relative;overflow:hidden;grid-template-columns:44px minmax(0,1fr) 173px}
 body[data-practice-module="phrase-bank"] .practice-list-header{gap:8px;padding-right:18px}
 body[data-practice-module="phrase-bank"] .practice-list-header>#practiceListTitle{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .phrase-bulk-select-button{display:flex;width:53px;height:50px;flex:0 0 53px;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:0;border:1px solid #dce2ec;border-radius:14px;background:#fff;color:#526078;box-shadow:0 3px 10px #26354a0b;font-size:.56rem;font-weight:800;white-space:nowrap}
