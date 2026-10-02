@@ -86,6 +86,8 @@
     }
     const uncategorized=ensureUncategorizedCategory();
     if(isUncategorized(item))editorCategoryIds.clear();else editorCategoryIds.delete(uncategorized.id);
+    const selectedRoot=categoryPathNodes(item.id)[0];
+    childrenOf(null).filter(root=>root.id!==selectedRoot?.id).forEach(root=>{editorCategoryIds.delete(root.id);descendantIds(root.id).forEach(id=>editorCategoryIds.delete(id))});
     if(item.parentId!=null)childrenOf(item.parentId).filter(sibling=>sibling.id!==item.id).forEach(sibling=>{editorCategoryIds.delete(sibling.id);descendantIds(sibling.id).forEach(id=>editorCategoryIds.delete(id))});
     categoryPathNodes(item.id).forEach(node=>editorCategoryIds.add(node.id));pickEditorPrimary(item.id);
   };
@@ -93,6 +95,8 @@
     const uncategorized=ensureUncategorizedCategory();
     if(editorCategoryIds.has(uncategorized.id)&&editorCategoryIds.size>1){if(editorPrimaryId===uncategorized.id)editorCategoryIds=new Set([uncategorized.id]);else editorCategoryIds.delete(uncategorized.id)}
     const preferredPath=new Set(categoryPathNodes(editorPrimaryId).map(item=>item.id));
+    const selectedRoots=childrenOf(null).filter(item=>editorCategoryIds.has(item.id));
+    if(selectedRoots.length>1){const keep=selectedRoots.find(item=>preferredPath.has(item.id))||selectedRoots[0];selectedRoots.filter(item=>item!==keep).forEach(item=>{editorCategoryIds.delete(item.id);descendantIds(item.id).forEach(id=>editorCategoryIds.delete(id))})}
     data.categories.forEach(parent=>{
       const selected=childrenOf(parent.id).filter(item=>editorCategoryIds.has(item.id));if(selected.length<2)return;
       const keep=selected.find(item=>preferredPath.has(item.id))||selected[0];selected.filter(item=>item!==keep).forEach(item=>{editorCategoryIds.delete(item.id);descendantIds(item.id).forEach(id=>editorCategoryIds.delete(id))});
@@ -139,7 +143,7 @@
   }).observe(practiceScreen,{attributes:true,attributeFilter:['hidden']});
 
   const editor=document.createElement('div');editor.className='phrase-data-overlay';editor.id='phraseDataOverlay';editor.hidden=true;
-  editor.innerHTML=`<section class="phrase-data-sheet" role="dialog" aria-modal="true" aria-labelledby="phraseDataTitle"><header class="phrase-data-head"><button id="phraseDataCancel" type="button">キャンセル</button><h2 id="phraseDataTitle">フレーズ追加</h2><button id="phraseDataSave" type="button">保存</button></header><div class="phrase-data-body"><label><span>日本語 <b>※</b></span><textarea id="phraseJapaneseInput" rows="3"></textarea></label><label><span>英語 <b>※</b></span><textarea id="phraseEnglishInput" rows="3" lang="en"></textarea></label><label><span>補足</span><textarea id="phraseNoteInput" rows="3"></textarea></label><div class="phrase-category-field"><div><strong>カテゴリ（複数選択可）</strong><button id="phraseCategoryManage" type="button">階層管理</button></div><p>子を選ぶと親も選択され、同じ親の下では1つだけ選べます。</p><div id="phraseCategoryChoices"></div></div><p class="phrase-data-error" id="phraseDataError" hidden></p><button class="phrase-data-delete" id="phraseDataDelete" type="button" hidden>このフレーズを削除</button></div></section>`;shell.append(editor);
+  editor.innerHTML=`<section class="phrase-data-sheet" role="dialog" aria-modal="true" aria-labelledby="phraseDataTitle"><header class="phrase-data-head"><button id="phraseDataCancel" type="button">キャンセル</button><h2 id="phraseDataTitle">フレーズ追加</h2><button id="phraseDataSave" type="button">保存</button></header><div class="phrase-data-body"><label><span>日本語 <b>※</b></span><textarea id="phraseJapaneseInput" rows="3"></textarea></label><label><span>英語 <b>※</b></span><textarea id="phraseEnglishInput" rows="3" lang="en"></textarea></label><label><span>補足</span><textarea id="phraseNoteInput" rows="3"></textarea></label><div class="phrase-category-field"><div><strong>カテゴリ</strong><button id="phraseCategoryManage" type="button">階層管理</button></div><p>親階層は1つだけ選択できます。子を選ぶと親も自動選択されます。</p><div id="phraseCategoryChoices"></div></div><p class="phrase-data-error" id="phraseDataError" hidden></p><button class="phrase-data-delete" id="phraseDataDelete" type="button" hidden>このフレーズを削除</button></div></section>`;shell.append(editor);
   const manager=document.createElement('div');manager.className='phrase-data-overlay';manager.id='phraseCategoryOverlay';manager.hidden=true;
   manager.innerHTML=`<section class="phrase-data-sheet phrase-category-sheet" role="dialog" aria-modal="true" aria-labelledby="phraseCategoryTitle"><header class="phrase-data-head"><button id="phraseCategoryClose" type="button">閉じる</button><h2 id="phraseCategoryTitle">階層管理</h2><span></span></header><p class="phrase-category-help">＋から階層を直接追加できます。並び順が階層番号になります。</p><div class="phrase-category-manager" id="phraseCategoryManager"></div></section>`;shell.append(manager);
   const $=selector=>document.querySelector(selector);
