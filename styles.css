@@ -1723,3 +1723,7 @@ body[data-practice-module="phrase-bank"] .phrase-card-tag-section>strong{padding
 .practice-card-add,.practice-filter-button,.phrase-bulk-select-button{box-sizing:border-box;width:48px;height:48px;min-width:48px;flex:0 0 48px}
 .practice-filter-button{border-radius:14px}
 body[data-practice-module="phrase-bank"] .practice-header-actions{gap:1px}
+
+
+/* Keep the help close control visible while scrolling long help panels. */
+.help-head{position:sticky;top:-18px;z-index:3;margin:-18px -20px 18px;padding:18px 20px 12px;background:var(--card)}
