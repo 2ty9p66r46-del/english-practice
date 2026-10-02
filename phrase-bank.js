@@ -59,6 +59,7 @@
 
   const applyModuleLabels=()=>{
     const phrase=moduleMode==='phrase-bank';
+    document.body.dataset.practiceModule=phrase?'phrase-bank':'active-vocabulary';
     if(practiceListTitle)practiceListTitle.textContent=phrase?'マイフレーズバンク':'例文一覧';
     practiceScreen.setAttribute('aria-label',phrase?'マイフレーズバンク':'英作文練習');
     if(practiceList)practiceList.setAttribute('aria-label',phrase?'マイフレーズバンク':'例文一覧');

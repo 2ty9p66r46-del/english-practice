@@ -1439,3 +1439,16 @@ html[data-theme="dark"] .practice-note-popover .practice-note.is-empty{color:#7f
 .practice-meaning-actions{position:absolute;z-index:2;top:50%;right:0;display:flex;align-items:center;gap:6px;transform:translateY(-50%)}
 .practice-meaning-actions .practice-edit-button{margin-left:0}
 html[data-theme="dark"] .practice-meaning-column .practice-meaning{color:#eef4ff}
+
+/* My Phrase Bank starts from the exact Active Vocabulary UI; only requested fields diverge. */
+body[data-practice-module="phrase-bank"] #practiceLevels,
+body[data-practice-module="phrase-bank"] #practicePart,
+body[data-practice-module="phrase-bank"] .practice-pronunciation-stack,
+body[data-practice-module="phrase-bank"] .practice-info-divider{display:none!important}
+body[data-practice-module="phrase-bank"] .practice-detail-grid{grid-template-columns:minmax(0,1fr)}
+body[data-practice-module="phrase-bank"] .practice-word-heading,
+body[data-practice-module="phrase-bank"] .practice-word-stack{grid-column:1/-1}
+body[data-practice-module="phrase-bank"] #practiceList .practice-list-card-badges>.practice-meta-chip,
+body[data-practice-module="phrase-bank"] #practiceList .practice-list-levels{display:none!important}
+body[data-practice-module="phrase-bank"] #practiceFilterOverlay [data-filter-section="word"],
+body[data-practice-module="phrase-bank"] #practiceFilterOverlay [data-filter-section="part"]{display:none!important}
