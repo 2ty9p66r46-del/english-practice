@@ -2700,6 +2700,7 @@ const COL=Object.freeze({
       const previousIndex=practiceIndex;
       const previousViewMode=practiceViewMode;
       const previousNumber=text(practiceRows[previousIndex]?.[COL.wordNo]);
+      const previousCardNumbers=previousViewMode==='card'?practiceRows.slice(0,previousIndex).reverse().map(row=>text(row[COL.wordNo])):[];
       const stored=await getPracticeSourceData();
       let rows=getMatchingRows(stored?.rows||[]);
       if(practiceButton.dataset.order==='random')rows=shuffleRows(rows);
@@ -2710,7 +2711,14 @@ const COL=Object.freeze({
       const preferredNumber=text(options.preferredNumber);
       const preferredIndex=preferredNumber?practiceRows.findIndex(row=>text(row[COL.wordNo])===preferredNumber):-1;
       const previousCardIndex=previousNumber?practiceRows.findIndex(row=>text(row[COL.wordNo])===previousNumber):-1;
-      setPracticeIndex(preferredIndex>=0?preferredIndex:previousCardIndex>=0?previousCardIndex:previousViewMode==='card'?0:Math.min(previousIndex,Math.max(0,practiceRows.length-1)));
+      let previousSurvivingIndex=-1;
+      if(previousViewMode==='card'&&previousCardIndex<0){
+        for(const previous of previousCardNumbers){
+          previousSurvivingIndex=practiceRows.findIndex(row=>text(row[COL.wordNo])===previous);
+          if(previousSurvivingIndex>=0)break;
+        }
+      }
+      setPracticeIndex(preferredIndex>=0?preferredIndex:previousCardIndex>=0?previousCardIndex:previousSurvivingIndex>=0?previousSurvivingIndex:previousViewMode==='card'?0:Math.min(previousIndex,Math.max(0,practiceRows.length-1)));
       setAnswerVisible(false);
       if(options.view==='list'||!practiceRows.length)setPracticeViewMode('list');
       else if(previousViewMode==='card'){setPracticeViewMode('card');renderPracticeQuestion()}
