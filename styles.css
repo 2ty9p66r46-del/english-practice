@@ -1718,3 +1718,8 @@ html[data-theme="dark"] .phrase-tag-manager-row button{border-color:#70414a;back
 /* Stack phrase category and tag metadata vertically. */
 body[data-practice-module="phrase-bank"] .phrase-card-tag-section{display:flex;flex-direction:column;align-items:flex-start;gap:4px}
 body[data-practice-module="phrase-bank"] .phrase-card-tag-section>strong{padding-top:0}
+
+/* Make the practice header icon controls uniformly square. */
+.practice-card-add,.practice-filter-button,.phrase-bulk-select-button{box-sizing:border-box;width:48px;height:48px;min-width:48px;flex:0 0 48px}
+.practice-filter-button{border-radius:14px}
+body[data-practice-module="phrase-bank"] .practice-header-actions{gap:1px}
