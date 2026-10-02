@@ -1543,6 +1543,7 @@ html[data-theme="dark"] .phrase-category-add-root{border-color:#426b91;backgroun
 #phraseSortOverlay.open .phrase-data-sheet{transform:translateY(0)}
 .phrase-sort-sheet{display:flex;height:92dvh;max-height:92dvh;flex-direction:column;overflow:hidden}
 .phrase-sort-category-picker,.phrase-sort-content{display:flex;min-height:0;flex:1 1 auto;flex-direction:column;gap:9px;overflow:hidden}
+.phrase-sort-category-picker[hidden],.phrase-sort-content[hidden]{display:none!important}
 .phrase-sort-categories,.phrase-sort-items{display:grid;min-height:0;align-content:start;gap:7px;overflow-y:auto;padding:1px 1px 8px;-webkit-overflow-scrolling:touch}
 .phrase-sort-category{display:grid;grid-template-columns:22px minmax(0,1fr);align-items:center;gap:9px;min-height:46px;padding:5px 11px 5px calc(11px + var(--depth)*16px);border:1px solid #dfe5ed;border-radius:13px;background:#f8fafc;color:#26364d;font-size:.76rem;font-weight:800}
 .phrase-sort-category input{width:19px;height:19px;margin:0;accent-color:var(--blue)}
