@@ -2235,13 +2235,16 @@ const COL=Object.freeze({
       if(screenTransitionBusy)return false;
       screenTransitionBusy=true;
       screenFade.classList.add('active');
-      await wait(480);
-      changeScreen();
-      await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
-      screenFade.classList.remove('active');
-      await wait(520);
-      screenTransitionBusy=false;
-      return true;
+      try{
+        await wait(480);
+        changeScreen();
+        await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+        return true;
+      }finally{
+        screenFade.classList.remove('active');
+        await wait(520);
+        screenTransitionBusy=false;
+      }
     };
 
     const PLAYBACK_STORAGE_KEY='flovo-playback-settings';
