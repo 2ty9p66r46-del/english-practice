@@ -847,12 +847,15 @@ const COL=Object.freeze({
       if(regex===false||!answerCounts.valid)return [];
       return rows.filter(row=>{
         if(!text(row[COL.japanese])||!text(row[COL.english]))return false;
+        const rawTextTargets=externalPractice?adapter?.getTextTargets?.(row):null;
+        const textTargets=(Array.isArray(rawTextTargets)&&rawTextTargets.length?rawTextTargets:[text(row[COL.word])]).map(value=>text(value)).filter(Boolean);
+        const normalizedTextTargets=textTargets.map(value=>value.toLowerCase());
+        if(startsWith&&!normalizedTextTargets.some(value=>value.startsWith(startsWith)))return false;
+        if(endsWith&&!normalizedTextTargets.some(value=>value.endsWith(endsWith)))return false;
+        if(includes&&!normalizedTextTargets.some(value=>value.includes(includes)))return false;
         const word=text(row[COL.word]).toLowerCase();
-        if(startsWith&&!word.startsWith(startsWith))return false;
-        if(endsWith&&!word.endsWith(endsWith))return false;
-        if(includes&&!word.includes(includes))return false;
         if(!externalPractice&&from&&word.localeCompare(from,'en',{sensitivity:'base'})<0)return false;
-        if(regex&&!regex.test(text(row[COL.word])))return false;
+        if(regex&&!textTargets.some(value=>{regex.lastIndex=0;return regex.test(value)}))return false;
         if(!matchesAnswerCountFilters(row,answerCounts))return false;
         if(!externalPractice&&!matchesLevelFilters(row,levelIncludeChoices,levelExcludeChoices))return false;
         if(!externalPractice&&parts.size&&!parts.has(text(row[COL.pos])))return false;
