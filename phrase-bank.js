@@ -8,6 +8,11 @@
   const practiceListTitle=document.getElementById('practiceListTitle');
   const practiceList=document.getElementById('practiceListPlaceholder');
   const practiceBack=document.getElementById('practiceBackToList');
+  const practiceInfoRow=document.querySelector('.practice-info-row.practice-info-primary');
+  const practiceWordTitle=document.querySelector('.practice-word-title');
+  const practiceWordHeading=document.querySelector('.practice-word-heading');
+  const practiceNoteButton=document.getElementById('practiceNoteButton');
+  const practiceWordCopy=document.getElementById('practiceWordCopy');
   if(!source||!mount||!sourcePractice||!practiceScreen)return;
 
   const clone=source.cloneNode(true);
@@ -60,6 +65,11 @@
   const applyModuleLabels=()=>{
     const phrase=moduleMode==='phrase-bank';
     document.body.dataset.practiceModule=phrase?'phrase-bank':'active-vocabulary';
+    if(practiceWordTitle)practiceWordTitle.textContent=phrase?'カテゴリ':'単語';
+    if(practiceNoteButton&&practiceInfoRow&&practiceWordHeading){
+      if(phrase)practiceInfoRow.append(practiceNoteButton);
+      else practiceWordHeading.insertBefore(practiceNoteButton,practiceWordCopy||null);
+    }
     if(practiceListTitle)practiceListTitle.textContent=phrase?'マイフレーズバンク':'例文一覧';
     practiceScreen.setAttribute('aria-label',phrase?'マイフレーズバンク':'英作文練習');
     if(practiceList)practiceList.setAttribute('aria-label',phrase?'マイフレーズバンク':'例文一覧');
