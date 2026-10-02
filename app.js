@@ -2692,6 +2692,7 @@ const COL=Object.freeze({
         renderPracticeQuestion();
         setPracticeViewMode('list');
       });
+      await refreshQuestionCount();
     };
     const refreshExternalPractice=async(options={})=>{
       if(practiceScreen.hidden||!activePracticeAdapter())return;
