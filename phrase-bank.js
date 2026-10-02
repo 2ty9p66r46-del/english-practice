@@ -44,7 +44,7 @@
   const PHRASE_HEADERS=['フレーズID','例文番号','主カテゴリ','追加カテゴリ','日本語文','英文','補足','理解度','◯回数','×回数','△回数'];
   const CATEGORY_HEADERS=['カテゴリパス','表示順'];
   let data={version:2,nextPhraseId:1,nextCategoryId:1,categories:[],phrases:[],fileName:'未読込'};
-  let loaded=false,moduleMode='active-vocabulary',launchingPhrase=false,editorPhraseId=null,editorCategoryIds=new Set(),editorPrimaryId=null,categoryDraftParentId=undefined,rowPhraseIds=new WeakMap(),phraseFilterCategoryIds=new Set(),phraseBulkSelecting=false,phraseBulkSelectedIds=new Set(),phraseBulkMoveCategoryId=null;
+  let loaded=false,moduleMode='active-vocabulary',launchingPhrase=false,editorPhraseId=null,editorCategoryIds=new Set(),editorPrimaryId=null,categoryDraftParentId=undefined,rowPhraseIds=new WeakMap(),phraseFilterCategoryIds=new Set(),phraseBulkSelecting=false,phraseBulkSelectedIds=new Set(),phraseBulkMoveCategoryId=null,phraseBulkHeaderTimer=null;
   const normalize=value=>String(value??'').trim();
   const number=value=>Math.max(0,Number.parseInt(value,10)||0);
   try{phraseFilterCategoryIds=new Set(JSON.parse(localStorage.getItem('phraseCategoryFilterV1')||'[]').map(number).filter(Boolean))}catch{}
@@ -156,7 +156,7 @@
   const applyModuleLabels=()=>{
     const phrase=moduleMode==='phrase-bank';document.body.dataset.practiceModule=phrase?'phrase-bank':'active-vocabulary';
     if(!phrase&&phraseBulkSelecting){phraseBulkSelecting=false;phraseBulkSelectedIds.clear();bulkMove.hidden=true}
-    if(typeof bulkSelectButton!=='undefined'){bulkSelectButton.hidden=!phrase||phraseBulkSelecting;bulkHeader.hidden=!phraseBulkSelecting;bulkActions.hidden=!phraseBulkSelecting;practiceList?.classList.toggle('phrase-bulk-selecting',phraseBulkSelecting)}
+    if(typeof bulkSelectButton!=='undefined'){bulkSelectButton.hidden=!phrase||phraseBulkSelecting;if(!phrase){clearTimeout(phraseBulkHeaderTimer);bulkHeader.hidden=true;bulkHeader.classList.remove('is-entering','is-leaving')}bulkActions.hidden=!phraseBulkSelecting;practiceList?.classList.toggle('phrase-bulk-selecting',phraseBulkSelecting)}
     phraseHierarchyFilter.hidden=!phrase;if(wordFromField)wordFromField.hidden=phrase;if(wordTextFilterTitle)wordTextFilterTitle.textContent=phrase?'カテゴリ文字列条件':'単語文字列条件';if(otherFilterBadge)otherFilterBadge.textContent=phrase?'条件4':'条件5';
     if(practiceWordTitle)practiceWordTitle.textContent=phrase?'カテゴリ':'単語';
     if(practiceNoteButton&&practiceInfoRow&&practiceWordHeading){if(phrase)practiceInfoRow.append(practiceNoteButton);else practiceWordHeading.insertBefore(practiceNoteButton,practiceWordCopy||null)}
@@ -234,11 +234,16 @@
   const closeManager=async()=>{categoryDraftParentId=undefined;manager.hidden=true;renderCategoryChoices();await refreshLivePractice({view:'list'})};
   const phraseFromListRow=row=>phraseByNumber(row?.querySelector('.practice-list-word-no')?.textContent||'');
   const visibleBulkRows=()=>[...(practiceListItems?.querySelectorAll('.practice-list-row')||[])];
+  const animateBulkHeader=active=>{
+    clearTimeout(phraseBulkHeaderTimer);bulkHeader.classList.remove('is-entering','is-leaving');
+    if(active){bulkHeader.hidden=false;void bulkHeader.offsetWidth;bulkHeader.classList.add('is-entering');phraseBulkHeaderTimer=setTimeout(()=>bulkHeader.classList.remove('is-entering'),300);return}
+    if(bulkHeader.hidden)return;bulkHeader.classList.add('is-leaving');phraseBulkHeaderTimer=setTimeout(()=>{if(!phraseBulkSelecting)bulkHeader.hidden=true;bulkHeader.classList.remove('is-leaving')},240);
+  };
   const updateBulkUi=()=>{
     const count=phraseBulkSelectedIds.size;
     practiceList?.classList.toggle('phrase-bulk-selecting',phraseBulkSelecting);
     bulkSelectButton.hidden=moduleMode!=='phrase-bank'||phraseBulkSelecting;
-    bulkHeader.hidden=!phraseBulkSelecting;bulkActions.hidden=!phraseBulkSelecting;
+    bulkActions.hidden=!phraseBulkSelecting;
     bulkHeader.querySelector('.phrase-bulk-count').textContent=`${count}件選択`;
     const rows=visibleBulkRows(),allSelected=Boolean(rows.length)&&rows.every(row=>phraseBulkSelectedIds.has(number(row.dataset.phraseBulkId)));
     const allButton=bulkHeader.querySelector('.phrase-bulk-all');allButton.textContent=allSelected?'すべて解除':'すべてを選択';allButton.disabled=!rows.length;
@@ -248,7 +253,7 @@
   const decorateBulkRows=()=>{
     visibleBulkRows().forEach(row=>{const phrase=phraseFromListRow(row);if(!phrase)return;row.dataset.phraseBulkId=String(phrase.id);let check=row.querySelector('.phrase-bulk-check');if(!check){check=document.createElement('span');check.className='phrase-bulk-check';check.setAttribute('aria-hidden','true');row.prepend(check)}});updateBulkUi();
   };
-  const setBulkSelecting=active=>{phraseBulkSelecting=Boolean(active);phraseBulkSelectedIds.clear();if(!active)bulkMove.hidden=true;decorateBulkRows()};
+  const setBulkSelecting=active=>{phraseBulkSelecting=Boolean(active);phraseBulkSelectedIds.clear();if(!active)bulkMove.hidden=true;animateBulkHeader(phraseBulkSelecting);decorateBulkRows()};
   const toggleBulkRow=row=>{const id=number(row.dataset.phraseBulkId);if(!id)return;if(phraseBulkSelectedIds.has(id))phraseBulkSelectedIds.delete(id);else phraseBulkSelectedIds.add(id);updateBulkUi()};
   const renderBulkDestinations=()=>{
     phraseBulkMoveCategoryId=null;bulkMove.querySelector('.phrase-bulk-move-summary').textContent=`選択した${phraseBulkSelectedIds.size}件を移動します。`;

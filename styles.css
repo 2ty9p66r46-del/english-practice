@@ -1523,7 +1523,7 @@ html[data-theme="dark"] .phrase-category-add-root{border-color:#426b91;backgroun
 @media(max-width:430px){.phrase-category-manager-row.phrase-category-draft{grid-template-columns:31px minmax(64px,1fr) 43px 43px}}
 
 /* My Phrase Bank list bulk actions. */
-body[data-practice-module="phrase-bank"] .practice-screen-header{position:relative;grid-template-columns:44px minmax(0,1fr) 173px}
+body[data-practice-module="phrase-bank"] .practice-screen-header{position:relative;overflow:hidden;grid-template-columns:44px minmax(0,1fr) 173px}
 body[data-practice-module="phrase-bank"] .practice-list-header{gap:8px;padding-right:18px}
 body[data-practice-module="phrase-bank"] .practice-list-header>#practiceListTitle{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .phrase-bulk-select-button{display:flex;width:53px;height:50px;flex:0 0 53px;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:0;border:1px solid #dce2ec;border-radius:14px;background:#fff;color:#526078;box-shadow:0 3px 10px #26354a0b;font-size:.56rem;font-weight:800;white-space:nowrap}
@@ -1537,6 +1537,11 @@ body[data-practice-module="phrase-bank"] .practice-list-header>#practiceListTitl
 .phrase-bulk-header .phrase-bulk-cancel svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
 .phrase-bulk-header strong{font-size:.72rem;text-align:center;white-space:nowrap}
 .phrase-bulk-header button:disabled{color:#aeb7c5}
+.phrase-bulk-header.is-entering{animation:phrase-bulk-header-in 280ms cubic-bezier(.2,.8,.2,1) both}
+.phrase-bulk-header.is-leaving{animation:phrase-bulk-header-out 220ms cubic-bezier(.4,0,.6,1) both;pointer-events:none}
+@keyframes phrase-bulk-header-in{from{opacity:.35;transform:translateX(100%)}to{opacity:1;transform:translateX(0)}}
+@keyframes phrase-bulk-header-out{from{opacity:1;transform:translateX(0)}to{opacity:.25;transform:translateX(100%)}}
+@media(prefers-reduced-motion:reduce){.phrase-bulk-header.is-entering,.phrase-bulk-header.is-leaving{animation-duration:1ms}}
 .practice-list-placeholder.phrase-bulk-selecting{position:relative}
 .practice-list-placeholder.phrase-bulk-selecting .practice-list-items{padding-bottom:82px}
 .practice-list-row .phrase-bulk-check{display:none}
