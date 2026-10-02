@@ -2236,23 +2236,34 @@ const COL=Object.freeze({
       }
       return result;
     };
-    let screenTransitionBusy=false;
+    let screenTransitionBusy=false,screenTransitionRun=0,screenTransitionWatchdog=null;
     const wait=duration=>new Promise(resolve=>setTimeout(resolve,duration));
+    const forceScreenTransitionRecovery=()=>{
+      clearTimeout(screenTransitionWatchdog);screenTransitionWatchdog=null;screenFade.classList.remove('active');screenFade.style.opacity='0';screenFade.style.pointerEvents='none';screenTransitionBusy=false;
+      requestAnimationFrame(()=>{screenFade.style.opacity='';screenFade.style.pointerEvents=''});
+    };
     const transitionScreen=async changeScreen=>{
       if(screenTransitionBusy)return false;
-      screenTransitionBusy=true;
-      screenFade.classList.add('active');
+      screenTransitionBusy=true;const run=++screenTransitionRun;
+      screenFade.style.opacity='';screenFade.style.pointerEvents='';screenFade.classList.add('active');
+      screenTransitionWatchdog=setTimeout(()=>{if(screenTransitionRun===run){forceScreenTransitionRecovery()}},2200);
       try{
         await wait(480);
+        if(screenTransitionRun!==run)return false;
         changeScreen();
-        await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+        await Promise.race([new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))),wait(180)]);
         return true;
       }finally{
-        screenFade.classList.remove('active');
-        await wait(520);
-        screenTransitionBusy=false;
+        if(screenTransitionRun===run){
+          clearTimeout(screenTransitionWatchdog);screenTransitionWatchdog=null;screenFade.classList.remove('active');screenFade.style.pointerEvents='none';
+          await wait(520);
+          if(screenTransitionRun===run){screenTransitionBusy=false;screenFade.style.pointerEvents=''}
+        }
       }
     };
+    const recoverTransitionOnResume=()=>{if(screenTransitionBusy)forceScreenTransitionRecovery()};
+    window.addEventListener('pageshow',recoverTransitionOnResume);
+    document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')recoverTransitionOnResume()});
 
     const PLAYBACK_STORAGE_KEY='flovo-playback-settings';
     const playbackDefaults={language:'both',repeat:'once',japanesePause:1,englishPause:1,englishRepeats:1,japaneseRate:.9,englishRate:.9};
@@ -2749,7 +2760,7 @@ const COL=Object.freeze({
       });
       refreshQuestionCount();
     };
-    practiceButton.addEventListener('click',()=>openPractice().catch(()=>alert('練習画面を開けませんでした。')));
+    practiceButton.addEventListener('click',()=>openPractice().catch(error=>{forceScreenTransitionRecovery();practiceScreen.hidden=true;mainNav.classList.remove('practice-mode');navHome.classList.add('active');console.error('練習画面を開けませんでした。',error);alert(error?.message||'練習画面を開けませんでした。')}));
     practiceCardMenu.addEventListener('click',()=>{const row=currentPracticeRow();if(row)openCardEditor('edit',row)});
     let practiceNoteAnimation=null;
     const syncPracticeNotePosition=()=>{
