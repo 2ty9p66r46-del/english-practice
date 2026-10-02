@@ -15,6 +15,11 @@
   const practiceWordCopy=document.getElementById('practiceWordCopy');
   const navHome=document.querySelector('.nav-home');
   const shell=document.querySelector('.shell');
+  const sharedFilterCard=document.getElementById('filterCard');
+  const wordTextFilterSection=sharedFilterCard?.querySelector('[data-filter-section="text"]');
+  const wordFromField=document.getElementById('wordFrom')?.closest('label');
+  const wordTextFilterTitle=wordTextFilterSection?.querySelector('.filter-section-head h3 span:last-child');
+  const otherFilterBadge=sharedFilterCard?.querySelector('[data-filter-section="other"] .condition-badge');
   if(!source||!mount||!sourcePractice||!practiceScreen||!shell)return;
 
   const clone=source.cloneNode(true);
@@ -35,9 +40,14 @@
   const PHRASE_HEADERS=['フレーズID','例文番号','主カテゴリ','追加カテゴリ','日本語文','英文','補足','理解度','◯回数','×回数','△回数'];
   const CATEGORY_HEADERS=['カテゴリパス','表示順'];
   let data={version:2,nextPhraseId:1,nextCategoryId:1,categories:[],phrases:[],fileName:'未読込'};
-  let loaded=false,moduleMode='active-vocabulary',launchingPhrase=false,editorPhraseId=null,editorCategoryIds=new Set(),editorPrimaryId=null,categoryDraftParentId=undefined,rowPhraseIds=new WeakMap();
+  let loaded=false,moduleMode='active-vocabulary',launchingPhrase=false,editorPhraseId=null,editorCategoryIds=new Set(),editorPrimaryId=null,categoryDraftParentId=undefined,rowPhraseIds=new WeakMap(),phraseFilterCategoryIds=new Set();
   const normalize=value=>String(value??'').trim();
   const number=value=>Math.max(0,Number.parseInt(value,10)||0);
+  try{phraseFilterCategoryIds=new Set(JSON.parse(localStorage.getItem('phraseCategoryFilterV1')||'[]').map(number).filter(Boolean))}catch{}
+
+  const phraseHierarchyFilter=document.createElement('div');phraseHierarchyFilter.className='filter-section phrase-hierarchy-filter';phraseHierarchyFilter.dataset.filterSection='phrase-category';phraseHierarchyFilter.hidden=true;
+  phraseHierarchyFilter.innerHTML='<div class="filter-section-head"><h3><span class="condition-badge">条件3</span><span>階層</span></h3><div class="filter-section-actions"><button class="section-filter-button filter-reset-button" id="phraseHierarchyFilterReset" type="button" disabled>リセット</button></div></div><p class="phrase-hierarchy-filter-help">任意の階層を複数選択できます。親を選ぶと配下も対象になります。</p><div id="phraseHierarchyFilterChoices"></div>';
+  wordTextFilterSection?.after(phraseHierarchyFilter);
 
   const openDatabase=()=>new Promise((resolve,reject)=>{const request=indexedDB.open('flovo-data',1);request.onupgradeneeded=()=>{if(!request.result.objectStoreNames.contains('app'))request.result.createObjectStore('app')};request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error)});
   const readStore=async key=>{const database=await openDatabase();try{return await new Promise((resolve,reject)=>{const transaction=database.transaction('app','readonly'),request=transaction.objectStore('app').get(key);request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error)})}finally{database.close()}};
@@ -60,7 +70,7 @@
     data.phrases.forEach((item,index)=>{item.id=number(item.id);item.categoryIds=[...new Set((item.categoryIds||[]).map(number).filter(Boolean))];item.primaryCategoryId=number(item.primaryCategoryId)||item.categoryIds[0]||null;if(item.primaryCategoryId&&!item.categoryIds.includes(item.primaryCategoryId))item.categoryIds.unshift(item.primaryCategoryId);item.japanese=normalize(item.japanese);item.english=normalize(item.english);item.note=normalize(item.note);item.understanding=normalize(item.understanding);item.correct=number(item.correct);item.wrong=number(item.wrong);item.unsure=number(item.unsure);item.order=number(item.order)||index+1});
     const uncategorized=ensureUncategorizedCategory();
     data.phrases.forEach(item=>{if(!categoryById(item.primaryCategoryId)){item.primaryCategoryId=uncategorized.id;item.categoryIds=[uncategorized.id]}});
-    loaded=true;await writeStore();refreshPhraseHome();
+    loaded=true;await writeStore();refreshPhraseHome();renderPhraseHierarchyFilter();
   };
   const categoryById=id=>data.categories.find(item=>item.id===Number(id));
   const childrenOf=parentId=>data.categories.filter(item=>(item.parentId??null)===(parentId??null)).sort((a,b)=>a.order-b.order||a.id-b.id);
@@ -108,6 +118,19 @@
   const phraseByNumber=value=>data.phrases.find(item=>phraseNumber(item)===String(value).replace(/^No\s*/i,''));
   const flattenCategories=()=>{const result=[];const visit=(parentId,depth)=>childrenOf(parentId).forEach(item=>{result.push({item,depth});visit(item.id,depth+1)});visit(null,0);return result};
   const ensureCategoryPath=path=>{let parentId=null,found=null;for(const name of String(path||'').split('>').map(normalize).filter(Boolean)){found=childrenOf(parentId).find(item=>item.name.toLocaleLowerCase('ja')===name.toLocaleLowerCase('ja'));if(!found){found={id:data.nextCategoryId++,parentId,name,order:childrenOf(parentId).length+1};data.categories.push(found)}parentId=found.id}return found?.id||null};
+  const renderPhraseHierarchyFilter=()=>{
+    phraseFilterCategoryIds=new Set([...phraseFilterCategoryIds].filter(id=>categoryById(id)));
+    const container=phraseHierarchyFilter.querySelector('#phraseHierarchyFilterChoices');container.replaceChildren();
+    flattenCategories().forEach(({item,depth})=>{const row=document.createElement('label');row.className='phrase-hierarchy-filter-choice';row.style.setProperty('--depth',depth);const check=document.createElement('input');check.type='checkbox';check.checked=phraseFilterCategoryIds.has(item.id);check.setAttribute('aria-label',`${categoryPath(item.id)}で絞り込む`);const label=document.createElement('span');label.textContent=item.name;check.addEventListener('change',()=>{if(check.checked)phraseFilterCategoryIds.add(item.id);else phraseFilterCategoryIds.delete(item.id);renderPhraseHierarchyFilter();window.flovoPracticeBridge?.refreshFilterCount?.()});row.append(check,label);container.append(row)});
+    const reset=phraseHierarchyFilter.querySelector('#phraseHierarchyFilterReset');reset.disabled=!phraseFilterCategoryIds.size;reset.classList.toggle('selected',Boolean(phraseFilterCategoryIds.size));
+  };
+  const phraseMatchesFilter=row=>{
+    if(!phraseFilterCategoryIds.size)return true;
+    const phrase=data.phrases.find(item=>item.id===rowPhraseIds.get(row))||phraseByNumber(row?.[0]);if(!phrase)return false;
+    const covered=new Set();[phrase.primaryCategoryId,...phrase.categoryIds].filter(Boolean).forEach(id=>categoryPathNodes(id).forEach(item=>covered.add(item.id)));
+    return [...phraseFilterCategoryIds].some(id=>covered.has(id));
+  };
+  phraseHierarchyFilter.querySelector('#phraseHierarchyFilterReset').addEventListener('click',()=>{phraseFilterCategoryIds.clear();renderPhraseHierarchyFilter();window.flovoPracticeBridge?.refreshFilterCount?.()});
 
   const toStoredData=()=>{
     rowPhraseIds=new WeakMap();
@@ -115,7 +138,7 @@
     return {headers:[],rows,vocabularyRows:rows,fileName:data.fileName,modified:true,phraseBank:true};
   };
   const saveStoredData=async stored=>{(stored?.rows||[]).forEach(row=>{const phrase=data.phrases.find(item=>item.id===rowPhraseIds.get(row));if(!phrase)return;phrase.japanese=normalize(row[12]);phrase.english=normalize(row[13]);phrase.note=normalize(row[14]);phrase.understanding=normalize(row[15]);phrase.correct=number(row[16]);phrase.wrong=number(row[17]);phrase.unsure=number(row[18])});await writeStore();refreshPhraseHome()};
-  window.flovoPracticeAdapter={active:false,getData:async()=>{await loadData();return toStoredData()},saveData:saveStoredData};
+  window.flovoPracticeAdapter={active:false,getData:async()=>{await loadData();return toStoredData()},saveData:saveStoredData,matchesRow:phraseMatchesFilter,getFilterSnapshot:()=>[...phraseFilterCategoryIds],restoreFilterSnapshot:ids=>{phraseFilterCategoryIds=new Set(Array.isArray(ids)?ids:[]);renderPhraseHierarchyFilter()},resetFilter:()=>{phraseFilterCategoryIds.clear();renderPhraseHierarchyFilter()},commitFilter:()=>{try{localStorage.setItem('phraseCategoryFilterV1',JSON.stringify([...phraseFilterCategoryIds]))}catch{}}};
 
   const setText=(original,value)=>{const element=document.getElementById(idMap.get(original));if(element)element.textContent=String(value)};
   const refreshPhraseHome=()=>{
@@ -128,6 +151,7 @@
 
   const applyModuleLabels=()=>{
     const phrase=moduleMode==='phrase-bank';document.body.dataset.practiceModule=phrase?'phrase-bank':'active-vocabulary';
+    phraseHierarchyFilter.hidden=!phrase;if(wordFromField)wordFromField.hidden=phrase;if(wordTextFilterTitle)wordTextFilterTitle.textContent=phrase?'カテゴリ文字列条件':'単語文字列条件';if(otherFilterBadge)otherFilterBadge.textContent=phrase?'条件4':'条件5';
     if(practiceWordTitle)practiceWordTitle.textContent=phrase?'カテゴリ':'単語';
     if(practiceNoteButton&&practiceInfoRow&&practiceWordHeading){if(phrase)practiceInfoRow.append(practiceNoteButton);else practiceWordHeading.insertBefore(practiceNoteButton,practiceWordCopy||null)}
     if(practiceListTitle)practiceListTitle.textContent=phrase?'マイフレーズバンク':'例文一覧';practiceScreen.setAttribute('aria-label',phrase?'マイフレーズバンク':'英作文練習');if(practiceList)practiceList.setAttribute('aria-label',phrase?'マイフレーズバンク':'例文一覧');if(practiceBack)practiceBack.setAttribute('aria-label',phrase?'マイフレーズバンク一覧へ戻る':'例文一覧へ戻る');
@@ -151,6 +175,7 @@
   const renderCategoryChoices=()=>{
     const container=$('#phraseCategoryChoices');container.replaceChildren();const flat=flattenCategories();if(!flat.length){container.innerHTML='<p class="phrase-category-empty">階層管理からカテゴリを作成してください。</p>';return}
     flat.forEach(({item,depth})=>{const row=document.createElement('label');row.className='phrase-category-choice';row.style.setProperty('--depth',depth);const check=document.createElement('input');check.type='checkbox';check.checked=editorCategoryIds.has(item.id);check.setAttribute('aria-label',`${categoryPath(item.id)}を設定`);const label=document.createElement('span');label.textContent=item.name;check.addEventListener('change',()=>{toggleEditorCategory(item,check.checked);renderCategoryChoices()});row.append(check,label);container.append(row)});
+    renderPhraseHierarchyFilter();
   };
   const openEditor=async phrase=>{await loadData();editorPhraseId=phrase?.id??null;editorCategoryIds=new Set(phrase?.categoryIds||[]);editorPrimaryId=phrase?.primaryCategoryId||null;normalizeEditorCategories();$('#phraseDataTitle').textContent=phrase?'フレーズ編集':'フレーズ追加';$('#phraseJapaneseInput').value=phrase?.japanese||'';$('#phraseEnglishInput').value=phrase?.english||'';$('#phraseNoteInput').value=phrase?.note||'';$('#phraseDataDelete').hidden=!phrase;$('#phraseDataError').hidden=true;renderCategoryChoices();editor.hidden=false};
   const closeEditor=()=>{editor.hidden=true;editorPhraseId=null;editorCategoryIds.clear();editorPrimaryId=null};

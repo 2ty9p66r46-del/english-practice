@@ -850,18 +850,19 @@ const COL=Object.freeze({
         if(startsWith&&!word.startsWith(startsWith))return false;
         if(endsWith&&!word.endsWith(endsWith))return false;
         if(includes&&!word.includes(includes))return false;
-        if(from&&word.localeCompare(from,'en',{sensitivity:'base'})<0)return false;
+        if(!externalPractice&&from&&word.localeCompare(from,'en',{sensitivity:'base'})<0)return false;
         if(regex&&!regex.test(text(row[COL.word])))return false;
         if(!matchesAnswerCountFilters(row,answerCounts))return false;
         if(!externalPractice&&!matchesLevelFilters(row,levelIncludeChoices,levelExcludeChoices))return false;
         if(!externalPractice&&parts.size&&!parts.has(text(row[COL.pos])))return false;
         const understanding=text(row[COL.understanding])||'未登録';
         if(understandings.size&&!understandings.has(understanding))return false;
+        if(externalPractice&&activePracticeAdapter()?.matchesRow&&!activePracticeAdapter().matchesRow(row))return false;
         return true;
       }).sort(compareDataRows);
     };
     const refreshQuestionCount=async()=>{
-      const stored=await getImportedData();
+      const stored=await getPracticeSourceData();
       const sourceRows=stored?.rows||[];
       const matchingRows=getMatchingRows(sourceRows);
       const allExampleRows=sourceRows.filter(row=>text(row[COL.japanese])&&text(row[COL.english]));
@@ -1033,6 +1034,7 @@ const COL=Object.freeze({
     selectAllFilters.addEventListener('click',()=>{
       resetAnswerCountFilters(answerCountFilters);
       practiceTextFilterInputs.forEach(input=>{input.value=''});
+      activePracticeAdapter()?.resetFilter?.();
       practiceDisplayLimit.value='';
       syncDisplayLimitValidity();syncWordTextFilterReset();
       setAllFilters(true);
@@ -2539,7 +2541,7 @@ const COL=Object.freeze({
     const openPracticeFilter=()=>{
       if(practiceFilterOpen)return;
       practiceFilterOpen=true;
-      practiceFilterSnapshot={choices:allFilterChoices.map(choice=>choice.classList.contains('selected')),text:practiceTextFilterInputs.map(input=>input.value),answerCounts:getAnswerCountValues(answerCountFilters),displayLimit:practiceDisplayLimit.value};
+      practiceFilterSnapshot={choices:allFilterChoices.map(choice=>choice.classList.contains('selected')),text:practiceTextFilterInputs.map(input=>input.value),answerCounts:getAnswerCountValues(answerCountFilters),displayLimit:practiceDisplayLimit.value,external:activePracticeAdapter()?.getFilterSnapshot?.()};
       if(autoPlaying)stopAutoPlayback();
       practiceFilterFixedSummary.append(filterCardSectionHead);
       practiceFilterSheetBody.append(filterCard);
@@ -2563,6 +2565,7 @@ const COL=Object.freeze({
         saveFilterSelection(PRACTICE_FILTER_STORAGE_KEY,allFilterChoices);
         savePracticeTextFilters();
         applyDisplayLimit();
+        activePracticeAdapter()?.commitFilter?.();
         applyPracticeMethodChange(previousRow);
         setPracticeViewMode(previousViewMode==='card'&&practiceRows.length?'card':'list');
       }
@@ -2574,6 +2577,7 @@ const COL=Object.freeze({
         practiceTextFilterInputs.forEach((input,index)=>{input.value=practiceFilterSnapshot.text[index]||''});
         restoreAnswerCountValues(answerCountFilters,practiceFilterSnapshot.answerCounts);syncAnswerCountRows(answerCountFilters);readAnswerCountFilters(answerCountFilters);
         practiceDisplayLimit.value=practiceFilterSnapshot.displayLimit||'';syncDisplayLimitValidity();
+        activePracticeAdapter()?.restoreFilterSnapshot?.(practiceFilterSnapshot.external);
         syncWordTextFilterReset();
         subgroupAllButtons.forEach(button=>syncSubgroupAll(button.closest('.group')));
         filterSections.forEach(section=>syncSectionControls(section,false));syncLevelFilterControls(levelFilterSection);
@@ -2673,7 +2677,7 @@ const COL=Object.freeze({
       else if(practiceViewMode==='card')renderPracticeQuestion();
       renderPracticeList();
     };
-    window.flovoPracticeBridge={refresh:refreshExternalPractice};
+    window.flovoPracticeBridge={refresh:refreshExternalPractice,refreshFilterCount:refreshQuestionCount};
     const closePractice=async()=>{
       if(screenTransitionBusy)return;
       if(practiceFilterOpen)await cancelPracticeFilter();
