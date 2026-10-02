@@ -1496,6 +1496,8 @@ body[data-practice-module="phrase-bank"] #practiceWord{font-size:.9rem!important
 .phrase-category-manager-row>b{color:#68758a;font-size:.61rem;text-align:center}
 .phrase-category-manager-row button{height:32px;padding:0 7px;border:1px solid #c9d7e7;border-radius:9px;background:#fff;color:var(--blue);font-size:.62rem;font-weight:850}
 .phrase-category-manager-row button:last-child{border-color:#efc2c7;color:#c93645}
+.phrase-category-manager-row input:disabled{background:#edf0f4;color:#667085;opacity:1}
+.phrase-category-manager-row button:disabled{color:#9aa3b1;opacity:.55;pointer-events:none}
 html[data-theme="dark"] .phrase-data-sheet,html[data-theme="dark"] .phrase-data-head{border-color:#344153;background:#1b2431}
 html[data-theme="dark"] .phrase-data-head h2{color:#eef4ff}
 html[data-theme="dark"] .phrase-data-body>label,html[data-theme="dark"] .phrase-category-field>div:first-child{color:#b3c0d1}
