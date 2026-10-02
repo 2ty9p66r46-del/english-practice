@@ -1473,7 +1473,7 @@ body[data-practice-module="phrase-bank"] .practice-word-heading{min-height:0}
 body[data-practice-module="phrase-bank"] .practice-word-stack{display:grid!important;min-height:34px;align-items:center}
 body[data-practice-module="phrase-bank"] .practice-word-title{color:#7b8798;font-size:.62rem;font-weight:800;letter-spacing:.03em}
 body[data-practice-module="phrase-bank"] .practice-word-stack{justify-items:start;align-items:start}
-body[data-practice-module="phrase-bank"] #practiceWord{display:inline-block;box-sizing:border-box;width:fit-content;max-width:100%;padding:5px 9px;border-radius:8px;background:#f1f5fa;color:#526078;font-size:.78rem!important;font-weight:700;line-height:1.4;text-align:left;white-space:normal;overflow-wrap:anywhere}
+body[data-practice-module="phrase-bank"] #practiceWord{display:inline-block;box-sizing:border-box;width:fit-content;max-width:100%;justify-self:start;padding:5px 9px;border-radius:8px;background:#f1f5fa;color:#526078;font-size:.78rem!important;font-weight:700;line-height:1.4;text-align:left;white-space:normal;overflow-wrap:anywhere}
 html[data-theme="dark"] body[data-practice-module="phrase-bank"] #practiceWord{background:#263548;color:#d5dfec}
 
 /* My Phrase Bank data and category sheets. */
