@@ -46,7 +46,7 @@
   try{phraseFilterCategoryIds=new Set(JSON.parse(localStorage.getItem('phraseCategoryFilterV1')||'[]').map(number).filter(Boolean))}catch{}
 
   const phraseHierarchyFilter=document.createElement('div');phraseHierarchyFilter.className='filter-section phrase-hierarchy-filter';phraseHierarchyFilter.dataset.filterSection='phrase-category';phraseHierarchyFilter.hidden=true;
-  phraseHierarchyFilter.innerHTML='<div class="filter-section-head"><h3><span class="condition-badge">条件3</span><span>階層</span></h3><div class="filter-section-actions"><button class="section-filter-button filter-reset-button" id="phraseHierarchyFilterReset" type="button" disabled>リセット</button></div></div><p class="phrase-hierarchy-filter-help">任意の階層を複数選択できます。親を選ぶと配下も対象になります。</p><div id="phraseHierarchyFilterChoices"></div>';
+  phraseHierarchyFilter.innerHTML='<div class="filter-section-head"><h3><span class="condition-badge">条件3</span><span>階層</span></h3><div class="filter-section-actions"><button class="section-filter-button select" id="phraseHierarchyFilterAction" type="button">すべて選択</button></div></div><p class="phrase-hierarchy-filter-help">任意の階層を複数選択できます。親を選ぶと配下も対象になります。</p><div id="phraseHierarchyFilterChoices"></div>';
   wordTextFilterSection?.after(phraseHierarchyFilter);
 
   const openDatabase=()=>new Promise((resolve,reject)=>{const request=indexedDB.open('flovo-data',1);request.onupgradeneeded=()=>{if(!request.result.objectStoreNames.contains('app'))request.result.createObjectStore('app')};request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error)});
@@ -122,7 +122,7 @@
     phraseFilterCategoryIds=new Set([...phraseFilterCategoryIds].filter(id=>categoryById(id)));
     const container=phraseHierarchyFilter.querySelector('#phraseHierarchyFilterChoices');container.replaceChildren();
     flattenCategories().forEach(({item,depth})=>{const row=document.createElement('label');row.className='phrase-hierarchy-filter-choice';row.style.setProperty('--depth',depth);const check=document.createElement('input');check.type='checkbox';check.checked=phraseFilterCategoryIds.has(item.id);check.setAttribute('aria-label',`${categoryPath(item.id)}で絞り込む`);const label=document.createElement('span');label.textContent=item.name;check.addEventListener('change',()=>{if(check.checked)phraseFilterCategoryIds.add(item.id);else phraseFilterCategoryIds.delete(item.id);renderPhraseHierarchyFilter();window.flovoPracticeBridge?.refreshFilterCount?.()});row.append(check,label);container.append(row)});
-    const reset=phraseHierarchyFilter.querySelector('#phraseHierarchyFilterReset');reset.disabled=!phraseFilterCategoryIds.size;reset.classList.toggle('selected',Boolean(phraseFilterCategoryIds.size));
+    const action=phraseHierarchyFilter.querySelector('#phraseHierarchyFilterAction'),active=Boolean(phraseFilterCategoryIds.size);action.textContent=active?'リセット':'すべて選択';action.classList.toggle('selected',active);action.setAttribute('aria-pressed',String(active));
   };
   const phraseMatchesFilter=row=>{
     if(!phraseFilterCategoryIds.size)return true;
@@ -130,7 +130,7 @@
     const covered=new Set();[phrase.primaryCategoryId,...phrase.categoryIds].filter(Boolean).forEach(id=>categoryPathNodes(id).forEach(item=>covered.add(item.id)));
     return [...phraseFilterCategoryIds].some(id=>covered.has(id));
   };
-  phraseHierarchyFilter.querySelector('#phraseHierarchyFilterReset').addEventListener('click',()=>{phraseFilterCategoryIds.clear();renderPhraseHierarchyFilter();window.flovoPracticeBridge?.refreshFilterCount?.()});
+  phraseHierarchyFilter.querySelector('#phraseHierarchyFilterAction').addEventListener('click',()=>{if(phraseFilterCategoryIds.size)phraseFilterCategoryIds.clear();else flattenCategories().forEach(({item})=>phraseFilterCategoryIds.add(item.id));renderPhraseHierarchyFilter();window.flovoPracticeBridge?.refreshFilterCount?.()});
 
   const toStoredData=()=>{
     rowPhraseIds=new WeakMap();
