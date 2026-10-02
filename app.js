@@ -1279,8 +1279,15 @@ const COL=Object.freeze({
       window.flovoPracticeAdapter?.renderPracticeCardMetadata?.(row);
       requestAnimationFrame(fitPracticeCardText);
     };
+    let practiceListRenderToken=0,activePracticeListRow=null;
+    const syncPracticeListCurrent=()=>{
+      if(activePracticeListRow)activePracticeListRow.setAttribute('aria-current','false');
+      activePracticeListRow=practiceList.querySelector(`[data-practice-row-index="${practiceIndex}"]`);
+      activePracticeListRow?.setAttribute('aria-current','true');
+    };
     const renderPracticeList=()=>{
-      practiceList.replaceChildren();
+      const renderToken=++practiceListRenderToken,rows=practiceRows;
+      practiceList.replaceChildren();activePracticeListRow=null;
       if(!practiceRows.length){
         const empty=document.createElement('div');
         empty.className='practice-list-empty';
@@ -1288,14 +1295,19 @@ const COL=Object.freeze({
         const detail=document.createElement('span');detail.textContent='「＋」から登録済みの単語に文を追加できます';
         empty.append(title,detail);practiceList.append(empty);return;
       }
-      practiceRows.forEach((row,index)=>{
+      let index=0;
+      const renderChunk=()=>{
+        if(renderToken!==practiceListRenderToken)return;
+        const fragment=document.createDocumentFragment(),chunkEnd=Math.min(index+120,rows.length);
+        for(;index<chunkEnd;index++){
+        const row=rows[index],rowIndex=index;
         const item=document.createElement('div');
         item.className='practice-list-row';
-        item.dataset.practiceRowIndex=String(index);
+        item.dataset.practiceRowIndex=String(rowIndex);
         item.tabIndex=0;
         item.setAttribute('role','button');
-        item.setAttribute('aria-label',`${index+1}問目 ${text(row[COL.word])||'単語未登録'}から再生`);
-        item.setAttribute('aria-current',String(index===practiceIndex));
+        item.setAttribute('aria-label',`${rowIndex+1}問目 ${text(row[COL.word])||'単語未登録'}から再生`);
+        item.setAttribute('aria-current',String(rowIndex===practiceIndex));
 
         const copy=document.createElement('span');
         copy.className='practice-list-copy';
@@ -1351,7 +1363,7 @@ const COL=Object.freeze({
         const openButton=document.createElement('button');
         openButton.type='button';
         openButton.className='practice-list-open';
-        openButton.setAttribute('aria-label',`${index+1}問目 ${text(row[COL.word])||'単語未登録'}をカードで開く`);
+        openButton.setAttribute('aria-label',`${rowIndex+1}問目 ${text(row[COL.word])||'単語未登録'}をカードで開く`);
         const chevron=document.createElementNS('http://www.w3.org/2000/svg','svg');
         chevron.setAttribute('class','practice-list-chevron');
         chevron.setAttribute('viewBox','0 0 24 24');
@@ -1363,10 +1375,11 @@ const COL=Object.freeze({
 
         rowActions.append(menuButton,openButton);
         item.append(copy,rowActions);
+        if(rowIndex===practiceIndex)activePracticeListRow=item;
         const playFromItem=()=>{
-          setPracticeIndex(index);
+          setPracticeIndex(rowIndex);
           renderPracticeQuestion();
-          renderPracticeList();
+          syncPracticeListCurrent();
           autoPlaying?restartAutoPlayback():startAutoPlayback();
         };
         item.addEventListener('click',playFromItem);
@@ -1377,19 +1390,23 @@ const COL=Object.freeze({
         });
         openButton.addEventListener('click',event=>{
           event.stopPropagation();
-          openPracticeCard(index);
+          openPracticeCard(rowIndex);
         });
         menuButton.addEventListener('click',event=>{
           event.stopPropagation();
           openCardEditor('edit',row);
         });
-        practiceList.append(item);
-      });
-      if(practiceViewMode==='list'){
-        requestAnimationFrame(()=>{
-          practiceList.querySelector('[aria-current="true"]')?.scrollIntoView({block:'nearest'});
-        });
-      }
+        fragment.append(item);
+        }
+        practiceList.append(fragment);
+        if(index<rows.length){requestAnimationFrame(renderChunk);return}
+        if(practiceViewMode==='list'){
+          requestAnimationFrame(()=>{
+            practiceList.querySelector('[aria-current="true"]')?.scrollIntoView({block:'nearest'});
+          });
+        }
+      };
+      renderChunk();
     };
     const vocabularyKey=row=>`${text(row?.[COL.word]).toLowerCase()}\t${text(row?.[COL.pos])}`;
     const normalizedMeaning=value=>text(value).replace(/\s+/g,' ').toLowerCase();
@@ -2245,6 +2262,7 @@ const COL=Object.freeze({
     let screenTransitionBusy=false,screenTransitionRun=0,screenTransitionWatchdog=null;
     const wait=duration=>new Promise(resolve=>setTimeout(resolve,duration));
     const forceScreenTransitionRecovery=()=>{
+      screenTransitionRun+=1;
       clearTimeout(screenTransitionWatchdog);screenTransitionWatchdog=null;screenFade.classList.remove('active');screenFade.style.opacity='0';screenFade.style.pointerEvents='none';screenTransitionBusy=false;
       requestAnimationFrame(()=>{screenFade.style.opacity='';screenFade.style.pointerEvents=''});
     };
@@ -2477,7 +2495,7 @@ const COL=Object.freeze({
         if(practiceIndex<practiceRows.length-1){
           setPracticeIndex(practiceIndex+1);
           renderPracticeQuestion();
-          if(practiceViewMode==='list')renderPracticeList();
+          if(practiceViewMode==='list')syncPracticeListCurrent();
           continue;
         }
         if(playbackSettings.repeat==='all'){
@@ -2533,7 +2551,7 @@ const COL=Object.freeze({
       }
     };
     setPracticeViewMode('list');
-    let practiceViewTransitioning=false;
+    let practiceViewTransitioning=false,practiceLaunchPending=false;
     const openPracticeCard=async index=>{
       if(practiceViewTransitioning)return;
       practiceViewTransitioning=true;
@@ -2702,25 +2720,28 @@ const COL=Object.freeze({
     enableBottomSheetGrab(practiceFilterOverlay,practiceFilterSheet,practiceFilterHandle,()=>cancelPracticeFilter());
     enableBottomSheetGrab(cardEditorOverlay,cardEditorSheet,cardEditorHandle,()=>closeCardEditor(true));
     const openPractice=async()=>{
-      if(screenTransitionBusy)return;
-      const stored=await getPracticeSourceData();
-      practiceResultLocks=new WeakMap();practiceResultSaving=false;
-      let rows=getMatchingRows(stored?.rows||[]);
-      if(practiceButton.dataset.order==='random')rows=shuffleRows(rows);
-      const limit=practiceButton.dataset.questionLimit==='all'?rows.length:Number(practiceButton.dataset.questionLimit);
-      practiceRows=rows.slice(0,limit);
-      practiceStored=stored||{headers:[...EXPECTED_HEADERS],rows:[],vocabularyRows:[],fileName:'未読込',modified:true};
-      restoreVocabularyRows(practiceStored);
-      practiceIndex=0;
-      setAnswerVisible(false);
-      await transitionScreen(()=>{
-        practiceScreen.hidden=false;
-        mainNav.classList.add('practice-mode');
-        navHome.classList.remove('active');
-        renderPracticeQuestion();
-        setPracticeViewMode('list');
-      });
-      await refreshQuestionCount();
+      if(screenTransitionBusy||practiceLaunchPending)return;
+      practiceLaunchPending=true;
+      try{
+        const stored=await getPracticeSourceData();
+        practiceResultLocks=new WeakMap();practiceResultSaving=false;
+        let rows=getMatchingRows(stored?.rows||[]);
+        if(practiceButton.dataset.order==='random')rows=shuffleRows(rows);
+        const limit=practiceButton.dataset.questionLimit==='all'?rows.length:Number(practiceButton.dataset.questionLimit);
+        practiceRows=rows.slice(0,limit);
+        practiceStored=stored||{headers:[...EXPECTED_HEADERS],rows:[],vocabularyRows:[],fileName:'未読込',modified:true};
+        restoreVocabularyRows(practiceStored);
+        practiceIndex=0;
+        setAnswerVisible(false);
+        const opened=await transitionScreen(()=>{
+          practiceScreen.hidden=false;
+          mainNav.classList.add('practice-mode');
+          navHome.classList.remove('active');
+          renderPracticeQuestion();
+          setPracticeViewMode('list');
+        });
+        if(opened)await refreshQuestionCount();
+      }finally{practiceLaunchPending=false}
     };
     const refreshExternalPractice=async(options={})=>{
       if(practiceScreen.hidden||!activePracticeAdapter())return;
