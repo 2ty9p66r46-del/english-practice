@@ -14,7 +14,7 @@
   <link rel="apple-touch-icon" href="./icon.svg">
   <title>FloVo</title>
   <script src="./xlsx.full.min.js"></script>
-  <link rel="stylesheet" href="./styles.css?v=561">
+  <link rel="stylesheet" href="./styles.css?v=562">
 </head>
 <body data-page="home">
   <div class="shell">
@@ -358,6 +358,19 @@
             <li>データ編集から意味や複数の例文を追加・変更できます。</li>
             <li>変更したデータは「エクスポート」でExcelへ保存できます。</li>
           </ol>
+          <section class="help-regex-guide" aria-labelledby="helpRegexTitle">
+            <h4 id="helpRegexTitle">正規表現（条件2）の基本</h4>
+            <p>大文字と小文字は区別されます。アクティブボキャビルでは単語、マイフレーズでは日本語文または英文が検索対象です。</p>
+            <ul>
+              <li><code>\b</code> 英単語の境目。<code>\ba\b</code> は独立した小文字の <code>a</code> を検索します。</li>
+              <li><code>\s</code> 空白文字（スペースや改行）。</li>
+              <li><code>.</code> 任意の1文字。<code>*</code> 直前の要素を0回以上、<code>+</code> 1回以上、<code>?</code> 0回または1回。</li>
+              <li><code>^</code> 文字列の先頭、<code>$</code> 末尾。</li>
+              <li><code>[aA]</code> 括弧内のどれか1文字。小文字の <code>a</code> と大文字の <code>A</code> の両方を対象にします。</li>
+              <li><code>|</code> または。<code>\b(a|the)\b</code> は独立した <code>a</code> または <code>the</code> を検索します。</li>
+              <li><code>()</code> グループ化。組み合わせて <code>\bgo(es|ing)?\b</code> とすると <code>go</code>、<code>goes</code>、<code>going</code> が対象です。</li>
+            </ul>
+          </section>
           <button class="help-back-button" type="button" data-help-back>メニューへ戻る</button>
         </div>
       </section>
