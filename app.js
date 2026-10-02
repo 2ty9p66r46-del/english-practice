@@ -992,8 +992,13 @@ const COL=Object.freeze({
       const hasInvalidRegex=!syncWordRegexValidity(wordRegex,wordRegexWarning);
       const answerCountState=readAnswerCountFilters(answerCountFilters);const hasInvalidAnswerCounts=!answerCountState.valid;
       const hasInvalidDisplayLimit=!syncDisplayLimitValidity();
-      const fullyReset=selectedCount===selectableFilterChoices.length&&!levelChoices.some(choice=>choice.classList.contains('selected'))&&!practiceTextFilterInputs.some(input=>Boolean(text(input.value)))&&practiceDisplayLimit.value===''&&!hasAnswerCountFilters(answerCountState);
+      const externalFilter=activePracticeAdapter()?.getFilterSnapshot?.();
+      const externalCategories=Array.isArray(externalFilter)?externalFilter:(externalFilter?.categoryIds||[]);
+      const externalTags=Array.isArray(externalFilter)?[]:(externalFilter?.tags||[]);
+      const hasExternalFilter=externalCategories.length>0||externalTags.length>0;
+      const fullyReset=selectedCount===selectableFilterChoices.length&&!levelChoices.some(choice=>choice.classList.contains('selected'))&&!practiceTextFilterInputs.some(input=>Boolean(text(input.value)))&&practiceDisplayLimit.value===''&&!hasAnswerCountFilters(answerCountState)&&!hasExternalFilter;
       selectAllFilters.classList.toggle('selected',fullyReset);
+      selectAllFilters.setAttribute('aria-pressed',String(fullyReset));
       practiceFilterClose.disabled=hasEmptyConditions||hasInvalidRegex||hasInvalidAnswerCounts||hasInvalidDisplayLimit;
       practiceFilterClose.setAttribute('aria-disabled',String(hasEmptyConditions||hasInvalidRegex||hasInvalidAnswerCounts||hasInvalidDisplayLimit));
       practiceButton.disabled=false;
@@ -1048,12 +1053,13 @@ const COL=Object.freeze({
       button.addEventListener('click',()=>setSectionFilters(section,!button.classList.contains('selected')));
     });
     selectAllFilters.addEventListener('click',()=>{
+      const selectAll=!selectAllFilters.classList.contains('selected');
       resetAnswerCountFilters(answerCountFilters);
       practiceTextFilterInputs.forEach(input=>{input.value=''});
       activePracticeAdapter()?.resetFilter?.();
       practiceDisplayLimit.value='';
       syncDisplayLimitValidity();syncWordTextFilterReset();
-      setAllFilters(true);
+      setAllFilters(selectAll);
     });
     const practiceTextFilterInputs=[wordStartsWith,wordEndsWith,wordIncludes,wordFrom,wordRegex];
     const syncWordTextFilterReset=()=>{const active=practiceTextFilterInputs.some(input=>Boolean(text(input.value)));wordTextFilterReset.disabled=!active;wordTextFilterReset.classList.toggle('selected',active);wordTextFilterReset.setAttribute('aria-pressed',String(active));syncWordRegexValidity(wordRegex,wordRegexWarning)};
@@ -2747,7 +2753,7 @@ const COL=Object.freeze({
       renderPracticeList();
       await refreshQuestionCount();
     };
-    window.flovoPracticeBridge={refresh:refreshExternalPractice,refreshFilterCount:refreshQuestionCount,showCountMode:renderPracticeCountState,setCardViewMode:isCardView=>{const button=document.getElementById('phraseBulkSelectButton');if(button){button.hidden=false;button.disabled=Boolean(isCardView);button.setAttribute('aria-disabled',String(Boolean(isCardView)))}},getVisibleRows:()=>practiceRows,deleteRows:deleteCardRows,enableBottomSheetGrab};
+    window.flovoPracticeBridge={refresh:refreshExternalPractice,refreshFilterCount:()=>{syncGlobalControls();return refreshQuestionCount()},showCountMode:renderPracticeCountState,setCardViewMode:isCardView=>{const button=document.getElementById('phraseBulkSelectButton');if(button){button.hidden=false;button.disabled=Boolean(isCardView);button.setAttribute('aria-disabled',String(Boolean(isCardView)))}},getVisibleRows:()=>practiceRows,deleteRows:deleteCardRows,enableBottomSheetGrab};
     const closePractice=async()=>{
       if(screenTransitionBusy)return;
       if(practiceFilterOpen)await cancelPracticeFilter();
