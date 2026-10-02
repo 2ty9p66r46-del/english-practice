@@ -1553,6 +1553,11 @@ body[data-practice-module="phrase-bank"] #practiceListPlaceholder.phrase-bulk-se
 .practice-list-placeholder.phrase-bulk-selecting .phrase-bulk-check.selected{border-color:var(--blue);background:var(--blue)}
 .practice-list-placeholder.phrase-bulk-selecting .practice-list-row.phrase-bulk-selected{background:#e9f4ff}
 .phrase-bulk-actions{position:absolute;z-index:8;right:10px;bottom:10px;left:10px;display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:7px;border:1px solid #d9e0e9;border-radius:18px;background:#fffffff2;box-shadow:0 8px 28px #1e293b26;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.phrase-bulk-actions.is-entering{animation:phrase-bulk-actions-in 460ms cubic-bezier(.2,.8,.2,1) both}
+.phrase-bulk-actions.is-leaving{animation:phrase-bulk-actions-out 360ms ease both;pointer-events:none}
+@keyframes phrase-bulk-actions-in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes phrase-bulk-actions-out{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(10px)}}
+@media(prefers-reduced-motion:reduce){.phrase-bulk-actions.is-entering,.phrase-bulk-actions.is-leaving{animation-duration:1ms}}
 .phrase-bulk-actions button{display:flex;min-height:54px;align-items:center;justify-content:center;gap:7px;border:0;border-radius:13px;background:#edf6ff;color:var(--blue);font-size:.72rem;font-weight:850}
 .phrase-bulk-actions button:last-child{background:#fff0f2;color:#d53549}
 .phrase-bulk-actions button:disabled{background:#f0f2f5;color:#aeb5c0}
