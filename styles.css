@@ -1523,7 +1523,7 @@ html[data-theme="dark"] .phrase-category-add-root{border-color:#426b91;backgroun
 @media(max-width:430px){.phrase-category-manager-row.phrase-category-draft{grid-template-columns:31px minmax(64px,1fr) 43px 43px}}
 
 /* My Phrase Bank list bulk actions. */
-body[data-practice-module="phrase-bank"] .practice-screen-header{position:relative;overflow:hidden;grid-template-columns:44px minmax(0,1fr) 173px}
+body[data-practice-module="phrase-bank"] .practice-screen-header,body[data-practice-module="active-vocabulary"] .practice-screen-header{position:relative;overflow:hidden;grid-template-columns:44px minmax(0,1fr) 173px}
 body[data-practice-module="phrase-bank"] .practice-list-header{gap:8px;padding-right:18px}
 body[data-practice-module="phrase-bank"] .practice-list-header>#practiceListTitle{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .phrase-bulk-select-button{display:flex;width:53px;height:50px;flex:0 0 53px;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:0;border:1px solid #dce2ec;border-radius:14px;background:#fff;color:#526078;box-shadow:0 3px 10px #26354a0b;font-size:.56rem;font-weight:800;white-space:nowrap}
@@ -1542,14 +1542,19 @@ body[data-practice-module="phrase-bank"] .practice-list-header>#practiceListTitl
 @keyframes phrase-bulk-header-in{from{opacity:.35;transform:translateX(100%)}to{opacity:1;transform:translateX(0)}}
 @keyframes phrase-bulk-header-out{from{opacity:1;transform:translateX(0)}to{opacity:.25;transform:translateX(100%)}}
 @media(prefers-reduced-motion:reduce){.phrase-bulk-header.is-entering,.phrase-bulk-header.is-leaving{animation-duration:1ms}}
-body[data-practice-module="phrase-bank"] #practiceListPlaceholder{position:relative}
+body[data-practice-module="phrase-bank"] #practiceListPlaceholder,body[data-practice-module="active-vocabulary"] #practiceListPlaceholder{position:relative}
 .practice-list-placeholder.phrase-bulk-selecting .practice-list-items{padding-bottom:82px}
 body[data-practice-module="phrase-bank"] #practiceList .practice-list-row{grid-template-columns:0 minmax(0,1fr) 53px;column-gap:0;transition:grid-template-columns 480ms cubic-bezier(.2,.8,.2,1),background-color 300ms ease}
+body[data-practice-module="active-vocabulary"] #practiceList .practice-list-row{grid-template-columns:0 minmax(0,1fr) 53px;column-gap:0;transition:grid-template-columns 480ms cubic-bezier(.2,.8,.2,1),background-color 300ms ease}
 body[data-practice-module="phrase-bank"] #practiceList .practice-list-actions{box-sizing:border-box;min-width:0;overflow:hidden;padding-left:11px;opacity:1;transition:opacity 220ms ease}
+body[data-practice-module="active-vocabulary"] #practiceList .practice-list-actions{box-sizing:border-box;min-width:0;overflow:hidden;padding-left:11px;opacity:1;transition:opacity 220ms ease}
 .practice-list-row .phrase-bulk-check{display:grid;box-sizing:border-box;width:24px;height:24px;place-items:center;overflow:hidden;border:2px solid #a1aab8;border-radius:50%;background:#fff;color:#fff;font-size:.8rem;font-weight:950;line-height:1;opacity:0;transform:scale(.72);transition:opacity 300ms ease,transform 480ms cubic-bezier(.2,.8,.2,1);pointer-events:none}
 body[data-practice-module="phrase-bank"] #practiceListPlaceholder.phrase-bulk-selecting #practiceList .practice-list-row{grid-template-columns:34px minmax(0,1fr) 0;cursor:pointer}
+body[data-practice-module="active-vocabulary"] #practiceListPlaceholder.phrase-bulk-selecting #practiceList .practice-list-row{grid-template-columns:34px minmax(0,1fr) 0;cursor:pointer}
 body[data-practice-module="phrase-bank"] #practiceListPlaceholder.phrase-bulk-selecting #practiceList .practice-list-actions{padding-left:0;opacity:0;pointer-events:none}
+body[data-practice-module="active-vocabulary"] #practiceListPlaceholder.phrase-bulk-selecting #practiceList .practice-list-actions{padding-left:0;opacity:0;pointer-events:none}
 body[data-practice-module="phrase-bank"] #practiceListPlaceholder.phrase-bulk-selecting #practiceList .phrase-bulk-check{opacity:1;transform:scale(1)}
+body[data-practice-module="active-vocabulary"] #practiceListPlaceholder.phrase-bulk-selecting #practiceList .phrase-bulk-check{opacity:1;transform:scale(1)}
 .practice-list-placeholder.phrase-bulk-selecting .phrase-bulk-check.selected{border-color:var(--blue);background:var(--blue)}
 .practice-list-placeholder.phrase-bulk-selecting .practice-list-row.phrase-bulk-selected{background:#e9f4ff}
 .phrase-bulk-actions{position:absolute;z-index:8;right:10px;bottom:10px;left:10px;display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:7px;border:1px solid #d9e0e9;border-radius:18px;background:#fffffff2;box-shadow:0 8px 28px #1e293b26;transform:none!important;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
@@ -1562,6 +1567,8 @@ body[data-practice-module="phrase-bank"] #practiceListPlaceholder.phrase-bulk-se
 .phrase-bulk-actions button:last-child{background:#fff0f2;color:#d53549}
 .phrase-bulk-actions button:disabled{background:#f0f2f5;color:#aeb5c0}
 .phrase-bulk-actions svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+body[data-practice-module="active-vocabulary"] .phrase-bulk-actions{grid-template-columns:1fr}
+body[data-practice-module="active-vocabulary"] .phrase-bulk-actions .phrase-bulk-move{display:none!important}
 .phrase-bulk-move-sheet{display:flex;max-height:82dvh;flex-direction:column;overflow:hidden}
 .phrase-bulk-move-sheet .phrase-data-head,.phrase-bulk-move-sheet .phrase-category-help{flex:0 0 auto}
 .phrase-bulk-destinations{display:grid;min-height:0;gap:6px;overflow-y:auto;-webkit-overflow-scrolling:touch}

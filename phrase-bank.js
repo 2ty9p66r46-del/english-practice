@@ -44,7 +44,7 @@
   const PHRASE_HEADERS=['フレーズID','例文番号','主カテゴリ','追加カテゴリ','日本語文','英文','補足','理解度','◯回数','×回数','△回数'];
   const CATEGORY_HEADERS=['カテゴリパス','表示順'];
   let data={version:2,nextPhraseId:1,nextCategoryId:1,categories:[],phrases:[],fileName:'未読込'};
-  let loaded=false,moduleMode='active-vocabulary',launchingPhrase=false,editorPhraseId=null,editorCategoryIds=new Set(),editorPrimaryId=null,categoryDraftParentId=undefined,rowPhraseIds=new WeakMap(),phraseFilterCategoryIds=new Set(),phraseBulkSelecting=false,phraseBulkSelectedIds=new Set(),phraseBulkMoveCategoryId=null,phraseBulkHeaderTimer=null,phraseBulkActionsTimer=null;
+  let loaded=false,moduleMode='active-vocabulary',launchingPhrase=false,editorPhraseId=null,editorCategoryIds=new Set(),editorPrimaryId=null,categoryDraftParentId=undefined,rowPhraseIds=new WeakMap(),phraseFilterCategoryIds=new Set(),phraseBulkSelecting=false,phraseBulkSelectedIds=new Set(),activeBulkSelectedRows=new Set(),activeBulkRowMap=new WeakMap(),phraseBulkMoveCategoryId=null,phraseBulkHeaderTimer=null,phraseBulkActionsTimer=null;
   const normalize=value=>String(value??'').trim();
   const number=value=>Math.max(0,Number.parseInt(value,10)||0);
   try{phraseFilterCategoryIds=new Set(JSON.parse(localStorage.getItem('phraseCategoryFilterV1')||'[]').map(number).filter(Boolean))}catch{}
@@ -156,7 +156,7 @@
   const applyModuleLabels=()=>{
     const phrase=moduleMode==='phrase-bank';document.body.dataset.practiceModule=phrase?'phrase-bank':'active-vocabulary';
     if(!phrase&&phraseBulkSelecting){phraseBulkSelecting=false;phraseBulkSelectedIds.clear();bulkMove.hidden=true}
-    if(typeof bulkSelectButton!=='undefined'){bulkSelectButton.hidden=!phrase||phraseBulkSelecting;if(!phrase){clearTimeout(phraseBulkHeaderTimer);clearTimeout(phraseBulkActionsTimer);bulkHeader.hidden=true;bulkHeader.classList.remove('is-entering','is-leaving');bulkActions.hidden=true;bulkActions.classList.remove('is-entering','is-leaving')}practiceList?.classList.toggle('phrase-bulk-selecting',phraseBulkSelecting)}
+    if(typeof bulkSelectButton!=='undefined'){bulkSelectButton.hidden=phraseBulkSelecting;if(!phrase&&practiceScreen.hidden){clearTimeout(phraseBulkHeaderTimer);clearTimeout(phraseBulkActionsTimer);bulkHeader.hidden=true;bulkHeader.classList.remove('is-entering','is-leaving');bulkActions.hidden=true;bulkActions.classList.remove('is-entering','is-leaving')}practiceList?.classList.toggle('phrase-bulk-selecting',phraseBulkSelecting)}
     phraseHierarchyFilter.hidden=!phrase;if(wordFromField)wordFromField.hidden=phrase;if(wordTextFilterTitle)wordTextFilterTitle.textContent=phrase?'カテゴリ文字列条件':'単語文字列条件';if(otherFilterBadge)otherFilterBadge.textContent=phrase?'条件4':'条件5';
     if(practiceWordTitle)practiceWordTitle.textContent=phrase?'カテゴリ':'単語';
     if(practiceNoteButton&&practiceInfoRow&&practiceWordHeading){if(phrase)practiceInfoRow.append(practiceNoteButton);else practiceWordHeading.insertBefore(practiceNoteButton,practiceWordCopy||null)}
@@ -234,6 +234,9 @@
   const closeManager=async()=>{categoryDraftParentId=undefined;manager.hidden=true;renderCategoryChoices();await refreshLivePractice({view:'list'})};
   const phraseFromListRow=row=>phraseByNumber(row?.querySelector('.practice-list-word-no')?.textContent||'');
   const visibleBulkRows=()=>[...(practiceListItems?.querySelectorAll('.practice-list-row')||[])];
+  const isPhraseBulkMode=()=>moduleMode==='phrase-bank';
+  const selectedBulkCount=()=>isPhraseBulkMode()?phraseBulkSelectedIds.size:activeBulkSelectedRows.size;
+  const isBulkRowSelected=row=>isPhraseBulkMode()?phraseBulkSelectedIds.has(number(row.dataset.phraseBulkId)):activeBulkSelectedRows.has(activeBulkRowMap.get(row));
   const animateBulkHeader=active=>{
     clearTimeout(phraseBulkHeaderTimer);bulkHeader.classList.remove('is-entering','is-leaving');
     if(active){bulkHeader.hidden=false;void bulkHeader.offsetWidth;bulkHeader.classList.add('is-entering');phraseBulkHeaderTimer=setTimeout(()=>bulkHeader.classList.remove('is-entering'),520);return}
@@ -245,20 +248,21 @@
     if(bulkActions.hidden)return;bulkActions.classList.add('is-leaving');phraseBulkActionsTimer=setTimeout(()=>{if(!phraseBulkSelecting)bulkActions.hidden=true;bulkActions.classList.remove('is-leaving')},400);
   };
   const updateBulkUi=()=>{
-    const count=phraseBulkSelectedIds.size;
+    const count=selectedBulkCount();
     practiceList?.classList.toggle('phrase-bulk-selecting',phraseBulkSelecting);
     bulkSelectButton.hidden=moduleMode!=='phrase-bank'||phraseBulkSelecting;
     bulkHeader.querySelector('.phrase-bulk-count').textContent=`${count}件選択`;
-    const rows=visibleBulkRows(),allSelected=Boolean(rows.length)&&rows.every(row=>phraseBulkSelectedIds.has(number(row.dataset.phraseBulkId)));
+    const rows=visibleBulkRows(),allSelected=Boolean(rows.length)&&rows.every(isBulkRowSelected);
     const allButton=bulkHeader.querySelector('.phrase-bulk-all');allButton.textContent=allSelected?'すべて解除':'すべてを選択';allButton.disabled=!rows.length;
     bulkActions.querySelectorAll('button').forEach(button=>button.disabled=!count);
-    rows.forEach(row=>{const id=number(row.dataset.phraseBulkId),selected=phraseBulkSelectedIds.has(id),check=row.querySelector('.phrase-bulk-check');row.classList.toggle('phrase-bulk-selected',selected);row.setAttribute('aria-selected',String(selected));if(check){check.classList.toggle('selected',selected);check.textContent=selected?'✓':''}});
+    rows.forEach(row=>{const selected=isBulkRowSelected(row),check=row.querySelector('.phrase-bulk-check');row.classList.toggle('phrase-bulk-selected',selected);row.setAttribute('aria-selected',String(selected));if(check){check.classList.toggle('selected',selected);check.textContent=selected?'✓':''}});
   };
   const decorateBulkRows=()=>{
-    visibleBulkRows().forEach(row=>{const phrase=phraseFromListRow(row);if(!phrase)return;row.dataset.phraseBulkId=String(phrase.id);let check=row.querySelector('.phrase-bulk-check');if(!check){check=document.createElement('span');check.className='phrase-bulk-check';check.setAttribute('aria-hidden','true');row.prepend(check)}});updateBulkUi();
+    activeBulkRowMap=new WeakMap();const activeRows=window.flovoPracticeBridge?.getVisibleRows?.()||[];
+    visibleBulkRows().forEach((row,index)=>{if(isPhraseBulkMode()){const phrase=phraseFromListRow(row);if(!phrase)return;row.dataset.phraseBulkId=String(phrase.id)}else if(activeRows[index])activeBulkRowMap.set(row,activeRows[index]);let check=row.querySelector('.phrase-bulk-check');if(!check){check=document.createElement('span');check.className='phrase-bulk-check';check.setAttribute('aria-hidden','true');row.prepend(check)}});updateBulkUi();
   };
-  const setBulkSelecting=active=>{phraseBulkSelecting=Boolean(active);phraseBulkSelectedIds.clear();if(!active)bulkMove.hidden=true;animateBulkHeader(phraseBulkSelecting);animateBulkActions(phraseBulkSelecting);decorateBulkRows()};
-  const toggleBulkRow=row=>{const id=number(row.dataset.phraseBulkId);if(!id)return;if(phraseBulkSelectedIds.has(id))phraseBulkSelectedIds.delete(id);else phraseBulkSelectedIds.add(id);updateBulkUi()};
+  const setBulkSelecting=active=>{phraseBulkSelecting=Boolean(active);phraseBulkSelectedIds.clear();activeBulkSelectedRows.clear();if(!active)bulkMove.hidden=true;animateBulkHeader(phraseBulkSelecting);animateBulkActions(phraseBulkSelecting);decorateBulkRows()};
+  const toggleBulkRow=row=>{if(isPhraseBulkMode()){const id=number(row.dataset.phraseBulkId);if(!id)return;if(phraseBulkSelectedIds.has(id))phraseBulkSelectedIds.delete(id);else phraseBulkSelectedIds.add(id)}else{const source=activeBulkRowMap.get(row);if(!source)return;if(activeBulkSelectedRows.has(source))activeBulkSelectedRows.delete(source);else activeBulkSelectedRows.add(source)}updateBulkUi()};
   const renderBulkDestinations=()=>{
     phraseBulkMoveCategoryId=null;bulkMove.querySelector('.phrase-bulk-move-summary').textContent=`選択した${phraseBulkSelectedIds.size}件を移動します。`;
     const container=bulkMove.querySelector('.phrase-bulk-destinations');container.replaceChildren();
@@ -268,16 +272,16 @@
   const openBulkMove=()=>{if(!phraseBulkSelectedIds.size)return;renderBulkDestinations();bulkMove.hidden=false};
   const closeBulkMove=()=>{bulkMove.hidden=true;phraseBulkMoveCategoryId=null};
   const moveBulkPhrases=async()=>{const target=categoryById(phraseBulkMoveCategoryId);if(!target||!phraseBulkSelectedIds.size)return;const path=categoryPathNodes(target.id).map(item=>item.id);data.phrases.forEach(phrase=>{if(phraseBulkSelectedIds.has(phrase.id)){phrase.primaryCategoryId=target.id;phrase.categoryIds=[...path]}});await writeStore();refreshPhraseHome();renderPhraseHierarchyFilter();closeBulkMove();setBulkSelecting(false);await refreshLivePractice({view:'list'});window.flovoPracticeBridge?.refreshFilterCount?.()};
-  const deleteBulkPhrases=async()=>{const count=phraseBulkSelectedIds.size;if(!count||!confirm(`選択したフレーズ ${count}件を削除しますか？`))return;data.phrases=data.phrases.filter(phrase=>!phraseBulkSelectedIds.has(phrase.id));await writeStore();refreshPhraseHome();setBulkSelecting(false);await refreshLivePractice({view:'list'});window.flovoPracticeBridge?.refreshFilterCount?.()};
+  const deleteBulkPhrases=async()=>{const count=selectedBulkCount();if(!count)return;if(!isPhraseBulkMode()){if(!confirm(`選択した例文 ${count}件を削除しますか？\n\n単語データは削除されません。`))return;await window.flovoPracticeBridge?.deleteRows?.([...activeBulkSelectedRows]);setBulkSelecting(false);return}if(!confirm(`選択したフレーズ ${count}件を削除しますか？`))return;data.phrases=data.phrases.filter(phrase=>!phraseBulkSelectedIds.has(phrase.id));await writeStore();refreshPhraseHome();setBulkSelecting(false);await refreshLivePractice({view:'list'});window.flovoPracticeBridge?.refreshFilterCount?.()};
   bulkSelectButton.addEventListener('click',()=>setBulkSelecting(true));
   bulkHeader.querySelector('.phrase-bulk-cancel').addEventListener('click',()=>setBulkSelecting(false));
-  bulkHeader.querySelector('.phrase-bulk-all').addEventListener('click',()=>{const rows=visibleBulkRows(),allSelected=Boolean(rows.length)&&rows.every(row=>phraseBulkSelectedIds.has(number(row.dataset.phraseBulkId)));rows.forEach(row=>{const id=number(row.dataset.phraseBulkId);if(id){if(allSelected)phraseBulkSelectedIds.delete(id);else phraseBulkSelectedIds.add(id)}});updateBulkUi()});
+  bulkHeader.querySelector('.phrase-bulk-all').addEventListener('click',()=>{const rows=visibleBulkRows(),allSelected=Boolean(rows.length)&&rows.every(isBulkRowSelected);rows.forEach(row=>{if(isPhraseBulkMode()){const id=number(row.dataset.phraseBulkId);if(id){if(allSelected)phraseBulkSelectedIds.delete(id);else phraseBulkSelectedIds.add(id)}}else{const source=activeBulkRowMap.get(row);if(source){if(allSelected)activeBulkSelectedRows.delete(source);else activeBulkSelectedRows.add(source)}}});updateBulkUi()});
   bulkActions.querySelector('.phrase-bulk-move').addEventListener('click',openBulkMove);
   bulkActions.querySelector('.phrase-bulk-delete').addEventListener('click',()=>deleteBulkPhrases().catch(()=>alert('フレーズを削除できませんでした。')));
   bulkMove.querySelector('.phrase-bulk-move-cancel').addEventListener('click',closeBulkMove);bulkMove.querySelector('.phrase-bulk-move-save').addEventListener('click',()=>moveBulkPhrases().catch(()=>alert('フレーズを移動できませんでした。')));bulkMove.addEventListener('click',event=>{if(event.target===bulkMove)closeBulkMove()});
   if(practiceListItems)new MutationObserver(decorateBulkRows).observe(practiceListItems,{childList:true});
   const currentPhraseFromCard=()=>phraseByNumber(document.getElementById('practiceWordNumber')?.textContent||'');
-  document.addEventListener('click',event=>{if(moduleMode!=='phrase-bank')return;const listRow=event.target.closest?.('.practice-list-row'),listMenu=event.target.closest?.('.practice-list-menu');if(phraseBulkSelecting&&listRow){event.preventDefault();event.stopImmediatePropagation();toggleBulkRow(listRow);return}if(event.target.closest?.('#practiceCardAdd')){event.preventDefault();event.stopImmediatePropagation();openEditor(null);return}if(event.target.closest?.('#practiceCardMenu')){event.preventDefault();event.stopImmediatePropagation();openEditor(currentPhraseFromCard());return}if(listMenu){event.preventDefault();event.stopImmediatePropagation();const value=listMenu.closest('.practice-list-row')?.querySelector('.practice-list-word-no')?.textContent||'';openEditor(phraseByNumber(value))}},true);
+  document.addEventListener('click',event=>{const listRow=event.target.closest?.('.practice-list-row');if(phraseBulkSelecting&&listRow){event.preventDefault();event.stopImmediatePropagation();toggleBulkRow(listRow);return}if(moduleMode!=='phrase-bank')return;const listMenu=event.target.closest?.('.practice-list-menu');if(event.target.closest?.('#practiceCardAdd')){event.preventDefault();event.stopImmediatePropagation();openEditor(null);return}if(event.target.closest?.('#practiceCardMenu')){event.preventDefault();event.stopImmediatePropagation();openEditor(currentPhraseFromCard());return}if(listMenu){event.preventDefault();event.stopImmediatePropagation();const value=listMenu.closest('.practice-list-row')?.querySelector('.practice-list-word-no')?.textContent||'';openEditor(phraseByNumber(value))}},true);
   $('#phraseDataCancel').addEventListener('click',closeEditor);$('#phraseDataSave').addEventListener('click',()=>saveEditor().catch(()=>alert('フレーズを保存できませんでした。')));$('#phraseDataDelete').addEventListener('click',()=>deletePhrase().catch(()=>alert('フレーズを削除できませんでした。')));editor.addEventListener('click',event=>{if(event.target===editor)closeEditor()});$('#phraseCategoryManage').addEventListener('click',openManager);$('#phraseCategoryClose').addEventListener('click',()=>closeManager().catch(()=>alert('練習画面を更新できませんでした。')));manager.addEventListener('click',event=>{if(event.target===manager)closeManager().catch(()=>alert('練習画面を更新できませんでした。'))});
 
   const buildExportWorkbook=()=>{const workbook=XLSX.utils.book_new();const phraseRows=data.phrases.slice().sort((a,b)=>phraseNumber(a).localeCompare(phraseNumber(b),'ja',{numeric:true})).map(item=>[item.id,phraseNumber(item),categoryPath(item.primaryCategoryId),item.categoryIds.filter(id=>id!==item.primaryCategoryId).map(categoryPath).join(' | '),item.japanese,item.english,item.note,item.understanding,item.correct,item.wrong,item.unsure]);const categoryRows=flattenCategories().map(({item})=>[categoryPath(item.id),item.order]);XLSX.utils.book_append_sheet(workbook,XLSX.utils.aoa_to_sheet([PHRASE_HEADERS,...phraseRows]),'マイフレーズ');XLSX.utils.book_append_sheet(workbook,XLSX.utils.aoa_to_sheet([CATEGORY_HEADERS,...categoryRows]),'マイフレーズカテゴリ');return workbook};

@@ -2158,6 +2158,28 @@ const COL=Object.freeze({
         return false;
       }
     };
+    const deleteCardRows=async rows=>{
+      const targets=new Set((rows||[]).filter(row=>practiceStored?.rows?.includes(row)));
+      if(!targets.size)return false;
+      const snapshot=(practiceStored.rows||[]).map(row=>[...row]);
+      const keys=[...new Set([...targets].map(vocabularyKey))];
+      keys.forEach(key=>{
+        const group=(practiceStored.rows||[]).filter(row=>vocabularyKey(row)===key),selected=group.filter(row=>targets.has(row));
+        const remainingCards=group.filter(row=>!targets.has(row)&&text(row[COL.japanese])&&text(row[COL.english]));
+        if(remainingCards.length){practiceStored.rows=practiceStored.rows.filter(row=>!targets.has(row));return}
+        const fallback=group.find(row=>!targets.has(row)&&!text(row[COL.japanese])&&!text(row[COL.english]))||selected[0];
+        practiceStored.rows=practiceStored.rows.filter(row=>!targets.has(row)||row===fallback);
+        if(targets.has(fallback)){
+          fallback[COL.meaningNo]='';fallback[COL.meaning]='';fallback[COL.exampleNo]='';fallback[COL.japanese]='';fallback[COL.english]='';fallback[COL.note]='';fallback[COL.understanding]='';fallback[COL.correctCount]=0;fallback[COL.wrongCount]=0;fallback[COL.questionCount]=0;
+        }
+      });
+      keys.forEach(key=>{
+        const byMeaning=new Map();(practiceStored.rows||[]).filter(row=>vocabularyKey(row)===key&&text(row[COL.japanese])&&text(row[COL.english])).forEach(row=>{const meaning=text(row[COL.meaningNo]);if(!byMeaning.has(meaning))byMeaning.set(meaning,[]);byMeaning.get(meaning).push(row)});
+        byMeaning.forEach(group=>group.forEach((row,index)=>{row[COL.exampleNo]=String(index+1)}));
+      });
+      try{await persistPracticeData();refreshPracticeAfterMutation();return true}
+      catch(error){practiceStored.rows=snapshot;refreshPracticeAfterMutation();throw error}
+    };
     cardActionDelete.addEventListener('click',async()=>{const row=cardActionRow;closeCardActions();await deleteCardRow(row)});
     let practiceMoving=false;
     const animatePracticeCard=async(keyframes,options)=>{
@@ -2677,7 +2699,7 @@ const COL=Object.freeze({
       else if(practiceViewMode==='card')renderPracticeQuestion();
       renderPracticeList();
     };
-    window.flovoPracticeBridge={refresh:refreshExternalPractice,refreshFilterCount:refreshQuestionCount};
+    window.flovoPracticeBridge={refresh:refreshExternalPractice,refreshFilterCount:refreshQuestionCount,getVisibleRows:()=>practiceRows,deleteRows:deleteCardRows};
     const closePractice=async()=>{
       if(screenTransitionBusy)return;
       if(practiceFilterOpen)await cancelPracticeFilter();
