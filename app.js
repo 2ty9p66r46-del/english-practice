@@ -2495,6 +2495,7 @@ const COL=Object.freeze({
       practiceListPlaceholder.hidden=!listMode;
       practiceBackToList.hidden=listMode;
       practiceHeaderCounts.hidden=!listMode;
+      window.flovoPracticeBridge?.setCardViewMode?.(!listMode);
       practiceFilterButton.disabled=false;
       practiceFilterButton.setAttribute('aria-disabled','false');
       if(listMode){
@@ -2697,6 +2698,8 @@ const COL=Object.freeze({
     const refreshExternalPractice=async(options={})=>{
       if(practiceScreen.hidden||!activePracticeAdapter())return;
       const previousIndex=practiceIndex;
+      const previousViewMode=practiceViewMode;
+      const previousNumber=text(practiceRows[previousIndex]?.[COL.wordNo]);
       const stored=await getPracticeSourceData();
       let rows=getMatchingRows(stored?.rows||[]);
       if(practiceButton.dataset.order==='random')rows=shuffleRows(rows);
@@ -2706,14 +2709,16 @@ const COL=Object.freeze({
       practiceRows=rows.slice(0,limit);
       const preferredNumber=text(options.preferredNumber);
       const preferredIndex=preferredNumber?practiceRows.findIndex(row=>text(row[COL.wordNo])===preferredNumber):-1;
-      setPracticeIndex(preferredIndex>=0?preferredIndex:Math.min(previousIndex,Math.max(0,practiceRows.length-1)));
+      const previousCardIndex=previousNumber?practiceRows.findIndex(row=>text(row[COL.wordNo])===previousNumber):-1;
+      setPracticeIndex(preferredIndex>=0?preferredIndex:previousCardIndex>=0?previousCardIndex:previousViewMode==='card'?0:Math.min(previousIndex,Math.max(0,practiceRows.length-1)));
       setAnswerVisible(false);
       if(options.view==='list'||!practiceRows.length)setPracticeViewMode('list');
-      else if(practiceViewMode==='card')renderPracticeQuestion();
+      else if(previousViewMode==='card'){setPracticeViewMode('card');renderPracticeQuestion()}
+      else setPracticeViewMode('list');
       renderPracticeList();
       await refreshQuestionCount();
     };
-    window.flovoPracticeBridge={refresh:refreshExternalPractice,refreshFilterCount:refreshQuestionCount,showCountMode:renderPracticeCountState,getVisibleRows:()=>practiceRows,deleteRows:deleteCardRows,enableBottomSheetGrab};
+    window.flovoPracticeBridge={refresh:refreshExternalPractice,refreshFilterCount:refreshQuestionCount,showCountMode:renderPracticeCountState,setCardViewMode:isCardView=>{const button=document.getElementById('phraseBulkSelectButton');if(button){button.disabled=Boolean(isCardView);button.setAttribute('aria-disabled',String(Boolean(isCardView)))}},getVisibleRows:()=>practiceRows,deleteRows:deleteCardRows,enableBottomSheetGrab};
     const closePractice=async()=>{
       if(screenTransitionBusy)return;
       if(practiceFilterOpen)await cancelPracticeFilter();
