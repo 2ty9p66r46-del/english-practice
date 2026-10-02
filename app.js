@@ -2747,7 +2747,7 @@ const COL=Object.freeze({
       renderPracticeList();
       await refreshQuestionCount();
     };
-    window.flovoPracticeBridge={refresh:refreshExternalPractice,refreshFilterCount:refreshQuestionCount,showCountMode:renderPracticeCountState,setCardViewMode:isCardView=>{const button=document.getElementById('phraseBulkSelectButton');if(button){button.disabled=Boolean(isCardView);button.setAttribute('aria-disabled',String(Boolean(isCardView)))}},getVisibleRows:()=>practiceRows,deleteRows:deleteCardRows,enableBottomSheetGrab};
+    window.flovoPracticeBridge={refresh:refreshExternalPractice,refreshFilterCount:refreshQuestionCount,showCountMode:renderPracticeCountState,setCardViewMode:isCardView=>{const button=document.getElementById('phraseBulkSelectButton');if(button){button.hidden=Boolean(isCardView);button.disabled=false;button.removeAttribute('aria-disabled')}},getVisibleRows:()=>practiceRows,deleteRows:deleteCardRows,enableBottomSheetGrab};
     const closePractice=async()=>{
       if(screenTransitionBusy)return;
       if(practiceFilterOpen)await cancelPracticeFilter();
