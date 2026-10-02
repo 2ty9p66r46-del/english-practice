@@ -134,23 +134,25 @@
     phraseFilterCategoryIds=new Set([...phraseFilterCategoryIds].filter(id=>categoryById(id)));
     const container=phraseHierarchyFilter.querySelector('#phraseHierarchyFilterChoices');container.replaceChildren();
     flattenCategories().forEach(({item,depth})=>{const choice=document.createElement('button');choice.type='button';choice.className='phrase-hierarchy-filter-choice';choice.style.setProperty('--depth',depth);const selected=phraseFilterCategoryIds.has(item.id);choice.classList.toggle('selected',selected);choice.setAttribute('aria-pressed',String(selected));choice.setAttribute('aria-label',item.name+'で絞り込む');choice.textContent=item.name;choice.addEventListener('click',()=>{if(phraseFilterCategoryIds.has(item.id))phraseFilterCategoryIds.delete(item.id);else phraseFilterCategoryIds.add(item.id);renderPhraseHierarchyFilter();window.flovoPracticeBridge?.refreshFilterCount?.()});container.append(choice)});
-    const action=phraseHierarchyFilter.querySelector('#phraseHierarchyFilterAction'),active=Boolean(phraseFilterCategoryIds.size);action.textContent=active?'リセット':'すべて選択';action.classList.toggle('selected',active);action.setAttribute('aria-pressed',String(active));
+    const action=phraseHierarchyFilter.querySelector('#phraseHierarchyFilterAction'),allIds=flattenCategories().map(({item})=>item.id),active=allIds.length>0&&allIds.every(id=>phraseFilterCategoryIds.has(id));action.textContent='すべて選択';action.classList.toggle('selected',active);action.setAttribute('aria-pressed',String(active));
   };
   const allPhraseTags=()=>[...new Map((data.tags||[]).map(normalize).filter(Boolean).map(tag=>[tag.toLocaleLowerCase('ja'),tag])).values()].sort((a,b)=>a.localeCompare(b,'ja'));
   const renderPhraseTagFilter=()=>{
     const available=allPhraseTags();phraseFilterTagNames=new Set([...phraseFilterTagNames].filter(tag=>available.some(item=>item.toLocaleLowerCase('ja')===tag.toLocaleLowerCase('ja'))));
     const container=phraseTagFilterSection.querySelector('#phraseTagFilterChoices');container.replaceChildren();
     available.forEach(tag=>{const button=document.createElement('button');button.type='button';button.className='phrase-tag-filter-choice';const selected=[...phraseFilterTagNames].some(item=>item.toLocaleLowerCase('ja')===tag.toLocaleLowerCase('ja'));button.classList.toggle('selected',selected);button.setAttribute('aria-pressed',String(selected));button.textContent=tag;button.addEventListener('click',()=>{if(selected)phraseFilterTagNames=new Set([...phraseFilterTagNames].filter(item=>item.toLocaleLowerCase('ja')!==tag.toLocaleLowerCase('ja')));else phraseFilterTagNames.add(tag);renderPhraseTagFilter();window.flovoPracticeBridge?.refreshFilterCount?.()});container.append(button)});
-    const action=phraseTagFilterSection.querySelector('#phraseTagFilterAction'),active=Boolean(phraseFilterTagNames.size);action.textContent=active?'リセット':'すべて選択';action.classList.toggle('selected',active);action.setAttribute('aria-pressed',String(active));action.disabled=!available.length;
+    const action=phraseTagFilterSection.querySelector('#phraseTagFilterAction'),active=available.length>0&&available.every(tag=>[...phraseFilterTagNames].some(item=>item.toLocaleLowerCase('ja')===tag.toLocaleLowerCase('ja')));action.textContent='すべて選択';action.classList.toggle('selected',active);action.setAttribute('aria-pressed',String(active));action.disabled=!available.length;
   };
   phraseHierarchyFilter.querySelector('#phraseHierarchyFilterAction').addEventListener('click',()=>{
-    if(phraseFilterCategoryIds.size)phraseFilterCategoryIds.clear();
-    else phraseFilterCategoryIds=new Set(flattenCategories().map(({item})=>item.id));
+    const allIds=flattenCategories().map(({item})=>item.id),allSelected=allIds.length>0&&allIds.every(id=>phraseFilterCategoryIds.has(id));
+    if(allSelected)phraseFilterCategoryIds.clear();
+    else phraseFilterCategoryIds=new Set(allIds);
     renderPhraseHierarchyFilter();window.flovoPracticeBridge?.refreshFilterCount?.();
   });
   phraseTagFilterSection.querySelector('#phraseTagFilterAction').addEventListener('click',()=>{
-    if(phraseFilterTagNames.size)phraseFilterTagNames.clear();
-    else phraseFilterTagNames=new Set(allPhraseTags());
+    const allTags=allPhraseTags(),allSelected=allTags.length>0&&allTags.every(tag=>[...phraseFilterTagNames].some(item=>item.toLocaleLowerCase('ja')===tag.toLocaleLowerCase('ja')));
+    if(allSelected)phraseFilterTagNames.clear();
+    else phraseFilterTagNames=new Set(allTags);
     renderPhraseTagFilter();window.flovoPracticeBridge?.refreshFilterCount?.();
   });
   const phraseMatchesFilter=row=>{
@@ -159,7 +161,6 @@
     if(phraseFilterTagNames.size&&!phrase.tags?.some(tag=>[...phraseFilterTagNames].some(selected=>selected.toLocaleLowerCase('ja')===tag.toLocaleLowerCase('ja'))))return false;
     return true;
   };
-  phraseHierarchyFilter.querySelector('#phraseHierarchyFilterAction').addEventListener('click',()=>{if(phraseFilterCategoryIds.size)phraseFilterCategoryIds.clear();else flattenCategories().forEach(({item})=>phraseFilterCategoryIds.add(item.id));renderPhraseHierarchyFilter();window.flovoPracticeBridge?.refreshFilterCount?.()});
   const toStoredData=()=>{
     rowPhraseIds=new WeakMap();rowPhraseObjects=new WeakMap();
     const rows=data.phrases.slice().sort((a,b)=>phraseNumber(a).localeCompare(phraseNumber(b),'ja',{numeric:true})).map(phrase=>{const row=[phraseNumber(phrase),categoryPath(phrase.primaryCategoryId),'','','','','','','','','','',phrase.japanese,phrase.english,phrase.note,phrase.understanding,phrase.correct,phrase.wrong,phrase.unsure];rowPhraseIds.set(row,phrase.id);rowPhraseObjects.set(row,phrase);return row});
