@@ -2655,6 +2655,25 @@ const COL=Object.freeze({
         setPracticeViewMode('list');
       });
     };
+    const refreshExternalPractice=async(options={})=>{
+      if(practiceScreen.hidden||!activePracticeAdapter())return;
+      const previousIndex=practiceIndex;
+      const stored=await getPracticeSourceData();
+      let rows=getMatchingRows(stored?.rows||[]);
+      if(practiceButton.dataset.order==='random')rows=shuffleRows(rows);
+      const limit=practiceButton.dataset.questionLimit==='all'?rows.length:Number(practiceButton.dataset.questionLimit);
+      practiceStored=stored||{headers:[...EXPECTED_HEADERS],rows:[],vocabularyRows:[],fileName:'未読込',modified:true};
+      restoreVocabularyRows(practiceStored);
+      practiceRows=rows.slice(0,limit);
+      const preferredNumber=text(options.preferredNumber);
+      const preferredIndex=preferredNumber?practiceRows.findIndex(row=>text(row[COL.wordNo])===preferredNumber):-1;
+      setPracticeIndex(preferredIndex>=0?preferredIndex:Math.min(previousIndex,Math.max(0,practiceRows.length-1)));
+      setAnswerVisible(false);
+      if(options.view==='list'||!practiceRows.length)setPracticeViewMode('list');
+      else if(practiceViewMode==='card')renderPracticeQuestion();
+      renderPracticeList();
+    };
+    window.flovoPracticeBridge={refresh:refreshExternalPractice};
     const closePractice=async()=>{
       if(screenTransitionBusy)return;
       if(practiceFilterOpen)await cancelPracticeFilter();

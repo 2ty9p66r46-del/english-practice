@@ -1452,7 +1452,9 @@ body[data-practice-module="phrase-bank"] #practiceList .practice-list-card-badge
 body[data-practice-module="phrase-bank"] #practiceList .practice-list-levels{display:none!important}
 body[data-practice-module="phrase-bank"] #practiceFilterOverlay [data-filter-section="word"],
 body[data-practice-module="phrase-bank"] #practiceFilterOverlay [data-filter-section="part"]{display:none!important}
-body[data-practice-module="phrase-bank"] .practice-info-primary>#practiceNoteButton{margin-left:auto}
+body[data-practice-module="phrase-bank"] .practice-info-primary>#practiceNoteButton{display:flex;width:24px;height:24px;min-width:24px;min-height:24px;flex:0 0 24px;align-items:center;justify-content:center;margin-left:auto;padding:0;border:1.5px solid #efc14d;border-radius:50%;background:#fff8d7;color:#9a6700;opacity:1}
+body[data-practice-module="phrase-bank"] .practice-info-primary>#practiceNoteButton svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+html[data-theme="dark"] body[data-practice-module="phrase-bank"] .practice-info-primary>#practiceNoteButton{border-color:#8c712d;background:#3a321d;color:#ffd96d}
 body[data-practice-module="phrase-bank"] #practiceWordCopy,
 body[data-practice-module="phrase-bank"] .practice-meaning-column{display:none!important}
 body[data-practice-module="phrase-bank"] #practiceMeaningExampleNumber,
@@ -1480,7 +1482,7 @@ body[data-practice-module="phrase-bank"] #practiceWord{font-size:.9rem!important
 .phrase-category-field>div:first-child button{min-height:32px;padding:0 10px;border:1px solid #9bc9f7;border-radius:10px;background:#eef7ff;color:var(--blue);font-size:.66rem;font-weight:850}
 .phrase-category-field>p,.phrase-category-help{margin:0;color:#7b8798;font-size:.63rem;line-height:1.45}
 #phraseCategoryChoices{display:grid;gap:5px}
-.phrase-category-choice{display:grid;grid-template-columns:23px 23px minmax(0,1fr);align-items:center;gap:6px;min-height:34px;padding:3px 8px 3px calc(8px + var(--depth)*18px);border-radius:10px;background:#fff;color:#26364d;font-size:.74rem;font-weight:750}
+.phrase-category-choice{display:grid;grid-template-columns:23px minmax(0,1fr);align-items:center;gap:8px;min-height:42px;padding:3px 10px 3px calc(10px + var(--depth)*18px);border-radius:12px;background:#fff;color:#26364d;font-size:.78rem;font-weight:750}
 .phrase-category-choice input{width:18px;height:18px;margin:0;accent-color:var(--blue)}
 .phrase-category-empty{margin:0;padding:18px;color:#8793a5;text-align:center;font-size:.7rem}
 .phrase-data-error{margin:0;color:#d92d45;font-size:.68rem;font-weight:750}
