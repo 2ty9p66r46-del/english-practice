@@ -1506,6 +1506,10 @@ html[data-theme="dark"] body[data-practice-module="phrase-bank"] #practiceWord{b
 .phrase-data-error{margin:0;color:#d92d45;font-size:.68rem;font-weight:750}
 .phrase-data-success{margin:0;color:#16834a;font-size:.7rem;font-weight:850;text-align:center}
 html[data-theme="dark"] .phrase-data-success{color:#6ed39b}
+.phrase-added-toast{position:fixed;z-index:600;right:16px;bottom:calc(20px + env(safe-area-inset-bottom));left:16px;width:max-content;max-width:calc(100vw - 48px);margin:0 auto;padding:12px 20px;border:1px solid #0876ee;border-radius:999px;background:#0876ee;color:#fff;box-shadow:0 8px 24px #11182735;font-size:.78rem;font-weight:850;text-align:center;opacity:0;transform:translateY(8px);transition:opacity 240ms ease,transform 240ms ease;pointer-events:none}
+.phrase-added-toast[hidden]{display:none}
+.phrase-added-toast.is-visible{opacity:1;transform:translateY(0)}
+@media(prefers-reduced-motion:reduce){.phrase-added-toast{transition-duration:1ms}}
 .phrase-data-delete{min-height:42px;border:1px solid #efb2b9;border-radius:12px;background:#fff4f5;color:#c93645;font-size:.72rem;font-weight:850}
 .phrase-root-add{display:grid;grid-template-columns:minmax(0,1fr) 64px;gap:7px;margin-bottom:8px}
 .phrase-root-add input,.phrase-category-manager-row input{min-width:0;height:38px;padding:0 10px;border:1px solid #d7dee8;border-radius:10px;background:#fff;color:#182230;font-size:.76rem;font-weight:700;outline:none}
