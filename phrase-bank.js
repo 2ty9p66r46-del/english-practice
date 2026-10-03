@@ -157,7 +157,7 @@
   });
   const phraseMatchesFilter=row=>{
     const phrase=rowPhraseObjects.get(row)||phraseByNumber(row?.[0]);if(!phrase)return false;
-    if(phraseFilterCategoryIds.size&&!categoryPathNodes(phrase.primaryCategoryId).some(node=>phraseFilterCategoryIds.has(node.id)))return false;
+    if(phraseFilterCategoryIds.size&&!phraseFilterCategoryIds.has(phrase.primaryCategoryId))return false;
     if(phraseFilterTagNames.size&&!phrase.tags?.some(tag=>[...phraseFilterTagNames].some(selected=>selected.toLocaleLowerCase('ja')===tag.toLocaleLowerCase('ja'))))return false;
     return true;
   };
