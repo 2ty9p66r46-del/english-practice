@@ -1768,3 +1768,7 @@ html[data-theme="dark"] .phrase-category-tree-toggle:hover{background:#29384a;co
 
 /* Ensure collapsed category rows are hidden despite their grid display. */
 .phrase-category-tree-node[hidden],.phrase-category-tree-extra[hidden]{display:none!important}
+
+/* Align nested category draft rows with the category row's label column. */
+.phrase-category-tree-extra{display:grid;grid-template-columns:28px minmax(0,1fr);gap:4px}
+.phrase-category-tree-extra::before{display:block;content:''}
