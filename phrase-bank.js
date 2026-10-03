@@ -111,6 +111,7 @@
     const selectedRoot=categoryPathNodes(item.id)[0];
     childrenOf(null).filter(root=>root.id!==selectedRoot?.id).forEach(root=>{editorCategoryIds.delete(root.id);descendantIds(root.id).forEach(id=>editorCategoryIds.delete(id))});
     if(item.parentId!=null)childrenOf(item.parentId).filter(sibling=>sibling.id!==item.id).forEach(sibling=>{editorCategoryIds.delete(sibling.id);descendantIds(sibling.id).forEach(id=>editorCategoryIds.delete(id))});
+    descendantIds(item.id).forEach(id=>editorCategoryIds.delete(id));
     categoryPathNodes(item.id).forEach(node=>editorCategoryIds.add(node.id));pickEditorPrimary(item.id);
   };
   const normalizeEditorCategories=()=>{
