@@ -129,11 +129,42 @@
   const phraseNumber=phrase=>`${categoryCode(phrase.primaryCategoryId)}-${String(Math.max(1,phraseSequence(phrase))).padStart(3,'0')}`;
   const phraseByNumber=value=>data.phrases.find(item=>phraseNumber(item)===String(value).replace(/^No\s*/i,''));
   const flattenCategories=()=>{const result=[];const visit=(parentId,depth)=>childrenOf(parentId).forEach(item=>{result.push({item,depth});visit(item.id,depth+1)});visit(null,0);return result};
+  const categoryExpansionByView=new Map();
+  const expandedCategoriesFor=view=>{if(!categoryExpansionByView.has(view))categoryExpansionByView.set(view,new Set());return categoryExpansionByView.get(view)};
+  const renderCategoryTree=(container,view,renderRow,renderExtra)=>{
+    container.replaceChildren();
+    const expanded=expandedCategoriesFor(view),entries=[],extras=[];
+    const updateVisibility=()=>{
+      entries.forEach(({item,node,toggle})=>{
+        const ancestors=categoryPathNodes(item.id).slice(0,-1);
+        node.hidden=ancestors.some(parent=>!expanded.has(parent.id));
+        if(toggle){const open=expanded.has(item.id);toggle.textContent=open?'⌄':'›';toggle.setAttribute('aria-expanded',String(open));toggle.setAttribute('aria-label',`「${item.name}」を${open?'折りたたむ':'展開'}`)}
+      });
+      extras.forEach(({parentId,node})=>{node.hidden=categoryPathNodes(parentId).some(parent=>!expanded.has(parent.id))});
+    };
+    flattenCategories().forEach(({item,depth})=>{
+      const node=document.createElement('div');node.className='phrase-category-tree-node';node.style.setProperty('--depth',depth);
+      const hasChildren=childrenOf(item.id).length>0;
+      let toggle=null;
+      if(hasChildren){toggle=document.createElement('button');toggle.type='button';toggle.className='phrase-category-tree-toggle';toggle.addEventListener('click',()=>{if(expanded.has(item.id))expanded.delete(item.id);else expanded.add(item.id);updateVisibility()})}
+      else{toggle=document.createElement('span');toggle.className='phrase-category-tree-spacer';toggle.setAttribute('aria-hidden','true')}
+      const row=renderRow(item,depth);node.append(toggle,row);container.append(node);entries.push({item,node,toggle:hasChildren?toggle:null});
+      if(renderExtra){const extra=renderExtra(item,depth);if(extra){extra.style?.removeProperty('--depth');const extraNode=document.createElement('div');extraNode.className='phrase-category-tree-extra';extraNode.style.setProperty('--depth',depth+1);extraNode.append(extra);container.append(extraNode);extras.push({parentId:item.id,node:extraNode})}}
+    });
+    updateVisibility();
+  };
   const ensureCategoryPath=path=>{let parentId=null,found=null;for(const name of String(path||'').split('>').map(normalize).filter(Boolean)){found=childrenOf(parentId).find(item=>item.name.toLocaleLowerCase('ja')===name.toLocaleLowerCase('ja'));if(!found){found={id:data.nextCategoryId++,parentId,name,order:childrenOf(parentId).length+1};data.categories.push(found)}parentId=found.id}return found?.id||null};
   const renderPhraseHierarchyFilter=()=>{
     phraseFilterCategoryIds=new Set([...phraseFilterCategoryIds].filter(id=>categoryById(id)));
-    const container=phraseHierarchyFilter.querySelector('#phraseHierarchyFilterChoices');container.replaceChildren();
-    flattenCategories().forEach(({item,depth})=>{const choice=document.createElement('button');choice.type='button';choice.className='phrase-hierarchy-filter-choice';choice.style.setProperty('--depth',depth);const selected=phraseFilterCategoryIds.has(item.id);choice.classList.toggle('selected',selected);choice.setAttribute('aria-pressed',String(selected));choice.setAttribute('aria-label',item.name+'で絞り込む');choice.textContent=item.name;choice.addEventListener('click',()=>{const ids=[item.id,...descendantIds(item.id)];if(phraseFilterCategoryIds.has(item.id))ids.forEach(id=>phraseFilterCategoryIds.delete(id));else ids.forEach(id=>phraseFilterCategoryIds.add(id));renderPhraseHierarchyFilter();window.flovoPracticeBridge?.refreshFilterCount?.()});container.append(choice)});
+    const container=phraseHierarchyFilter.querySelector('#phraseHierarchyFilterChoices');
+    const expanded=expandedCategoriesFor('filter');
+    [...phraseFilterCategoryIds].forEach(id=>{const path=categoryPathNodes(id);for(let index=0;index<path.length-1;index++){if(phraseFilterCategoryIds.has(path[index].id))break;expanded.add(path[index].id)}});
+    renderCategoryTree(container,'filter',item=>{
+      const choice=document.createElement('button');choice.type='button';choice.className='phrase-hierarchy-filter-choice';
+      const selected=phraseFilterCategoryIds.has(item.id);choice.classList.toggle('selected',selected);choice.setAttribute('aria-pressed',String(selected));choice.setAttribute('aria-label',item.name+'で絞り込む');choice.textContent=item.name;
+      choice.addEventListener('click',()=>{const ids=[item.id,...descendantIds(item.id)];if(phraseFilterCategoryIds.has(item.id))ids.forEach(id=>phraseFilterCategoryIds.delete(id));else ids.forEach(id=>phraseFilterCategoryIds.add(id));renderPhraseHierarchyFilter();window.flovoPracticeBridge?.refreshFilterCount?.()});
+      return choice;
+    });
     const action=phraseHierarchyFilter.querySelector('#phraseHierarchyFilterAction'),allIds=flattenCategories().map(({item})=>item.id),active=allIds.length>0&&allIds.every(id=>phraseFilterCategoryIds.has(id));action.textContent='すべて選択';action.classList.toggle('selected',active);action.setAttribute('aria-pressed',String(active));
   };
   const allPhraseTags=()=>[...new Map((data.tags||[]).map(normalize).filter(Boolean).map(tag=>[tag.toLocaleLowerCase('ja'),tag])).values()];
@@ -220,8 +251,11 @@
   const showPhraseAddedToast=()=>{clearTimeout(phraseSaveMessageTimer);phraseAddedToast.hidden=false;phraseAddedToast.classList.remove('is-visible');requestAnimationFrame(()=>phraseAddedToast.classList.add('is-visible'));phraseSaveMessageTimer=setTimeout(()=>{phraseAddedToast.classList.remove('is-visible');phraseSaveMessageTimer=setTimeout(()=>{phraseAddedToast.hidden=true},280)},2400)};
 
   const renderCategoryChoices=()=>{
-    const container=$('#phraseCategoryChoices');container.replaceChildren();const flat=flattenCategories();if(!flat.length){container.innerHTML='<p class="phrase-category-empty">カテゴリ管理からカテゴリを作成してください。</p>';return}
-    flat.forEach(({item,depth})=>{const row=document.createElement('label');row.className='phrase-category-choice';row.style.setProperty('--depth',depth);const check=document.createElement('input');check.type='checkbox';check.checked=editorCategoryIds.has(item.id);check.setAttribute('aria-label',`${categoryPath(item.id)}を設定`);const label=document.createElement('span');label.textContent=item.name;check.addEventListener('change',()=>{toggleEditorCategory(item,check.checked);renderCategoryChoices()});row.append(check,label);container.append(row)});
+    const container=$('#phraseCategoryChoices');if(!flattenCategories().length){container.innerHTML='<p class="phrase-category-empty">カテゴリ管理からカテゴリを作成してください。</p>';return}
+    if(editorPrimaryId)categoryPathNodes(editorPrimaryId).forEach(item=>expandedCategoriesFor('editor').add(item.id));
+    renderCategoryTree(container,'editor',item=>{
+      const row=document.createElement('label');row.className='phrase-category-choice';const check=document.createElement('input');check.type='checkbox';check.checked=editorCategoryIds.has(item.id);check.setAttribute('aria-label',`${categoryPath(item.id)}を設定`);const label=document.createElement('span');label.textContent=item.name;check.addEventListener('change',()=>{toggleEditorCategory(item,check.checked);renderCategoryChoices()});row.append(check,label);return row;
+    });
     renderPhraseHierarchyFilter();window.flovoPracticeBridge?.refreshFilterCount?.();
   };
   const renderEditorTags=()=>{const container=$('#phraseTagEditorChoices');if(!container)return;container.replaceChildren();allPhraseTags().forEach(tag=>{const button=document.createElement('button');button.type='button';button.className='phrase-tag-editor-choice';const selected=[...editorTagNames].some(item=>item.toLocaleLowerCase('ja')===tag.toLocaleLowerCase('ja'));button.classList.toggle('selected',selected);button.setAttribute('aria-pressed',String(selected));button.textContent=tag;button.addEventListener('click',()=>{if(selected)editorTagNames=new Set([...editorTagNames].filter(item=>item.toLocaleLowerCase('ja')!==tag.toLocaleLowerCase('ja')));else editorTagNames.add(tag);renderEditorTags()});container.append(button)})};
@@ -257,26 +291,29 @@
   };
 
   const renderCategoryManager=()=>{
-    const container=$('#phraseCategoryManager');container.replaceChildren();const flat=flattenCategories();
-    flat.forEach(({item,depth})=>{
-      const fixed=isUncategorized(item),row=document.createElement('div');row.className='phrase-category-manager-row';row.style.setProperty('--depth',depth);
+    const container=$('#phraseCategoryManager');
+    renderCategoryTree(container,'manager',item=>{
+      const fixed=isUncategorized(item),row=document.createElement('div');row.className='phrase-category-manager-row';
       const code=document.createElement('b');code.textContent=categoryCode(item.id);
       const input=document.createElement('input');input.value=item.name;input.maxLength=30;input.disabled=fixed;input.setAttribute('aria-label',`${item.name}の名前`);
       const save=document.createElement('button');save.type='button';save.textContent=fixed?'固定':'変更';save.disabled=fixed;
       save.addEventListener('click',async()=>{const next=normalize(input.value);if(!next||/[>|]/.test(next)){alert('カテゴリ名に「>」「|」は使えません。');return}if(next===UNCATEGORIZED_NAME){alert('「未分類」は固定階層名です。');return}if(childrenOf(item.parentId).some(candidate=>candidate.id!==item.id&&candidate.name.toLocaleLowerCase('ja')===next.toLocaleLowerCase('ja'))){alert('同じ階層に同名のカテゴリがあります。');return}item.name=next;await writeStore();renderCategoryManager();renderCategoryChoices()});
       const add=document.createElement('button');add.type='button';add.textContent='＋';add.disabled=fixed;add.setAttribute('aria-label',fixed?'未分類には子階層を追加できません':`${item.name}に子階層を追加`);
-      add.addEventListener('click',()=>{categoryDraftParentId=item.id;renderCategoryManager()});
+      add.addEventListener('click',()=>{categoryDraftParentId=item.id;expandedCategoriesFor('manager').add(item.id);renderCategoryManager()});
       const up=document.createElement('button');up.type='button';up.textContent='↑';up.disabled=fixed;up.setAttribute('aria-label',fixed?'未分類は固定階層のため移動できません':`${item.name}を上へ`);up.addEventListener('click',async()=>{const siblings=childrenOf(item.parentId),index=siblings.findIndex(candidate=>candidate.id===item.id);if(index<1)return;const previous=siblings[index-1],order=item.order;item.order=previous.order;previous.order=order;await writeStore();renderCategoryManager();renderCategoryChoices()});
       const remove=document.createElement('button');remove.type='button';remove.textContent='削除';remove.disabled=fixed;remove.setAttribute('aria-label',fixed?'未分類は削除できません':`${item.name}を削除`);
-      remove.addEventListener('click',async()=>{const ids=new Set([item.id,...descendantIds(item.id)]),affected=data.phrases.filter(phrase=>ids.has(phrase.primaryCategoryId)||phrase.categoryIds.some(id=>ids.has(id)));if(!confirm(`「${item.name}」と配下の階層を削除しますか？${affected.length?`\n含まれるフレーズ ${affected.length}件は「未分類」へ移動します。`:''}`))return;const uncategorized=ensureUncategorizedCategory();affected.forEach(phrase=>{phrase.primaryCategoryId=uncategorized.id;phrase.categoryIds=[uncategorized.id]});if(affected.some(phrase=>phrase.id===editorPhraseId)){editorPrimaryId=uncategorized.id;editorCategoryIds=new Set([uncategorized.id])}data.categories=data.categories.filter(candidate=>!ids.has(candidate.id));await writeStore();renderCategoryManager();renderCategoryChoices();await refreshLivePractice()});
-      row.append(code,input,save,add,up,remove);container.append(row);if(categoryDraftParentId===item.id)appendCategoryDraft(container,item.id,depth+1);
+      remove.addEventListener('click',async()=>{const ids=new Set([item.id,...descendantIds(item.id)]),affected=data.phrases.filter(phrase=>ids.has(phrase.primaryCategoryId)||phrase.categoryIds.some(id=>ids.has(id)));if(!confirm(`「${item.name}」と配下の階層を削除しますか？${affected.length?`\n含まれるフレーズ ${affected.length}件は「未分類」へ移動します。`:''}`))return;const uncategorized=ensureUncategorizedCategory();affected.forEach(phrase=>{phrase.primaryCategoryId=uncategorized.id;phrase.categoryIds=[uncategorized.id]});if(affected.some(phrase=>phrase.id===editorPhraseId)){editorPrimaryId=uncategorized.id;editorCategoryIds=new Set([uncategorized.id])}data.categories=data.categories.filter(candidate=>!ids.has(candidate.id));expandedCategoriesFor('manager').forEach(id=>{if(ids.has(id))expandedCategoriesFor('manager').delete(id)});await writeStore();renderCategoryManager();renderCategoryChoices();await refreshLivePractice()});
+      row.append(code,input,save,add,up,remove);return row;
+    },(item,depth)=>{
+      if(categoryDraftParentId!==item.id)return null;
+      const holder=document.createElement('div');appendCategoryDraft(holder,item.id,depth+1);return holder.firstElementChild;
     });
     if(categoryDraftParentId===null)appendCategoryDraft(container,null,0);
     const addRoot=document.createElement('button');addRoot.type='button';addRoot.className='phrase-category-add-root';addRoot.textContent='＋ 親階層を追加';addRoot.addEventListener('click',()=>{categoryDraftParentId=null;renderCategoryManager()});container.append(addRoot);
   };
   const openManager=()=>{categoryDraftParentId=undefined;renderCategoryManager();bindPhraseBottomSheetGrab(manager,closeManager);openPhraseBottomSheet(manager)};
   const closeManager=async()=>{categoryDraftParentId=undefined;await closePhraseBottomSheet(manager);renderCategoryChoices();await refreshLivePractice()};
-    const renderPhraseSortCategories=()=>{const c=$('#phraseSortCategories');c.replaceChildren();flattenCategories().forEach(({item,depth})=>{const row=document.createElement('label');row.className='phrase-sort-category';row.style.setProperty('--depth',depth);const radio=document.createElement('input');radio.type='radio';radio.name='phraseSortCategory';radio.value=String(item.id);radio.setAttribute('aria-label',categoryPath(item.id));const label=document.createElement('span');label.textContent=categoryPath(item.id);radio.addEventListener('change',()=>selectPhraseSortCategory(item.id));row.append(radio,label);c.append(row)})};
+    const renderPhraseSortCategories=()=>{const c=$('#phraseSortCategories');renderCategoryTree(c,'sort',item=>{const row=document.createElement('label');row.className='phrase-sort-category';const radio=document.createElement('input');radio.type='radio';radio.name='phraseSortCategory';radio.value=String(item.id);radio.setAttribute('aria-label',categoryPath(item.id));const label=document.createElement('span');label.textContent=item.name;radio.addEventListener('change',()=>selectPhraseSortCategory(item.id));row.append(radio,label);return row})};
   const renderPhraseSortItems=()=>{const c=$('#phraseSortItems');c.replaceChildren();const category=categoryById(phraseSortCategoryId);if(!category)return;$('#phraseSortCategoryName').textContent=categoryPath(category.id);if(!phraseSortDraftIds.length){const p=document.createElement('p');p.className='phrase-sort-empty';p.textContent='このカテゴリにはフレーズがありません。';c.append(p)}phraseSortDraftIds.forEach((id,i)=>{const phrase=data.phrases.find(x=>x.id===id);if(!phrase)return;const row=document.createElement('article');row.className='phrase-sort-row';const no=document.createElement('span');no.className='phrase-sort-number';no.textContent=categoryCode(category.id)+'-'+String(i+1).padStart(3,'0');const copy=document.createElement('div');copy.className='phrase-sort-copy';const ja=document.createElement('strong');ja.textContent=phrase.japanese||'（日本語未登録）';const en=document.createElement('span');en.textContent=phrase.english||'（英語未登録）';copy.append(ja,en);const actions=document.createElement('div');actions.className='phrase-sort-row-actions';const up=document.createElement('button');up.type='button';up.textContent='↑';up.disabled=i===0;up.setAttribute('aria-label',(i+1)+'番目のフレーズを上へ移動');const down=document.createElement('button');down.type='button';down.textContent='↓';down.disabled=i===phraseSortDraftIds.length-1;down.setAttribute('aria-label',(i+1)+'番目のフレーズを下へ移動');const move=(from,to)=>{if(to<0||to>=phraseSortDraftIds.length)return;const next=phraseSortDraftIds.slice();[next[from],next[to]]=[next[to],next[from]];phraseSortDraftIds=next;phraseSortDirty=next.some((value,index)=>value!==phraseSortOriginalIds[index]);$('#phraseSortSave').disabled=!phraseSortDirty;renderPhraseSortItems()};up.addEventListener('click',()=>move(i,i-1));down.addEventListener('click',()=>move(i,i+1));actions.append(up,down);row.append(no,copy,actions);c.append(row)})};
   const selectPhraseSortCategory=id=>{if(phraseSortDirty&&!confirm('保存していない並び替えがあります。破棄してカテゴリを選び直しますか？')){const current=document.querySelector('#phraseSortCategories input[value="'+phraseSortCategoryId+'"]');if(current)current.checked=true;return}phraseSortCategoryId=id;phraseSortDraftIds=data.phrases.filter(x=>x.primaryCategoryId===id).sort((a,b)=>a.order-b.order||a.id-b.id).map(x=>x.id);phraseSortOriginalIds=phraseSortDraftIds.slice();phraseSortDirty=false;$('#phraseSortSave').disabled=true;$('#phraseSortCategoryPicker').hidden=true;$('#phraseSortContent').hidden=false;renderPhraseSortItems()};
   const choosePhraseSortCategory=()=>{if(phraseSortDirty&&!confirm('保存していない並び替えがあります。破棄してカテゴリを選び直しますか？'))return;phraseSortDirty=false;phraseSortCategoryId=null;phraseSortDraftIds=[];phraseSortOriginalIds=[];$('#phraseSortSave').disabled=true;$('#phraseSortContent').hidden=true;$('#phraseSortCategoryPicker').hidden=false;renderPhraseSortCategories()};
@@ -321,8 +358,10 @@
   const toggleBulkRow=row=>{if(isPhraseBulkMode()){const id=phraseIdForRow(row);if(!id)return;if(phraseBulkSelectedIds.has(id))phraseBulkSelectedIds.delete(id);else phraseBulkSelectedIds.add(id)}else{const source=activeSourceForRow(row);if(!source)return;if(activeBulkSelectedRows.has(source))activeBulkSelectedRows.delete(source);else activeBulkSelectedRows.add(source)}syncBulkRowVisual(row);updateBulkUi(false)};
   const renderBulkDestinations=()=>{
     phraseBulkMoveCategoryId=null;bulkMove.querySelector('.phrase-bulk-move-summary').textContent=`選択した${phraseBulkSelectedIds.size}件を移動します。`;
-    const container=bulkMove.querySelector('.phrase-bulk-destinations');container.replaceChildren();
-    flattenCategories().forEach(({item,depth})=>{const row=document.createElement('label');row.className='phrase-bulk-destination';row.style.setProperty('--depth',depth);const radio=document.createElement('input');radio.type='radio';radio.name='phraseBulkDestination';radio.value=String(item.id);const copy=document.createElement('span');copy.innerHTML=`<b>${categoryCode(item.id)}</b><span></span>`;copy.lastElementChild.textContent=item.name;radio.addEventListener('change',()=>{phraseBulkMoveCategoryId=item.id;bulkMove.querySelector('.phrase-bulk-move-save').disabled=false});row.append(radio,copy);container.append(row)});
+    const container=bulkMove.querySelector('.phrase-bulk-destinations');
+    renderCategoryTree(container,'move',item=>{
+      const row=document.createElement('label');row.className='phrase-bulk-destination';const radio=document.createElement('input');radio.type='radio';radio.name='phraseBulkDestination';radio.value=String(item.id);const copy=document.createElement('span');copy.innerHTML=`<b>${categoryCode(item.id)}</b><span></span>`;copy.lastElementChild.textContent=item.name;radio.addEventListener('change',()=>{phraseBulkMoveCategoryId=item.id;bulkMove.querySelector('.phrase-bulk-move-save').disabled=false});row.append(radio,copy);return row;
+    });
     bulkMove.querySelector('.phrase-bulk-move-save').disabled=true;
   };
   const openBulkMove=()=>{if(!phraseBulkSelectedIds.size)return;renderBulkDestinations();bulkMove.hidden=false};
