@@ -1754,3 +1754,14 @@ html[data-theme="dark"] .phrase-tag-manager-row input{border-color:#405065;backg
 html[data-theme="dark"] .phrase-tag-manager-row button:not(:last-child){border-color:#426b91;background:#15283a;color:#72baff}
 html[data-theme="dark"] .phrase-tag-manager-row button:last-child{border-color:#70414a;background:#3a2027;color:#ff8997}
 @media(max-width:430px){.phrase-tag-manager-row{grid-template-columns:minmax(0,1fr) 29px 38px 27px 27px 42px;gap:3px;padding:5px}.phrase-tag-manager-row input{height:34px;padding:0 6px;font-size:.65rem}.phrase-tag-manager-row button{padding:0 2px;font-size:.56rem}}
+
+/* Collapsible category trees shared by the phrase bank sheets */
+.phrase-category-tree-node{display:grid;grid-template-columns:28px minmax(0,1fr);align-items:center;gap:4px;min-width:0;margin-left:calc(var(--depth)*14px)}
+.phrase-category-tree-extra{min-width:0;margin-left:calc(var(--depth)*14px)}
+.phrase-category-tree-toggle,.phrase-category-tree-spacer{display:flex;width:28px;height:34px;align-items:center;justify-content:center}
+.phrase-category-tree-toggle{padding:0;border:0;border-radius:9px;background:transparent;color:#66758a;font-size:1.25rem;font-weight:800;line-height:1}
+.phrase-category-tree-toggle:hover{background:#eaf2fb;color:var(--blue)}
+.phrase-category-tree-node>.phrase-hierarchy-filter-choice,.phrase-category-tree-node>.phrase-category-choice,.phrase-category-tree-node>.phrase-sort-category,.phrase-category-tree-node>.phrase-bulk-destination{width:100%;padding-left:10px}
+.phrase-category-tree-node>.phrase-category-manager-row{width:100%;padding-left:7px}
+html[data-theme="dark"] .phrase-category-tree-toggle{color:#b5c0cf}
+html[data-theme="dark"] .phrase-category-tree-toggle:hover{background:#29384a;color:#8dc5ff}
