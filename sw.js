@@ -1,5 +1,5 @@
-const CACHE='flovo-v570';
-const ASSETS=['./','./index.html','./styles.css?v=570','./app.js?v=564','./phrase-bank.js?v=568','./xlsx.full.min.js','./manifest.webmanifest','./icon.svg','./flovo-wordmark-v3.png','./Import-data_format.xlsx'];
+const CACHE='flovo-v571';
+const ASSETS=['./','./index.html','./styles.css?v=570','./app.js?v=564','./phrase-bank.js?v=570','./xlsx.full.min.js','./manifest.webmanifest','./icon.svg','./flovo-wordmark-v3.png','./Import-data_format.xlsx'];
 self.addEventListener('install',event=>{self.skipWaiting();event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)))});
 self.addEventListener('activate',event=>event.waitUntil(Promise.all([self.clients.claim(),caches.keys().then(keys=>Promise.all(keys.filter(key=>key.startsWith('flovo-')&&key!==CACHE).map(key=>caches.delete(key))))])));
 self.addEventListener('fetch',event=>{if(event.request.method==='GET')event.respondWith(fetch(event.request,{cache:event.request.mode==='navigate'?'no-store':'no-cache'}).then(response=>{const copy=response.clone();caches.open(CACHE).then(cache=>cache.put(event.request,copy));return response}).catch(()=>caches.match(event.request)))});
