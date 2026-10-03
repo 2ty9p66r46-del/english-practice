@@ -337,10 +337,10 @@
       input.addEventListener('input',()=>{item.name=input.value;markCategoryManagerDirty()});
       const add=document.createElement('button');add.type='button';add.textContent='＋';add.disabled=fixed;add.setAttribute('aria-label',fixed?'未分類には子階層を追加できません':`${item.name}に子階層を追加`);
       add.addEventListener('click',()=>{categoryDraftParentId=item.id;expandedCategoriesFor('manager').add(item.id);renderCategoryManager()});
-      const up=document.createElement('button');up.type='button';up.textContent='↑';up.disabled=fixed;up.setAttribute('aria-label',fixed?'未分類は固定階層のため移動できません':`${item.name}を上へ`);up.addEventListener('click',()=>{const siblings=childrenOf(item.parentId),index=siblings.findIndex(candidate=>candidate.id===item.id);if(index<1)return;const previous=siblings[index-1],order=item.order;item.order=previous.order;previous.order=order;markCategoryManagerDirty();renderCategoryManager()});
+      const siblings=childrenOf(item.parentId),siblingIndex=siblings.findIndex(candidate=>candidate.id===item.id);const up=document.createElement('button');up.type='button';up.textContent='↑';up.disabled=fixed||siblingIndex<=0||isUncategorized(siblings[siblingIndex-1]);up.setAttribute('aria-label',fixed?'未分類は固定階層のため移動できません':`${item.name}を上へ`);const down=document.createElement('button');down.type='button';down.textContent='↓';down.disabled=fixed||siblingIndex<0||siblingIndex>=siblings.length-1||isUncategorized(siblings[siblingIndex+1]);down.setAttribute('aria-label',fixed?'未分類は固定階層のため移動できません':`${item.name}を下へ`);const moveCategory=delta=>{const current=childrenOf(item.parentId),index=current.findIndex(candidate=>candidate.id===item.id),target=current[index+delta];if(index<0||!target||fixed||isUncategorized(target))return;const order=item.order;item.order=target.order;target.order=order;markCategoryManagerDirty();renderCategoryManager()};up.addEventListener('click',()=>moveCategory(-1));down.addEventListener('click',()=>moveCategory(1));
       const remove=document.createElement('button');remove.type='button';remove.textContent='削除';remove.disabled=fixed;remove.setAttribute('aria-label',fixed?'未分類は削除できません':`${item.name}を削除`);
       remove.addEventListener('click',()=>{const ids=new Set([item.id,...descendantIds(item.id)]),affected=data.phrases.filter(phrase=>ids.has(phrase.primaryCategoryId)||phrase.categoryIds.some(id=>ids.has(id)));if(!confirm(`「${item.name}」と配下の階層を削除しますか？${affected.length?`\n含まれるフレーズ ${affected.length}件は保存時に「未分類」へ移動します。`:''}`))return;data.categories=data.categories.filter(candidate=>!ids.has(candidate.id));expandedCategoriesFor('manager').forEach(id=>{if(ids.has(id))expandedCategoriesFor('manager').delete(id)});categoryDraftParentId=undefined;markCategoryManagerDirty();renderCategoryManager()});
-      row.append(code,input,add,up,remove);return row;
+      row.append(code,input,add,up,down,remove);return row;
     },(item,depth)=>{
       if(categoryDraftParentId!==item.id)return null;
       const holder=document.createElement('div');appendCategoryDraft(holder,item.id,depth+1);return holder.firstElementChild;
@@ -369,9 +369,9 @@
     await writeStore();categoryManagerSnapshot=null;categoryManagerDirty=false;categoryDraftParentId=undefined;
     await closePhraseBottomSheet(manager);renderCategoryChoices();await refreshLivePractice();
   };
-  const openManager=()=>{categoryDraftParentId=undefined;categoryManagerSnapshot={categories:data.categories.map(item=>({...item})),nextCategoryId:data.nextCategoryId};categoryManagerDirty=false;renderCategoryManager();bindPhraseBottomSheetGrab(manager,closeManager);openPhraseBottomSheet(manager)};
-  const closeManager=async()=>{
-    if(categoryManagerDirty&&!confirm('保存していない変更を破棄しますか？'))return;
+  const openManager=()=>{categoryDraftParentId=undefined;categoryManagerSnapshot={categories:data.categories.map(item=>({...item})),nextCategoryId:data.nextCategoryId};categoryManagerDirty=false;renderCategoryManager();bindPhraseBottomSheetGrab(manager,()=>closeManager(true));openPhraseBottomSheet(manager)};
+  const closeManager=async(skipConfirmation=false)=>{
+    if(categoryManagerDirty&&!skipConfirmation&&!confirm('保存していない変更を破棄しますか？'))return;
     if(categoryManagerDirty&&categoryManagerSnapshot){data.categories=categoryManagerSnapshot.categories.map(item=>({...item}));data.nextCategoryId=categoryManagerSnapshot.nextCategoryId}
     categoryManagerSnapshot=null;categoryManagerDirty=false;categoryDraftParentId=undefined;
     await closePhraseBottomSheet(manager);renderCategoryChoices();await refreshLivePractice();
