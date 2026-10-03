@@ -153,7 +153,12 @@
       if(hasChildren){toggle=document.createElement('button');toggle.type='button';toggle.className='phrase-category-tree-toggle';toggle.addEventListener('click',()=>{if(expanded.has(item.id))expanded.delete(item.id);else expanded.add(item.id);updateVisibility()})}
       else{toggle=document.createElement('span');toggle.className='phrase-category-tree-spacer';toggle.setAttribute('aria-hidden','true')}
       const row=renderRow(item,depth);node.append(toggle,row);container.append(node);entries.push({item,node,toggle:hasChildren?toggle:null});
-      if(renderExtra){const extra=renderExtra(item,depth);if(extra){extra.style?.removeProperty('--depth');const extraNode=document.createElement('div');extraNode.className='phrase-category-tree-extra';extraNode.style.setProperty('--depth',depth+1);extraNode.append(extra);container.append(extraNode);extras.push({parentId:item.id,node:extraNode})}}
+      if(renderExtra){const extra=renderExtra(item,depth);if(extra){extra.style?.removeProperty('--depth');const extraNode=document.createElement('div');extraNode.className='phrase-category-tree-extra';extraNode.style.setProperty('--depth',depth+1);extraNode.append(extra);extras.push({parentId:item.id,node:extraNode})}}
+    });
+    extras.forEach(({parentId,node})=>{
+      const descendants=entries.filter(({item})=>categoryPathNodes(item.id).slice(0,-1).some(parent=>parent.id===parentId));
+      const anchor=descendants[descendants.length-1]?.node||entries.find(({item})=>item.id===parentId)?.node;
+      if(anchor?.nextSibling)container.insertBefore(node,anchor.nextSibling);else container.append(node);
     });
     updateVisibility();
   };
@@ -164,10 +169,10 @@
     const expanded=expandedCategoriesFor('filter');
     [...phraseFilterCategoryIds].forEach(id=>{const path=categoryPathNodes(id);for(let index=0;index<path.length-1;index++){if(phraseFilterCategoryIds.has(path[index].id))break;expanded.add(path[index].id)}});
     renderCategoryTree(container,'filter',item=>{
-      const choice=document.createElement('button');choice.type='button';choice.className='phrase-hierarchy-filter-choice';
-      const selected=phraseFilterCategoryIds.has(item.id);choice.classList.toggle('selected',selected);choice.setAttribute('aria-pressed',String(selected));choice.setAttribute('aria-label',item.name+'で絞り込む');choice.textContent=item.name;
-      choice.addEventListener('click',()=>{const ids=[item.id,...descendantIds(item.id)];if(phraseFilterCategoryIds.has(item.id))ids.forEach(id=>phraseFilterCategoryIds.delete(id));else ids.forEach(id=>phraseFilterCategoryIds.add(id));renderPhraseHierarchyFilter();window.flovoPracticeBridge?.refreshFilterCount?.()});
-      return choice;
+      const choice=document.createElement('label');choice.className='phrase-category-choice phrase-hierarchy-filter-choice';
+      const checkbox=document.createElement('input');checkbox.type='checkbox';const selected=phraseFilterCategoryIds.has(item.id);checkbox.checked=selected;choice.classList.toggle('selected',selected);checkbox.setAttribute('aria-label',item.name+'で絞り込む');const label=document.createElement('span');label.textContent=item.name;
+      checkbox.addEventListener('change',()=>{const ids=[item.id,...descendantIds(item.id)];if(!checkbox.checked)ids.forEach(id=>phraseFilterCategoryIds.delete(id));else ids.forEach(id=>phraseFilterCategoryIds.add(id));renderPhraseHierarchyFilter();window.flovoPracticeBridge?.refreshFilterCount?.()});
+      choice.append(checkbox,label);return choice;
     });
     const action=phraseHierarchyFilter.querySelector('#phraseHierarchyFilterAction'),allIds=flattenCategories().map(({item})=>item.id),active=allIds.length>0&&allIds.every(id=>phraseFilterCategoryIds.has(id));action.textContent='すべて選択';action.classList.toggle('selected',active);action.setAttribute('aria-pressed',String(active));
   };
