@@ -1783,3 +1783,10 @@ html[data-theme="dark"] .phrase-category-tree-toggle:hover{background:#29384a;co
 .phrase-category-manager-row{grid-template-columns:50px minmax(72px,1fr) 32px 32px auto}
 .phrase-category-manager-row.phrase-category-draft{grid-template-columns:50px minmax(72px,1fr) 50px 50px}
 @media(max-width:430px){.phrase-category-manager-row{grid-template-columns:45px minmax(64px,1fr) 26px 26px 42px}.phrase-category-manager-row.phrase-category-draft{grid-template-columns:45px minmax(64px,1fr) 43px 43px}}
+
+/* Stable count columns and filter button dimensions in selected and idle states. */
+.filter-result-counts>span{display:grid;grid-template-columns:4.5em 12ch;align-items:baseline;gap:9px}
+.filter-result-counts strong{box-sizing:border-box;width:12ch;min-width:12ch;flex:0 0 12ch;justify-content:flex-end}
+.practice-filter-fixed-summary .filter-result-counts>span,.card-filter-sticky-summary .filter-result-counts>span{grid-template-columns:48px 12ch}
+.bulk-filter-button,.section-filter-button,.filter-section .all{border-width:3px}
+.bulk-filter-button.selected,.section-filter-button.selected,.filter-section .all.selected{border-width:3px}
