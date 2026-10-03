@@ -1891,3 +1891,21 @@ html[data-theme="dark"] .phrase-tag-tree-toggle,html[data-theme="dark"] .phrase-
 html[data-theme="dark"] .phrase-tag-folder-tree-actions button{border-color:#405065;background:#202b39;color:#d6e0ef}
 html[data-theme="dark"] .phrase-tag-tree-children{border-left-color:#405065}
 @media(max-width:430px){.phrase-tag-folder-tree-row{grid-template-columns:24px minmax(0,1fr) auto;gap:4px;padding:4px}.phrase-tag-tree-toggle,.phrase-tag-tree-spacer{width:24px}.phrase-tag-folder-tree-actions{gap:3px}.phrase-tag-folder-tree-actions button{font-size:.51rem}}
+
+
+/* Root controls and add rows are placed at their actual folder level. */
+.phrase-tag-tree-root{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:46px;padding:4px 8px;border:1px solid #dfe5ed;border-radius:12px;background:#f8fafc;color:#26364d}
+.phrase-tag-tree-root>strong{font-size:.78rem;font-weight:850}
+.phrase-tag-root-actions{display:flex;align-items:center;gap:7px}
+.phrase-tag-root-actions button{width:36px;height:36px;border:1px solid #c9d7e7;border-radius:9px;background:#fff;font-size:1rem}
+.phrase-tag-inline-add-row{display:grid;grid-template-columns:26px minmax(0,1fr) auto auto;align-items:center;gap:5px;min-height:48px;padding:5px;border:1px solid #84b9e8;border-radius:11px;background:#f3f9ff}
+.phrase-tag-inline-add-row input{min-width:0;width:100%;height:38px;padding:0 9px;border:1px solid #d6deea;border-radius:9px;background:#fff;color:#26364d;font-size:.72rem}
+.phrase-tag-inline-add-row button{min-height:32px;padding:0 10px;border:1px solid #b9d8f5;border-radius:8px;background:#eef7ff;color:var(--blue);font-size:.65rem;font-weight:850}
+.phrase-tag-inline-add-row button:last-child{border-color:#efc2c7;background:#fff3f4;color:#bf3443}
+.phrase-tag-folder-tree-actions button:nth-child(1),.phrase-tag-folder-tree-actions button:nth-child(2){font-size:.9rem}
+html[data-theme="dark"] .phrase-tag-tree-root{border-color:#344153;background:#17202c;color:#eef4ff}
+html[data-theme="dark"] .phrase-tag-root-actions button{border-color:#405065;background:#202b39}
+html[data-theme="dark"] .phrase-tag-inline-add-row{border-color:#426b91;background:#15283a}
+html[data-theme="dark"] .phrase-tag-inline-add-row input{border-color:#405065;background:#121a24;color:#eef4ff}
+html[data-theme="dark"] .phrase-tag-inline-add-row button:not(:last-child){border-color:#426b91;background:#15283a;color:#72baff}
+@media(max-width:430px){.phrase-tag-root-actions button{width:34px;height:34px}.phrase-tag-inline-add-row{grid-template-columns:24px minmax(0,1fr) auto auto;gap:4px;padding:4px}.phrase-tag-inline-add-row button{padding:0 7px;font-size:.6rem}}
