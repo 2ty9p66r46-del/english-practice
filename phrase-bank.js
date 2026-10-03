@@ -300,7 +300,7 @@
       const fixed=isUncategorized(item),row=document.createElement('div');row.className='phrase-category-manager-row';
       const code=document.createElement('b');code.textContent=categoryCode(item.id);
       const input=document.createElement('input');input.value=item.name;input.maxLength=30;input.disabled=fixed;input.setAttribute('aria-label',`${item.name}の名前`);
-      const save=document.createElement('button');save.type='button';save.textContent=fixed?'固定':'変更';save.disabled=fixed;
+      const save=document.createElement('button');save.type='button';save.textContent=fixed?'固定':'保存';save.disabled=fixed;
       save.addEventListener('click',async()=>{const next=normalize(input.value);if(!next||/[>|]/.test(next)){alert('カテゴリ名に「>」「|」は使えません。');return}if(next===UNCATEGORIZED_NAME){alert('「未分類」は固定階層名です。');return}if(childrenOf(item.parentId).some(candidate=>candidate.id!==item.id&&candidate.name.toLocaleLowerCase('ja')===next.toLocaleLowerCase('ja'))){alert('同じ階層に同名のカテゴリがあります。');return}item.name=next;await writeStore();renderCategoryManager();renderCategoryChoices()});
       const add=document.createElement('button');add.type='button';add.textContent='＋';add.disabled=fixed;add.setAttribute('aria-label',fixed?'未分類には子階層を追加できません':`${item.name}に子階層を追加`);
       add.addEventListener('click',()=>{categoryDraftParentId=item.id;expandedCategoriesFor('manager').add(item.id);renderCategoryManager()});
