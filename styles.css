@@ -1765,3 +1765,6 @@ html[data-theme="dark"] .phrase-tag-manager-row button:last-child{border-color:#
 .phrase-category-tree-node>.phrase-category-manager-row{width:100%;padding-left:7px}
 html[data-theme="dark"] .phrase-category-tree-toggle{color:#b5c0cf}
 html[data-theme="dark"] .phrase-category-tree-toggle:hover{background:#29384a;color:#8dc5ff}
+
+/* Ensure collapsed category rows are hidden despite their grid display. */
+.phrase-category-tree-node[hidden],.phrase-category-tree-extra[hidden]{display:none!important}
