@@ -1961,3 +1961,17 @@ html[data-theme="dark"] .phrase-tag-root-actions .phrase-tag-icon-button,html[da
 .phrase-tag-manager-row.phrase-tag-tree-tag button:nth-of-type(3){grid-column:3;grid-row:2}
 .phrase-tag-manager-row.phrase-tag-tree-tag button:nth-of-type(4){grid-column:4;grid-row:2}
 @media(max-width:430px){.phrase-tag-manager-row.phrase-tag-tree-tag{grid-template-columns:minmax(0,1fr) repeat(4,28px);gap:4px;padding:5px}.phrase-tag-manager-row.phrase-tag-tree-tag button:nth-of-type(1){grid-column:1}.phrase-tag-manager-row.phrase-tag-tree-tag button:nth-of-type(2){grid-column:2}.phrase-tag-manager-row.phrase-tag-tree-tag button:nth-of-type(3){grid-column:3}.phrase-tag-manager-row.phrase-tag-tree-tag button:nth-of-type(4){grid-column:4}}
+
+
+/* Align tag and folder row actions at the right with compact, consistent buttons. */
+.phrase-tag-manager-row.phrase-tag-tree-tag{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto;gap:8px}
+.phrase-tag-manager-row.phrase-tag-tree-tag input{grid-column:1;grid-row:1;width:100%}
+.phrase-tag-manager-actions{display:flex;grid-column:1/-1;justify-content:flex-end;align-items:center;gap:6px;width:100%}
+.phrase-tag-manager-actions button{display:inline-flex;flex:0 0 auto;align-items:center;justify-content:center;gap:5px;width:auto;min-width:0;height:32px;min-height:32px;padding:0 10px;border:1px solid #cbd5e1;border-radius:9px;background:#fff;color:#344256;font-family:inherit;font-size:.78rem;font-weight:700;line-height:1;white-space:nowrap}
+.phrase-tag-manager-actions button:disabled{opacity:.4}
+.phrase-tag-manager-actions button svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.phrase-tag-manager-actions button[aria-label$="を変更"],.phrase-tag-folder-tree-actions button[aria-label$="の名前変更"]{width:36px;padding:0}
+.phrase-tag-folder-tree-actions{grid-template-columns:none}
+html[data-theme="dark"] .phrase-tag-manager-actions button{border-color:#465467;background:#202b39;color:#e0e7f0}
+html[data-theme="dark"] .phrase-tag-manager-actions button:disabled{opacity:.4}
+@media(max-width:430px){.phrase-tag-manager-row.phrase-tag-tree-tag{grid-template-columns:minmax(0,1fr);gap:7px}.phrase-tag-manager-actions{gap:5px}.phrase-tag-manager-actions button{height:30px;min-height:30px;padding:0 8px;font-size:.72rem}}
