@@ -1790,3 +1790,6 @@ html[data-theme="dark"] .phrase-category-tree-toggle:hover{background:#29384a;co
 .practice-filter-fixed-summary .filter-result-counts>span,.card-filter-sticky-summary .filter-result-counts>span{grid-template-columns:48px 12ch}
 .bulk-filter-button,.section-filter-button,.filter-section .all{border-width:3px}
 .bulk-filter-button.selected,.section-filter-button.selected,.filter-section .all.selected{border-width:3px}
+
+/* Keep filter category checkbox and name on one compact line. */
+.phrase-category-tree-node>.phrase-hierarchy-filter-choice{grid-template-columns:22px minmax(0,1fr);gap:8px;padding:4px 10px;min-height:39px}
