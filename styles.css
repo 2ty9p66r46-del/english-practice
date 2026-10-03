@@ -1830,3 +1830,39 @@ html[data-theme="dark"] .phrase-category-tree-toggle:hover{background:#29384a;co
 html[data-theme="dark"] .phrase-tag-manager-add select,html[data-theme="dark"] .phrase-tag-folder-select,html[data-theme="dark"] .phrase-tag-manager-row input{border-color:#405065;background:#121a24;color:#eef4ff}
 html[data-theme="dark"] .phrase-tag-folder-row{border-color:#344153;background:#17202c}
 html[data-theme="dark"] .phrase-tag-folder-row span{color:#eef4ff}
+
+
+/* Explorer-style tag management. */
+.phrase-tag-explorer-nav{display:flex;align-items:center;gap:8px;min-height:42px;padding:9px 0 4px;overflow:hidden}
+.phrase-tag-explorer-nav>button,#phraseTagBreadcrumb button{flex:0 0 auto;min-height:30px;padding:0 11px;border:1px solid #d6deea;border-radius:9px;background:#f7f9fc;color:#526078;font-size:.7rem;font-weight:800}
+#phraseTagBreadcrumb{display:flex;align-items:center;gap:6px;min-width:0;overflow-x:auto;white-space:nowrap;scrollbar-width:none}
+#phraseTagBreadcrumb span{color:#96a1b1}
+.phrase-tag-explorer-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:6px 0 8px}
+.phrase-tag-explorer-actions button{min-height:40px;border:1px solid #b9d8f5;border-radius:11px;background:#eef7ff;color:var(--blue);font-size:.73rem;font-weight:850}
+.phrase-tag-explorer-form{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:7px;padding:0 0 8px}
+.phrase-tag-explorer-form[hidden]{display:none}
+.phrase-tag-explorer-form input{min-width:0;height:40px;padding:0 10px;border:1px solid #d6deea;border-radius:10px;background:#fff;color:#26364d;font-size:.74rem}
+.phrase-tag-explorer-form button{min-width:50px;padding:0 11px;border:1px solid #b9d8f5;border-radius:10px;background:#eef7ff;color:var(--blue);font-size:.68rem;font-weight:850}
+.phrase-tag-explorer-form button:last-child{border-color:#efc2c7;background:#fff3f4;color:#bf3443}
+.phrase-tag-manager-list{gap:8px}
+.phrase-tag-explorer-section-title{display:block;width:100%;padding:5px 2px 0;color:#6f7b8e;font-size:.69rem}
+.phrase-tag-explorer-folder{display:grid;gap:5px;padding:6px;border:1px solid #dfe5ed;border-radius:12px;background:#f8fafc}
+.phrase-tag-explorer-folder-open{display:flex;align-items:center;justify-content:flex-start;min-height:42px;padding:0 10px;border:0;border-radius:9px;background:#fff;color:#26364d;text-align:left;font-size:.76rem;font-weight:800}
+.phrase-tag-explorer-row-actions{display:grid;grid-template-columns:minmax(0,1fr) auto auto auto auto;align-items:center;gap:5px}
+.phrase-tag-explorer-row-actions small{color:#778397;font-size:.61rem}
+.phrase-tag-explorer-row-actions button{min-height:28px;padding:0 7px;border:1px solid #c9d7e7;border-radius:8px;background:#fff;color:#526078;font-size:.59rem;font-weight:800}
+.phrase-tag-explorer-row-actions button:last-child{border-color:#efc2c7;background:#fff3f4;color:#bf3443}
+.phrase-tag-explorer-row-actions button:disabled{opacity:.4}
+.phrase-tag-manager-row{grid-template-columns:minmax(0,1fr) 40px 40px 40px 56px;grid-template-rows:auto auto}
+.phrase-tag-manager-row input{grid-column:1/3;grid-row:1;min-width:0;width:100%;height:38px;padding:0 9px;border:1px solid #d6deea;border-radius:9px;background:#fff;color:#26364d;font-size:.73rem}
+.phrase-tag-manager-row select{grid-column:3/-1;grid-row:1;width:100%;height:38px}
+.phrase-tag-manager-row small{grid-column:1;grid-row:2}
+.phrase-tag-manager-row button:nth-of-type(1){grid-column:2;grid-row:2}
+.phrase-tag-manager-row button:nth-of-type(2){grid-column:3;grid-row:2}
+.phrase-tag-manager-row button:nth-of-type(3){grid-column:4;grid-row:2}
+.phrase-tag-manager-row button:nth-of-type(4){grid-column:5;grid-row:2}
+html[data-theme="dark"] .phrase-tag-explorer-nav>button,html[data-theme="dark"] #phraseTagBreadcrumb button,html[data-theme="dark"] .phrase-tag-explorer-folder-open,html[data-theme="dark"] .phrase-tag-explorer-row-actions button{border-color:#405065;background:#202b39;color:#d6e0ef}
+html[data-theme="dark"] .phrase-tag-explorer-folder{border-color:#344153;background:#17202c}
+html[data-theme="dark"] .phrase-tag-explorer-actions button,html[data-theme="dark"] .phrase-tag-explorer-form button:not(:last-child){border-color:#426b91;background:#15283a;color:#72baff}
+html[data-theme="dark"] .phrase-tag-explorer-form input{border-color:#405065;background:#121a24;color:#eef4ff}
+@media(max-width:430px){.phrase-tag-explorer-row-actions{gap:3px}.phrase-tag-explorer-row-actions button{padding:0 5px;font-size:.55rem}.phrase-tag-manager-row{grid-template-columns:minmax(0,1fr) 36px 36px 36px 52px;gap:5px;padding:5px}.phrase-tag-manager-row input{grid-column:1/3}.phrase-tag-manager-row select{grid-column:3/-1}}
