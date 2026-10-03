@@ -289,7 +289,7 @@
   };
   const appendCategoryDraft=(container,parentId,depth)=>{
     const row=document.createElement('div');row.className='phrase-category-manager-row phrase-category-draft';row.style.setProperty('--depth',depth);
-    const code=document.createElement('b');code.textContent='＋';
+    const code=document.createElement('b');const nextOrdinal=childrenOf(parentId).filter(candidate=>!isUncategorized(candidate)).length+1;code.textContent=parentId==null?String(nextOrdinal):`${categoryCode(parentId)}.${nextOrdinal}`;
     const input=document.createElement('input');input.maxLength=30;input.placeholder=parentId==null?'新しい親階層名':'新しい子階層名';input.setAttribute('aria-label',input.placeholder);
     const save=document.createElement('button');save.type='button';save.textContent='追加';
     const cancel=document.createElement('button');cancel.type='button';cancel.textContent='取消';
