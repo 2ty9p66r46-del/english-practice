@@ -108,11 +108,14 @@
     }
     const uncategorized=ensureUncategorizedCategory();
     if(isUncategorized(item))editorCategoryIds.clear();else editorCategoryIds.delete(uncategorized.id);
-    const selectedRoot=categoryPathNodes(item.id)[0];
+    const path=categoryPathNodes(item.id),selectedRoot=path[0];
     childrenOf(null).filter(root=>root.id!==selectedRoot?.id).forEach(root=>{editorCategoryIds.delete(root.id);descendantIds(root.id).forEach(id=>editorCategoryIds.delete(id))});
-    if(item.parentId!=null)childrenOf(item.parentId).filter(sibling=>sibling.id!==item.id).forEach(sibling=>{editorCategoryIds.delete(sibling.id);descendantIds(sibling.id).forEach(id=>editorCategoryIds.delete(id))});
+    path.forEach((pathNode,index)=>{
+      const parentId=index===0?null:path[index-1].id;
+      childrenOf(parentId).filter(sibling=>sibling.id!==pathNode.id).forEach(sibling=>{editorCategoryIds.delete(sibling.id);descendantIds(sibling.id).forEach(id=>editorCategoryIds.delete(id))});
+    });
     descendantIds(item.id).forEach(id=>editorCategoryIds.delete(id));
-    categoryPathNodes(item.id).forEach(node=>editorCategoryIds.add(node.id));pickEditorPrimary(item.id);
+    path.forEach(node=>editorCategoryIds.add(node.id));pickEditorPrimary(item.id);
   };
   const normalizeEditorCategories=()=>{
     const uncategorized=ensureUncategorizedCategory();
