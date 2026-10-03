@@ -1989,3 +1989,7 @@ html[data-theme="dark"] .phrase-tag-manager-actions button:disabled{opacity:.4}
 html[data-theme="dark"] .phrase-tag-editor-folder-toggle{color:#b3c0d1}
 html[data-theme="dark"] .phrase-tag-editor-folder-label{background:#202b39;color:#e0e7f0}
 html[data-theme="dark"] .phrase-tag-editor-folder-children{border-color:#405065}
+
+/* Make the tag manager's save state visible before any edits are made. */
+.phrase-tag-manager-sheet .phrase-data-head button:last-child:disabled{background:#dbe3ed;color:#7b8798;cursor:not-allowed}
+html[data-theme="dark"] .phrase-tag-manager-sheet .phrase-data-head button:last-child:disabled{background:#354154;color:#8290a4}
