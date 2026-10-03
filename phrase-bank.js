@@ -170,7 +170,7 @@
     [...phraseFilterCategoryIds].forEach(id=>{const path=categoryPathNodes(id);for(let index=0;index<path.length-1;index++){if(phraseFilterCategoryIds.has(path[index].id))break;expanded.add(path[index].id)}});
     renderCategoryTree(container,'filter',item=>{
       const choice=document.createElement('label');choice.className='phrase-category-choice phrase-hierarchy-filter-choice';
-      const checkbox=document.createElement('input');checkbox.type='checkbox';const selected=phraseFilterCategoryIds.has(item.id);checkbox.checked=selected;choice.classList.toggle('selected',selected);checkbox.setAttribute('aria-label',item.name+'で絞り込む');const label=document.createElement('span');label.textContent=item.name;
+      const checkbox=document.createElement('input');checkbox.type='checkbox';const selected=phraseFilterCategoryIds.has(item.id);checkbox.checked=selected;checkbox.setAttribute('aria-label',item.name+'で絞り込む');const label=document.createElement('span');label.textContent=item.name;
       checkbox.addEventListener('change',()=>{const ids=[item.id,...descendantIds(item.id)];if(!checkbox.checked)ids.forEach(id=>phraseFilterCategoryIds.delete(id));else ids.forEach(id=>phraseFilterCategoryIds.add(id));renderPhraseHierarchyFilter();window.flovoPracticeBridge?.refreshFilterCount?.()});
       choice.append(checkbox,label);return choice;
     });
