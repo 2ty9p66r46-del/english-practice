@@ -1607,7 +1607,7 @@ body[data-practice-module="phrase-bank"] .practice-list-header>#practiceListTitl
 @media(prefers-reduced-motion:reduce){.phrase-bulk-header.is-entering,.phrase-bulk-header.is-leaving{animation-duration:1ms}}
 body[data-practice-module="phrase-bank"] #practiceListPlaceholder,body[data-practice-module="active-vocabulary"] #practiceListPlaceholder{position:relative}
 .practice-list-placeholder.phrase-bulk-selecting .practice-list-items{padding-bottom:82px}
-body[data-practice-module="phrase-bank"] #practiceList .practice-list-row,body[data-practice-module="active-vocabulary"] #practiceList .practice-list-row{position:relative;grid-template-columns:minmax(0,1fr) 53px;column-gap:0;content-visibility:auto;contain-intrinsic-size:auto 104px;transition:background-color 300ms ease}
+body[data-practice-module="phrase-bank"] #practiceList .practice-list-row,body[data-practice-module="active-vocabulary"] #practiceList .practice-list-row{position:relative;grid-template-columns:minmax(0,1fr) 53px;column-gap:0;transition:background-color 300ms ease}
 body[data-practice-module="phrase-bank"] #practiceList .practice-list-copy,body[data-practice-module="active-vocabulary"] #practiceList .practice-list-copy{transition:transform 560ms cubic-bezier(.2,.8,.2,1)}
 body[data-practice-module="phrase-bank"] #practiceList .practice-list-actions{box-sizing:border-box;min-width:0;overflow:hidden;padding-left:11px;opacity:1;transition:opacity 220ms ease}
 body[data-practice-module="active-vocabulary"] #practiceList .practice-list-actions{box-sizing:border-box;min-width:0;overflow:hidden;padding-left:11px;opacity:1;transition:opacity 220ms ease}
@@ -1735,7 +1735,7 @@ body[data-practice-module="phrase-bank"] .phrase-card-tag-section>strong{padding
 /* Keep the main bottom cards aligned with the boundary below the list controls. */
 .help-sheet,.practice-filter-sheet,.card-editor-sheet,.phrase-data-sheet,.sentence-editor-sheet,.result-editor-sheet{height:92dvh;max-height:92dvh}
 .practice-filter-sheet,.card-editor-sheet{height:92dvh;max-height:92dvh}
-/* Keep the Japanese, English, and result editors around half-screen height. */
+/* Keep the Japanese, English, meaning, note, and result editors around half-screen height. */
 .sentence-editor-sheet,.result-editor-sheet{display:flex;height:50dvh;max-height:50dvh;flex-direction:column;overflow:hidden}
 .sentence-editor-body,.result-editor-body{min-height:0;flex:1 1 auto;overflow-y:auto;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch}
 /* Phrase-bank card metadata uses separate vertical category and tag sections. */
