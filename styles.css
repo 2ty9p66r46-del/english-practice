@@ -2110,3 +2110,9 @@ body:not([data-practice-module="phrase-bank"]) #phraseCardTagSection{display:non
 
 .help-usage-section{margin-top:16px;padding:14px;border:1px solid #dce2eb;border-radius:14px;background:#fff}.help-usage-section h4{margin:0 0 10px;color:#344054;font-size:.82rem;font-weight:800}.help-usage-section+.help-usage-section{margin-top:12px}
 html[data-theme="dark"] .help-usage-section{border-color:#354153;background:#1b2431}html[data-theme="dark"] .help-usage-section h4{color:#eef4ff}
+
+/* Give each learning mode its own calm, easily recognized home-card tint. */
+.phrase-module-card{background:linear-gradient(145deg,#fff 0%,#f7fbf8 62%,#edf7f0 100%);border-color:#d5e8da}
+.phrase-module-card::after{background:radial-gradient(circle at 100% 0,#63b97b22 0%,#63b97b00 68%)}
+html[data-theme="dark"] .phrase-module-card{background:linear-gradient(145deg,#1b2431 0%,#1c2a27 100%);border-color:#344a3d}
+html[data-theme="dark"] .phrase-module-card .home-module-head{border-color:#344a3d}
