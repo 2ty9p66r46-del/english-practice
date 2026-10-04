@@ -2021,3 +2021,9 @@ html[data-theme="dark"] .phrase-tag-filter-folder-children{border-color:#405065}
 /* Make the tag manager's save state visible before any edits are made. */
 .phrase-tag-manager-sheet .phrase-data-head button:last-child:disabled{background:#dbe3ed;color:#7b8798;cursor:not-allowed}
 html[data-theme="dark"] .phrase-tag-manager-sheet .phrase-data-head button:last-child:disabled{background:#354154;color:#8290a4}
+
+/* Tag colors use the same five tones as the understanding controls. */
+.phrase-card-tag-badge.red,.phrase-card-tag-badge.orange,.phrase-card-tag-badge.yellow,.phrase-card-tag-badge.green,.phrase-card-tag-badge.purple{border-color:var(--solid-line);background:linear-gradient(160deg,var(--solid-hi),var(--solid),var(--solid-lo));color:#fff;text-shadow:0 1px 1px #0004;box-shadow:0 2px 5px var(--solid-shadow)}
+.phrase-tag-manager-actions .phrase-tag-color-select{flex:0 0 76px;width:76px;height:32px;min-height:32px;padding:0 7px;border:1px solid #cbd5e1;border-radius:9px;background:#fff;color:#344256;font:inherit;font-size:.72rem;font-weight:700}
+html[data-theme="dark"] .phrase-tag-manager-actions .phrase-tag-color-select{border-color:#465467;background:#202b39;color:#e0e7f0}
+@media(max-width:430px){.phrase-tag-manager-actions .phrase-tag-color-select{flex-basis:68px;width:68px;height:30px;min-height:30px;padding:0 5px;font-size:.68rem}}
