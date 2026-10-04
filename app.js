@@ -487,10 +487,11 @@ const COL=Object.freeze({
     const homeUnsureCount=document.getElementById('homeUnsureCount');
     const homeTotalWordCount=document.getElementById('homeTotalWordCount');
     const homeActiveWordCount=document.getElementById('homeActiveWordCount');
+    const homeExampleCount=document.getElementById('homeExampleCount');
     const homeActiveWordBar=document.getElementById('homeActiveWordBar');
     const homeLevelStats=document.getElementById('homeLevelStats');
     const homePosStats=document.getElementById('homePosStats');
-    const homeStatPanelIds={understanding:'homeUnderstandingPanel',answers:'homeAnswerPanel',words:'homeWordPanel'};
+    const homeStatPanelIds={understanding:'homeUnderstandingPanel',answers:'homeAnswerPanel',words:'homeWordPanel',examples:'homeExamplePanel'};
     homeStatTabs.forEach(button=>button.addEventListener('click',()=>{
       homeStatTabs.forEach(tab=>{const active=tab===button;tab.classList.toggle('active',active);tab.setAttribute('aria-selected',String(active))});
       homeStatPanels.forEach(panel=>{panel.hidden=panel.id!==homeStatPanelIds[button.dataset.homeStat]});
@@ -893,6 +894,7 @@ const COL=Object.freeze({
       const wordKey=row=>text(row[COL.wordNo])||text(row[COL.word]).toLowerCase();
       const totalWordKeys=new Set(sourceRows.map(wordKey).filter(Boolean));
       practiceCountStates.set(mode,{matchingPairCount,totalPairCount,displayedExampleCount,totalExampleCount:allExampleRows.length});
+      if(mode==='active-vocabulary'&&homeExampleCount)homeExampleCount.textContent=String(allExampleRows.length);
       if(currentPracticeCountMode()!==mode)return;
       renderPracticeCountState(mode);
       if(mode==='phrase-bank')return;
