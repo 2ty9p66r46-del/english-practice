@@ -391,6 +391,7 @@ const applyPendingTagRenames=()=>{if(!pendingTagRenames.size)return true;const e
     const save=$('#phraseCategorySave');if(save)save.disabled=!categoryManagerDirty;
   };
   const saveCategoryManager=async()=>{
+    if(!confirm('カテゴリ管理の変更を保存しますか？'))return;
     const names=new Set();
     for(const category of data.categories){
       const name=normalize(category.name);
