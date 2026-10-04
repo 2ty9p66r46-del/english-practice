@@ -2060,17 +2060,17 @@ html[data-theme="dark"] .phrase-tag-filter-choice.blue.selected,html[data-theme=
 
 .phrase-tag-manager-actions .phrase-tag-color-trigger svg{display:block;width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 
-/* Folder rows use a neutral charcoal surface, separate from every tag tone. */
-.phrase-tag-folder-tree-row{border-color:#394352;background:#394352}
-.phrase-tag-folder-tree-row>strong{color:#f7f9fc}
-.phrase-tag-folder-tree-row>small{color:#c4ccd7}
-.phrase-tag-folder-name-input{color:#f7f9fc}
-.phrase-tag-tree-toggle,.phrase-tag-tree-spacer{color:#d3dbe6}
-.phrase-tag-tree-children{border-left-color:#aab4c2}
-.phrase-tag-folder-name-input:focus{border-color:#c4ccd7;background:#fff;color:#26364d;box-shadow:0 0 0 3px #39435224}
-html[data-theme="dark"] .phrase-tag-folder-tree-row{border-color:#252d39;background:#252d39}
-html[data-theme="dark"] .phrase-tag-folder-tree-row>strong,html[data-theme="dark"] .phrase-tag-folder-name-input{color:#f7f9fc}
-html[data-theme="dark"] .phrase-tag-folder-tree-row>small{color:#c4ccd7}
-html[data-theme="dark"] .phrase-tag-tree-toggle,html[data-theme="dark"] .phrase-tag-tree-spacer{color:#d3dbe6}
-html[data-theme="dark"] .phrase-tag-tree-children{border-left-color:#657286}
-html[data-theme="dark"] .phrase-tag-folder-name-input:focus{border-color:#8793a5;background:#121a24;color:#eef4ff}
+/* Neutral, light folder surface stays distinct from all selectable tag colors. */
+.phrase-tag-folder-tree-row{border-color:#d8dce3;background:#f0f1f4}
+.phrase-tag-folder-tree-row>strong{color:#26364d}
+.phrase-tag-folder-tree-row>small{color:#778397}
+.phrase-tag-folder-name-input{color:#26364d}
+.phrase-tag-tree-toggle,.phrase-tag-tree-spacer{color:#65758b}
+.phrase-tag-tree-children{border-left-color:#c4cad4}
+.phrase-tag-folder-name-input:focus{border-color:#aeb8c7;background:#fff;color:#26364d;box-shadow:0 0 0 3px #60708018}
+html[data-theme="dark"] .phrase-tag-folder-tree-row{border-color:#455163;background:#303a49}
+html[data-theme="dark"] .phrase-tag-folder-tree-row>strong,html[data-theme="dark"] .phrase-tag-folder-name-input{color:#eef4ff}
+html[data-theme="dark"] .phrase-tag-folder-tree-row>small{color:#bac5d3}
+html[data-theme="dark"] .phrase-tag-tree-toggle,html[data-theme="dark"] .phrase-tag-tree-spacer{color:#bac5d3}
+html[data-theme="dark"] .phrase-tag-tree-children{border-left-color:#59677a}
+html[data-theme="dark"] .phrase-tag-folder-name-input:focus{border-color:#718096;background:#121a24;color:#eef4ff}
