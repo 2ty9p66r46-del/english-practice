@@ -14,7 +14,7 @@
   <link rel="apple-touch-icon" href="./icon.svg">
   <title>FloVo</title>
   <script src="./xlsx.full.min.js"></script>
-  <link rel="stylesheet" href="./styles.css?v=612">
+  <link rel="stylesheet" href="./styles.css?v=613">
 </head>
 <body data-page="home">
   <div class="shell">
@@ -403,13 +403,26 @@
         </div>
         <div class="help-version-card help-panel" id="helpUsagePanel" hidden>
           <h3 class="help-version-title">利用方法</h3>
-          <ol class="help-usage-list">
-            <li>入力用雛形データをダウンロードし、単語・意味・例文を入力します。</li>
-            <li>ホーム画面の「インポート」からExcelデータを読み込みます。</li>
-            <li>フィルタで出題範囲を選び、「練習する」から学習を開始します。</li>
-            <li>データ編集から意味や複数の例文を追加・変更できます。</li>
-            <li>変更したデータは「エクスポート」でExcelへ保存できます。</li>
-          </ol>
+          <section class="help-usage-section" aria-labelledby="helpActiveUsageTitle">
+            <h4 id="helpActiveUsageTitle">アクティブボキャビル</h4>
+            <ol class="help-usage-list">
+              <li>ホームの「入力用雛形データダウンロード」からExcelを取得し、単語・意味・例文を入力します。</li>
+              <li>アクティブボキャビルの「IN」を押して、入力したExcelを読み込みます。</li>
+              <li>「例文フィルタ条件」で出題範囲を選び、「練習する」を押します。</li>
+              <li>練習カードで英語を思い出してから答えを確認し、理解度を選びます。学習結果は自動で記録されます。</li>
+              <li>単語や例文を直すときは、一覧の「データ編集」を使います。データの控えは「OUT」からExcelに保存できます。</li>
+            </ol>
+          </section>
+          <section class="help-usage-section" aria-labelledby="helpPhraseUsageTitle">
+            <h4 id="helpPhraseUsageTitle">マイフレーズ</h4>
+            <ol class="help-usage-list">
+              <li>ホームのカードを横にスワイプするか、下の丸印を押して「マイフレーズバンク」を開きます。</li>
+              <li>「練習する」を押して一覧を開き、追加ボタンから日本語と英語の例文を登録します。カテゴリやタグは必要に応じて設定できます。</li>
+              <li>登録したフレーズは一覧から編集できます。Excelの「IN」「OUT」からまとめて読み込み・保存することもできます。</li>
+              <li>「例文フィルタ条件」でカテゴリやタグなどを選び、「練習する」を押すと、選んだフレーズを練習できます。</li>
+              <li>答えを確認して理解度を選ぶと、学習結果がマイフレーズ用に記録されます。</li>
+            </ol>
+          </section>
           
           <button class="help-back-button" type="button" data-help-back>メニューへ戻る</button>
         </div>
