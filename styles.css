@@ -1620,7 +1620,7 @@ body[data-practice-module="phrase-bank"] #practiceListPlaceholder.phrase-bulk-se
 body[data-practice-module="active-vocabulary"] #practiceListPlaceholder.phrase-bulk-selecting #practiceList .practice-list-row::before{opacity:1;transform:translateY(-50%) scale(1)}
 .practice-list-placeholder.phrase-bulk-selecting .practice-list-row.phrase-bulk-selected::before{border-color:var(--blue);background:var(--blue);content:'✓'}
 .practice-list-placeholder.phrase-bulk-selecting .practice-list-row.phrase-bulk-selected{background:#e9f4ff}
-.phrase-bulk-actions{position:absolute;z-index:8;right:10px;bottom:10px;left:10px;display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0;border:0;background:transparent;box-shadow:none;transform:none!important;pointer-events:none}
+.phrase-bulk-actions{position:absolute;z-index:8;right:10px;bottom:10px;left:10px;display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0;border:0;background:transparent;box-shadow:none;transform:none!important;pointer-events:auto}
 .phrase-bulk-actions.is-entering{animation:phrase-bulk-actions-fade-in-v2 460ms ease both;transform:none!important}
 .phrase-bulk-actions.is-leaving{animation:phrase-bulk-actions-fade-out-v2 360ms ease both;transform:none!important;pointer-events:none}
 @keyframes phrase-bulk-actions-fade-in-v2{0%{opacity:0;transform:none}100%{opacity:1;transform:none}}
@@ -1967,7 +1967,7 @@ html[data-theme="dark"] .phrase-tag-root-actions .phrase-tag-icon-button,html[da
 .phrase-tag-manager-row.phrase-tag-tree-tag{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto;gap:8px}
 .phrase-tag-manager-row.phrase-tag-tree-tag input{grid-column:1;grid-row:1;width:100%}
 .phrase-tag-manager-actions{display:flex;grid-column:1/-1;justify-content:flex-end;align-items:center;gap:6px;width:100%}
-.phrase-tag-manager-actions button{display:inline-flex;flex:0 0 auto;align-items:center;justify-content:center;gap:5px;width:auto;min-width:0;height:32px;min-height:32px;padding:0 10px;border:1px solid #cbd5e1;border-radius:9px;background:#fff;color:#344256;font-family:inherit;font-size:.78rem;font-weight:700;line-height:1;white-space:nowrap}
+.phrase-tag-manager-actions button{position:relative;z-index:1;display:inline-flex;flex:0 0 auto;align-items:center;justify-content:center;gap:5px;width:auto;min-width:0;height:32px;min-height:32px;padding:0 10px;border:1px solid #cbd5e1;border-radius:9px;background:#fff;color:#344256;font-family:inherit;font-size:.78rem;font-weight:700;line-height:1;white-space:nowrap;touch-action:manipulation}
 .phrase-tag-manager-actions button:disabled{opacity:.4}
 .phrase-tag-manager-actions button svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .phrase-tag-manager-actions button[aria-label$="を変更"],.phrase-tag-folder-tree-actions button[aria-label$="の名前変更"]{width:36px;padding:0}
