@@ -1286,7 +1286,7 @@ const COL=Object.freeze({
     const renderPracticeList=(ensureCurrentVisible=true)=>{
       const renderToken=++practiceListRenderToken,rows=practiceRows;
       const savedScrollTop=practiceList.scrollTop;
-      const virtualRows=document.body.dataset.practiceModule==='active-vocabulary'&&rows.length>160;
+      const virtualRows=rows.length>160;
       const rowHeight=106,viewportHeight=practiceList.clientHeight||650;
       const windowRows=virtualRows?Math.ceil(viewportHeight/rowHeight)+16:rows.length;
       const getWindowStart=scrollTop=>virtualRows?Math.max(0,Math.min(rows.length-windowRows,Math.floor(scrollTop/rowHeight)-8)):0;
@@ -1296,13 +1296,15 @@ const COL=Object.freeze({
         startIndex=getWindowStart(virtualScrollTop);
       }
       const endIndex=Math.min(rows.length,startIndex+windowRows);
+      const persistentBulkActions=practiceList.querySelector('.phrase-bulk-actions');
+      practiceList.classList.toggle('is-virtualized',virtualRows);
       practiceList.replaceChildren();activePracticeListRow=null;
       if(!practiceRows.length){
         const empty=document.createElement('div');
         empty.className='practice-list-empty';
         const title=document.createElement('strong');title.textContent='表示できるカードがありません';
         const detail=document.createElement('span');detail.textContent='「＋」から登録済みの単語に文を追加できます';
-        empty.append(title,detail);practiceList.append(empty);return;
+        empty.append(title,detail);practiceList.append(empty);if(persistentBulkActions)practiceList.append(persistentBulkActions);return;
       }
       const spacer=height=>{const element=document.createElement('div');element.setAttribute('aria-hidden','true');element.style.flex=`0 0 ${height}px`;element.style.height=`${height}px`;return element};
       if(virtualRows&&startIndex>0)practiceList.append(spacer(startIndex*rowHeight));
@@ -1413,6 +1415,7 @@ const COL=Object.freeze({
         if(index<endIndex){requestAnimationFrame(renderChunk);return}
         if(virtualRows&&endIndex<rows.length)practiceList.append(spacer((rows.length-endIndex)*rowHeight));
         practiceList.scrollTop=virtualScrollTop;
+        if(persistentBulkActions)practiceList.append(persistentBulkActions);
         if(virtualRows)practiceListVirtualStart=startIndex;
         else practiceListVirtualStart=-1;
         if(practiceViewMode==='list'&&ensureCurrentVisible){
@@ -1425,7 +1428,7 @@ const COL=Object.freeze({
     };
     let practiceListVirtualFrame=0,practiceListVirtualStart=-1;
     practiceList.addEventListener('scroll',()=>{
-      if(document.body.dataset.practiceModule!=='active-vocabulary'||practiceRows.length<=160||practiceViewMode!=='list')return;
+      if(practiceRows.length<=160||practiceViewMode!=='list')return;
       const nextStart=Math.max(0,Math.min(practiceRows.length-Math.ceil((practiceList.clientHeight||650)/106)-16,Math.floor(practiceList.scrollTop/106)-8));
       if(nextStart===practiceListVirtualStart||practiceListVirtualFrame)return;
       practiceListVirtualFrame=requestAnimationFrame(()=>{practiceListVirtualFrame=0;practiceListVirtualStart=nextStart;renderPracticeList(false)});
