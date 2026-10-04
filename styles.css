@@ -1674,7 +1674,7 @@ html[data-theme="dark"] .help-regex-guide code{background:#273445;color:#dce8f7}
 .phrase-tag-create-row input{min-width:0;height:40px;padding:0 10px;border:1px solid #d6deea;border-radius:10px;background:#fff;color:#26364d;font-size:.75rem}
 .phrase-tag-create-row button{padding:0 11px;border:1px solid #b9d8f5;border-radius:10px;background:#eef7ff;color:var(--blue);font-size:.66rem;font-weight:850}
 .phrase-card-tag-section{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:start;gap:8px;width:100%;margin-top:1px;color:#66758a;font-size:.66rem}
-.phrase-card-tag-section>strong{padding-top:4px}
+.phrase-card-tag-section>strong{padding-top:4px;color:var(--blue)}
 .phrase-card-tag-badges{display:flex;flex-wrap:wrap;gap:5px;min-width:0}
 .phrase-card-tag-badge{display:inline-flex;max-width:100%;padding:4px 9px;overflow-wrap:anywhere;border:1px solid #c8def2;border-radius:999px;background:#eef7ff;color:#276caa;font-size:.62rem;font-weight:800;line-height:1.25}
 .phrase-card-no-tags{padding:3px 0;color:#a0a8b4;font-size:.64rem}
