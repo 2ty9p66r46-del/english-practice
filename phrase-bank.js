@@ -32,6 +32,15 @@
   clone.querySelectorAll('[aria-controls]').forEach(element=>{const target=element.getAttribute('aria-controls');if(idMap.has(target))element.setAttribute('aria-controls',idMap.get(target))});
   mount.className=clone.className;mount.classList.add('phrase-module-card');mount.replaceChildren(...clone.childNodes);
   mount.querySelector('.home-stat-tabs')?.classList.add('phrase-stat-tabs');
+  const phraseStatsTabs=mount.querySelector('.home-stat-tabs');
+  const phraseStatsPanels=mount.querySelector('.home-stat-panels');
+  const phraseBreakdownTab=document.createElement('button');
+  phraseBreakdownTab.type='button';phraseBreakdownTab.role='tab';phraseBreakdownTab.setAttribute('aria-selected','false');phraseBreakdownTab.textContent='分類別';phraseBreakdownTab.dataset.homeStat='classification';
+  const phraseBreakdownPanel=document.createElement('div');
+  phraseBreakdownPanel.className='home-stat-panel phrase-home-breakdown-panel';phraseBreakdownPanel.id='phraseHomeBreakdownPanel';phraseBreakdownPanel.role='tabpanel';phraseBreakdownPanel.hidden=true;
+  phraseBreakdownPanel.innerHTML='<div class="phrase-breakdown-top"><div><strong>分類ごとの学習状況</strong><small>理解度100%の割合で、復習先を見つける</small></div></div><div class="phrase-breakdown-switch" role="group" aria-label="集計する分類"><button type="button" class="active" data-phrase-breakdown-mode="categories" aria-pressed="true">カテゴリ</button><button type="button" data-phrase-breakdown-mode="tags" aria-pressed="false">タグ</button></div><p class="phrase-breakdown-note" id="phraseBreakdownNote"></p><div class="phrase-breakdown-list" id="phraseBreakdownList"></div>';
+  phraseBreakdownTab.setAttribute('aria-controls',phraseBreakdownPanel.id);
+  phraseStatsTabs?.append(phraseBreakdownTab);phraseStatsPanels?.append(phraseBreakdownPanel);
   const phraseHomeIcon=mount.querySelector('.home-module-icon svg');if(phraseHomeIcon)phraseHomeIcon.innerHTML='<path d="M4.5 5.5h15a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-8l-5.5 3v-3H4.5a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2Z"/><path d="M7 10h10M7 13h7"/>';
   mount.querySelector('.home-module-title strong').textContent='マイフレーズバンク';
   mount.querySelector('.home-module-title small').textContent='MY PHRASE BANK';
@@ -41,7 +50,7 @@
   const phraseExport=document.getElementById(idMap.get('exportButton'));
   const phraseTabs=[...mount.querySelectorAll('[data-home-stat]')];
   const phrasePanels=[...mount.querySelectorAll('.home-stat-panel')];
-  const panelByStat={understanding:idMap.get('homeUnderstandingPanel'),answers:idMap.get('homeAnswerPanel'),words:idMap.get('homeWordPanel'),examples:idMap.get('homeExamplePanel')};
+  const panelByStat={understanding:idMap.get('homeUnderstandingPanel'),answers:idMap.get('homeAnswerPanel'),words:idMap.get('homeWordPanel'),examples:idMap.get('homeExamplePanel'),classification:phraseBreakdownPanel.id};
   const phraseWordTab=mount.querySelector('[data-home-stat="words"]');if(phraseWordTab)phraseWordTab.hidden=true;
   const STORE_KEY='phraseBankV2',LEGACY_STORE_KEY='phraseBankV1',UNCATEGORIZED_NAME='未分類';
   const PHRASE_HEADERS=['フレーズID','例文番号','主カテゴリ','追加カテゴリ','日本語文','英文','補足','理解度','◯回数','×回数','△回数','タグ'];
@@ -50,7 +59,7 @@
   let tagManagerFolderId=null,tagManagerFormState=null,tagManagerSnapshot=null,tagManagerDirty=false;
   const pendingTagRenames=new Map(),pendingFolderRenames=new Map();
   const expandedTagFolders=new Set(),expandedTagFilterFolders=new Set();
-  let loaded=false,loadDataPromise=null,moduleMode='active-vocabulary',launchingPhrase=false,editorPhraseId=null,editorCategoryIds=new Set(),editorPrimaryId=null,categoryDraftParentId=undefined,categoryManagerSnapshot=null,categoryManagerDirty=false,phraseSaveMessageTimer=null,rowPhraseIds=new WeakMap(),rowPhraseObjects=new WeakMap(),phraseFilterCategoryIds=new Set(),phraseBulkSelecting=false,phraseBulkSelectedIds=new Set(),activeBulkSelectedRows=new Set(),activeBulkRowMap=new WeakMap(),phraseBulkMoveCategoryId=null,phraseBulkHeaderTimer=null,phraseBulkActionsTimer=null,editorTagNames=new Set(),phraseFilterTagNames=new Set();
+  let loaded=false,loadDataPromise=null,moduleMode='active-vocabulary',launchingPhrase=false,editorPhraseId=null,editorCategoryIds=new Set(),editorPrimaryId=null,categoryDraftParentId=undefined,categoryManagerSnapshot=null,categoryManagerDirty=false,phraseSaveMessageTimer=null,rowPhraseIds=new WeakMap(),rowPhraseObjects=new WeakMap(),phraseFilterCategoryIds=new Set(),phraseBulkSelecting=false,phraseBulkSelectedIds=new Set(),activeBulkSelectedRows=new Set(),activeBulkRowMap=new WeakMap(),phraseBulkMoveCategoryId=null,phraseBulkHeaderTimer=null,phraseBulkActionsTimer=null,editorTagNames=new Set(),phraseFilterTagNames=new Set(),phraseBreakdownMode='categories';
   const normalize=value=>String(value??'').trim();
   const number=value=>Math.max(0,Number.parseInt(value,10)||0);
   try{phraseFilterCategoryIds=new Set(JSON.parse(localStorage.getItem('phraseCategoryFilterV1')||'[]').map(number).filter(Boolean))}catch{}
@@ -239,6 +248,41 @@
   window.flovoPracticeAdapter={active:false,getData:async()=>{await loadData();return toStoredData()},saveData:saveStoredData,matchesRow:phraseMatchesFilter,getTextTargets:row=>{const item=rowPhraseObjects.get(row)||phraseByNumber(row?.[0]);return item?[item.english]:[]},getFilterSnapshot:()=>({categoryIds:[...phraseFilterCategoryIds],tags:[...phraseFilterTagNames]}),restoreFilterSnapshot:snapshot=>{phraseFilterCategoryIds=new Set(Array.isArray(snapshot)?snapshot:(snapshot?.categoryIds||[]));phraseFilterTagNames=new Set(Array.isArray(snapshot)?[]:(snapshot?.tags||[]));renderPhraseHierarchyFilter();renderPhraseTagFilter()},resetFilter:()=>{phraseFilterCategoryIds.clear();phraseFilterTagNames.clear();renderPhraseHierarchyFilter();renderPhraseTagFilter()},commitFilter:()=>{try{localStorage.setItem('phraseCategoryFilterV1',JSON.stringify([...phraseFilterCategoryIds]));localStorage.setItem('phraseTagFilterV1',JSON.stringify([...phraseFilterTagNames]))}catch{}},renderPracticeCardMetadata:row=>{const section=document.getElementById('phraseCardTagSection'),container=document.getElementById('phraseCardTagBadges');if(!section||!container)return;section.hidden=moduleMode!=='phrase-bank';container.replaceChildren();const phrase=rowPhraseObjects.get(row)||phraseByNumber(row?.[0]);if(!phrase||!phrase.tags?.length){const empty=document.createElement('span');empty.className='phrase-card-no-tags';empty.textContent='タグなし';container.append(empty);return}phrase.tags.forEach(tag=>{const badge=document.createElement('span'),tone=data.tagColors?.[tagFolderKey(tag)]||'red';badge.className='phrase-card-tag-badge'+(tone?' '+tone:'');badge.textContent=tag;container.append(badge)})}};
 
   const setText=(original,value)=>{const element=document.getElementById(idMap.get(original));if(element)element.textContent=String(value)};
+  const renderPhraseBreakdown=()=>{
+    const container=document.getElementById('phraseBreakdownList'),note=document.getElementById('phraseBreakdownNote');if(!container||!note)return;
+    const groups=new Map(),add=(label,item)=>{
+      const key=normalize(label)||'分類未登録';
+      if(!groups.has(key))groups.set(key,{label:key,total:0,mastered:0,correct:0,wrong:0,unsure:0});
+      const group=groups.get(key);group.total++;if(item.understanding==='100%')group.mastered++;
+      group.correct+=number(item.correct);group.wrong+=number(item.wrong);group.unsure+=number(item.unsure);
+    };
+    if(phraseBreakdownMode==='categories'){
+      note.textContent='カテゴリ別。複数カテゴリに登録した例文は、それぞれに集計。習得率が低い順に表示します。';
+      data.phrases.forEach(item=>{const ids=[...new Set((item.categoryIds||[item.primaryCategoryId]).map(number).filter(Boolean))];if(!ids.length)add('カテゴリ未登録',item);else ids.forEach(id=>add(categoryById(id)?categoryPath(id):'カテゴリ未登録',item))});
+    }else{
+      note.textContent='タグ別。タグなしも含め、複数タグの例文は各タグに集計。習得率が低い順に表示します。';
+      data.phrases.forEach(item=>{const tags=[...new Map((item.tags||[]).map(normalize).filter(Boolean).map(tag=>[tag.toLocaleLowerCase('ja'),tag])).values()];if(!tags.length)add('タグなし',item);else tags.forEach(tag=>add(tag,item))});
+    }
+    const ranked=[...groups.values()].sort((a,b)=>(a.mastered/a.total)-(b.mastered/b.total)||b.total-a.total||a.label.localeCompare(b.label,'ja')).slice(0,6);
+    container.replaceChildren();
+    if(!ranked.length){const empty=document.createElement('div');empty.className='phrase-breakdown-empty';empty.textContent=phraseBreakdownMode==='categories'?'フレーズを登録すると、カテゴリ別の進み具合が表示されます。':'タグを付けると、タグ別の進み具合が表示されます。';container.append(empty);return}
+    ranked.forEach(group=>{
+      const row=document.createElement('article');row.className='phrase-breakdown-row';
+      const head=document.createElement('div');head.className='phrase-breakdown-row-head';
+      const label=document.createElement('strong');label.className='phrase-breakdown-label';label.textContent=group.label;label.title=group.label;
+      const rate=document.createElement('span');rate.className='phrase-breakdown-rate';rate.textContent=`習得 ${Math.round(group.mastered/group.total*100)}%`;
+      head.append(label,rate);
+      const track=document.createElement('div');track.className='phrase-breakdown-track';track.setAttribute('role','img');track.setAttribute('aria-label',`${group.label}：理解度100% ${group.mastered}件／${group.total}件`);
+      const fill=document.createElement('i');fill.style.width=`${group.mastered/group.total*100}%`;track.append(fill);
+      const foot=document.createElement('div');foot.className='phrase-breakdown-row-foot';
+      const progress=document.createElement('span');progress.textContent=`理解度100% ${group.mastered} / ${group.total}件`;
+      const answers=group.correct+group.wrong+group.unsure,accuracy=document.createElement('span');accuracy.textContent=answers?`正答率 ${Math.round(group.correct/answers*100)}%`:'回答なし';
+      foot.append(progress,accuracy);row.append(head,track,foot);container.append(row);
+    });
+  };
+  const phraseBreakdownModeButtons=[...phraseBreakdownPanel.querySelectorAll('[data-phrase-breakdown-mode]')];
+  phraseBreakdownModeButtons.forEach(button=>button.addEventListener('click',()=>{phraseBreakdownMode=button.dataset.phraseBreakdownMode;phraseBreakdownModeButtons.forEach(option=>{const active=option===button;option.classList.toggle('active',active);option.setAttribute('aria-pressed',String(active))});renderPhraseBreakdown()}));
+
   const refreshPhraseHome=()=>{
     const total=data.phrases.length,counts={mastered:0,steady:0,learning:0,new:0};data.phrases.forEach(item=>{if(item.understanding==='100%')counts.mastered++;else if(item.understanding==='80%')counts.steady++;else if(item.understanding==='50%')counts.learning++;else counts.new++});
     setText('homeImportFileName',data.fileName||'未読込');setText('homeMasteryRate',total?`${Math.round(counts.mastered/total*100)}%`:'0%');setText('homeMasteredCount',counts.mastered);setText('homeSteadyCount',counts.steady);setText('homeLearningCount',counts.learning);setText('homeNewCount',counts.new);
@@ -248,7 +292,7 @@
     if(understandingDonut){if(total){const tones=[['#35b972',counts.mastered],['#efd044',counts.steady],['#ef9b3a',counts.learning],['#df5b69',counts.new]];let cursor=0;understandingDonut.style.background=`conic-gradient(${tones.map(([color,count])=>{const start=cursor;cursor+=count/total*100;return `${color} ${start}% ${cursor}%`}).join(',')})`}else understandingDonut.style.background='#e9edf3';understandingDonut.setAttribute('aria-label',total?`理解度：習得${counts.mastered}件、定着${counts.steady}件、練習中${counts.learning}件、未定着${counts.new}件`:'理解度データなし')}
     const correctBar=document.getElementById(idMap.get('homeCorrectBar')),wrongBar=document.getElementById(idMap.get('homeWrongBar')),unsureBar=document.getElementById(idMap.get('homeUnsureBar'));if(answerBar){if(correctBar)correctBar.style.width=`${answers?correct/answers*100:0}%`;if(wrongBar)wrongBar.style.width=`${answers?wrong/answers*100:0}%`;if(unsureBar)unsureBar.style.width=`${answers?unsure/answers*100:0}%`;answerBar.setAttribute('aria-label',answers?`回答結果：正解${correct}回、惜しい${unsure}回、不正解${wrong}回`:'回答結果データなし')}
     if(answerDonut){if(answers){const correctEnd=correct/answers*100,partialEnd=correctEnd+unsure/answers*100;answerDonut.style.background=`conic-gradient(#35b972 0% ${correctEnd}%,#9a75d3 ${correctEnd}% ${partialEnd}%,#df5b69 ${partialEnd}% 100%)`}else answerDonut.style.background='#e9edf3';answerDonut.setAttribute('aria-label',answers?`正解率${Math.round(correct/answers*100)}パーセント`:'回答結果データなし')}
-    renderPhraseTagFilter();
+    renderPhraseTagFilter();renderPhraseBreakdown();
   };
   phraseTabs.forEach(button=>button.addEventListener('click',()=>{phraseTabs.forEach(tab=>{const active=tab===button;tab.classList.toggle('active',active);tab.setAttribute('aria-selected',String(active))});phrasePanels.forEach(panel=>{panel.hidden=panel.id!==panelByStat[button.dataset.homeStat]})}));
 
