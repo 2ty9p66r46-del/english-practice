@@ -915,7 +915,7 @@ html[data-theme="dark"] .screen-fade{background:#0d121b}
 .home-modules{display:flex;flex:1 1 auto;min-height:0;gap:14px;overflow-x:auto;overflow-y:hidden;padding:0 14px 4px;scroll-snap-type:x mandatory;scroll-padding-inline:14px;scrollbar-width:none;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
 .home-modules::-webkit-scrollbar{display:none}
 .home-module-card{position:relative;flex:0 0 100%;height:100%;min-height:0;overflow:hidden;border:1px solid #dfe5ef;border-radius:23px;background:#fff;box-shadow:0 1px 1px #1822350d,0 9px 25px #27344d0a;scroll-snap-align:start;scroll-snap-stop:always}
-.active-vocab-card{padding:18px;background:linear-gradient(145deg,#fff 0%,#f7fbff 62%,#edf6ff 100%);border-color:#d2e4f8}
+.active-vocab-card{padding:18px;background:linear-gradient(145deg,#f4f9ff 0%,#e5f1ff 60%,#d8eaff 100%);border-color:#b9d5f2}
 .active-vocab-card::after{position:absolute;top:0;right:0;width:115px;height:115px;border-radius:0 0 0 100%;background:radial-gradient(circle at 100% 0,#55adff24 0%,#55adff00 68%);content:"";pointer-events:none}
 .home-module-head{position:relative;z-index:1;display:grid;grid-template-columns:48px minmax(0,1fr) auto;align-items:center;gap:11px}
 .home-module-icon{display:grid;width:44px;height:44px;place-items:center;border:1px solid #dce2eb;border-radius:14px;background:linear-gradient(180deg,#f7f8fa,#e8ebf0);color:#8b94a3;box-shadow:inset 0 1px 0 #fff}
@@ -2112,7 +2112,7 @@ body:not([data-practice-module="phrase-bank"]) #phraseCardTagSection{display:non
 html[data-theme="dark"] .help-usage-section{border-color:#354153;background:#1b2431}html[data-theme="dark"] .help-usage-section h4{color:#eef4ff}
 
 /* Give each learning mode its own calm, easily recognized home-card tint. */
-.phrase-module-card{background:linear-gradient(145deg,#fff 0%,#f7fbf8 62%,#edf7f0 100%);border-color:#d5e8da}
+.phrase-module-card{background:linear-gradient(145deg,#f5faf5 0%,#e8f4e9 60%,#dceddf 100%);border-color:#bdd9c2}
 .phrase-module-card::after{background:radial-gradient(circle at 100% 0,#63b97b22 0%,#63b97b00 68%)}
 html[data-theme="dark"] .phrase-module-card{background:linear-gradient(145deg,#1b2431 0%,#1c2a27 100%);border-color:#344a3d}
 html[data-theme="dark"] .phrase-module-card .home-module-head{border-color:#344a3d}
