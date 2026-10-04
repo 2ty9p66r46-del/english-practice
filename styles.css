@@ -2107,3 +2107,6 @@ html[data-theme="dark"] .phrase-tag-tree-root>.phrase-tag-root-mark{color:#bac5d
 
 /* Tag badges are only shown while practicing My Phrases. */
 body:not([data-practice-module="phrase-bank"]) #phraseCardTagSection{display:none!important}
+
+.help-usage-section{margin-top:16px;padding:14px;border:1px solid #dce2eb;border-radius:14px;background:#fff}.help-usage-section h4{margin:0 0 10px;color:#344054;font-size:.82rem;font-weight:800}.help-usage-section+.help-usage-section{margin-top:12px}
+html[data-theme="dark"] .help-usage-section{border-color:#354153;background:#1b2431}html[data-theme="dark"] .help-usage-section h4{color:#eef4ff}
