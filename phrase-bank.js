@@ -307,11 +307,8 @@
         const label=document.createElement('strong');label.className='phrase-tag-editor-folder-label';label.innerHTML=tagTreeIcons.folder;const name=document.createElement('span');name.textContent=folder.name;label.append(name);row.append(toggle,label);node.append(row);target.append(node);
         if(canExpand){const children=document.createElement('div');children.className='phrase-tag-editor-folder-children';children.hidden=!expandedTagFolders.has(folder.id);node.append(children);renderLevel(folder.id,children,depth+1)}
       });
-      allPhraseTags().filter(tag=>tagFolderIdFor(tag)===parentId).forEach(tag=>{
-        const row=document.createElement('div');row.className='phrase-tag-editor-tree-tag-row';row.style.setProperty('--depth',depth);
-        const spacer=document.createElement('span');spacer.className='phrase-tag-tree-spacer';spacer.setAttribute('aria-hidden','true');
-        const button=document.createElement('button');button.type='button';button.className='phrase-tag-editor-choice';const selected=[...editorTagNames].some(item=>item.toLocaleLowerCase('ja')===tag.toLocaleLowerCase('ja'));button.classList.toggle('selected',selected);button.setAttribute('aria-pressed',String(selected));button.textContent=tag;button.addEventListener('click',()=>{if(selected)editorTagNames=new Set([...editorTagNames].filter(item=>item.toLocaleLowerCase('ja')!==tag.toLocaleLowerCase('ja')));else editorTagNames.add(tag);renderEditorTags()});row.append(spacer,button);target.append(row)
-      })
+      const tags=allPhraseTags().filter(tag=>tagFolderIdFor(tag)===parentId);
+      if(tags.length){const group=document.createElement('div');group.className='phrase-tag-editor-tags';group.style.setProperty('--depth',depth);tags.forEach(tag=>{const button=document.createElement('button');button.type='button';button.className='phrase-tag-editor-choice';const selected=[...editorTagNames].some(item=>item.toLocaleLowerCase('ja')===tag.toLocaleLowerCase('ja'));button.classList.toggle('selected',selected);button.setAttribute('aria-pressed',String(selected));button.textContent=tag;button.addEventListener('click',()=>{if(selected)editorTagNames=new Set([...editorTagNames].filter(item=>item.toLocaleLowerCase('ja')!==tag.toLocaleLowerCase('ja')));else editorTagNames.add(tag);renderEditorTags()});group.append(button)});target.append(group)}
     };
     renderLevel(null,container,0)
   };
