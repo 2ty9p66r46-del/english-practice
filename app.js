@@ -2567,7 +2567,7 @@ const COL=Object.freeze({
           await practiceExerciseCard.animate([
             {transform:'translateX(105%)',opacity:.65},
             {transform:'translateX(0)',opacity:1}
-          ],{duration:380,easing:'cubic-bezier(.16,.82,.24,1)'}).finished;
+          ],{duration:180,easing:'cubic-bezier(.16,.82,.24,1)'}).finished;
         }catch{}
       }
       practiceViewTransitioning=false;
