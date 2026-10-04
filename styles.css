@@ -2074,3 +2074,23 @@ html[data-theme="dark"] .phrase-tag-folder-tree-row>small{color:#bac5d3}
 html[data-theme="dark"] .phrase-tag-tree-toggle,html[data-theme="dark"] .phrase-tag-tree-spacer{color:#bac5d3}
 html[data-theme="dark"] .phrase-tag-tree-children{border-left-color:#59677a}
 html[data-theme="dark"] .phrase-tag-folder-name-input:focus{border-color:#718096;background:#121a24;color:#eef4ff}
+
+/* Per-tag category assignment: explicit checkboxes affect only selected categories. */
+.phrase-tag-assignment-trigger{width:32px!important;min-width:32px!important;padding:0!important}
+.phrase-tag-assignment-trigger svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.phrase-tag-category-assignment{grid-column:1/-1;display:grid;gap:8px;margin:2px 0 8px 31px;padding:11px;border:1px solid #d8dfe8;border-radius:12px;background:#fff}
+.phrase-tag-category-assignment[hidden]{display:none!important}
+.phrase-tag-assignment-title{color:#344256;font-size:.68rem;font-weight:800}
+.phrase-tag-assignment-tree{display:grid;gap:5px;max-height:25dvh;overflow-y:auto}
+.phrase-tag-assignment-option{display:flex;min-height:30px;align-items:center;gap:8px;padding-inline-start:calc(var(--depth)*15px);color:#344256;font-size:.72rem}
+.phrase-tag-assignment-option input{width:17px;height:17px;margin:0;accent-color:#087cff}
+.phrase-tag-assignment-actions{display:flex;flex-wrap:wrap;gap:7px}
+.phrase-tag-assignment-actions button{min-height:34px;padding:0 11px;border:1px solid #cbd5e1;border-radius:9px;background:#f7f9fc;color:#344256;font:inherit;font-size:.68rem;font-weight:800}
+.phrase-tag-assignment-actions button:first-child{border-color:#9fc6ed;background:#eef6ff;color:#176db5}
+.phrase-tag-assignment-message{min-height:1em;margin:0;color:#65758b;font-size:.64rem}
+html[data-theme="dark"] .phrase-tag-category-assignment{border-color:#465467;background:#202b39}
+html[data-theme="dark"] .phrase-tag-assignment-title,html[data-theme="dark"] .phrase-tag-assignment-option{color:#e0e7f0}
+html[data-theme="dark"] .phrase-tag-assignment-actions button{border-color:#465467;background:#263244;color:#e0e7f0}
+html[data-theme="dark"] .phrase-tag-assignment-actions button:first-child{border-color:#426b91;background:#15283a;color:#72baff}
+html[data-theme="dark"] .phrase-tag-assignment-message{color:#aeb9c8}
+@media(max-width:430px){.phrase-tag-category-assignment{margin-left:26px;padding:9px}.phrase-tag-assignment-actions button{flex:1 1 auto}}
