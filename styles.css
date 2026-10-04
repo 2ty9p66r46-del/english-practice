@@ -2059,3 +2059,18 @@ html[data-theme="dark"] .phrase-tag-filter-choice.blue.selected,html[data-theme=
 @media(max-width:430px){.phrase-tag-manager-actions .phrase-tag-color-trigger{width:40px;min-width:40px;height:30px;min-height:30px;padding:0}}
 
 .phrase-tag-manager-actions .phrase-tag-color-trigger svg{display:block;width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* Folder rows use a neutral charcoal surface, separate from every tag tone. */
+.phrase-tag-folder-tree-row{border-color:#394352;background:#394352}
+.phrase-tag-folder-tree-row>strong{color:#f7f9fc}
+.phrase-tag-folder-tree-row>small{color:#c4ccd7}
+.phrase-tag-folder-name-input{color:#f7f9fc}
+.phrase-tag-tree-toggle,.phrase-tag-tree-spacer{color:#d3dbe6}
+.phrase-tag-tree-children{border-left-color:#aab4c2}
+.phrase-tag-folder-name-input:focus{border-color:#c4ccd7;background:#fff;color:#26364d;box-shadow:0 0 0 3px #39435224}
+html[data-theme="dark"] .phrase-tag-folder-tree-row{border-color:#252d39;background:#252d39}
+html[data-theme="dark"] .phrase-tag-folder-tree-row>strong,html[data-theme="dark"] .phrase-tag-folder-name-input{color:#f7f9fc}
+html[data-theme="dark"] .phrase-tag-folder-tree-row>small{color:#c4ccd7}
+html[data-theme="dark"] .phrase-tag-tree-toggle,html[data-theme="dark"] .phrase-tag-tree-spacer{color:#d3dbe6}
+html[data-theme="dark"] .phrase-tag-tree-children{border-left-color:#657286}
+html[data-theme="dark"] .phrase-tag-folder-name-input:focus{border-color:#8793a5;background:#121a24;color:#eef4ff}
