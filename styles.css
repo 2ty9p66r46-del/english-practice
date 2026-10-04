@@ -1985,7 +1985,7 @@ html[data-theme="dark"] .phrase-tag-manager-actions button:disabled{opacity:.4}
 .phrase-tag-editor-folder-label{display:flex;align-items:center;gap:7px;min-height:36px;padding:6px 10px;border-radius:10px;background:#f2f5f9;color:#344256;font-size:.75rem}
 .phrase-tag-editor-folder-label svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .phrase-tag-editor-folder-children{margin-left:7px;padding-left:5px;border-left:1px solid #d9e1eb}
-.phrase-tag-editor-tree-tag-row .phrase-tag-editor-choice{width:100%;text-align:left;border-radius:10px}
+.phrase-tag-editor-tree-tag-row .phrase-tag-editor-choice{justify-self:start;width:fit-content;max-width:100%;text-align:left;border-radius:999px}
 html[data-theme="dark"] .phrase-tag-editor-folder-toggle{color:#b3c0d1}
 html[data-theme="dark"] .phrase-tag-editor-folder-label{background:#202b39;color:#e0e7f0}
 html[data-theme="dark"] .phrase-tag-editor-folder-children{border-color:#405065}
