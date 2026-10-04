@@ -30,7 +30,8 @@
   const idMap=new Map();
   clone.querySelectorAll('[id]').forEach(element=>{const original=element.id,replacement=`phrase_${original}`;idMap.set(original,replacement);element.id=replacement});
   clone.querySelectorAll('[aria-controls]').forEach(element=>{const target=element.getAttribute('aria-controls');if(idMap.has(target))element.setAttribute('aria-controls',idMap.get(target))});
-  mount.className=clone.className;mount.replaceChildren(...clone.childNodes);
+  mount.className=clone.className;mount.classList.add('phrase-module-card');mount.replaceChildren(...clone.childNodes);
+  const phraseHomeIcon=mount.querySelector('.home-module-icon svg');if(phraseHomeIcon)phraseHomeIcon.innerHTML='<path d="M4.5 5.5h15a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-8l-5.5 3v-3H4.5a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2Z"/><path d="M7 10h10M7 13h7"/>';
   mount.querySelector('.home-module-title strong').textContent='マイフレーズバンク';
   mount.querySelector('.home-module-title small').textContent='MY PHRASE BANK';
 
