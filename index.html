@@ -1,3 +1,6 @@
+Warning: truncated output (original token count: 15223)
+Total output lines: 423
+
 <!doctype html>
 <html lang="ja">
 <head>
@@ -14,7 +17,7 @@
   <link rel="apple-touch-icon" href="./icon.svg">
   <title>FloVo</title>
   <script src="./xlsx.full.min.js"></script>
-  <link rel="stylesheet" href="./styles.css?v=589">
+  <link rel="stylesheet" href="./styles.css?v=590">
 </head>
 <body data-page="home">
   <div class="shell">
@@ -158,137 +161,7 @@
             <p class="answer-count-help">ANDはすべて一致、ORはOR指定のいずれかに一致</p>
             <p class="answer-count-warning" data-answer-count-warning hidden>※0以上の整数で、「以上」は「以下」以下にしてください</p>
           </div>
-          <div class="group meaning-count-group editor-only-filter"><div class="group-title"><span>意味の数</span><button class="all blue" type="button">ALL</button></div><div class="choice-grid"><button class="choice red" type="button" data-value="0">0</button><button class="choice yellow" type="button" data-value="1">1</button><button class="choice blue" type="button" data-value="multiple">複数</button></div></div>
-          <div class="group example-count-group editor-only-filter"><div class="group-title"><span>例文の数</span><button class="all blue" type="button">ALL</button></div><div class="choice-grid"><button class="choice red" type="button" data-value="0">0</button><button class="choice yellow" type="button" data-value="1">1</button><button class="choice blue" type="button" data-value="multiple">複数</button></div></div>
-          </div>
-        </section>
-        <div class="bottom-space"></div>
-      </div>
-    </main>
-    <nav class="nav" aria-label="メインメニュー">
-      <button class="tab nav-reload" id="reloadButton" type="button" aria-label="アプリを最新版に更新"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.35 5.65"/><path d="M20 4v7h-7"/></svg><span>リロード</span></button>
-      <button class="tab nav-home active" type="button"><svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8v9a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg><span>ホーム</span></button>
-      <div class="nav-scroll">
-        <button class="tab" id="homeSettingsButton" type="button" aria-haspopup="dialog"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.83 2.83-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1.1V21h-4v-.1A1.7 1.7 0 0 0 8.6 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1.1-.4H3v-4h.1A1.7 1.7 0 0 0 4.6 8.6a1.7 1.7 0 0 0-.34-1.88l-.06-.06 2.83-2.83.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-.6 1.7 1.7 0 0 0 .4-1.1V3h4v.1A1.7 1.7 0 0 0 15.4 4.6a1.7 1.7 0 0 0 1.88-.34l.06-.06 2.83 2.83-.06.06A1.7 1.7 0 0 0 19.4 9c.1.38.32.73.6 1 .3.28.69.42 1.1.4h.1v4h-.1a1.7 1.7 0 0 0-1.7.6z"/></svg><span>設定</span></button>
-        <button class="tab" id="helpButton" type="button" aria-haspopup="dialog"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.7 9a2.4 2.4 0 1 1 3.8 1.95c-.95.68-1.5 1.08-1.5 2.05M12 17h.01"/></svg><span>ヘルプ</span></button>
-            </div>
-        <button class="tab practice-control-tab practice-play-fixed" id="autoPlayTab" type="button"><svg class="practice-control-icon practice-play-svg" id="autoPlayIcon" viewBox="0 0 24 24" aria-hidden="true"><path class="play-mark" d="m9 6 9 6-9 6Z"/><g class="pause-mark"><path d="M9 7v10"/><path d="M15 7v10"/></g></svg><span id="autoPlayLabel">再生</span></button>
-      <div class="practice-nav-controls" aria-label="練習操作">
-
-        <button class="tab practice-control-tab" id="practiceOrderTab" type="button" aria-pressed="false"><svg class="practice-control-icon practice-order-icon" viewBox="0 0 24 24" aria-hidden="true"><g class="order-number-mark"><text x="4.5" y="8.8">1</text><text x="12" y="8.8">2</text><text x="19.5" y="8.8">3</text><path d="M4 16h16"/><path d="m16 12 4 4-4 4"/></g><g class="order-random-mark"><path d="M4 7h3c4 0 6 10 10 10h3"/><path d="m17 14 3 3-3 3"/><path d="M4 17h3c1.7 0 3-1.8 4.3-4"/><path d="M14 8.5C15 7.6 16 7 17 7h3"/><path d="m17 4 3 3-3 3"/></g></svg><span id="practiceOrderLabel">順序</span></button>
-        <button class="tab practice-control-tab repeat-once" id="repeatModeTab" type="button"><svg class="practice-control-icon repeat-mode-icon" viewBox="0 0 24 24" aria-hidden="true"><g class="repeat-current-mark"><path d="M18 7H8a4 4 0 0 0-4 4"/><path d="m15 4 3 3-3 3M6 17h10a4 4 0 0 0 4-4"/><path d="m9 20-3-3 3-3"/><circle cx="18" cy="7" r="5"/><text x="18" y="9.5">1</text></g><g class="repeat-all-mark"><path d="M18 7H8a4 4 0 0 0-4 4"/><path d="m15 4 3 3-3 3M6 17h10a4 4 0 0 0 4-4"/><path d="m9 20-3-3 3-3"/></g><g class="repeat-once-mark"><path d="M4 12h14"/><path d="m14 8 4 4-4 4"/><path d="M21 6v12"/></g></svg><span id="repeatModeLabel">リピート</span></button>
-        <button class="tab practice-control-tab" id="languageModeTab" type="button"><span class="practice-language-mark" id="languageModeIcon" aria-hidden="true">日・英</span><span id="languageModeLabel">音声</span></button>
-        <button class="tab practice-control-tab" id="practiceSettingsTab" type="button"><svg class="practice-control-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h7M15 6h5M4 12h3M11 12h9M4 18h10M18 18h2"/><circle cx="13" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="16" cy="18" r="2"/></svg><span>設定</span></button>
-      </div>
-    </nav>
-    <div class="home-settings-overlay" id="homeSettingsOverlay" hidden>
-      <section class="home-settings-sheet" role="dialog" aria-modal="true" aria-labelledby="homeSettingsTitle">
-        <div class="home-settings-head"><h2 id="homeSettingsTitle">設定</h2><button id="homeSettingsClose" type="button" aria-label="閉じる">×</button></div>
-        <div class="home-setting-section">
-          <h3>画面テーマ</h3>
-          <p>「自動」は端末の外観設定に合わせます。</p>
-          <div class="theme-options" role="radiogroup" aria-label="画面テーマ">
-            <button type="button" data-theme-option="auto" role="radio">自動</button>
-            <button type="button" data-theme-option="light" role="radio">ライト</button>
-            <button type="button" data-theme-option="dark" role="radio">ダーク</button>
-          </div>
-        </div>
-      </section>
-    </div>
-    <section class="practice-screen" id="practiceScreen" aria-label="英作文練習" hidden>
-      <header class="practice-screen-header">
-        <div class="practice-header-left">
-          <button class="practice-back-to-list" id="practiceBackToList" type="button" aria-label="例文一覧へ戻る" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg></button>
-        </div>
-        <div class="practice-header-actions">
-          <button class="practice-card-add" id="practiceCardAdd" type="button" aria-label="データ編集"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg><span>データ編集</span></button>
-          <button class="practice-filter-button" id="practiceFilterButton" type="button" aria-label="例文フィルタ条件を開く"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4v12M3.5 12.5 7 16l3.5-3.5M14 6h7M14 11h5.5M14 16h4"/></svg><span>フィルタ</span></button>
-        </div>
-      </header>
-      <main class="practice-screen-main">
-        <article class="practice-exercise-card" id="practiceExerciseCard">
-          <section class="practice-question-meta" aria-label="問題情報">
-            <strong class="practice-progress" id="practiceProgress">0 / 0</strong>
-            <button class="practice-card-menu" id="practiceCardMenu" type="button" aria-label="表示中のカードを編集">•••</button>
-            <div class="practice-info-row practice-info-primary"><span class="practice-card-badges"><span class="practice-number" id="practiceWordNumber">No 00000</span><span class="practice-meta-chip" id="practicePart">—</span><span class="practice-sub-number practice-meta-chip" id="practiceMeaningExampleNumber">—</span></span><span class="practice-level-chips" id="practiceLevels"></span></div>
-            <div class="practice-detail-grid">
-              <div class="practice-word-heading"><span class="practice-word-title">単語</span><button class="practice-note-button" id="practiceNoteButton" type="button" aria-label="補足を表示" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4"/><path d="M8.2 14.5A6 6 0 1 1 15.8 14.5c-.9.7-1.3 1.5-1.3 2.5h-5c0-1-.4-1.8-1.3-2.5z"/></svg></button><button class="practice-copy-button practice-word-copy" id="practiceWordCopy" type="button" aria-label="単語をコピー"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg></button></div>
-              <div class="practice-word-stack"><strong class="practice-keyword" id="practiceWord">—</strong><div class="phrase-card-tag-section" id="phraseCardTagSection" hidden><strong>タグ</strong><div class="phrase-card-tag-badges" id="phraseCardTagBadges"></div></div></div>
-              <span class="practice-info-divider" aria-hidden="true"></span>
-              <span class="practice-pronunciation-stack">
-                <span class="practice-pronunciation-line"><b>US</b><button class="practice-pronunciation-audio" id="practicePronUsAudio" type="button" aria-label="米国英語で単語を再生"><span id="practicePronUs">—</span></button></span>
-                <span class="practice-pronunciation-line"><b>UK</b><button class="practice-pronunciation-audio" id="practicePronUkAudio" type="button" aria-label="英国英語で単語を再生"><span id="practicePronUk">—</span></button></span>
-              </span>
-              <div class="practice-meaning-column"><span class="practice-meaning-actions"><button class="practice-edit-button" id="practiceMeaningEdit" type="button" aria-label="意味を編集"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg></button><button class="practice-copy-button" id="practiceMeaningCopy" type="button" aria-label="意味をコピー"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg></button></span><p class="practice-meaning" id="practiceMeaning">—</p></div>
-            </div>
-          </section>
-          <section class="practice-language practice-japanese-block">
-            <div class="practice-language-heading"><button class="practice-language-label practice-language-audio" id="practiceJapaneseAudio" type="button" aria-label="日本語を再生">日本語</button><button class="practice-inline-stop" id="practiceJapaneseStop" type="button" aria-label="日本語音声を停止" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="1.5"/></svg></button><button class="practice-edit-button" id="practiceJapaneseEdit" type="button" aria-label="日本語文を編集"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg></button><button class="practice-copy-button" id="practiceJapaneseCopy" type="button" aria-label="日本語文をコピー"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg></button></div>
-            <p class="practice-japanese" id="practiceJapanese">日本語の例文</p>
-          </section>
-          <section class="practice-language practice-english-block">
-            <div class="practice-language-heading"><button class="practice-language-label practice-language-audio" id="practiceAudio" type="button" aria-label="英文を再生" disabled>英語</button><button class="practice-inline-stop" id="practiceEnglishStop" type="button" aria-label="英語音声を停止" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="1.5"/></svg></button><button class="practice-edit-button" id="practiceEnglishEdit" type="button" aria-label="英文を編集"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg></button><button class="practice-copy-button" id="practiceEnglishCopy" type="button" aria-label="英文をコピー"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg></button></div>
-            <div class="practice-answer" aria-live="polite">
-              <button class="practice-reveal" id="practiceReveal" type="button">英文を表示</button>
-              <p class="practice-english" id="practiceEnglish" hidden></p>
-            </div>
-          </section>
-          <footer class="practice-card-footer">
-            <div class="practice-rating-footer"><div class="practice-rating-options" id="practiceRatingOptions" aria-label="理解度選択"><button class="practice-rating-button rating-zero red" type="button" data-value="0%" aria-label="理解度0パーセント">0</button><button class="practice-rating-button rating-fifty orange" type="button" data-value="50%" aria-label="理解度50パーセント">50</button><button class="practice-rating-button rating-eighty yellow" type="button" data-value="80%" aria-label="理解度80パーセント">80</button><button class="practice-rating-button rating-full green" type="button" data-value="100%" aria-label="理解度100パーセント">100</button></div></div>
-            <div class="practice-result-footer"><div class="practice-result-actions" id="practiceResultActions" aria-label="回答結果"><div class="practice-result-choice"><button class="practice-result-button result-correct" type="button" data-result="correct" aria-label="できた"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7.5"/></svg></button><small id="practiceCorrectCount">0</small></div><div class="practice-result-choice"><button class="practice-result-button result-unsure" type="button" data-result="unsure" aria-label="もう少し"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.8 20 18.7H4Z"/></svg></button><small id="practiceUnsureCount">0</small></div><div class="practice-result-choice"><button class="practice-result-button result-wrong" type="button" data-result="wrong" aria-label="できなかった"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6.5 6.5 11 11M17.5 6.5l-11 11"/></svg></button><small id="practiceWrongCount">0</small></div></div><button class="practice-result-edit" id="practiceResultEdit" type="button" aria-label="結果を編集"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg></button></div>
-          </footer>
-        </article>
-        <section class="practice-list-placeholder" id="practiceListPlaceholder" aria-label="例文一覧" hidden>
-          <header class="practice-list-header">
-            <strong id="practiceListTitle">例文一覧</strong>
-            <div class="practice-header-counts" id="practiceHeaderCounts" aria-live="polite">
-              <span><b>単語数</b><strong id="wordCount">0</strong></span>
-              <span><b>例文数</b><strong id="exampleCount">0</strong></span>
-            </div>
-          </header>
-          <div class="practice-list-items" id="practiceList"></div>
-        </section>
-      </main>    </section>
-    <div class="practice-filter-overlay" id="practiceFilterOverlay" hidden>
-      <section class="practice-filter-sheet" role="dialog" aria-modal="true" aria-labelledby="practiceFilterTitle">
-        <header class="practice-filter-sheet-head"><span class="practice-filter-handle" aria-hidden="true"></span><button id="practiceFilterCancel" type="button">キャンセル</button><h2 id="practiceFilterTitle">例文フィルタ</h2><button id="practiceFilterClose" type="button">適用</button></header>
-        <div class="practice-filter-fixed-summary" id="practiceFilterFixedSummary"></div>
-        <div class="practice-filter-sheet-body" id="practiceFilterSheetBody"></div>
-      </section>
-    </div>
-    <div class="practice-settings-overlay" id="practiceSettingsOverlay" hidden>
-      <section class="practice-settings-sheet" role="dialog" aria-modal="true" aria-labelledby="practiceSettingsTitle">
-        <div class="practice-settings-head"><h2 id="practiceSettingsTitle">練習設定</h2><button id="practiceSettingsClose" type="button" aria-label="閉じる">×</button></div>
-        <div class="practice-setting-row"><span>日本語の再生速度</span><div class="practice-setting-picker"><button class="practice-setting-trigger" id="japaneseRateSetting" type="button" aria-haspopup="listbox" aria-expanded="false"><span class="practice-setting-value"></span><span class="practice-setting-chevron">⌄</span></button><div class="practice-setting-menu" id="japaneseRateMenu" role="listbox" aria-label="日本語の再生速度" hidden></div></div></div>
-        <div class="practice-setting-row"><span>英語の再生速度</span><div class="practice-setting-picker"><button class="practice-setting-trigger" id="englishRateSetting" type="button" aria-haspopup="listbox" aria-expanded="false"><span class="practice-setting-value"></span><span class="practice-setting-chevron">⌄</span></button><div class="practice-setting-menu" id="englishRateMenu" role="listbox" aria-label="英語の再生速度" hidden></div></div></div>
-        <div class="practice-setting-row"><span>日本語後のポーズ</span><div class="practice-setting-picker"><button class="practice-setting-trigger setting-cycle" id="japanesePauseSetting" type="button"><span class="practice-setting-value"></span></button><div class="practice-setting-menu" id="japanesePauseMenu" hidden></div></div></div>
-        <div class="practice-setting-row"><span>英語後のポーズ</span><div class="practice-setting-picker"><button class="practice-setting-trigger setting-cycle" id="englishPauseSetting" type="button"><span class="practice-setting-value"></span></button><div class="practice-setting-menu" id="englishPauseMenu" hidden></div></div></div>
-        <div class="practice-setting-row"><span>英語の読み上げ回数</span><div class="practice-setting-picker"><button class="practice-setting-trigger setting-cycle" id="englishRepeatSetting" type="button"><span class="practice-setting-value"></span></button><div class="practice-setting-menu" id="englishRepeatMenu" hidden></div></div></div>
-        <button class="practice-learning-reset" id="practiceLearningReset" type="button">学習データリセット</button>
-      </section>
-    </div>
-    <div class="learning-reset-overlay" id="learningResetOverlay" hidden>
-      <section class="learning-reset-dialog" role="alertdialog" aria-modal="true" aria-labelledby="learningResetTitle" aria-describedby="learningResetMessage">
-        <h2 id="learningResetTitle">学習データリセット</h2>
-        <p id="learningResetMessage">理解度、正答結果をすべてリセットします。</p>
-        <div><button id="learningResetCancel" type="button">キャンセル</button><button class="danger" id="learningResetConfirm" type="button">リセット</button></div>
-      </section>
-    </div>
-    <div class="card-actions-overlay" id="cardActionsOverlay" hidden>
-      <section class="card-actions-sheet" role="dialog" aria-modal="true" aria-label="カード操作">
-        <div class="card-actions-summary"><strong id="cardActionsWord">—</strong><span id="cardActionsNumber">—</span></div>
-        <button id="cardActionEdit" type="button">編集</button>
-        <button class="danger" id="cardActionDelete" type="button">カードを削除</button>
-        <button class="cancel" id="cardActionCancel" type="button">キャンセル</button>
-      </section>
-    </div>
-    <div class="card-editor-overlay" id="cardEditorOverlay" hidden>
-      <section class="card-editor-sheet" role="dialog" aria-modal="true" aria-labelledby="cardEditorTitle">
-        <span class="practice-filter-handle" aria-hidden="true"></span>
-        <header class="card-editor-head"><button id="cardEditorCancel" type="button">キャンセル</button><h2 id="cardEditorTitle">データ編集</h2><button id="cardEditorSave" type="button">保存</button></header>
-        <div class="card-editor-body">
-          <section class="card-word-step" id="cardWordStep">
-            <div class="card-word-sticky"><div class="card-word-step-head"><span class="card-word-heading">単語 <em class="card-inline-message" id="cardWordMessage">※単語を選択してください</em></span><span class="card-selected-word-group" id="cardSelectedWord" hidden><span id="cardSelectedWordText"></span></span><button class="card-word-reselect" id="cardWordReselect" type="button" hidden>再選択</button></div><div class="card-word-search-row" id="cardWordSearchRow"><label class="card-editor-field card-word-field"><span class="card-search-input"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg><input id="cardWordSearch" type="search" aria-label="単語を検索" placeholder="単語を検索" autocomplete="off" autocapitalize="none" spellcheck="false" role="combobox" aria-autocomplete="list" aria-controls="cardWordResults" aria-expanded="false"></span></label><button class="card-word-filter-toggle" id="cardWordFilterToggle" type="button" aria-expanded="false" aria-controls="cardWordFilterPanel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4v12M3.5 12.5 7 16l3.5-3.5M14 6h7M14 11h5.5M14 16h4"/></svg><span>フィルタ</span></button></div></div>
+          <div class="group meaning-count-group editor-only-filter"><div class="group-title"><s…5223 tokens truncated…role="combobox" aria-autocomplete="list" aria-controls="cardWordResults" aria-expanded="false"></span></label><button class="card-word-filter-toggle" id="cardWordFilterToggle" type="button" aria-expanded="false" aria-controls="cardWordFilterPanel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4v12M3.5 12.5 7 16l3.5-3.5M14 6h7M14 11h5.5M14 16h4"/></svg><span>フィルタ</span></button></div></div>
             <div class="card-word-filter-panel" id="cardWordFilterPanel" hidden>
               <div class="card-filter-bulk"><button class="bulk-filter-button select selected" id="cardSelectAllFilters" type="button">すべて選択</button></div>
               <div class="filter-section" data-card-filter-section="word"><div class="filter-section-head"><h3><span class="condition-badge">条件1</span><span>単語レベル</span></h3><div class="filter-section-actions"><button class="section-filter-button select selected" type="button" data-card-section-action>すべて選択</button></div></div><div class="group level-group"><div class="group-title"><span>Speaking</span><button class="all blue selected" type="button">ALL</button></div><div class="choice-grid"><button class="choice level red selected" type="button" data-value="S1">S1</button><button class="choice level orange selected" type="button" data-value="S2">S2</button><button class="choice level yellow selected" type="button" data-value="S3">S3</button></div></div><div class="group level-group"><div class="group-title"><span>Writing</span><button class="all blue selected" type="button">ALL</button></div><div class="choice-grid"><button class="choice level red selected" type="button" data-value="W1">W1</button><button class="choice level orange selected" type="button" data-value="W2">W2</button><button class="choice level yellow selected" type="button" data-value="W3">W3</button></div></div></div>
@@ -418,6 +291,6 @@
   </div>
   <div class="screen-fade" id="screenFade" aria-hidden="true"></div>
   <script src="./app.js?v=564"></script>
-  <script src="./phrase-bank.js?v=594"></script>
+  <script src="./phrase-bank.js?v=595"></script>
 </body>
 </html>
