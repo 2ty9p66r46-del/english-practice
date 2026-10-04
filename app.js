@@ -1283,8 +1283,19 @@ const COL=Object.freeze({
       activePracticeListRow=practiceList.querySelector(`[data-practice-row-index="${practiceIndex}"]`);
       activePracticeListRow?.setAttribute('aria-current','true');
     };
-    const renderPracticeList=()=>{
+    const renderPracticeList=(ensureCurrentVisible=true)=>{
       const renderToken=++practiceListRenderToken,rows=practiceRows;
+      const savedScrollTop=practiceList.scrollTop;
+      const virtualRows=document.body.dataset.practiceModule==='active-vocabulary'&&rows.length>160;
+      const rowHeight=106,viewportHeight=practiceList.clientHeight||650;
+      const windowRows=virtualRows?Math.ceil(viewportHeight/rowHeight)+16:rows.length;
+      const getWindowStart=scrollTop=>virtualRows?Math.max(0,Math.min(rows.length-windowRows,Math.floor(scrollTop/rowHeight)-8)):0;
+      let virtualScrollTop=savedScrollTop,startIndex=getWindowStart(virtualScrollTop);
+      if(virtualRows&&ensureCurrentVisible&&(practiceIndex<startIndex||practiceIndex>=startIndex+windowRows)){
+        virtualScrollTop=Math.max(0,practiceIndex*rowHeight-Math.floor(windowRows/2)*rowHeight);
+        startIndex=getWindowStart(virtualScrollTop);
+      }
+      const endIndex=Math.min(rows.length,startIndex+windowRows);
       practiceList.replaceChildren();activePracticeListRow=null;
       if(!practiceRows.length){
         const empty=document.createElement('div');
@@ -1293,10 +1304,12 @@ const COL=Object.freeze({
         const detail=document.createElement('span');detail.textContent='「＋」から登録済みの単語に文を追加できます';
         empty.append(title,detail);practiceList.append(empty);return;
       }
-      let index=0;
+      const spacer=height=>{const element=document.createElement('div');element.setAttribute('aria-hidden','true');element.style.flex=`0 0 ${height}px`;element.style.height=`${height}px`;return element};
+      if(virtualRows&&startIndex>0)practiceList.append(spacer(startIndex*rowHeight));
+      let index=startIndex;
       const renderChunk=()=>{
         if(renderToken!==practiceListRenderToken)return;
-        const fragment=document.createDocumentFragment(),chunkEnd=Math.min(index+120,rows.length);
+        const fragment=document.createDocumentFragment(),chunkEnd=Math.min(index+(virtualRows?windowRows:120),endIndex);
         for(;index<chunkEnd;index++){
         const row=rows[index],rowIndex=index;
         const item=document.createElement('div');
@@ -1397,8 +1410,12 @@ const COL=Object.freeze({
         fragment.append(item);
         }
         practiceList.append(fragment);
-        if(index<rows.length){requestAnimationFrame(renderChunk);return}
-        if(practiceViewMode==='list'){
+        if(index<endIndex){requestAnimationFrame(renderChunk);return}
+        if(virtualRows&&endIndex<rows.length)practiceList.append(spacer((rows.length-endIndex)*rowHeight));
+        practiceList.scrollTop=virtualScrollTop;
+        if(virtualRows)practiceListVirtualStart=startIndex;
+        else practiceListVirtualStart=-1;
+        if(practiceViewMode==='list'&&ensureCurrentVisible){
           requestAnimationFrame(()=>{
             practiceList.querySelector('[aria-current="true"]')?.scrollIntoView({block:'nearest'});
           });
@@ -1406,6 +1423,13 @@ const COL=Object.freeze({
       };
       renderChunk();
     };
+    let practiceListVirtualFrame=0,practiceListVirtualStart=-1;
+    practiceList.addEventListener('scroll',()=>{
+      if(document.body.dataset.practiceModule!=='active-vocabulary'||practiceRows.length<=160||practiceViewMode!=='list')return;
+      const nextStart=Math.max(0,Math.min(practiceRows.length-Math.ceil((practiceList.clientHeight||650)/106)-16,Math.floor(practiceList.scrollTop/106)-8));
+      if(nextStart===practiceListVirtualStart||practiceListVirtualFrame)return;
+      practiceListVirtualFrame=requestAnimationFrame(()=>{practiceListVirtualFrame=0;practiceListVirtualStart=nextStart;renderPracticeList(false)});
+    },{passive:true});
     const vocabularyKey=row=>`${text(row?.[COL.word]).toLowerCase()}\t${text(row?.[COL.pos])}`;
     const normalizedMeaning=value=>text(value).replace(/\s+/g,' ').toLowerCase();
     const restoredVocabularyStores=new WeakSet();
