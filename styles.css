@@ -2057,3 +2057,5 @@ html[data-theme="dark"] .phrase-tag-filter-choice.blue.selected,html[data-theme=
 .phrase-tag-manager-actions .phrase-tag-color-trigger{width:42px;min-width:42px;height:32px;min-height:32px;gap:3px;padding:0}
 .phrase-tag-color-trigger>span:first-child{font-size:1rem;line-height:1}
 @media(max-width:430px){.phrase-tag-manager-actions .phrase-tag-color-trigger{width:40px;min-width:40px;height:30px;min-height:30px;padding:0}}
+
+.phrase-tag-manager-actions .phrase-tag-color-trigger svg{display:block;width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
