@@ -2116,3 +2116,8 @@ html[data-theme="dark"] .help-usage-section{border-color:#354153;background:#1b2
 .phrase-module-card::after{background:radial-gradient(circle at 100% 0,#63b97b22 0%,#63b97b00 68%)}
 html[data-theme="dark"] .phrase-module-card{background:linear-gradient(145deg,#1b2431 0%,#1c2a27 100%);border-color:#344a3d}
 html[data-theme="dark"] .phrase-module-card .home-module-head{border-color:#344a3d}
+
+/* Keep all practice-list header actions in one blue family in dark mode. */
+html[data-theme="dark"] .practice-header-actions .practice-card-add,
+html[data-theme="dark"] .practice-header-actions .practice-filter-button,
+html[data-theme="dark"] .practice-header-actions .phrase-bulk-select-button{border-color:#426b91;background:#15283a;color:#72baff;box-shadow:none}
