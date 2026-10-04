@@ -2890,7 +2890,7 @@ const COL=Object.freeze({
       if(event.target===practiceSettingsOverlay)closePracticeSettings();
     });
     const closeLearningReset=()=>{learningResetOverlay.hidden=true;practiceLearningReset.focus({preventScroll:true})};
-    practiceLearningReset.addEventListener('click',()=>{closePracticeSettingMenus();learningResetOverlay.hidden=false;learningResetCancel.focus({preventScroll:true})});
+    practiceLearningReset.addEventListener('click',()=>{closePracticeSettingMenus();const phraseMode=Boolean(activePracticeAdapter());document.getElementById('learningResetTitle').textContent=phraseMode?'マイフレーズの学習データリセット':'アクティブボキャビルの学習データリセット';document.getElementById('learningResetMessage').textContent=phraseMode?'マイフレーズの理解度・正答結果だけをリセットします。アクティブボキャビルの学習データには影響しません。':'アクティブボキャビルの理解度・正答結果だけをリセットします。マイフレーズの学習データには影響しません。';learningResetOverlay.hidden=false;learningResetCancel.focus({preventScroll:true})});
     learningResetCancel.addEventListener('click',closeLearningReset);
     learningResetOverlay.addEventListener('click',event=>{if(event.target===learningResetOverlay)closeLearningReset()});
     learningResetConfirm.addEventListener('click',async()=>{
