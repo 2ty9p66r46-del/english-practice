@@ -14,7 +14,7 @@
   <link rel="apple-touch-icon" href="./icon.svg">
   <title>FloVo</title>
   <script src="./xlsx.full.min.js"></script>
-  <link rel="stylesheet" href="./styles.css?v=616">
+  <link rel="stylesheet" href="./styles.css?v=617">
 </head>
 <body data-page="home">
   <div class="shell">
@@ -41,10 +41,11 @@
               </div>
             </header>
             <section class="home-learning-stats" aria-label="学習状況">
-              <div class="home-stat-tabs" role="tablist" aria-label="統計の種類">
+              <div class="home-stat-tabs active-vocab-stat-tabs" role="tablist" aria-label="統計の種類">
                 <button class="active" type="button" role="tab" aria-selected="true" aria-controls="homeUnderstandingPanel" data-home-stat="understanding">理解度</button>
                 <button type="button" role="tab" aria-selected="false" aria-controls="homeAnswerPanel" data-home-stat="answers">正答率</button>
                 <button type="button" role="tab" aria-selected="false" aria-controls="homeWordPanel" data-home-stat="words">単語数</button>
+                <button type="button" role="tab" aria-selected="false" aria-controls="homeExamplePanel" data-home-stat="examples">例文数</button>
               </div>
               <div class="home-stat-panels">
                 <div class="home-understanding-panel home-stat-panel" id="homeUnderstandingPanel" role="tabpanel">
@@ -73,6 +74,10 @@
                     <div><h3>SWレベル</h3><div class="home-level-stats" id="homeLevelStats"></div></div>
                     <div><h3>品詞</h3><div class="home-pos-stats" id="homePosStats"></div></div>
                   </div>
+                </div>
+                <div class="home-example-panel home-stat-panel" id="homeExamplePanel" role="tabpanel" hidden>
+                  <div class="home-example-graphic" aria-hidden="true"><svg viewBox="0 0 48 48"><rect x="8" y="7" width="27" height="31" rx="5"/><path d="M15 16h13M15 22h13M15 28h8"/><path d="M35 15h3a3 3 0 0 1 3 3v21H17v-1"/></svg></div>
+                  <div class="home-example-total"><strong id="homeExampleCount">0</strong><span>登録例文</span></div>
                 </div>
               </div>
             </section>
@@ -430,7 +435,7 @@
     </div>
   </div>
   <div class="screen-fade" id="screenFade" aria-hidden="true"></div>
-  <script src="./app.js?v=570"></script>
-  <script src="./phrase-bank.js?v=615"></script>
+  <script src="./app.js?v=571"></script>
+  <script src="./phrase-bank.js?v=616"></script>
 </body>
 </html>
