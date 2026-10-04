@@ -2562,14 +2562,22 @@ const COL=Object.freeze({
       if(continuePlayback)restartAutoPlayback();
       const main=practiceScreen.querySelector('.practice-screen-main');
       main?.scrollTo({top:0});
-      if(practiceExerciseCard.animate){
-        try{
-          await practiceExerciseCard.animate([
-            {transform:'translateX(105%)',opacity:.65},
-            {transform:'translateX(0)',opacity:1}
-          ],{duration:180,easing:'cubic-bezier(.16,.82,.24,1)'}).finished;
-        }catch{}
-      }
+      practiceExerciseCard.style.transition='none';
+      practiceExerciseCard.style.transform='translateX(100%)';
+      void practiceExerciseCard.offsetWidth;
+      await new Promise(resolve=>requestAnimationFrame(resolve));
+      const finishSlide=new Promise(resolve=>{
+        let timer;
+        const finish=()=>{clearTimeout(timer);practiceExerciseCard.removeEventListener('transitionend',onEnd);resolve()};
+        const onEnd=event=>{if(event.target===practiceExerciseCard&&event.propertyName==='transform')finish()};
+        practiceExerciseCard.addEventListener('transitionend',onEnd);
+        timer=setTimeout(finish,280);
+      });
+      practiceExerciseCard.style.transition='transform 220ms cubic-bezier(.2,.75,.2,1)';
+      practiceExerciseCard.style.transform='translateX(0)';
+      await finishSlide;
+      practiceExerciseCard.style.removeProperty('transition');
+      practiceExerciseCard.style.removeProperty('transform');
       practiceViewTransitioning=false;
     };
     const returnToPracticeList=async()=>{
