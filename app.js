@@ -480,6 +480,8 @@ const COL=Object.freeze({
     const homeSteadyCount=document.getElementById('homeSteadyCount');
     const homeLearningCount=document.getElementById('homeLearningCount');
     const homeNewCount=document.getElementById('homeNewCount');
+    const homeUnderstandingTotalCount=document.getElementById('homeUnderstandingTotalCount');
+    const homeAnswerTotalCount=document.getElementById('homeAnswerTotalCount');
     const homeStatTabs=[...document.querySelectorAll('[data-home-stat]')];
     const homeStatPanels=[...document.querySelectorAll('.home-stat-panel')];
     const homeAnswerDonut=document.getElementById('homeAnswerDonut');
@@ -980,7 +982,8 @@ const COL=Object.freeze({
         else understandingCounts.new+=1;
       });
       const understandingTotal=allExampleRows.length;
-      homeMasteryRate.textContent=String(understandingTotal);
+      homeMasteryRate.textContent=`${understandingCounts.mastered}/${understandingTotal}`;
+      homeUnderstandingTotalCount.textContent=String(understandingTotal);
       homeMasteredCount.textContent=String(understandingCounts.mastered);
       homeSteadyCount.textContent=String(understandingCounts.steady);
       homeLearningCount.textContent=String(understandingCounts.learning);
@@ -991,7 +994,7 @@ const COL=Object.freeze({
         const stops=tones.map(([color,count])=>{const start=cursor;cursor+=(count/understandingTotal)*100;return `${color} ${start}% ${cursor}%`});
         homeUnderstandingDonut.style.background=`conic-gradient(${stops.join(',')})`;
       }else homeUnderstandingDonut.style.background='#e9edf3';
-      homeUnderstandingDonut.setAttribute('aria-label',understandingTotal?`理解度：習得${understandingCounts.mastered}件、定着${understandingCounts.steady}件、練習中${understandingCounts.learning}件、未定着${understandingCounts.new}件`:'理解度データなし');
+      homeUnderstandingDonut.setAttribute('aria-label',understandingTotal?`理解度：習得${understandingCounts.mastered}件/全${understandingTotal}件、定着${understandingCounts.steady}件、練習中${understandingCounts.learning}件、未定着${understandingCounts.new}件`:'理解度データなし');
       const sumColumn=column=>allExampleRows.reduce((sum,row)=>sum+(Number.parseInt(text(row[column]),10)||0),0);
       const correctCount=sumColumn(COL.correctCount);
       const wrongCount=sumColumn(COL.wrongCount);
@@ -1002,6 +1005,7 @@ const COL=Object.freeze({
       homeCorrectCount.textContent=String(correctCount);
       homeWrongCount.textContent=String(wrongCount);
       homeUnsureCount.textContent=String(unsureCount);
+      homeAnswerTotalCount.textContent=String(answerTotal);
       if(answerTotal){
         const correctEnd=(correctCount/answerTotal)*100;
         const partialEnd=correctEnd+(unsureCount/answerTotal)*100;
