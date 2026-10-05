@@ -524,9 +524,12 @@ const COL=Object.freeze({
             if(levelOrder)return levelOrder;
           }
           if(dimension==='pos'){
-            const order={S:0,A:1,B:2,C:3,D:4};
-            const rankOrder=(order[a.rank]??5)-(order[b.rank]??5);
-            if(rankOrder)return rankOrder;
+            const rankOrder={S:0,A:1,B:2,C:3,D:4};
+            const rankDifference=(rankOrder[a.rank]??5)-(rankOrder[b.rank]??5);
+            if(rankDifference)return rankDifference;
+            const filterOrder={動詞:0,名詞:1,形容詞:2,前置詞:3,副詞:4,接続詞:5,法助動詞:6,限定詞:7,代名詞:8,助動詞:9,前限定詞:10,間投詞:11,数詞:12,不定冠詞:13,定冠詞:14,不定詞標識:15};
+            const partOrder=(filterOrder[a.label]??16)-(filterOrder[b.label]??16);
+            if(partOrder)return partOrder;
             return a.label.localeCompare(b.label,'ja');
           }
           if(metric==='answers'){const aa=a.correct+a.wrong+a.unsure,ba=b.correct+b.wrong+b.unsure;return (aa?a.correct/aa:-1)-(ba?b.correct/ba:-1)||b.total-a.total}
@@ -540,8 +543,8 @@ const COL=Object.freeze({
           const label=document.createElement('strong');label.className='home-breakdown-label';label.textContent=group.label;label.title=group.label;
           const rate=document.createElement('span');rate.className='home-breakdown-value';
           const answers=group.correct+group.wrong+group.unsure;
-          if(metric==='answers')rate.textContent=answers?`正答率 ${Math.round(group.correct/answers*100)}%`:'回答なし';
-          else rate.textContent=`習得率 ${Math.round(group.mastered/group.total*100)}%`;
+          if(metric==='answers')rate.textContent=`回答数 ${answers}`;
+          else rate.textContent=`例文数 ${group.total}`;
           head.append(label,rate);
           const values=metric==='answers'?[['correct',group.correct,'できた'],['unsure',group.unsure,'もう少し'],['wrong',group.wrong,'分からない']]:
             [['mastered',group.mastered,'習得'],['steady',group.steady,'定着'],['learning',group.learning,'練習中'],['new',group.new,'未定着']];
@@ -554,14 +557,15 @@ const COL=Object.freeze({
             const number=document.createElement('span');number.className='home-breakdown-count-number';number.textContent=String(count);
             item.append(dot,number);counts.append(item);
           });
-          if(metric==='understanding'){
+          if(metric==='understanding'||metric==='answers'){
+            const denominator=metric==='answers'?answers:group.total;
             const track=document.createElement('div');track.className='home-breakdown-track';track.setAttribute('role','img');
             track.setAttribute('aria-label',values.map(([tone,count,name])=>`${name} ${count}件`).join('、'));
             values.forEach(([tone,count])=>{
               const segment=document.createElement('i');segment.className='home-breakdown-bar-segment '+tone;
-              segment.style.width=`${group.total?count/group.total*100:0}%`;track.append(segment);
+              segment.style.width=`${denominator?count/denominator*100:0}%`;track.append(segment);
             });
-            row.append(head,counts,track);
+            row.append(head,track,counts);
           }else row.append(head,counts);
           container.append(row);
         });
