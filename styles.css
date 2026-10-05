@@ -2212,7 +2212,7 @@ html[data-theme="dark"] .home-example-row strong{color:#aebbd0}
 .home-breakdown-section{display:grid;min-width:0;gap:5px;padding-top:8px;border-top:1px solid #e3e8ef}.home-breakdown-section+.home-breakdown-section{border-top:2px solid #cbd5e1;padding-top:10px}
 .home-breakdown-section h3{margin:0;color:var(--muted);font-size:.72rem;font-weight:900}
 .home-breakdown-list{display:grid;min-width:0;gap:7px;overflow:visible}
-.home-breakdown-row{display:grid;min-width:0;gap:4px}
+.home-breakdown-row{display:grid;min-width:0;gap:4px}.home-breakdown-list[data-breakdown-by="level"] .home-breakdown-row+.home-breakdown-row{border-top:1px solid #e9edf3;padding-top:7px}
 .home-breakdown-head{display:flex;min-width:0;align-items:baseline;justify-content:space-between;gap:8px}
 .home-breakdown-label{min-width:0;overflow:hidden;color:var(--ink);font-size:.7rem;font-weight:800;text-overflow:ellipsis;white-space:nowrap}
 .home-breakdown-value{display:grid;grid-template-columns:4em minmax(4ch,max-content);justify-content:end;gap:2px;flex:0 0 auto;color:var(--blue);font-size:.68rem;font-weight:900;font-variant-numeric:tabular-nums;white-space:nowrap}.home-breakdown-value.is-unit-count{grid-template-columns:minmax(4ch,max-content) auto}.home-breakdown-value-label{white-space:nowrap}.home-breakdown-value-number{text-align:right}
