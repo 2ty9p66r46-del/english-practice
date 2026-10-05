@@ -2268,3 +2268,6 @@ html[data-theme="dark"] .home-breakdown-track{background:#364253}
 }
 html[data-theme="dark"] .phrase-category-manager-row{border-color:#455163;background:#303a49}
 html[data-theme="dark"] .phrase-category-manager-row .phrase-tag-folder-name-input{color:#eef4ff}
+
+/* Keep the category fold control above legacy category row button placement rules. */
+.phrase-category-manager-row>button.phrase-category-manager-toggle:nth-of-type(1){grid-column:1!important;grid-row:1!important;display:grid!important;visibility:visible!important;opacity:1!important;align-self:center;justify-self:center;z-index:2}
