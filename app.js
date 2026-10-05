@@ -500,9 +500,9 @@ const COL=Object.freeze({
     }));
     const renderHomeStatBreakdowns=rows=>{
       const grouped={level:new Map(),pos:new Map()};
-      const add=(map,label,row)=>{
+      const add=(map,label,row,rank='')=>{
         const key=label||'未登録';
-        if(!map.has(key))map.set(key,{label:key,total:0,mastered:0,steady:0,learning:0,new:0,correct:0,wrong:0,unsure:0});
+        if(!map.has(key))map.set(key,{label:key,rank,total:0,mastered:0,steady:0,learning:0,new:0,correct:0,wrong:0,unsure:0});
         const group=map.get(key);group.total++;
         const value=text(row[COL.understanding]);
         if(value==='100%')group.mastered++;else if(value==='80%')group.steady++;else if(value==='50%')group.learning++;else group.new++;
@@ -513,19 +513,29 @@ const COL=Object.freeze({
       rows.forEach(row=>{
         const levels=[text(row[COL.sLevel]),text(row[COL.wLevel])].filter(Boolean);
         [...new Set(levels.length?levels:['レベル未登録'])].forEach(level=>add(grouped.level,level,row));
-        add(grouped.pos,text(row[COL.pos])||'品詞未登録',row);
+        add(grouped.pos,text(row[COL.pos])||'品詞未登録',row,text(row[COL.posRank]));
       });
       homeBreakdownLists.forEach(container=>{
         const metric=container.dataset.homeBreakdown,dimension=container.dataset.breakdownBy;
         const groups=[...grouped[dimension].values()];
         groups.sort((a,b)=>{
+          if(dimension==='level'){
+            const order={S1:0,S2:1,S3:2,W1:3,W2:4,W3:5};
+            const levelOrder=(order[a.label]??6)-(order[b.label]??6);
+            if(levelOrder)return levelOrder;
+          }
+          if(dimension==='pos'){
+            const order={S:0,A:1,B:2,C:3,D:4};
+            const rankOrder=(order[a.rank]??5)-(order[b.rank]??5);
+            if(rankOrder)return rankOrder;
+            return a.label.localeCompare(b.label,'ja');
+          }
           if(metric==='examples')return b.total-a.total||a.label.localeCompare(b.label,'ja');
           if(metric==='answers'){const aa=a.correct+a.wrong+a.unsure,ba=b.correct+b.wrong+b.unsure;return (aa?a.correct/aa:-1)-(ba?b.correct/ba:-1)||b.total-a.total}
           return a.mastered/a.total-b.mastered/b.total||b.total-a.total;
         });
         container.replaceChildren();
         if(!groups.length){const empty=document.createElement('div');empty.className='home-breakdown-empty';empty.textContent='データなし';container.append(empty);return}
-        const max=metric==='examples'?Math.max(1,...groups.map(g=>g.total)):1;
         groups.forEach(group=>{
           const row=document.createElement('div');row.className='home-breakdown-row';
           const head=document.createElement('div');head.className='home-breakdown-head';
@@ -536,19 +546,19 @@ const COL=Object.freeze({
           else if(metric==='answers')rate.textContent=answers?`正答率 ${Math.round(group.correct/answers*100)}%`:'回答なし';
           else rate.textContent=`習得率 ${Math.round(group.mastered/group.total*100)}%`;
           head.append(label,rate);
-          const track=document.createElement('div');track.className='home-breakdown-track';
-          if(metric==='examples'){
-            const bar=document.createElement('i');bar.className='home-example-segment';bar.style.width=`${group.total/max*100}%`;track.append(bar);
-          }else{
-            const vals=metric==='answers'?[['correct',group.correct],['unsure',group.unsure],['wrong',group.wrong]]:[['mastered',group.mastered],['steady',group.steady],['learning',group.learning],['new',group.new]];
-            const denominator=metric==='answers'?answers:group.total;
-            vals.forEach(([tone,count])=>{const segment=document.createElement('i');segment.className='home-stat-segment '+tone;segment.style.width=`${denominator?count/denominator*100:0}%`;track.append(segment)});
-          }
-          const foot=document.createElement('small');foot.className='home-breakdown-foot';
-          if(metric==='examples')foot.textContent='登録例文数';
-          else if(metric==='answers')foot.textContent=`○ ${group.correct}　△ ${group.unsure}　× ${group.wrong}`;
-          else foot.textContent=`習得 ${group.mastered}／${group.total}件　定着 ${group.steady}　練習中 ${group.learning}　未定着 ${group.new}`;
-          row.append(head,track,foot);container.append(row);
+          const values=metric==='examples'?[['example',group.total,'登録例文数']]:
+            metric==='answers'?[['correct',group.correct,'正解'],['unsure',group.unsure,'△'],['wrong',group.wrong,'不正解']]:
+            [['mastered',group.mastered,'習得'],['steady',group.steady,'定着'],['learning',group.learning,'練習中'],['new',group.new,'未定着']];
+          const counts=document.createElement('div');counts.className='home-breakdown-counts';
+          counts.style.setProperty('--count-columns',String(values.length));
+          values.forEach(([tone,count,name])=>{
+            const item=document.createElement('span');item.className='home-breakdown-count-item';item.setAttribute('role','img');
+            item.setAttribute('aria-label',`${name} ${count}件`);item.title=`${name} ${count}件`;
+            const dot=document.createElement('i');dot.className='home-breakdown-count-dot '+tone;dot.setAttribute('aria-hidden','true');
+            const number=document.createElement('span');number.className='home-breakdown-count-number';number.textContent=String(count);
+            item.append(dot,number);counts.append(item);
+          });
+          row.append(head,counts);container.append(row);
         });
       });
     };
