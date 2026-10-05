@@ -2271,3 +2271,9 @@ html[data-theme="dark"] .phrase-category-manager-row .phrase-tag-folder-name-inp
 
 /* Keep the category fold control above legacy category row button placement rules. */
 .phrase-category-manager-row>button.phrase-category-manager-toggle:nth-of-type(1){grid-column:1!important;grid-row:1!important;display:grid!important;visibility:visible!important;opacity:1!important;align-self:center;justify-self:center;z-index:2}
+
+/* Make tag folder names visibly editable, matching the category manager fields. */
+.phrase-tag-folder-name-input{border-color:#d7dee8;background:#fff;color:#182230;cursor:text}
+.phrase-tag-folder-name-input:hover{border-color:#aeb8c7;background:#fff}
+html[data-theme="dark"] .phrase-tag-folder-name-input{border-color:#405065;background:#121a24;color:#eef4ff}
+html[data-theme="dark"] .phrase-tag-folder-name-input:hover{border-color:#718096;background:#121a24}
