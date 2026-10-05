@@ -484,7 +484,6 @@ const COL=Object.freeze({
     const homeStatPanels=[...document.querySelectorAll('.home-stat-panel')];
     const homeAnswerDonut=document.getElementById('homeAnswerDonut');
     const homeAnswerRate=document.getElementById('homeAnswerRate');
-    const homeAnswerBar=document.getElementById('homeAnswerBar');
     const homeCorrectBar=document.getElementById('homeCorrectBar');
     const homeWrongBar=document.getElementById('homeWrongBar');
     const homeUnsureBar=document.getElementById('homeUnsureBar');
@@ -1012,7 +1011,6 @@ const COL=Object.freeze({
         homeAnswerDonut.style.background=`conic-gradient(#35b972 0% ${correctEnd}%,#9a75d3 ${correctEnd}% ${partialEnd}%,#df5b69 ${partialEnd}% 100%)`;
       }else homeAnswerDonut.style.background='#e9edf3';
       homeAnswerDonut.setAttribute('aria-label',answerTotal?`正解率${answerRate}パーセント`:'回答結果データなし');
-      homeAnswerBar.setAttribute('aria-label',answerTotal?`回答結果：正解${correctCount}回、惜しい${unsureCount}回、不正解${wrongCount}回`:'回答結果データなし');
       
       const importedName=stored?.fileName||'未読込';
       homeImportFileName.textContent=importedName;
