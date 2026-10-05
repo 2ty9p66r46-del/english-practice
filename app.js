@@ -982,7 +982,7 @@ const COL=Object.freeze({
         else understandingCounts.new+=1;
       });
       const understandingTotal=allExampleRows.length;
-      homeMasteryRate.textContent=`${understandingCounts.mastered}/${understandingTotal}`;
+      homeMasteryRate.textContent=understandingTotal?`${Math.round(understandingCounts.mastered/understandingTotal*100)}%`:'—%';
       homeUnderstandingTotalCount.textContent=String(understandingTotal);
       homeMasteredCount.textContent=String(understandingCounts.mastered);
       homeSteadyCount.textContent=String(understandingCounts.steady);
@@ -1001,7 +1001,7 @@ const COL=Object.freeze({
       const unsureCount=sumColumn(COL.questionCount);
       const answerTotal=correctCount+wrongCount+unsureCount;
       const answerRate=answerTotal?Math.round((correctCount/answerTotal)*100):null;
-      homeAnswerRate.textContent=`${correctCount}/${answerTotal}`;
+      homeAnswerRate.textContent=answerRate===null?'—%':`${answerRate}%`;
       homeCorrectCount.textContent=String(correctCount);
       homeWrongCount.textContent=String(wrongCount);
       homeUnsureCount.textContent=String(unsureCount);
