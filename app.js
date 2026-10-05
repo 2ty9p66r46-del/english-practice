@@ -513,7 +513,7 @@ const COL=Object.freeze({
           groups.get(key).count++;
         });
         const ranked=[...groups.values()].sort((a,b)=>b.count-a.count||a.label.localeCompare(b.label,'ja'));
-        const visible=mode==='word'?ranked.slice(0,6):ranked;
+        const visible=ranked;
         const maxCount=Math.max(1,...visible.map(group=>group.count));
         const rowsToRender=visible.map(group=>{
           const item=document.createElement('div');item.className='home-example-row';
