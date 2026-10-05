@@ -430,7 +430,7 @@ const applyPendingTagRenames=()=>{if(!pendingTagRenames.size)return true;const e
     if(!next||/[>|]/.test(next)){alert('カテゴリ名に「>」「|」は使えません。');return false}
     if(next===UNCATEGORIZED_NAME){alert('「未分類」は固定階層のため追加できません。');return false}
     if(childrenOf(parentId).some(candidate=>candidate.name.toLocaleLowerCase('ja')===next.toLocaleLowerCase('ja'))){alert('同じ階層に同名のカテゴリがあります。');return false}
-    data.categories.push({id:data.nextCategoryId++,parentId,name:next,order:childrenOf(parentId).length+1});categoryDraftParentId=undefined;markCategoryManagerDirty();renderCategoryManager();return true;
+    const order=Math.max(0,...childrenOf(parentId).map(item=>number(item.order)))+1;data.categories.push({id:data.nextCategoryId++,parentId,name:next,order});categoryDraftParentId=undefined;markCategoryManagerDirty();renderCategoryManager();return true;
   };
   const categoryPlusIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6H10l2 2h7.5A1.5 1.5 0 0 1 21 9.5v8a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5v-10Z"/><path d="M3 10h18M12 12.5v5m-2.5-2.5h5"/></svg>';
   const appendCategoryDraft=(container,parentId,depth)=>{
@@ -456,12 +456,10 @@ const applyPendingTagRenames=()=>{if(!pendingTagRenames.size)return true;const e
     const renderLevel=(parentId,depth,target)=>{
       const children=childrenOf(parentId);
       children.forEach((item,index)=>{
-        const fixed=isUncategorized(item),descendants=childrenOf(item.id),addingHere=categoryDraftParentId===item.id,canExpand=descendants.length>0||addingHere||expanded.has(item.id);
+        const fixed=isUncategorized(item);
         const node=document.createElement('div');node.className='phrase-category-manager-node';node.style.setProperty('--depth',depth);
         const row=document.createElement('div');row.className='phrase-tag-folder-tree-row phrase-category-manager-row';
-        const toggle=document.createElement(canExpand?'button':'span');
-        if(canExpand){toggle.type='button';toggle.className='phrase-tag-tree-toggle';toggle.textContent=expanded.has(item.id)?'⌄':'›';toggle.setAttribute('aria-expanded',String(expanded.has(item.id)));toggle.setAttribute('aria-label','「'+item.name+'」'+(expanded.has(item.id)?'を折りたたむ':'展開'));toggle.addEventListener('click',()=>{if(expanded.has(item.id))expanded.delete(item.id);else expanded.add(item.id);renderCategoryManager()})}
-        else{toggle.className='phrase-tag-tree-spacer';toggle.setAttribute('aria-hidden','true')}
+        const toggle=document.createElement('button');toggle.type='button';toggle.className='phrase-tag-tree-toggle';toggle.textContent=expanded.has(item.id)?'⌄':'›';toggle.setAttribute('aria-expanded',String(expanded.has(item.id)));toggle.setAttribute('aria-label','「'+item.name+'」'+(expanded.has(item.id)?'を折りたたむ':'展開'));toggle.addEventListener('click',()=>{if(expanded.has(item.id))expanded.delete(item.id);else expanded.add(item.id);renderCategoryManager()})
         const nameField=document.createElement('div');nameField.className='phrase-tag-folder-name-field';
         const icon=document.createElement('span');icon.className='phrase-tag-folder-inline-icon';icon.innerHTML=tagTreeIcons.folder;
         const input=document.createElement('input');input.className='phrase-tag-folder-name-input';input.value=item.name;input.maxLength=30;input.disabled=fixed;input.setAttribute('aria-label',item.name+'カテゴリの名前');
@@ -478,7 +476,7 @@ const applyPendingTagRenames=()=>{if(!pendingTagRenames.size)return true;const e
         const remove=document.createElement('button');remove.type='button';remove.textContent='削除';remove.disabled=fixed;remove.setAttribute('aria-label',fixed?'未分類は削除できません':item.name+'を削除');
         remove.addEventListener('click',()=>{const ids=new Set([item.id,...descendantIds(item.id)]),affected=data.phrases.filter(phrase=>ids.has(phrase.primaryCategoryId)||phrase.categoryIds.some(id=>ids.has(id)));if(!confirm(`「${item.name}」と配下の階層を削除しますか？${affected.length?`\\n含まれるフレーズ ${affected.length}件は保存時に「未分類」へ移動します。`:''}`))return;data.categories=data.categories.filter(candidate=>!ids.has(candidate.id));ids.forEach(id=>expanded.delete(id));categoryDraftParentId=undefined;markCategoryManagerDirty();renderCategoryManager()});
         actions.append(up,down,remove);row.append(toggle,nameField,childActions,actions);node.append(row);target.append(node);
-        if(canExpand){const childrenBox=document.createElement('div');childrenBox.className='phrase-tag-tree-children';childrenBox.hidden=!expanded.has(item.id);node.append(childrenBox);renderLevel(item.id,depth+1,childrenBox)}
+        const childrenBox=document.createElement('div');childrenBox.className='phrase-tag-tree-children';childrenBox.hidden=!expanded.has(item.id);node.append(childrenBox);renderLevel(item.id,depth+1,childrenBox)
       });
       if(categoryDraftParentId===(parentId??null))appendCategoryDraft(target,parentId,depth);
     };
