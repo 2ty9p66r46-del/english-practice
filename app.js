@@ -962,8 +962,7 @@ const COL=Object.freeze({
         else understandingCounts.new+=1;
       });
       const understandingTotal=allExampleRows.length;
-      const masteryRate=understandingTotal?Math.round((understandingCounts.mastered/understandingTotal)*100):0;
-      homeMasteryRate.textContent=`${masteryRate}%`;
+      homeMasteryRate.textContent=String(understandingTotal);
       homeMasteredCount.textContent=String(understandingCounts.mastered);
       homeSteadyCount.textContent=String(understandingCounts.steady);
       homeLearningCount.textContent=String(understandingCounts.learning);
