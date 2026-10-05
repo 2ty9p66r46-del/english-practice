@@ -488,6 +488,7 @@ const COL=Object.freeze({
     const homeTotalWordCount=document.getElementById('homeTotalWordCount');
     const homeActiveWordCount=document.getElementById('homeActiveWordCount');
     const homeExampleCount=document.getElementById('homeExampleCount');
+    const homeExampleBreakdownLists=[...document.querySelectorAll('[data-example-breakdown-list]')];
     const homeActiveWordBar=document.getElementById('homeActiveWordBar');
     const homeLevelStats=document.getElementById('homeLevelStats');
     const homePosStats=document.getElementById('homePosStats');
@@ -496,6 +497,36 @@ const COL=Object.freeze({
       homeStatTabs.forEach(tab=>{const active=tab===button;tab.classList.toggle('active',active);tab.setAttribute('aria-selected',String(active))});
       homeStatPanels.forEach(panel=>{panel.hidden=panel.id!==homeStatPanelIds[button.dataset.homeStat]});
     }));
+    document.querySelectorAll('.home-example-subtabs').forEach(tablist=>tablist.addEventListener('click',event=>{
+      const button=event.target.closest('[data-example-breakdown-tab]');if(!button)return;
+      const panel=button.closest('.home-example-panel');if(!panel)return;
+      panel.querySelectorAll('[data-example-breakdown-tab]').forEach(tab=>{const active=tab===button;tab.classList.toggle('active',active);tab.setAttribute('aria-selected',String(active))});
+      panel.querySelectorAll('[data-example-breakdown-list]').forEach(list=>{list.hidden=list.dataset.exampleBreakdownList!==button.dataset.exampleBreakdownTab});
+    }));
+    const renderHomeExampleBreakdowns=rows=>{
+      homeExampleBreakdownLists.forEach(container=>{
+        const mode=container.dataset.exampleBreakdownList,groups=new Map();
+        rows.forEach(row=>{
+          const word=text(row[COL.word]),key=mode==='word'?(text(row[COL.wordNo])||word.toLocaleLowerCase('en')):(text(row[COL.pos])||'品詞未登録');
+          if(!key)return;
+          if(!groups.has(key))groups.set(key,{label:mode==='word'?word:(text(row[COL.pos])||'品詞未登録'),count:0});
+          groups.get(key).count++;
+        });
+        const ranked=[...groups.values()].sort((a,b)=>b.count-a.count||a.label.localeCompare(b.label,'ja'));
+        const visible=mode==='word'?ranked.slice(0,6):ranked;
+        const maxCount=Math.max(1,...visible.map(group=>group.count));
+        const rowsToRender=visible.map(group=>{
+          const item=document.createElement('div');item.className='home-example-row';
+          const label=document.createElement('span');label.className='home-example-label';label.textContent=group.label;label.title=group.label;
+          const track=document.createElement('span');track.className='home-example-track';
+          const bar=document.createElement('i');bar.style.width=`${group.count/maxCount*100}%`;track.append(bar);
+          const count=document.createElement('strong');count.textContent=`${group.count}件`;
+          item.setAttribute('aria-label',`${group.label}：例文${group.count}件`);item.append(label,track,count);return item;
+        });
+        if(!rowsToRender.length){const empty=document.createElement('div');empty.className='home-example-empty';empty.textContent='例文データがありません';rowsToRender.push(empty)}
+        container.replaceChildren(...rowsToRender);
+      });
+    };
     const filterSections=[...document.querySelectorAll('#filterCard .filter-section:not([data-filter-section="text"]):not([data-filter-section="word"])')];
     const subgroupAllButtons=[...document.querySelectorAll('#filterCard .group .all')];
     const levelChoices=[...document.querySelectorAll('#filterCard [data-level-mode]')];
@@ -895,6 +926,7 @@ const COL=Object.freeze({
       const totalWordKeys=new Set(sourceRows.map(wordKey).filter(Boolean));
       practiceCountStates.set(mode,{matchingPairCount,totalPairCount,displayedExampleCount,totalExampleCount:allExampleRows.length});
       if(mode==='active-vocabulary'&&homeExampleCount)homeExampleCount.textContent=String(allExampleRows.length);
+      if(mode==='active-vocabulary')renderHomeExampleBreakdowns(allExampleRows);
       if(currentPracticeCountMode()!==mode)return;
       renderPracticeCountState(mode);
       if(mode==='phrase-bank')return;
