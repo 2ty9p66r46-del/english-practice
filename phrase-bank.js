@@ -268,36 +268,40 @@
       const metric=container.dataset.phraseStatBreakdown,dimension=container.dataset.breakdownBy;
       const ranked=[...groups[dimension].values()];
       ranked.sort((a,b)=>{
-        if(metric==='examples')return b.total-a.total||a.label.localeCompare(b.label,'ja');
         if(metric==='answers'){const aa=a.correct+a.wrong+a.unsure,ba=b.correct+b.wrong+b.unsure;return (aa?a.correct/aa:-1)-(ba?b.correct/ba:-1)||b.total-a.total}
         return a.mastered/a.total-b.mastered/b.total||b.total-a.total;
       });
       container.replaceChildren();
       if(!ranked.length){const empty=document.createElement('div');empty.className='home-breakdown-empty';empty.textContent=dimension==='tags'?'タグ付き例文はありません':'カテゴリ情報はありません';container.append(empty);return}
-      const max=metric==='examples'?Math.max(1,...ranked.map(group=>group.total)):1;
       ranked.forEach(group=>{
         const row=document.createElement('div');row.className='home-breakdown-row';
         const head=document.createElement('div');head.className='home-breakdown-head';
         const label=document.createElement('strong');label.className='home-breakdown-label';label.textContent=group.label;label.title=group.label;
-        const value=document.createElement('span');value.className='home-breakdown-value';
+        const value=document.createElement('span');value.className='home-breakdown-value is-unit-count';
         const answerCount=group.correct+group.wrong+group.unsure;
-        if(metric==='examples')value.textContent=`${group.total}件`;
-        else if(metric==='answers')value.textContent=answerCount?`正答率 ${Math.round(group.correct/answerCount*100)}%`:'回答なし';
-        else value.textContent=`習得率 ${Math.round(group.mastered/group.total*100)}%`;
-        head.append(label,value);
-        const track=document.createElement('div');track.className='home-breakdown-track';
-        if(metric==='examples'){
-          const bar=document.createElement('i');bar.className='home-example-segment';bar.style.width=`${group.total/max*100}%`;track.append(bar);
-        }else{
-          const parts=metric==='answers'?[['correct',group.correct],['unsure',group.unsure],['wrong',group.wrong]]:[['mastered',group.mastered],['steady',group.steady],['learning',group.learning],['new',group.new]];
-          const total=metric==='answers'?answerCount:group.total;
-          parts.forEach(([tone,count])=>{const bar=document.createElement('i');bar.className='home-stat-segment '+tone;bar.style.width=`${total?count/total*100:0}%`;track.append(bar)});
-        }
-        const foot=document.createElement('small');foot.className='home-breakdown-foot';
-        if(metric==='examples')foot.textContent='登録例文数';
-        else if(metric==='answers')foot.textContent=`○ ${group.correct}　△ ${group.unsure}　× ${group.wrong}`;
-        else foot.textContent=`習得 ${group.mastered}／${group.total}件　定着 ${group.steady}　練習中 ${group.learning}　未定着 ${group.new}`;
-        row.append(head,track,foot);container.append(row);
+        const numberElement=document.createElement('span');numberElement.className='home-breakdown-value-number';
+        numberElement.textContent=String(metric==='answers'?answerCount:group.total);
+        const unit=document.createElement('span');unit.className='home-breakdown-value-label';
+        unit.textContent=metric==='answers'?'回':'例文';
+        value.append(numberElement,unit);head.append(label,value);
+        const values=metric==='answers'?[['correct',group.correct,'できた'],['unsure',group.unsure,'もう少し'],['wrong',group.wrong,'分からない']]:
+          [['mastered',group.mastered,'習得'],['steady',group.steady,'定着'],['learning',group.learning,'練習中'],['new',group.new,'未定着']];
+        const denominator=metric==='answers'?answerCount:group.total;
+        const track=document.createElement('div');track.className='home-breakdown-track';track.setAttribute('role','img');
+        track.setAttribute('aria-label',values.map(([,count,name])=>`${name} ${count}件`).join('、'));
+        values.forEach(([tone,count])=>{
+          const segment=document.createElement('i');segment.className='home-breakdown-bar-segment '+tone;
+          segment.style.width=`${denominator?count/denominator*100:0}%`;track.append(segment);
+        });
+        const counts=document.createElement('div');counts.className='home-breakdown-counts';counts.style.setProperty('--count-columns',String(values.length));
+        values.forEach(([tone,count,name])=>{
+          const item=document.createElement('span');item.className='home-breakdown-count-item';item.setAttribute('role','img');
+          item.setAttribute('aria-label',`${name} ${count}件`);item.title=`${name} ${count}件`;
+          const dot=document.createElement('i');dot.className='home-breakdown-count-dot '+tone;dot.setAttribute('aria-hidden','true');
+          const number=document.createElement('span');number.className='home-breakdown-count-number';number.textContent=String(count);
+          item.append(dot,number);counts.append(item);
+        });
+        row.append(head,track,counts);container.append(row);
       });
     });
   };
