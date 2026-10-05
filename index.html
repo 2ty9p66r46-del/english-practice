@@ -14,7 +14,7 @@
   <link rel="apple-touch-icon" href="./icon.svg">
   <title>FloVo</title>
   <script src="./xlsx.full.min.js"></script>
-  <link rel="stylesheet" href="./styles.css?v=618">
+  <link rel="stylesheet" href="./styles.css?v=619">
 </head>
 <body data-page="home">
   <div class="shell">
@@ -76,8 +76,15 @@
                   </div>
                 </div>
                 <div class="home-example-panel home-stat-panel" id="homeExamplePanel" role="tabpanel" hidden>
-                  <div class="home-example-graphic" aria-hidden="true"><svg viewBox="0 0 48 48"><rect x="8" y="7" width="27" height="31" rx="5"/><path d="M15 16h13M15 22h13M15 28h8"/><path d="M35 15h3a3 3 0 0 1 3 3v21H17v-1"/></svg></div>
-                  <div class="home-example-total"><strong id="homeExampleCount">0</strong><span>登録例文</span></div>
+                  <div class="home-example-total"><span>登録例文</span><strong id="homeExampleCount">0</strong></div>
+                  <div class="home-example-breakdown">
+                    <div class="home-example-subtabs" role="tablist" aria-label="例文数の集計方法">
+                      <button class="active" type="button" role="tab" aria-selected="true" aria-controls="homeExampleWordList" data-example-breakdown-tab="word">単語別</button>
+                      <button type="button" role="tab" aria-selected="false" aria-controls="homeExamplePosList" data-example-breakdown-tab="pos">品詞別</button>
+                    </div>
+                    <div class="home-example-breakdown-list" id="homeExampleWordList" role="tabpanel" data-example-breakdown-list="word"></div>
+                    <div class="home-example-breakdown-list" id="homeExamplePosList" role="tabpanel" data-example-breakdown-list="pos" hidden></div>
+                  </div>
                 </div>
               </div>
             </section>
@@ -435,7 +442,7 @@
     </div>
   </div>
   <div class="screen-fade" id="screenFade" aria-hidden="true"></div>
-  <script src="./app.js?v=571"></script>
-  <script src="./phrase-bank.js?v=617"></script>
+  <script src="./app.js?v=572"></script>
+  <script src="./phrase-bank.js?v=618"></script>
 </body>
 </html>

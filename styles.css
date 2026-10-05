@@ -2157,3 +2157,34 @@ html[data-theme="dark"] .phrase-breakdown-switch{background:#17212e}
 html[data-theme="dark"] .phrase-breakdown-switch button{color:#9aa8bc}
 html[data-theme="dark"] .phrase-breakdown-switch button.active{background:#26374a;color:#72baff;box-shadow:none}
 html[data-theme="dark"] .phrase-breakdown-track{background:#364253}
+
+
+/* Home statistics keep a fixed footprint so the practice action stays clear of charts. */
+.home-learning-stats{height:224px;flex:0 0 224px;grid-template-rows:30px minmax(0,1fr);gap:8px}
+.home-stat-panels{height:186px;min-height:0}
+.home-understanding-panel,.home-answer-panel,.home-word-panel,.home-example-panel,.phrase-home-breakdown-panel{height:100%;min-height:0}
+.active-vocab-card .home-practice-button{margin-top:16px}
+.home-example-panel{display:grid;grid-template-rows:auto minmax(0,1fr);align-content:stretch;justify-content:stretch;gap:7px;padding:9px 11px}
+.home-example-total{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.home-example-total span{font-size:.65rem}
+.home-example-total strong{font-size:1rem}
+.home-example-breakdown{display:grid;min-height:0;grid-template-rows:28px minmax(0,1fr);gap:5px}
+.home-example-subtabs{display:grid;grid-template-columns:1fr 1fr;gap:3px;padding:3px;border-radius:9px;background:#e8edf4}
+.home-example-subtabs button{min-height:24px;padding:0 5px;border:0;border-radius:7px;background:transparent;color:#758197;font-size:.65rem;font-weight:850}
+.home-example-subtabs button.active{background:#fff;color:var(--blue);box-shadow:0 2px 7px #26354a17}
+.home-example-breakdown-list{display:grid;min-height:0;align-content:start;gap:4px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
+.home-example-breakdown-list[hidden]{display:none!important}
+.home-example-row{display:grid;min-height:19px;grid-template-columns:minmax(52px,1fr) minmax(40px,2fr) 36px;align-items:center;gap:7px}
+.home-example-label{overflow:hidden;color:var(--ink);font-size:.68rem;font-weight:800;text-overflow:ellipsis;white-space:nowrap}
+.home-example-track{height:6px;overflow:hidden;border-radius:999px;background:#e5eaf1}
+.home-example-track i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#55a8ef,#176fc2)}
+.home-example-row strong{color:var(--muted);font-size:.64rem;font-weight:850;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.home-example-empty{padding:10px 4px;color:var(--muted);font-size:.7rem;text-align:center}
+html[data-theme="dark"] .home-example-subtabs{background:#17212e}
+html[data-theme="dark"] .home-example-subtabs button{color:#9aa8bc}
+html[data-theme="dark"] .home-example-subtabs button.active{background:#26374a;color:#72baff;box-shadow:none}
+html[data-theme="dark"] .home-example-track{background:#364253}
+html[data-theme="dark"] .home-example-row strong{color:#aebbd0}
+.phrase-home-breakdown-panel{grid-template-rows:auto 31px auto minmax(0,1fr)}
+.phrase-breakdown-list{min-height:0;max-height:none}
+.home-stat-tabs.phrase-stat-tabs{grid-template-columns:repeat(3,minmax(0,1fr))}

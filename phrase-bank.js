@@ -35,10 +35,10 @@
   const phraseStatsTabs=mount.querySelector('.home-stat-tabs');
   const phraseStatsPanels=mount.querySelector('.home-stat-panels');
   const phraseBreakdownTab=document.createElement('button');
-  phraseBreakdownTab.type='button';phraseBreakdownTab.role='tab';phraseBreakdownTab.setAttribute('aria-selected','false');phraseBreakdownTab.textContent='分類別';phraseBreakdownTab.dataset.homeStat='classification';
+  phraseBreakdownTab.type='button';phraseBreakdownTab.role='tab';phraseBreakdownTab.setAttribute('aria-selected','false');phraseBreakdownTab.textContent='例文数';phraseBreakdownTab.dataset.homeStat='classification';
   const phraseBreakdownPanel=document.createElement('div');
   phraseBreakdownPanel.className='home-stat-panel phrase-home-breakdown-panel';phraseBreakdownPanel.id='phraseHomeBreakdownPanel';phraseBreakdownPanel.role='tabpanel';phraseBreakdownPanel.hidden=true;
-  phraseBreakdownPanel.innerHTML='<div class="phrase-breakdown-top"><div><strong>分類ごとの学習状況</strong><small>理解度100%の割合で、復習先を見つける</small></div></div><div class="phrase-breakdown-switch" role="group" aria-label="集計する分類"><button type="button" class="active" data-phrase-breakdown-mode="categories" aria-pressed="true">カテゴリ</button><button type="button" data-phrase-breakdown-mode="tags" aria-pressed="false">タグ</button></div><p class="phrase-breakdown-note" id="phraseBreakdownNote"></p><div class="phrase-breakdown-list" id="phraseBreakdownList"></div>';
+  phraseBreakdownPanel.innerHTML='<div class="phrase-breakdown-top"><div><strong>例文数と習得率</strong><small>理解度100%を習得として集計</small></div></div><div class="phrase-breakdown-switch" role="group" aria-label="集計する分類"><button type="button" class="active" data-phrase-breakdown-mode="categories" aria-pressed="true">カテゴリ</button><button type="button" data-phrase-breakdown-mode="tags" aria-pressed="false">タグ</button></div><p class="phrase-breakdown-note" id="phraseBreakdownNote"></p><div class="phrase-breakdown-list" id="phraseBreakdownList"></div>';
   phraseBreakdownTab.setAttribute('aria-controls',phraseBreakdownPanel.id);
   phraseStatsTabs?.append(phraseBreakdownTab);phraseStatsPanels?.append(phraseBreakdownPanel);
   const phraseHomeIcon=mount.querySelector('.home-module-icon svg');if(phraseHomeIcon)phraseHomeIcon.innerHTML='<path d="M4.5 5.5h15a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-8l-5.5 3v-3H4.5a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2Z"/><path d="M7 10h10M7 13h7"/>';
@@ -52,6 +52,8 @@
   const phrasePanels=[...mount.querySelectorAll('.home-stat-panel')];
   const panelByStat={understanding:idMap.get('homeUnderstandingPanel'),answers:idMap.get('homeAnswerPanel'),words:idMap.get('homeWordPanel'),examples:idMap.get('homeExamplePanel'),classification:phraseBreakdownPanel.id};
   const phraseWordTab=mount.querySelector('[data-home-stat="words"]');if(phraseWordTab)phraseWordTab.hidden=true;
+  const phraseExamplesTab=mount.querySelector('[data-home-stat="examples"]');if(phraseExamplesTab)phraseExamplesTab.hidden=true;
+  const phraseExamplesPanel=mount.querySelector('#phrase_homeExamplePanel');if(phraseExamplesPanel)phraseExamplesPanel.hidden=true;
   const STORE_KEY='phraseBankV2',LEGACY_STORE_KEY='phraseBankV1',UNCATEGORIZED_NAME='未分類';
   const PHRASE_HEADERS=['フレーズID','例文番号','主カテゴリ','追加カテゴリ','日本語文','英文','補足','理解度','◯回数','×回数','△回数','タグ'];
   const CATEGORY_HEADERS=['カテゴリパス','表示順'];
@@ -263,21 +265,21 @@
       note.textContent='タグ別。タグなしも含め、複数タグの例文は各タグに集計。習得率が低い順に表示します。';
       data.phrases.forEach(item=>{const tags=[...new Map((item.tags||[]).map(normalize).filter(Boolean).map(tag=>[tag.toLocaleLowerCase('ja'),tag])).values()];if(!tags.length)add('タグなし',item);else tags.forEach(tag=>add(tag,item))});
     }
-    const ranked=[...groups.values()].sort((a,b)=>(a.mastered/a.total)-(b.mastered/b.total)||b.total-a.total||a.label.localeCompare(b.label,'ja')).slice(0,6);
+    const ranked=[...groups.values()].sort((a,b)=>(a.mastered/a.total)-(b.mastered/b.total)||b.total-a.total||a.label.localeCompare(b.label,'ja'));
     container.replaceChildren();
     if(!ranked.length){const empty=document.createElement('div');empty.className='phrase-breakdown-empty';empty.textContent=phraseBreakdownMode==='categories'?'フレーズを登録すると、カテゴリ別の進み具合が表示されます。':'タグを付けると、タグ別の進み具合が表示されます。';container.append(empty);return}
     ranked.forEach(group=>{
       const row=document.createElement('article');row.className='phrase-breakdown-row';
       const head=document.createElement('div');head.className='phrase-breakdown-row-head';
       const label=document.createElement('strong');label.className='phrase-breakdown-label';label.textContent=group.label;label.title=group.label;
-      const rate=document.createElement('span');rate.className='phrase-breakdown-rate';rate.textContent=`習得 ${Math.round(group.mastered/group.total*100)}%`;
+      const rate=document.createElement('span');rate.className='phrase-breakdown-rate';rate.textContent=`習得率 ${Math.round(group.mastered/group.total*100)}%`;
       head.append(label,rate);
       const track=document.createElement('div');track.className='phrase-breakdown-track';track.setAttribute('role','img');track.setAttribute('aria-label',`${group.label}：理解度100% ${group.mastered}件／${group.total}件`);
       const fill=document.createElement('i');fill.style.width=`${group.mastered/group.total*100}%`;track.append(fill);
       const foot=document.createElement('div');foot.className='phrase-breakdown-row-foot';
-      const progress=document.createElement('span');progress.textContent=`理解度100% ${group.mastered} / ${group.total}件`;
-      const answers=group.correct+group.wrong+group.unsure,accuracy=document.createElement('span');accuracy.textContent=answers?`正答率 ${Math.round(group.correct/answers*100)}%`:'回答なし';
-      foot.append(progress,accuracy);row.append(head,track,foot);container.append(row);
+      const progress=document.createElement('span');progress.textContent=`例文数 ${group.total}件`;
+      const learned=document.createElement('span');learned.textContent=`習得済み ${group.mastered}件`;
+      foot.append(progress,learned);row.append(head,track,foot);container.append(row);
     });
   };
   const phraseBreakdownModeButtons=[...phraseBreakdownPanel.querySelectorAll('[data-phrase-breakdown-mode]')];
