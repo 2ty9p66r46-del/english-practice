@@ -491,9 +491,8 @@ const COL=Object.freeze({
     const homeCorrectCount=document.getElementById('homeCorrectCount');
     const homeWrongCount=document.getElementById('homeWrongCount');
     const homeUnsureCount=document.getElementById('homeUnsureCount');
-    const homeExampleCount=document.getElementById('homeExampleCount');
     const homeBreakdownLists=[...document.querySelectorAll('[data-home-breakdown]')];
-    const homeStatPanelIds={understanding:'homeUnderstandingPanel',answers:'homeAnswerPanel',examples:'homeExamplePanel'};
+    const homeStatPanelIds={understanding:'homeUnderstandingPanel',answers:'homeAnswerPanel'};
     homeStatTabs.forEach(button=>button.addEventListener('click',()=>{
       homeStatTabs.forEach(tab=>{const active=tab===button;tab.classList.toggle('active',active);tab.setAttribute('aria-selected',String(active))});
       homeStatPanels.forEach(panel=>{panel.hidden=panel.id!==homeStatPanelIds[button.dataset.homeStat]});
@@ -530,7 +529,6 @@ const COL=Object.freeze({
             if(rankOrder)return rankOrder;
             return a.label.localeCompare(b.label,'ja');
           }
-          if(metric==='examples')return b.total-a.total||a.label.localeCompare(b.label,'ja');
           if(metric==='answers'){const aa=a.correct+a.wrong+a.unsure,ba=b.correct+b.wrong+b.unsure;return (aa?a.correct/aa:-1)-(ba?b.correct/ba:-1)||b.total-a.total}
           return a.mastered/a.total-b.mastered/b.total||b.total-a.total;
         });
@@ -542,12 +540,10 @@ const COL=Object.freeze({
           const label=document.createElement('strong');label.className='home-breakdown-label';label.textContent=group.label;label.title=group.label;
           const rate=document.createElement('span');rate.className='home-breakdown-value';
           const answers=group.correct+group.wrong+group.unsure;
-          if(metric==='examples')rate.textContent=`${group.total}件`;
-          else if(metric==='answers')rate.textContent=answers?`正答率 ${Math.round(group.correct/answers*100)}%`:'回答なし';
+          if(metric==='answers')rate.textContent=answers?`正答率 ${Math.round(group.correct/answers*100)}%`:'回答なし';
           else rate.textContent=`習得率 ${Math.round(group.mastered/group.total*100)}%`;
           head.append(label,rate);
-          const values=metric==='examples'?[['example',group.total,'登録例文数']]:
-            metric==='answers'?[['correct',group.correct,'正解'],['unsure',group.unsure,'△'],['wrong',group.wrong,'不正解']]:
+          const values=metric==='answers'?[['correct',group.correct,'できた'],['unsure',group.unsure,'もう少し'],['wrong',group.wrong,'分からない']]:
             [['mastered',group.mastered,'習得'],['steady',group.steady,'定着'],['learning',group.learning,'練習中'],['new',group.new,'未定着']];
           const counts=document.createElement('div');counts.className='home-breakdown-counts';
           counts.style.setProperty('--count-columns',String(values.length));
@@ -959,7 +955,7 @@ const COL=Object.freeze({
       const totalPairCount=new Set(allExampleRows.map(row=>text(row[COL.wordNo])||text(row[COL.word]).toLowerCase())).size;
       const wordKey=row=>text(row[COL.wordNo])||text(row[COL.word]).toLowerCase();
       practiceCountStates.set(mode,{matchingPairCount,totalPairCount,displayedExampleCount,totalExampleCount:allExampleRows.length});
-      if(mode==='active-vocabulary'&&homeExampleCount){homeExampleCount.textContent=String(allExampleRows.length);renderHomeStatBreakdowns(allExampleRows)}
+      if(mode==='active-vocabulary')renderHomeStatBreakdowns(allExampleRows)
       if(currentPracticeCountMode()!==mode)return;
       renderPracticeCountState(mode);
       if(mode==='phrase-bank')return;
