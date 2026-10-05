@@ -524,9 +524,9 @@ const COL=Object.freeze({
             if(levelOrder)return levelOrder;
           }
           if(dimension==='pos'){
-            const order={S:0,A:1,B:2,C:3,D:4};
-            const rankOrder=(order[a.rank]??5)-(order[b.rank]??5);
-            if(rankOrder)return rankOrder;
+            const filterOrder={動詞:0,名詞:1,形容詞:2,前置詞:3,副詞:4,接続詞:5,法助動詞:6,限定詞:7,代名詞:8,助動詞:9,前限定詞:10,間投詞:11,数詞:12,不定冠詞:13,定冠詞:14,不定詞標識:15};
+            const partOrder=(filterOrder[a.label]??16)-(filterOrder[b.label]??16);
+            if(partOrder)return partOrder;
             return a.label.localeCompare(b.label,'ja');
           }
           if(metric==='answers'){const aa=a.correct+a.wrong+a.unsure,ba=b.correct+b.wrong+b.unsure;return (aa?a.correct/aa:-1)-(ba?b.correct/ba:-1)||b.total-a.total}
