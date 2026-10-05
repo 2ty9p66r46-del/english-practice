@@ -989,7 +989,7 @@ const COL=Object.freeze({
       homeLearningCount.textContent=String(understandingCounts.learning);
       homeNewCount.textContent=String(understandingCounts.new);
       if(understandingTotal){
-        const tones=[['#35b972',understandingCounts.mastered],['#efd044',understandingCounts.steady],['#ef9b3a',understandingCounts.learning],['#df5b69',understandingCounts.new]];
+        const tones=[['#55a8ef',understandingCounts.mastered],['#35b972',understandingCounts.steady],['#efd044',understandingCounts.learning],['#df5b69',understandingCounts.new]];
         let cursor=0;
         const stops=tones.map(([color,count])=>{const start=cursor;cursor+=(count/understandingTotal)*100;return `${color} ${start}% ${cursor}%`});
         homeUnderstandingDonut.style.background=`conic-gradient(${stops.join(',')})`;
