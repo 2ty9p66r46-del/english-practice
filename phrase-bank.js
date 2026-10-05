@@ -463,11 +463,11 @@ const applyPendingTagRenames=()=>{if(!pendingTagRenames.size)return true;const e
         const nameField=document.createElement('div');nameField.className='phrase-tag-folder-name-field';
         const icon=document.createElement('span');icon.className='phrase-tag-folder-inline-icon';icon.innerHTML=tagTreeIcons.folder;
         const input=document.createElement('input');input.className='phrase-tag-folder-name-input';input.value=item.name;input.maxLength=30;input.disabled=fixed;input.setAttribute('aria-label',item.name+'カテゴリの名前');
-        input.addEventListener('input',()=>{item.name=input.value;markCategoryManagerDirty()});nameField.append(icon,input);
+        input.addEventListener('input',()=>{item.name=input.value;markCategoryManagerDirty()});nameField.append(toggle,icon,input);
         const childActions=document.createElement('div');childActions.className='phrase-tag-folder-tree-icons';
         const addChild=document.createElement('button');addChild.type='button';addChild.className='phrase-tag-icon-button';addChild.innerHTML=categoryPlusIcon;addChild.disabled=fixed;addChild.setAttribute('aria-label',fixed?'未分類には子カテゴリを追加できません':item.name+'に子カテゴリを追加');addChild.title='子カテゴリを追加';
         addChild.addEventListener('click',()=>{categoryDraftParentId=item.id;expanded.add(item.id);renderCategoryManager()});childActions.append(addChild);
-        const actions=document.createElement('div');actions.className='phrase-tag-folder-tree-actions phrase-tag-manager-actions';
+        const actions=document.createElement('div');actions.className='phrase-tag-manager-actions phrase-category-manager-actions';
         const up=document.createElement('button');up.type='button';up.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 14 6-6 6 6"/></svg>';up.setAttribute('aria-label','上へ移動');
         const down=document.createElement('button');down.type='button';down.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 10 6 6 6-6"/></svg>';down.setAttribute('aria-label','下へ移動');
         up.disabled=fixed||index<=0||isUncategorized(children[index-1]);down.disabled=fixed||index>=children.length-1||isUncategorized(children[index+1]);
@@ -475,7 +475,7 @@ const applyPendingTagRenames=()=>{if(!pendingTagRenames.size)return true;const e
         up.addEventListener('click',()=>move(-1));down.addEventListener('click',()=>move(1));
         const remove=document.createElement('button');remove.type='button';remove.textContent='削除';remove.disabled=fixed;remove.setAttribute('aria-label',fixed?'未分類は削除できません':item.name+'を削除');
         remove.addEventListener('click',()=>{const ids=new Set([item.id,...descendantIds(item.id)]),affected=data.phrases.filter(phrase=>ids.has(phrase.primaryCategoryId)||phrase.categoryIds.some(id=>ids.has(id)));if(!confirm(`「${item.name}」と配下の階層を削除しますか？${affected.length?`\\n含まれるフレーズ ${affected.length}件は保存時に「未分類」へ移動します。`:''}`))return;data.categories=data.categories.filter(candidate=>!ids.has(candidate.id));ids.forEach(id=>expanded.delete(id));categoryDraftParentId=undefined;markCategoryManagerDirty();renderCategoryManager()});
-        actions.append(up,down,remove);row.append(toggle,nameField,childActions,actions);node.append(row);target.append(node);
+        actions.append(up,down,remove);row.append(nameField,childActions,actions);node.append(row);target.append(node);
         const childrenBox=document.createElement('div');childrenBox.className='phrase-tag-tree-children';childrenBox.hidden=!expanded.has(item.id);node.append(childrenBox);renderLevel(item.id,depth+1,childrenBox)
       });
       if(categoryDraftParentId===(parentId??null))appendCategoryDraft(target,parentId,depth);
