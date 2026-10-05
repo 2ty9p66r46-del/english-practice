@@ -1008,10 +1008,10 @@ body[data-page="home"] .bottom-space{display:none}
 .home-answer-summary{display:grid;gap:12px}.home-answer-summary>strong{color:#65728a;font-size:.62rem;font-weight:850}
 .home-answer-bar{display:flex;height:10px;overflow:hidden;border-radius:999px;background:#e9edf3}
 .home-answer-bar i{display:block;width:0;height:100%;transition:width .3s ease}.home-answer-bar .correct{background:#35b972}.home-answer-bar .wrong{background:#df5b69}.home-answer-bar .unsure{background:#9a75d3}
-.home-answer-legend{display:grid;grid-template-rows:repeat(4,14px) auto;gap:0;color:#65728a;font-size:.56rem;font-weight:800}.home-answer-legend::before{content:"";min-height:14px}
+.home-answer-legend{display:grid;grid-template-rows:repeat(4,14px) auto;gap:0;color:#65728a;font-size:.57rem;font-weight:800}.home-answer-legend::before{content:"";min-height:14px}
 .home-answer-legend span{display:grid;grid-template-columns:8px minmax(0,1fr) minmax(3ch,auto);align-items:center;gap:5px}
 .home-answer-legend b{font-weight:800}
-.home-answer-legend strong{min-width:3ch;color:#344054;font-size:.59rem;font-weight:900;text-align:right;font-variant-numeric:tabular-nums}
+.home-answer-legend strong{min-width:3ch;color:#344054;font-size:.62rem;font-weight:900;text-align:right;font-variant-numeric:tabular-nums}
 .home-answer-legend .correct{background:#55a8ef}.home-answer-legend .wrong{background:#df5b69}.home-answer-legend .unsure{background:#efd044}
 .home-word-panel{display:grid;align-content:start;gap:8px;padding:11px 13px}
 .home-word-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
