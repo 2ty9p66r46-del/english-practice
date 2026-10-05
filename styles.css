@@ -2209,7 +2209,7 @@ html[data-theme="dark"] .home-example-row strong{color:#aebbd0}
 .home-example-overview .home-example-total span{font-size:.7rem}
 .home-example-overview .home-example-total strong{font-size:1.2rem}
 .home-vocab-breakdowns,.phrase-home-breakdowns{display:grid;min-width:0;gap:10px}
-.home-breakdown-section{display:grid;min-width:0;gap:5px;padding-top:8px;border-top:1px solid #e3e8ef}
+.home-breakdown-section{display:grid;min-width:0;gap:5px;padding-top:8px;border-top:1px solid #e3e8ef}.home-breakdown-section+.home-breakdown-section{border-top:2px solid #cbd5e1;padding-top:10px}
 .home-breakdown-section h3{margin:0;color:var(--muted);font-size:.72rem;font-weight:900}
 .home-breakdown-list{display:grid;min-width:0;gap:7px;overflow:visible}
 .home-breakdown-row{display:grid;min-width:0;gap:4px}
