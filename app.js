@@ -554,7 +554,16 @@ const COL=Object.freeze({
             const number=document.createElement('span');number.className='home-breakdown-count-number';number.textContent=String(count);
             item.append(dot,number);counts.append(item);
           });
-          row.append(head,counts);container.append(row);
+          if(metric==='understanding'){
+            const track=document.createElement('div');track.className='home-breakdown-track';track.setAttribute('role','img');
+            track.setAttribute('aria-label',values.map(([tone,count,name])=>`${name} ${count}件`).join('、'));
+            values.forEach(([tone,count])=>{
+              const segment=document.createElement('i');segment.className='home-breakdown-bar-segment '+tone;
+              segment.style.width=`${group.total?count/group.total*100:0}%`;track.append(segment);
+            });
+            row.append(head,counts,track);
+          }else row.append(head,counts);
+          container.append(row);
         });
       });
     };
