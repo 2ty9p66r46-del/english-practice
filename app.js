@@ -1001,7 +1001,7 @@ const COL=Object.freeze({
       const unsureCount=sumColumn(COL.questionCount);
       const answerTotal=correctCount+wrongCount+unsureCount;
       const answerRate=answerTotal?Math.round((correctCount/answerTotal)*100):null;
-      homeAnswerRate.textContent=answerRate===null?'—%':`${answerRate}%`;
+      homeAnswerRate.textContent=`${correctCount}/${answerTotal}`;
       homeCorrectCount.textContent=String(correctCount);
       homeWrongCount.textContent=String(wrongCount);
       homeUnsureCount.textContent=String(unsureCount);
