@@ -2215,14 +2215,16 @@ html[data-theme="dark"] .home-example-row strong{color:#aebbd0}
 .home-breakdown-head{display:flex;min-width:0;align-items:baseline;justify-content:space-between;gap:8px}
 .home-breakdown-label{min-width:0;overflow:hidden;color:var(--ink);font-size:.7rem;font-weight:800;text-overflow:ellipsis;white-space:nowrap}
 .home-breakdown-value{flex:0 0 auto;color:var(--blue);font-size:.68rem;font-weight:900;font-variant-numeric:tabular-nums;white-space:nowrap}
-.home-breakdown-track{display:flex;width:100%;height:8px;overflow:hidden;border-radius:999px;background:#e6eaf0}
-.home-breakdown-track i{display:block;height:100%;min-width:0}
-.home-stat-segment.mastered,.home-stat-segment.correct{background:#35b972}
-.home-stat-segment.steady{background:#efd044}
-.home-stat-segment.learning,.home-example-segment{background:#55a8ef}
-.home-stat-segment.new,.home-stat-segment.wrong{background:#df5b69}
-.home-stat-segment.unsure{background:#9a75d3}
-.home-breakdown-foot{color:var(--muted);font-size:.63rem;font-weight:700;line-height:1.4;overflow-wrap:anywhere}
+.home-breakdown-counts{display:grid;grid-template-columns:repeat(var(--count-columns,4),minmax(0,1fr));align-items:center;gap:2px;min-width:0;padding:1px 0}
+.home-breakdown-count-item{display:grid;grid-template-columns:.42rem minmax(3ch,1fr);align-items:center;gap:4px;min-width:0;color:var(--ink);font-size:.7rem;font-weight:800;font-variant-numeric:tabular-nums}
+.home-breakdown-count-dot{display:block;width:.4rem;height:.4rem;border-radius:50%;background:#55a8ef}
+.home-breakdown-count-dot.mastered,.home-breakdown-count-dot.correct{background:#35b972}
+.home-breakdown-count-dot.steady{background:#efd044}
+.home-breakdown-count-dot.learning{background:#ef9b3a}
+.home-breakdown-count-dot.new,.home-breakdown-count-dot.wrong{background:#df5b69}
+.home-breakdown-count-dot.unsure{background:#9a75d3}
+.home-breakdown-count-number{text-align:right;white-space:nowrap}
+.home-breakdown-empty{padding:6px 0;color:var(--muted);font-size:.7rem}
 .home-breakdown-empty{padding:6px 0;color:var(--muted);font-size:.7rem}
 .active-vocab-card .home-practice-button{margin-top:auto}
 html[data-theme="dark"] .home-example-overview .home-example-total{background:#263343}
