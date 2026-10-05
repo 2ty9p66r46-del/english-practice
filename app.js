@@ -1009,7 +1009,7 @@ const COL=Object.freeze({
       if(answerTotal){
         const correctEnd=(correctCount/answerTotal)*100;
         const partialEnd=correctEnd+(unsureCount/answerTotal)*100;
-        homeAnswerDonut.style.background=`conic-gradient(#35b972 0% ${correctEnd}%,#9a75d3 ${correctEnd}% ${partialEnd}%,#df5b69 ${partialEnd}% 100%)`;
+        homeAnswerDonut.style.background=`conic-gradient(#55a8ef 0% ${correctEnd}%,#efd044 ${correctEnd}% ${partialEnd}%,#df5b69 ${partialEnd}% 100%)`;
       }else homeAnswerDonut.style.background='#e9edf3';
       homeAnswerDonut.setAttribute('aria-label',answerTotal?`正解率${answerRate}パーセント`:'回答結果データなし');
       
