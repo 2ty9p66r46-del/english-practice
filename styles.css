@@ -992,13 +992,14 @@ body[data-page="home"] .bottom-space{display:none}
 .home-understanding-panel{display:grid;grid-template-columns:112px minmax(0,1fr);align-items:center;gap:14px;padding:12px 14px}
 .home-understanding-donut{display:grid;width:108px;height:108px;place-items:center;border-radius:50%;background:#e9edf3;box-shadow:inset 0 0 0 1px #ffffff80;transition:background .3s ease}
 .home-understanding-center{display:grid;width:72px;height:72px;place-content:center;border-radius:50%;background:#fff;box-shadow:0 2px 8px #26354a14;text-align:center}
-.home-understanding-center strong{color:#253247;font-size:1.25rem;font-weight:950;line-height:1;font-variant-numeric:tabular-nums}
+.home-understanding-center strong{color:#253247;font-size:.72rem;font-weight:950;line-height:1;font-variant-numeric:tabular-nums}
 .home-understanding-center span{margin-top:4px;color:#738096;font-size:.54rem;font-weight:850}
 .home-understanding-legend{display:grid;gap:6px}
 .home-understanding-legend>div{display:grid;grid-template-columns:8px minmax(0,1fr) minmax(3ch,auto);align-items:center;gap:5px;color:#667287;font-size:.57rem}
 .home-understanding-legend i,.home-answer-legend i{display:block;width:8px;height:8px;border-radius:50%}
 .home-understanding-legend span{font-weight:800}
 .home-understanding-legend strong{min-width:3ch;color:#344054;font-size:.62rem;font-weight:900;text-align:right;font-variant-numeric:tabular-nums}
+.home-stat-total{display:grid;grid-template-columns:8px minmax(0,1fr) auto;align-items:center;gap:5px;margin-top:2px;padding-top:5px;border-top:1px solid #d9e0e9;color:#344054;font-size:.6rem;font-weight:900}.home-stat-total>i{width:8px;height:8px}.home-stat-total strong{min-width:3ch;color:#253247;font-size:.62rem;font-weight:950;text-align:right;font-variant-numeric:tabular-nums}
 .home-understanding-legend .mastered{background:#35b972}.home-understanding-legend .steady{background:#efd044}.home-understanding-legend .learning{background:#ef9b3a}.home-understanding-legend .new{background:#df5b69}
 .home-answer-panel{display:grid;grid-template-columns:112px minmax(0,1fr);align-items:center;gap:14px;padding:12px 14px}
 .home-answer-donut{display:grid;width:108px;height:108px;place-items:center;border-radius:50%;background:#e9edf3;transition:background .3s ease}
