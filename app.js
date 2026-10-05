@@ -485,46 +485,65 @@ const COL=Object.freeze({
     const homeCorrectCount=document.getElementById('homeCorrectCount');
     const homeWrongCount=document.getElementById('homeWrongCount');
     const homeUnsureCount=document.getElementById('homeUnsureCount');
-    const homeTotalWordCount=document.getElementById('homeTotalWordCount');
-    const homeActiveWordCount=document.getElementById('homeActiveWordCount');
     const homeExampleCount=document.getElementById('homeExampleCount');
-    const homeExampleBreakdownLists=[...document.querySelectorAll('[data-example-breakdown-list]')];
-    const homeActiveWordBar=document.getElementById('homeActiveWordBar');
-    const homeLevelStats=document.getElementById('homeLevelStats');
-    const homePosStats=document.getElementById('homePosStats');
-    const homeStatPanelIds={understanding:'homeUnderstandingPanel',answers:'homeAnswerPanel',words:'homeWordPanel',examples:'homeExamplePanel'};
+    const homeBreakdownLists=[...document.querySelectorAll('[data-home-breakdown]')];
+    const homeStatPanelIds={understanding:'homeUnderstandingPanel',answers:'homeAnswerPanel',examples:'homeExamplePanel'};
     homeStatTabs.forEach(button=>button.addEventListener('click',()=>{
       homeStatTabs.forEach(tab=>{const active=tab===button;tab.classList.toggle('active',active);tab.setAttribute('aria-selected',String(active))});
       homeStatPanels.forEach(panel=>{panel.hidden=panel.id!==homeStatPanelIds[button.dataset.homeStat]});
     }));
-    document.querySelectorAll('.home-example-subtabs').forEach(tablist=>tablist.addEventListener('click',event=>{
-      const button=event.target.closest('[data-example-breakdown-tab]');if(!button)return;
-      const panel=button.closest('.home-example-panel');if(!panel)return;
-      panel.querySelectorAll('[data-example-breakdown-tab]').forEach(tab=>{const active=tab===button;tab.classList.toggle('active',active);tab.setAttribute('aria-selected',String(active))});
-      panel.querySelectorAll('[data-example-breakdown-list]').forEach(list=>{list.hidden=list.dataset.exampleBreakdownList!==button.dataset.exampleBreakdownTab});
-    }));
-    const renderHomeExampleBreakdowns=rows=>{
-      homeExampleBreakdownLists.forEach(container=>{
-        const mode=container.dataset.exampleBreakdownList,groups=new Map();
-        rows.forEach(row=>{
-          const word=text(row[COL.word]),key=mode==='word'?(text(row[COL.wordNo])||word.toLocaleLowerCase('en')):(text(row[COL.pos])||'品詞未登録');
-          if(!key)return;
-          if(!groups.has(key))groups.set(key,{label:mode==='word'?word:(text(row[COL.pos])||'品詞未登録'),count:0});
-          groups.get(key).count++;
+    const renderHomeStatBreakdowns=rows=>{
+      const grouped={level:new Map(),pos:new Map()};
+      const add=(map,label,row)=>{
+        const key=label||'未登録';
+        if(!map.has(key))map.set(key,{label:key,total:0,mastered:0,steady:0,learning:0,new:0,correct:0,wrong:0,unsure:0});
+        const group=map.get(key);group.total++;
+        const value=text(row[COL.understanding]);
+        if(value==='100%')group.mastered++;else if(value==='80%')group.steady++;else if(value==='50%')group.learning++;else group.new++;
+        group.correct+=Number.parseInt(text(row[COL.correctCount]),10)||0;
+        group.wrong+=Number.parseInt(text(row[COL.wrongCount]),10)||0;
+        group.unsure+=Number.parseInt(text(row[COL.questionCount]),10)||0;
+      };
+      rows.forEach(row=>{
+        const levels=[text(row[COL.sLevel]),text(row[COL.wLevel])].filter(Boolean);
+        [...new Set(levels.length?levels:['レベル未登録'])].forEach(level=>add(grouped.level,level,row));
+        add(grouped.pos,text(row[COL.pos])||'品詞未登録',row);
+      });
+      homeBreakdownLists.forEach(container=>{
+        const metric=container.dataset.homeBreakdown,dimension=container.dataset.breakdownBy;
+        const groups=[...grouped[dimension].values()];
+        groups.sort((a,b)=>{
+          if(metric==='examples')return b.total-a.total||a.label.localeCompare(b.label,'ja');
+          if(metric==='answers'){const aa=a.correct+a.wrong+a.unsure,ba=b.correct+b.wrong+b.unsure;return (aa?a.correct/aa:-1)-(ba?b.correct/ba:-1)||b.total-a.total}
+          return a.mastered/a.total-b.mastered/b.total||b.total-a.total;
         });
-        const ranked=[...groups.values()].sort((a,b)=>b.count-a.count||a.label.localeCompare(b.label,'ja'));
-        const visible=ranked;
-        const maxCount=Math.max(1,...visible.map(group=>group.count));
-        const rowsToRender=visible.map(group=>{
-          const item=document.createElement('div');item.className='home-example-row';
-          const label=document.createElement('span');label.className='home-example-label';label.textContent=group.label;label.title=group.label;
-          const track=document.createElement('span');track.className='home-example-track';
-          const bar=document.createElement('i');bar.style.width=`${group.count/maxCount*100}%`;track.append(bar);
-          const count=document.createElement('strong');count.textContent=`${group.count}件`;
-          item.setAttribute('aria-label',`${group.label}：例文${group.count}件`);item.append(label,track,count);return item;
+        container.replaceChildren();
+        if(!groups.length){const empty=document.createElement('div');empty.className='home-breakdown-empty';empty.textContent='データなし';container.append(empty);return}
+        const max=metric==='examples'?Math.max(1,...groups.map(g=>g.total)):1;
+        groups.forEach(group=>{
+          const row=document.createElement('div');row.className='home-breakdown-row';
+          const head=document.createElement('div');head.className='home-breakdown-head';
+          const label=document.createElement('strong');label.className='home-breakdown-label';label.textContent=group.label;label.title=group.label;
+          const rate=document.createElement('span');rate.className='home-breakdown-value';
+          const answers=group.correct+group.wrong+group.unsure;
+          if(metric==='examples')rate.textContent=`${group.total}件`;
+          else if(metric==='answers')rate.textContent=answers?`正答率 ${Math.round(group.correct/answers*100)}%`:'回答なし';
+          else rate.textContent=`習得率 ${Math.round(group.mastered/group.total*100)}%`;
+          head.append(label,rate);
+          const track=document.createElement('div');track.className='home-breakdown-track';
+          if(metric==='examples'){
+            const bar=document.createElement('i');bar.className='home-example-segment';bar.style.width=`${group.total/max*100}%`;track.append(bar);
+          }else{
+            const vals=metric==='answers'?[['correct',group.correct],['unsure',group.unsure],['wrong',group.wrong]]:[['mastered',group.mastered],['steady',group.steady],['learning',group.learning],['new',group.new]];
+            const denominator=metric==='answers'?answers:group.total;
+            vals.forEach(([tone,count])=>{const segment=document.createElement('i');segment.className='home-stat-segment '+tone;segment.style.width=`${denominator?count/denominator*100:0}%`;track.append(segment)});
+          }
+          const foot=document.createElement('small');foot.className='home-breakdown-foot';
+          if(metric==='examples')foot.textContent='登録例文数';
+          else if(metric==='answers')foot.textContent=`○ ${group.correct}　△ ${group.unsure}　× ${group.wrong}`;
+          else foot.textContent=`習得 ${group.mastered}／${group.total}件　定着 ${group.steady}　練習中 ${group.learning}　未定着 ${group.new}`;
+          row.append(head,track,foot);container.append(row);
         });
-        if(!rowsToRender.length){const empty=document.createElement('div');empty.className='home-example-empty';empty.textContent='例文データがありません';rowsToRender.push(empty)}
-        container.replaceChildren(...rowsToRender);
       });
     };
     const filterSections=[...document.querySelectorAll('#filterCard .filter-section:not([data-filter-section="text"]):not([data-filter-section="word"])')];
@@ -923,10 +942,8 @@ const COL=Object.freeze({
       const matchingPairCount=new Set(matchingRows.map(row=>text(row[COL.wordNo])||text(row[COL.word]).toLowerCase())).size;
       const totalPairCount=new Set(allExampleRows.map(row=>text(row[COL.wordNo])||text(row[COL.word]).toLowerCase())).size;
       const wordKey=row=>text(row[COL.wordNo])||text(row[COL.word]).toLowerCase();
-      const totalWordKeys=new Set(sourceRows.map(wordKey).filter(Boolean));
       practiceCountStates.set(mode,{matchingPairCount,totalPairCount,displayedExampleCount,totalExampleCount:allExampleRows.length});
-      if(mode==='active-vocabulary'&&homeExampleCount)homeExampleCount.textContent=String(allExampleRows.length);
-      if(mode==='active-vocabulary')renderHomeExampleBreakdowns(allExampleRows);
+      if(mode==='active-vocabulary'&&homeExampleCount){homeExampleCount.textContent=String(allExampleRows.length);renderHomeStatBreakdowns(allExampleRows)}
       if(currentPracticeCountMode()!==mode)return;
       renderPracticeCountState(mode);
       if(mode==='phrase-bank')return;
@@ -972,38 +989,7 @@ const COL=Object.freeze({
       }else homeAnswerDonut.style.background='#e9edf3';
       homeAnswerDonut.setAttribute('aria-label',answerTotal?`正解率${answerRate}パーセント`:'回答結果データなし');
       homeAnswerBar.setAttribute('aria-label',answerTotal?`回答結果：正解${correctCount}回、惜しい${unsureCount}回、不正解${wrongCount}回`:'回答結果データなし');
-      homeTotalWordCount.textContent=String(totalWordKeys.size);
-      homeActiveWordCount.textContent=String(matchingPairCount);
-      homeActiveWordBar.style.width=`${totalWordKeys.size?Math.min(100,(matchingPairCount/totalWordKeys.size)*100):0}%`;
-      const levelSets=Object.fromEntries(['S1','S2','S3','W1','W2','W3'].map(level=>[level,new Set()]));
-      const posSets=new Map();
-      sourceRows.forEach(row=>{
-        const key=wordKey(row);
-        if(!key)return;
-        [text(row[COL.sLevel]),text(row[COL.wLevel])].forEach(level=>{if(levelSets[level])levelSets[level].add(key)});
-        const part=text(row[COL.pos]);
-        if(part){if(!posSets.has(part))posSets.set(part,new Set());posSets.get(part).add(key)}
-      });
-      homeLevelStats.replaceChildren(...Object.entries(levelSets).map(([level,words])=>{
-        const item=document.createElement('span');
-        const count=document.createElement('strong');
-        item.append(document.createTextNode(level),count);
-        count.textContent=String(words.size);
-        return item;
-      }));
-      const sortedParts=[...posSets].map(([part,words])=>[part,words.size]).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0],'ja'));
-      const visibleParts=sortedParts;
-      const maxPartCount=Math.max(1,...visibleParts.map(item=>item[1]));
-      const posRows=visibleParts.map(([part,count])=>{
-        const row=document.createElement('div');row.className='home-pos-row';
-        const label=document.createElement('span');label.textContent=part;label.title=part;
-        const track=document.createElement('span');track.className='home-pos-track';
-        const bar=document.createElement('i');bar.style.width=`${(count/maxPartCount)*100}%`;track.append(bar);
-        const value=document.createElement('strong');value.textContent=String(count);
-        row.append(label,track,value);return row;
-      });
-      if(!posRows.length){const empty=document.createElement('div');empty.className='home-pos-row';const label=document.createElement('span');label.textContent='データなし';empty.append(label);posRows.push(empty)}
-      homePosStats.replaceChildren(...posRows);
+      
       const importedName=stored?.fileName||'未読込';
       homeImportFileName.textContent=importedName;
       homeImportFileName.title=importedName;

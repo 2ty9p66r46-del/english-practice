@@ -14,7 +14,7 @@
   <link rel="apple-touch-icon" href="./icon.svg">
   <title>FloVo</title>
   <script src="./xlsx.full.min.js"></script>
-  <link rel="stylesheet" href="./styles.css?v=619">
+  <link rel="stylesheet" href="./styles.css?v=620">
 </head>
 <body data-page="home">
   <div class="shell">
@@ -44,46 +44,45 @@
               <div class="home-stat-tabs active-vocab-stat-tabs" role="tablist" aria-label="統計の種類">
                 <button class="active" type="button" role="tab" aria-selected="true" aria-controls="homeUnderstandingPanel" data-home-stat="understanding">理解度</button>
                 <button type="button" role="tab" aria-selected="false" aria-controls="homeAnswerPanel" data-home-stat="answers">正答率</button>
-                <button type="button" role="tab" aria-selected="false" aria-controls="homeWordPanel" data-home-stat="words">単語数</button>
                 <button type="button" role="tab" aria-selected="false" aria-controls="homeExamplePanel" data-home-stat="examples">例文数</button>
               </div>
               <div class="home-stat-panels">
                 <div class="home-understanding-panel home-stat-panel" id="homeUnderstandingPanel" role="tabpanel">
-                  <div class="home-understanding-donut" id="homeUnderstandingDonut" role="img" aria-label="理解度データなし">
-                    <div class="home-understanding-center"><strong id="homeMasteryRate">0%</strong><span>習得率</span></div>
+                  <div class="home-stat-overview home-understanding-overview">
+                    <div class="home-understanding-donut" id="homeUnderstandingDonut" role="img" aria-label="理解度データなし">
+                      <div class="home-understanding-center"><strong id="homeMasteryRate">0%</strong><span>習得率</span></div>
+                    </div>
+                    <div class="home-understanding-legend" aria-label="理解度の内訳">
+                      <div><i class="mastered"></i><span>習得</span><strong id="homeMasteredCount">0</strong><small>100%</small></div>
+                      <div><i class="steady"></i><span>定着</span><strong id="homeSteadyCount">0</strong><small>80%</small></div>
+                      <div><i class="learning"></i><span>練習中</span><strong id="homeLearningCount">0</strong><small>50%</small></div>
+                      <div><i class="new"></i><span>未定着</span><strong id="homeNewCount">0</strong><small>0%・未登録</small></div>
+                    </div>
                   </div>
-                  <div class="home-understanding-legend" aria-label="理解度の内訳">
-                    <div><i class="mastered"></i><span>習得</span><strong id="homeMasteredCount">0</strong><small>100%</small></div>
-                    <div><i class="steady"></i><span>定着</span><strong id="homeSteadyCount">0</strong><small>80%</small></div>
-                    <div><i class="learning"></i><span>練習中</span><strong id="homeLearningCount">0</strong><small>50%</small></div>
-                    <div><i class="new"></i><span>未定着</span><strong id="homeNewCount">0</strong><small>0%・未登録</small></div>
+                  <div class="home-vocab-breakdowns">
+                    <section class="home-breakdown-section"><h3>SWレベル別</h3><div class="home-breakdown-list" data-home-breakdown="understanding" data-breakdown-by="level"></div></section>
+                    <section class="home-breakdown-section"><h3>品詞別</h3><div class="home-breakdown-list" data-home-breakdown="understanding" data-breakdown-by="pos"></div></section>
                   </div>
                 </div>
                 <div class="home-answer-panel home-stat-panel" id="homeAnswerPanel" role="tabpanel" hidden>
-                  <div class="home-answer-donut" id="homeAnswerDonut" role="img" aria-label="回答結果データなし"><div><strong id="homeAnswerRate">—%</strong><span>正解率</span></div></div>
-                  <div class="home-answer-summary">
-                    <strong>回答結果</strong>
-                    <div class="home-answer-bar" id="homeAnswerBar" role="img" aria-label="回答結果データなし"><i class="correct" id="homeCorrectBar"></i><i class="unsure" id="homeUnsureBar"></i><i class="wrong" id="homeWrongBar"></i></div>
-                    <div class="home-answer-legend"><span><i class="correct"></i>○ <strong id="homeCorrectCount">0</strong></span><span><i class="unsure"></i>△ <strong id="homeUnsureCount">0</strong></span><span><i class="wrong"></i>× <strong id="homeWrongCount">0</strong></span></div>
+                  <div class="home-stat-overview home-answer-overview">
+                    <div class="home-answer-donut" id="homeAnswerDonut" role="img" aria-label="回答結果データなし"><div><strong id="homeAnswerRate">—%</strong><span>正解率</span></div></div>
+                    <div class="home-answer-summary">
+                      <strong>回答結果</strong>
+                      <div class="home-answer-bar" id="homeAnswerBar" role="img" aria-label="回答結果データなし"><i class="correct" id="homeCorrectBar"></i><i class="unsure" id="homeUnsureBar"></i><i class="wrong" id="homeWrongBar"></i></div>
+                      <div class="home-answer-legend"><span><i class="correct"></i>○ <strong id="homeCorrectCount">0</strong></span><span><i class="unsure"></i>△ <strong id="homeUnsureCount">0</strong></span><span><i class="wrong"></i>× <strong id="homeWrongCount">0</strong></span></div>
+                    </div>
                   </div>
-                </div>
-                <div class="home-word-panel home-stat-panel" id="homeWordPanel" role="tabpanel" hidden>
-                  <div class="home-word-summary"><div><span>全単語</span><strong id="homeTotalWordCount">0</strong></div><div><span>有効</span><strong id="homeActiveWordCount">0</strong></div></div>
-                  <div class="home-word-progress"><i id="homeActiveWordBar"></i></div>
-                  <div class="home-word-breakdown">
-                    <div><h3>SWレベル</h3><div class="home-level-stats" id="homeLevelStats"></div></div>
-                    <div><h3>品詞</h3><div class="home-pos-stats" id="homePosStats"></div></div>
+                  <div class="home-vocab-breakdowns">
+                    <section class="home-breakdown-section"><h3>SWレベル別</h3><div class="home-breakdown-list" data-home-breakdown="answers" data-breakdown-by="level"></div></section>
+                    <section class="home-breakdown-section"><h3>品詞別</h3><div class="home-breakdown-list" data-home-breakdown="answers" data-breakdown-by="pos"></div></section>
                   </div>
                 </div>
                 <div class="home-example-panel home-stat-panel" id="homeExamplePanel" role="tabpanel" hidden>
-                  <div class="home-example-total"><span>登録例文</span><strong id="homeExampleCount">0</strong></div>
-                  <div class="home-example-breakdown">
-                    <div class="home-example-subtabs" role="tablist" aria-label="例文数の集計方法">
-                      <button class="active" type="button" role="tab" aria-selected="true" aria-controls="homeExampleWordList" data-example-breakdown-tab="word">単語別</button>
-                      <button type="button" role="tab" aria-selected="false" aria-controls="homeExamplePosList" data-example-breakdown-tab="pos">品詞別</button>
-                    </div>
-                    <div class="home-example-breakdown-list" id="homeExampleWordList" role="tabpanel" data-example-breakdown-list="word"></div>
-                    <div class="home-example-breakdown-list" id="homeExamplePosList" role="tabpanel" data-example-breakdown-list="pos" hidden></div>
+                  <div class="home-stat-overview home-example-overview"><div class="home-example-total"><span>登録例文</span><strong id="homeExampleCount">0</strong></div></div>
+                  <div class="home-vocab-breakdowns">
+                    <section class="home-breakdown-section"><h3>SWレベル別</h3><div class="home-breakdown-list" data-home-breakdown="examples" data-breakdown-by="level"></div></section>
+                    <section class="home-breakdown-section"><h3>品詞別</h3><div class="home-breakdown-list" data-home-breakdown="examples" data-breakdown-by="pos"></div></section>
                   </div>
                 </div>
               </div>
@@ -442,7 +441,7 @@
     </div>
   </div>
   <div class="screen-fade" id="screenFade" aria-hidden="true"></div>
-  <script src="./app.js?v=572"></script>
-  <script src="./phrase-bank.js?v=618"></script>
+  <script src="./app.js?v=573"></script>
+  <script src="./phrase-bank.js?v=619"></script>
 </body>
 </html>
