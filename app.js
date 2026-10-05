@@ -543,11 +543,10 @@ const COL=Object.freeze({
           const rate=document.createElement('span');rate.className='home-breakdown-value';
           const answers=group.correct+group.wrong+group.unsure;
           const rateLabel=document.createElement('span');rateLabel.className='home-breakdown-value-label';
-          rateLabel.textContent=metric==='answers'?'回答数':'例文';
+          rateLabel.textContent=metric==='answers'?'回':'例文';
           const rateNumber=document.createElement('span');rateNumber.className='home-breakdown-value-number';
           rateNumber.textContent=String(metric==='answers'?answers:group.total);
-          if(metric==='answers')rate.append(rateLabel,rateNumber);
-          else{rate.classList.add('is-example-count');rate.append(rateNumber,rateLabel)}
+          rate.classList.add('is-unit-count');rate.append(rateNumber,rateLabel)
           head.append(label,rate);
           const values=metric==='answers'?[['correct',group.correct,'できた'],['unsure',group.unsure,'もう少し'],['wrong',group.wrong,'分からない']]:
             [['mastered',group.mastered,'習得'],['steady',group.steady,'定着'],['learning',group.learning,'練習中'],['new',group.new,'未定着']];
