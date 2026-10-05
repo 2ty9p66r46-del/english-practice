@@ -540,8 +540,8 @@ const COL=Object.freeze({
           const label=document.createElement('strong');label.className='home-breakdown-label';label.textContent=group.label;label.title=group.label;
           const rate=document.createElement('span');rate.className='home-breakdown-value';
           const answers=group.correct+group.wrong+group.unsure;
-          if(metric==='answers')rate.textContent=answers?`正答率 ${Math.round(group.correct/answers*100)}%`:'回答なし';
-          else rate.textContent=`習得率 ${Math.round(group.mastered/group.total*100)}%`;
+          if(metric==='answers')rate.textContent=`回答数 ${answers}`;
+          else rate.textContent=`例文数 ${group.total}`;
           head.append(label,rate);
           const values=metric==='answers'?[['correct',group.correct,'できた'],['unsure',group.unsure,'もう少し'],['wrong',group.wrong,'分からない']]:
             [['mastered',group.mastered,'習得'],['steady',group.steady,'定着'],['learning',group.learning,'練習中'],['new',group.new,'未定着']];
@@ -554,14 +554,15 @@ const COL=Object.freeze({
             const number=document.createElement('span');number.className='home-breakdown-count-number';number.textContent=String(count);
             item.append(dot,number);counts.append(item);
           });
-          if(metric==='understanding'){
+          if(metric==='understanding'||metric==='answers'){
+            const denominator=metric==='answers'?answers:group.total;
             const track=document.createElement('div');track.className='home-breakdown-track';track.setAttribute('role','img');
             track.setAttribute('aria-label',values.map(([tone,count,name])=>`${name} ${count}件`).join('、'));
             values.forEach(([tone,count])=>{
               const segment=document.createElement('i');segment.className='home-breakdown-bar-segment '+tone;
-              segment.style.width=`${group.total?count/group.total*100:0}%`;track.append(segment);
+              segment.style.width=`${denominator?count/denominator*100:0}%`;track.append(segment);
             });
-            row.append(head,counts,track);
+            row.append(head,track,counts);
           }else row.append(head,counts);
           container.append(row);
         });
