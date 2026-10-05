@@ -542,8 +542,11 @@ const COL=Object.freeze({
           const label=document.createElement('strong');label.className='home-breakdown-label';label.textContent=group.label;label.title=group.label;
           const rate=document.createElement('span');rate.className='home-breakdown-value';
           const answers=group.correct+group.wrong+group.unsure;
-          if(metric==='answers')rate.textContent=`回答数 ${answers}`;
-          else rate.textContent=`例文数 ${group.total}`;
+          const rateLabel=document.createElement('span');rateLabel.className='home-breakdown-value-label';
+          rateLabel.textContent=metric==='answers'?'回答数':'例文数';
+          const rateNumber=document.createElement('span');rateNumber.className='home-breakdown-value-number';
+          rateNumber.textContent=String(metric==='answers'?answers:group.total);
+          rate.append(rateLabel,rateNumber);
           head.append(label,rate);
           const values=metric==='answers'?[['correct',group.correct,'できた'],['unsure',group.unsure,'もう少し'],['wrong',group.wrong,'分からない']]:
             [['mastered',group.mastered,'習得'],['steady',group.steady,'定着'],['learning',group.learning,'練習中'],['new',group.new,'未定着']];
