@@ -303,7 +303,7 @@
   };
   const refreshPhraseHome=()=>{
     const total=data.phrases.length,counts={mastered:0,steady:0,learning:0,new:0};data.phrases.forEach(item=>{if(item.understanding==='100%')counts.mastered++;else if(item.understanding==='80%')counts.steady++;else if(item.understanding==='50%')counts.learning++;else counts.new++});
-    setText('homeImportFileName',data.fileName||'未読込');setText('homeMasteryRate',total?`${Math.round(counts.mastered/total*100)}%`:'0%');setText('homeMasteredCount',counts.mastered);setText('homeSteadyCount',counts.steady);setText('homeLearningCount',counts.learning);setText('homeNewCount',counts.new);
+    setText('homeImportFileName',data.fileName||'未読込');setText('homeMasteryRate',String(total));setText('homeMasteredCount',counts.mastered);setText('homeSteadyCount',counts.steady);setText('homeLearningCount',counts.learning);setText('homeNewCount',counts.new);
     const correct=data.phrases.reduce((sum,item)=>sum+item.correct,0),wrong=data.phrases.reduce((sum,item)=>sum+item.wrong,0),unsure=data.phrases.reduce((sum,item)=>sum+item.unsure,0),answers=correct+wrong+unsure;
     setText('homeAnswerRate',answers?`${Math.round(correct/answers*100)}%`:'—%');setText('homeCorrectCount',correct);setText('homeWrongCount',wrong);setText('homeUnsureCount',unsure);setText('homeExampleCount',total);
     const understandingDonut=document.getElementById(idMap.get('homeUnderstandingDonut')),answerDonut=document.getElementById(idMap.get('homeAnswerDonut')),answerBar=document.getElementById(idMap.get('homeAnswerBar'));
