@@ -2203,7 +2203,7 @@ html[data-theme="dark"] .home-example-row strong{color:#aebbd0}
 .home-understanding-overview,.home-answer-overview{grid-template-columns:96px minmax(0,1fr)}
 .home-understanding-overview .home-understanding-donut,.home-answer-overview .home-answer-donut{width:92px;height:92px}
 .home-understanding-overview .home-understanding-center,.home-answer-overview .home-answer-donut>div{width:62px;height:62px}
-.home-understanding-overview .home-understanding-legend{gap:4px}
+.home-understanding-overview .home-understanding-legend{gap:0}
 .home-answer-overview .home-answer-summary{gap:8px}
 .home-example-overview{grid-template-columns:minmax(0,1fr)}
 .home-example-overview .home-example-total{display:flex;align-items:baseline;justify-content:space-between;padding:5px 7px;border-radius:10px;background:#f1f5fa}
