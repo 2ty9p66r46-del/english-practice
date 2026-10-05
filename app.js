@@ -48,6 +48,7 @@ const COL=Object.freeze({
     const homeModules=document.querySelector('.home-modules');
     const homeModuleCards=[...document.querySelectorAll('.home-modules>.home-module-card')];
     const homeCarouselDots=[...document.querySelectorAll('.home-carousel-dots button')];
+    let homeCarouselActiveIndex=0;
     const text=value=>String(value??'').trim();
     const compareDataRows=(a,b)=>{
       for(const column of [COL.wordNo,COL.posNo,COL.meaningNo,COL.exampleNo]){
@@ -67,6 +68,10 @@ const COL=Object.freeze({
         const distance=Math.abs((card.offsetLeft+(card.offsetWidth/2))-center);
         return distance<closest.distance?{index,distance}:closest;
       },{index:0,distance:Infinity}).index;
+      if(activeIndex!==homeCarouselActiveIndex){
+        homeCarouselActiveIndex=activeIndex;
+        scroller?.scrollTo({top:0,behavior:'smooth'});
+      }
       homeCarouselDots.forEach((dot,index)=>{
         const active=index===activeIndex;
         dot.classList.toggle('active',active);
@@ -80,6 +85,7 @@ const COL=Object.freeze({
     homeCarouselDots.forEach((dot,index)=>dot.addEventListener('click',()=>{
       const card=homeModuleCards[index];
       if(!card||!homeModules)return;
+      scroller?.scrollTo({top:0,behavior:'smooth'});
       const paddingLeft=parseFloat(getComputedStyle(homeModules).paddingLeft)||0;
       homeModules.scrollTo({left:card.offsetLeft-homeModules.offsetLeft-paddingLeft,behavior:'smooth'});
     }));
@@ -2929,7 +2935,10 @@ const COL=Object.freeze({
       }catch{snapshots.forEach(({row,values})=>{row[COL.understanding]=values[0];row[COL.correctCount]=values[1];row[COL.wrongCount]=values[2];row[COL.questionCount]=values[3]});alert('学習データをリセットできませんでした。')}
       finally{learningResetConfirm.disabled=false}
     });
-    navHome.addEventListener('click',()=>{if(!practiceScreen.hidden)closePractice()});
+    navHome.addEventListener('click',()=>{
+      if(!practiceScreen.hidden)closePractice();
+      scroller.scrollTo({top:0,behavior:'smooth'});
+    });
     practiceReveal.addEventListener('click',()=>setAnswerVisible(true,true));
     practiceEnglish.addEventListener('click',()=>setAnswerVisible(false,true));
     let practiceSwipeStart=null;
