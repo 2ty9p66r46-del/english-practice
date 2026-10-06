@@ -1,3 +1,6 @@
 /* Align My Phrase labels and match the muted empty-value size. */
 body[data-practice-module="phrase-bank"] .phrase-keyword-card:not([hidden]){padding-inline:4px}
 .phrase-keyword-card span.is-empty{font-size:.64rem;font-weight:400}
+
+/* Match category labels to the Japanese and English lines in the phrase list. */
+body[data-practice-module="phrase-bank"] #practiceList .practice-list-row .practice-list-word{font-size:.7rem}
