@@ -2304,11 +2304,12 @@ body[data-practice-module="phrase-bank"] .phrase-card-tag-section>strong{
 
 /* Optional My Phrase keyword sits above the Japanese prompt. */
 .phrase-keyword-card{display:none}
-body[data-practice-module="phrase-bank"] .phrase-keyword-card:not([hidden]){display:grid;grid-template-columns:auto minmax(0,1fr);align-items:baseline;column-gap:10px;min-height:30px;padding:5px 8px;border-bottom:1px solid #e5eaf1}
+body[data-practice-module="phrase-bank"] .phrase-keyword-card:not([hidden]){display:grid;grid-template-columns:minmax(0,1fr);align-content:center;row-gap:1px;min-height:44px;padding:4px 8px}
 body[data-practice-module="phrase-bank"] .phrase-keyword-card[hidden]{display:none!important}
 .phrase-keyword-card strong{color:var(--blue);font-size:.69rem;font-weight:850;letter-spacing:.04em;white-space:nowrap}
 .phrase-keyword-card span{min-width:0;color:#526078;font-size:.82rem;font-weight:750;overflow-wrap:anywhere;white-space:pre-wrap}
-html[data-theme="dark"] body[data-practice-module="phrase-bank"] .phrase-keyword-card{border-color:#344153}
+.phrase-keyword-card span.is-empty{color:#a0a8b4}
 html[data-theme="dark"] .phrase-keyword-card span{color:#d5dfec}
-body[data-practice-module="phrase-bank"] .practice-exercise-card:has(.phrase-keyword-card:not([hidden])){grid-template-rows:187px 34px minmax(0,1fr) minmax(0,1fr) 54px}
-body[data-practice-module="phrase-bank"] .phrase-keyword-card:not([hidden]){box-sizing:border-box;height:34px;min-height:34px;padding:5px 8px}
+html[data-theme="dark"] .phrase-keyword-card span.is-empty{color:#8390a2}
+body[data-practice-module="phrase-bank"] .practice-exercise-card:has(.phrase-keyword-card:not([hidden])){grid-template-rows:187px 46px minmax(0,1fr) minmax(0,1fr) 54px}
+body[data-practice-module="phrase-bank"] .phrase-keyword-card:not([hidden]){box-sizing:border-box;height:46px;min-height:46px;padding:4px 8px}
