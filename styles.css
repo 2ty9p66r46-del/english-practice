@@ -1495,8 +1495,8 @@ html[data-theme="dark"] body[data-practice-module="phrase-bank"] #practiceWord{b
 .phrase-data-body{display:grid;gap:13px}
 .phrase-data-body>label{display:grid;gap:6px;color:#526078;font-size:.72rem;font-weight:850}
 .phrase-data-body>label b{color:#d92d45}
-.phrase-data-body textarea{box-sizing:border-box;width:100%;padding:11px 12px;border:1px solid #d7dee8;border-radius:13px;background:#fff;color:#182230;font:inherit;font-size:.86rem;font-weight:650;line-height:1.5;outline:none;resize:vertical}
-.phrase-data-body textarea:focus,.phrase-root-add input:focus,.phrase-category-manager-row input:focus{border-color:#5aa8ef;box-shadow:0 0 0 3px #3b9cf023}
+.phrase-data-body textarea,.phrase-data-body input{box-sizing:border-box;width:100%;padding:11px 12px;border:1px solid #d7dee8;border-radius:13px;background:#fff;color:#182230;font:inherit;font-size:.86rem;font-weight:650;line-height:1.5;outline:none;resize:vertical}
+.phrase-data-body textarea:focus,.phrase-data-body input:focus,.phrase-root-add input:focus,.phrase-category-manager-row input:focus{border-color:#5aa8ef;box-shadow:0 0 0 3px #3b9cf023}
 .phrase-category-field{display:grid;gap:8px;padding:11px;border:1px solid #dfe5ed;border-radius:15px;background:#f8fafc}
 .phrase-category-field>div:first-child{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#526078;font-size:.72rem}
 .phrase-category-field>div:first-child button{min-height:32px;padding:0 10px;border:1px solid #9bc9f7;border-radius:10px;background:#eef7ff;color:var(--blue);font-size:.66rem;font-weight:850}
@@ -1527,7 +1527,7 @@ html[data-theme="dark"] .phrase-data-success{color:#6ed39b}
 html[data-theme="dark"] .phrase-data-sheet,html[data-theme="dark"] .phrase-data-head{border-color:#344153;background:#1b2431}
 html[data-theme="dark"] .phrase-data-head h2{color:#eef4ff}
 html[data-theme="dark"] .phrase-data-body>label,html[data-theme="dark"] .phrase-category-field>div:first-child{color:#b3c0d1}
-html[data-theme="dark"] .phrase-data-body textarea,html[data-theme="dark"] .phrase-root-add input,html[data-theme="dark"] .phrase-category-manager-row input{border-color:#405065;background:#121a24;color:#eef4ff}
+html[data-theme="dark"] .phrase-data-body textarea,html[data-theme="dark"] .phrase-data-body input,html[data-theme="dark"] .phrase-root-add input,html[data-theme="dark"] .phrase-category-manager-row input{border-color:#405065;background:#121a24;color:#eef4ff}
 html[data-theme="dark"] .phrase-category-field,html[data-theme="dark"] .phrase-category-manager-row{border-color:#344153;background:#17202c}
 html[data-theme="dark"] .phrase-category-choice{background:#202b39;color:#eef4ff}
 @media(max-width:430px){.phrase-category-manager-row{grid-template-columns:31px minmax(64px,1fr) 42px 30px 30px 42px;gap:3px;padding-left:calc(5px + var(--depth)*9px)}.phrase-category-manager-row button{padding:0 3px;font-size:.56rem}}
@@ -2301,3 +2301,14 @@ body[data-practice-module="phrase-bank"] .phrase-card-tag-section>strong{
   letter-spacing:.04em;
   line-height:1;
 }
+
+/* Optional My Phrase keyword sits above the Japanese prompt. */
+.phrase-keyword-card{display:none}
+body[data-practice-module="phrase-bank"] .phrase-keyword-card:not([hidden]){display:grid;grid-template-columns:auto minmax(0,1fr);align-items:baseline;column-gap:10px;min-height:30px;padding:5px 8px;border-bottom:1px solid #e5eaf1}
+body[data-practice-module="phrase-bank"] .phrase-keyword-card[hidden]{display:none!important}
+.phrase-keyword-card strong{color:var(--blue);font-size:.69rem;font-weight:850;letter-spacing:.04em;white-space:nowrap}
+.phrase-keyword-card span{min-width:0;color:#526078;font-size:.82rem;font-weight:750;overflow-wrap:anywhere;white-space:pre-wrap}
+html[data-theme="dark"] body[data-practice-module="phrase-bank"] .phrase-keyword-card{border-color:#344153}
+html[data-theme="dark"] .phrase-keyword-card span{color:#d5dfec}
+body[data-practice-module="phrase-bank"] .practice-exercise-card:has(.phrase-keyword-card:not([hidden])){grid-template-rows:187px 34px minmax(0,1fr) minmax(0,1fr) 54px}
+body[data-practice-module="phrase-bank"] .phrase-keyword-card:not([hidden]){box-sizing:border-box;height:34px;min-height:34px;padding:5px 8px}
