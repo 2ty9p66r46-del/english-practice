@@ -2291,3 +2291,13 @@ html[data-theme="dark"] .phrase-tag-folder-name-input:hover{border-color:#718096
   .phrase-category-manager-row>.phrase-tag-folder-tree-icons .phrase-tag-icon-button{width:30px;height:30px;min-width:30px}
 }
 html[data-theme="dark"] .phrase-category-manager-row .phrase-category-manager-toggle{border-color:#526176;background:#17202c;color:#d9e3f0}
+
+/* Phrase-bank card category and tag labels match the Japanese/English title labels. */
+body[data-practice-module="phrase-bank"] .practice-word-title,
+body[data-practice-module="phrase-bank"] .phrase-card-tag-section>strong{
+  color:var(--practice-button-blue,var(--blue));
+  font-size:.69rem;
+  font-weight:850;
+  letter-spacing:.04em;
+  line-height:1;
+}
