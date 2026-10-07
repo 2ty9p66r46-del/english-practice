@@ -1309,6 +1309,7 @@ const COL=Object.freeze({
       const note=text(row[COL.note]);
       practiceNote.textContent=note||'まだ補足は記入されていません';
       practiceNote.classList.toggle('is-empty',!note);
+      practiceNoteButton.classList.toggle('has-note',Boolean(note));
       practiceNoteButton.hidden=false;
       practiceNoteButton.disabled=false;
       practiceNotePopover.hidden=!keepNoteOpen;
