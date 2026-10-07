@@ -1466,9 +1466,11 @@ body[data-practice-module="phrase-bank"] #practiceFilterOverlay .word-text-filte
 .phrase-hierarchy-filter-choice{display:grid;grid-template-columns:22px minmax(0,1fr);align-items:center;gap:8px;min-height:39px;padding:4px 10px 4px calc(10px + var(--depth)*18px);border:1px solid #e1e7ef;border-radius:11px;background:#fff;color:#26364d;font-size:.75rem;font-weight:750}
 .phrase-hierarchy-filter-choice input{width:18px;height:18px;margin:0;accent-color:var(--blue)}
 html[data-theme="dark"] .phrase-hierarchy-filter-choice{border-color:#344153;background:#202b39;color:#eef4ff}
-body[data-practice-module="phrase-bank"] .practice-info-primary>#practiceNoteButton{display:flex;width:24px;height:24px;min-width:24px;min-height:24px;flex:0 0 24px;align-items:center;justify-content:center;margin-left:auto;padding:0;border:1.5px solid #efc14d;border-radius:50%;background:#fff8d7;color:#9a6700;opacity:1}
+body[data-practice-module="phrase-bank"] .practice-info-primary>#practiceNoteButton{display:flex;width:24px;height:24px;min-width:24px;min-height:24px;flex:0 0 24px;align-items:center;justify-content:center;margin-left:auto;padding:0;border:1.5px solid #cfd5df;border-radius:50%;background:#f2f4f7;color:#8792a3;opacity:1}
+body[data-practice-module="phrase-bank"] .practice-info-primary>#practiceNoteButton.has-note{border-color:#efc14d;background:#fff8d7;color:#9a6700}
 body[data-practice-module="phrase-bank"] .practice-info-primary>#practiceNoteButton svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-html[data-theme="dark"] body[data-practice-module="phrase-bank"] .practice-info-primary>#practiceNoteButton{border-color:#8c712d;background:#3a321d;color:#ffd96d}
+html[data-theme="dark"] body[data-practice-module="phrase-bank"] .practice-info-primary>#practiceNoteButton{border-color:#465261;background:#27313e;color:#8b98aa}
+html[data-theme="dark"] body[data-practice-module="phrase-bank"] .practice-info-primary>#practiceNoteButton.has-note{border-color:#8c712d;background:#3a321d;color:#ffd96d}
 body[data-practice-module="phrase-bank"] #practiceWordCopy,
 body[data-practice-module="phrase-bank"] .practice-meaning-column{display:none!important}
 body[data-practice-module="phrase-bank"] #practiceMeaningExampleNumber,
