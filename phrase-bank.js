@@ -59,7 +59,7 @@
   let tagManagerFolderId=null,tagManagerFormState=null,tagManagerSnapshot=null,tagManagerDirty=false;
   const pendingTagRenames=new Map(),pendingFolderRenames=new Map();
   const expandedTagFolders=new Set(),expandedTagFilterFolders=new Set();
-  let loaded=false,loadDataPromise=null,moduleMode='active-vocabulary',launchingPhrase=false,editorPhraseId=null,editorCategoryIds=new Set(),editorPrimaryId=null,categoryDraftParentId=undefined,categoryManagerSnapshot=null,categoryManagerDirty=false,phraseSaveMessageTimer=null,rowPhraseIds=new WeakMap(),rowPhraseObjects=new WeakMap(),phraseFilterCategoryIds=new Set(),phraseBulkSelecting=false,phraseBulkSelectedIds=new Set(),activeBulkSelectedRows=new Set(),activeBulkRowMap=new WeakMap(),phraseBulkMoveCategoryId=null,phraseBulkHeaderTimer=null,phraseBulkActionsTimer=null,editorTagNames=new Set(),phraseFilterTagNames=new Set();
+  let loaded=false,loadDataPromise=null,storeWriteQueue=Promise.resolve(),moduleMode='active-vocabulary',launchingPhrase=false,editorPhraseId=null,editorCategoryIds=new Set(),editorPrimaryId=null,categoryDraftParentId=undefined,categoryManagerSnapshot=null,categoryManagerDirty=false,phraseSaveMessageTimer=null,rowPhraseIds=new WeakMap(),rowPhraseObjects=new WeakMap(),rowPhraseSnapshots=new Map(),phraseFilterCategoryIds=new Set(),phraseBulkSelecting=false,phraseBulkSelectedIds=new Set(),activeBulkSelectedRows=new Set(),activeBulkRowMap=new WeakMap(),phraseBulkMoveCategoryId=null,phraseBulkHeaderTimer=null,phraseBulkActionsTimer=null,editorTagNames=new Set(),phraseFilterTagNames=new Set();
   const normalize=value=>String(value??'').trim();
   const number=value=>Math.max(0,Number.parseInt(value,10)||0);
   try{phraseFilterCategoryIds=new Set(JSON.parse(localStorage.getItem('phraseCategoryFilterV1')||'[]').map(number).filter(Boolean))}catch{}
@@ -72,7 +72,14 @@
 
   const openDatabase=()=>new Promise((resolve,reject)=>{const request=indexedDB.open('flovo-data',1);request.onupgradeneeded=()=>{if(!request.result.objectStoreNames.contains('app'))request.result.createObjectStore('app')};request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error)});
   const readStore=async key=>{const database=await openDatabase();try{return await new Promise((resolve,reject)=>{const transaction=database.transaction('app','readonly'),request=transaction.objectStore('app').get(key);request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error)})}finally{database.close()}};
-  const writeStore=async()=>{const database=await openDatabase();try{await new Promise((resolve,reject)=>{const transaction=database.transaction('app','readwrite');transaction.objectStore('app').put(data,STORE_KEY);transaction.oncomplete=resolve;transaction.onerror=()=>reject(transaction.error)})}finally{database.close()}};
+  const writeStore=()=>{
+    // Snapshot at invocation and serialize writes: independently opened IndexedDB
+    // connections can otherwise complete out of order and restore an older edit.
+    const snapshot=structuredClone(data);
+    const write=storeWriteQueue.catch(()=>{}).then(async()=>{const database=await openDatabase();try{await new Promise((resolve,reject)=>{const transaction=database.transaction('app','readwrite');transaction.objectStore('app').put(snapshot,STORE_KEY);transaction.oncomplete=resolve;transaction.onerror=()=>reject(transaction.error);transaction.onabort=()=>reject(transaction.error||new Error('保存が中断されました。'))})}finally{database.close()}});
+    storeWriteQueue=write;
+    return write;
+  };
   const migrateLegacy=legacy=>{
     if(!legacy||!Array.isArray(legacy.phrases))return null;
     const migrated={version:2,nextPhraseId:1,nextCategoryId:1,categories:[],phrases:[],tags:[],fileName:'未読込'},categoryByName=new Map();
@@ -241,11 +248,24 @@
     return true;
   };
   const toStoredData=()=>{
-    rowPhraseIds=new WeakMap();rowPhraseObjects=new WeakMap();
-    const rows=data.phrases.slice().sort((a,b)=>phraseNumber(a).localeCompare(phraseNumber(b),'ja',{numeric:true})).map(phrase=>{const row=[phraseNumber(phrase),categoryPath(phrase.primaryCategoryId),'','','','','','','','','','',phrase.japanese,phrase.english,phrase.note,phrase.understanding,phrase.correct,phrase.wrong,phrase.unsure];rowPhraseIds.set(row,phrase.id);rowPhraseObjects.set(row,phrase);return row});
+    rowPhraseIds=new WeakMap();rowPhraseObjects=new WeakMap();rowPhraseSnapshots=new Map();
+    const rows=data.phrases.slice().sort((a,b)=>phraseNumber(a).localeCompare(phraseNumber(b),'ja',{numeric:true})).map(phrase=>{const row=[phraseNumber(phrase),categoryPath(phrase.primaryCategoryId),'','','','','','','','','','',phrase.japanese,phrase.english,phrase.note,phrase.understanding,phrase.correct,phrase.wrong,phrase.unsure];row[19]=phrase.id;rowPhraseIds.set(row,phrase.id);rowPhraseObjects.set(row,phrase);rowPhraseSnapshots.set(phrase.id,row.slice(12,19));return row});
     return {headers:[],rows,vocabularyRows:rows,fileName:data.fileName,modified:true,phraseBank:true};
   };
-  const saveStoredData=async stored=>{(stored?.rows||[]).forEach(row=>{const phrase=rowPhraseObjects.get(row);if(!phrase)return;phrase.japanese=normalize(row[12]);phrase.english=normalize(row[13]);phrase.note=normalize(row[14]);phrase.understanding=normalize(row[15]);phrase.correct=number(row[16]);phrase.wrong=number(row[17]);phrase.unsure=number(row[18])});await writeStore();refreshPhraseHome()};
+  const saveStoredData=async stored=>{
+    const rows=stored?.rows||[];
+    const updates=rows.map(row=>{
+      const phraseId=number(row?.[19])||rowPhraseIds.get(row),phrase=(phraseId!=null?data.phrases.find(item=>item.id===phraseId):null)||rowPhraseObjects.get(row)||phraseByNumber(row?.[0]);
+      if(!phrase)throw new Error(`フレーズ「${normalize(row?.[0])||'不明'}」の保存先を特定できません。`);
+      return {phrase,row,phraseId:phrase.id};
+    });
+    updates.forEach(({phrase,row,phraseId})=>{
+      const baseline=rowPhraseSnapshots.get(phraseId),values=row.slice(12,19);
+      if(!baseline){phrase.japanese=normalize(row[12]);phrase.english=normalize(row[13]);phrase.note=normalize(row[14]);phrase.understanding=normalize(row[15]);phrase.correct=number(row[16]);phrase.wrong=number(row[17]);phrase.unsure=number(row[18])}
+      else values.forEach((value,index)=>{if(value===baseline[index])return;switch(index){case 0:phrase.japanese=normalize(value);break;case 1:phrase.english=normalize(value);break;case 2:phrase.note=normalize(value);break;case 3:phrase.understanding=normalize(value);break;case 4:phrase.correct=number(value);break;case 5:phrase.wrong=number(value);break;case 6:phrase.unsure=number(value);break}});
+    });
+    await writeStore();updates.forEach(({phraseId,row})=>rowPhraseSnapshots.set(phraseId,row.slice(12,19)));refreshPhraseHome();
+  };
   window.flovoPracticeAdapter={active:false,getData:async()=>{await loadData();return toStoredData()},saveData:saveStoredData,matchesRow:phraseMatchesFilter,getTextTargets:row=>{const item=rowPhraseObjects.get(row)||phraseByNumber(row?.[0]);return item?[item.english]:[]},getFilterSnapshot:()=>({categoryIds:[...phraseFilterCategoryIds],tags:[...phraseFilterTagNames]}),restoreFilterSnapshot:snapshot=>{phraseFilterCategoryIds=new Set(Array.isArray(snapshot)?snapshot:(snapshot?.categoryIds||[]));phraseFilterTagNames=new Set(Array.isArray(snapshot)?[]:(snapshot?.tags||[]));renderPhraseHierarchyFilter();renderPhraseTagFilter()},resetFilter:()=>{phraseFilterCategoryIds.clear();phraseFilterTagNames.clear();renderPhraseHierarchyFilter();renderPhraseTagFilter()},commitFilter:()=>{try{localStorage.setItem('phraseCategoryFilterV1',JSON.stringify([...phraseFilterCategoryIds]));localStorage.setItem('phraseTagFilterV1',JSON.stringify([...phraseFilterTagNames]))}catch{}},renderPracticeCardMetadata:row=>{const phrase=rowPhraseObjects.get(row)||phraseByNumber(row?.[0]),keywordCard=document.getElementById('phraseKeywordCard'),keywordValue=document.getElementById('phraseKeywordValue');if(keywordCard&&keywordValue){const keyword=moduleMode==='phrase-bank'?normalize(phrase?.keyword):'';keywordValue.textContent=keyword||'なし';keywordValue.classList.toggle('is-empty',!keyword);keywordCard.hidden=moduleMode!=='phrase-bank'}const section=document.getElementById('phraseCardTagSection'),container=document.getElementById('phraseCardTagBadges');if(!section||!container)return;section.hidden=moduleMode!=='phrase-bank';container.replaceChildren();if(!phrase||!phrase.tags?.length){const empty=document.createElement('span');empty.className='phrase-card-no-tags';empty.textContent='なし';container.append(empty);return}tagsInDefinitionOrder(phrase.tags).forEach(tag=>{const badge=document.createElement('span'),tone=data.tagColors?.[tagFolderKey(tag)]||'red';badge.className='phrase-card-tag-badge'+(tone?' '+tone:'');badge.textContent=tag;container.append(badge)})}};
 
   const setText=(original,value)=>{const element=document.getElementById(idMap.get(original));if(element)element.textContent=String(value)};
